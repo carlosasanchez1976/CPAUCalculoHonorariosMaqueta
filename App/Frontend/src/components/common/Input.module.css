@@ -1,0 +1,65 @@
+/* Estilos para el componente Input */
+.inputWrapper {
+  position: relative;
+  margin-bottom: var(--spacing-3);
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  font-size: var(--font-size-base);
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-white);
+  transition: all var(--transition);
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+}
+
+.input.hasError {
+  border-color: var(--color-error);
+}
+
+/* Floating Label */
+.label {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--font-size-base);
+  color: var(--color-gray-700);
+  pointer-events: none;
+  transition: all var(--transition);
+  background-color: var(--color-white);
+  padding: 0 4px;
+}
+
+.input:focus ~ .label,
+.input:not(:placeholder-shown) ~ .label {
+  top: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+}
+
+.input.hasError:focus ~ .label,
+.input.hasError:not(:placeholder-shown) ~ .label {
+  color: var(--color-error);
+}
+
+/* Mensaje de error */
+.errorMessage {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  min-height: 20px;
+}
+
+/* Asterisco requerido */
+.required {
+  color: var(--color-error);
+  margin-left: 2px;
+}

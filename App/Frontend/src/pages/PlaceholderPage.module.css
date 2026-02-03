@@ -1,0 +1,72 @@
+/* Estilos para las páginas placeholder */
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.mainContent {
+  flex: 1;
+  padding: var(--spacing-5) 0;
+  background-color: var(--color-gray-50);
+}
+
+.contentWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-2);
+}
+
+.placeholderCard {
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.pageTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.pageSubtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-700);
+  margin: 0 0 var(--spacing-4) 0;
+}
+
+.placeholderIcon {
+  font-size: 80px;
+  color: var(--color-accent);
+  margin-bottom: var(--spacing-3);
+}
+
+.backButtonWrapper {
+  margin-top: var(--spacing-4);
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .mainContent {
+    padding: var(--spacing-3) 0;
+  }
+
+  .placeholderCard {
+    padding: var(--spacing-3);
+  }
+
+  .pageTitle {
+    font-size: var(--font-size-xl);
+  }
+
+  .pageSubtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .placeholderIcon {
+    font-size: 60px;
+  }
+}

@@ -1,0 +1,112 @@
+/* Estilos para el componente UserMenu */
+.userMenuWrapper {
+  position: relative;
+}
+
+.userButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  background-color: rgba(45, 80, 22, 0.1);
+  color: var(--color-gray-700);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+  border: 1px solid transparent;
+}
+
+.userButton:hover {
+  background-color: rgba(45, 80, 22, 0.15);
+  border-color: var(--color-primary);
+}
+
+.userButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.userIcon {
+  font-size: 20px;
+}
+
+.userName {
+  font-weight: 500;
+  font-size: var(--font-size-base);
+}
+
+.chevronIcon {
+  font-size: 14px;
+  transition: transform var(--transition);
+}
+
+.userButton.open .chevronIcon {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  min-width: 200px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all var(--transition);
+}
+
+.dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: 12px 16px;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition: background-color var(--transition);
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-size: var(--font-size-base);
+}
+
+.menuItem:hover {
+  background-color: var(--color-gray-50);
+}
+
+.menuItem:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+.menuIcon {
+  font-size: 18px;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--color-gray-200);
+  margin: 4px 0;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .userName {
+    display: none;
+  }
+
+  .userButton {
+    padding: 8px 12px;
+  }
+}

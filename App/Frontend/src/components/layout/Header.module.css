@@ -1,0 +1,65 @@
+/* Estilos para el componente Header */
+.header {
+  background-color: var(--color-accent);
+  color: var(--color-gray-700);
+  padding: var(--spacing-2) 0;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-2);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-2);
+}
+
+/* Logo */
+.logoSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+/* Título */
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-gray-700);
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .headerContainer {
+    flex-wrap: wrap;
+  }
+
+  .title {
+    font-size: var(--font-size-lg);
+    flex: 1 1 100%;
+    text-align: center;
+    order: -1;
+    margin-bottom: var(--spacing-1);
+  }
+
+  .logo {
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: var(--font-size-base);
+  }
+}

@@ -1,0 +1,75 @@
+/* Estilos para el componente Card */
+.card {
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-4);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-2);
+  min-height: 200px;
+  border: 2px solid transparent;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-primary);
+}
+
+.card:active {
+  transform: translateY(-2px);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Ícono */
+.iconWrapper {
+  font-size: 60px;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-1);
+  transition: transform var(--transition);
+}
+
+.card:hover .iconWrapper {
+  transform: scale(1.1);
+}
+
+/* Título */
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-gray-700);
+  margin: 0;
+}
+
+/* Descripción */
+.description {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .card {
+    padding: var(--spacing-3);
+    min-height: 180px;
+  }
+
+  .iconWrapper {
+    font-size: 48px;
+  }
+
+  .title {
+    font-size: var(--font-size-base);
+  }
+}

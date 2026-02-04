@@ -37,6 +37,7 @@ TAS	Tasaciones
 ARB	Arbitrajes
 MED	Medianería
 
+
 2.3) Solapa “Datos específicos”
 Solicitar algunos datos para ingresar valores de ejemplo:
 -Cantidad de metros cuadrados (Textbox)

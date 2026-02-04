@@ -1,40 +1,68 @@
-import { useNavigate } from 'react-router-dom';
-import { FaCalculator } from 'react-icons/fa';
+import { FaCalculator, FaFileInvoiceDollar, FaChartLine, FaCog } from 'react-icons/fa';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
-import Button from '../components/common/Button';
-import { ROUTES } from '../utils/constants';
-import styles from './PlaceholderPage.module.css';
+import CalculationTypeCard from '../components/common/CalculationTypeCard';
+import styles from './NuevoCalculoPage.module.css';
 
 /**
- * Página: Nuevo Cálculo de Honorarios
- * Placeholder - En desarrollo
+ * Página de selección de tipo de cálculo de honorarios
  */
 const NuevoCalculoPage = () => {
-  const navigate = useNavigate();
+  const calculationTypes = [
+    {
+      title: 'Básico',
+      description: 'Cálculo de honorarios desarrollado para utilizarse como referencia a partir de obras de construcción estándares con materiales y procedimientos involucrados comunes en el mercado.',
+      icon: <FaCalculator />,
+      color: '#2D5016',
+      path: '/proceso-calculo'
+    },
+    {
+      title: 'Arancel CPAU',
+      description: 'Arancel propuesto por el CPAU en su resolución número 3220 y actualizaciones, a partir de un índice K de referencia y haciendo hincapié de manera detallada en cada tarea y rol que puede desarrollar el profesional matriculado',
+      icon: <FaFileInvoiceDollar />,
+      color: '#D4A574',
+      path: '/proceso-calculo'
+    },
+    {
+      title: 'Costo+Arancel',
+      description: 'Cálculo basado en el Arancel CPAU, tomando como base el Cálculo de Costo de Obra realizado previamente de manera detallada',
+      icon: <FaChartLine />,
+      color: '#A8DADC',
+      path: '/proceso-calculo'
+    },
+    {
+      title: 'Personalizado',
+      description: 'Cálculo que permite al usuario cambiar los valores de referencia y los índices para poder analizar impacto de esos cambios en el resultado final',
+      icon: <FaCog />,
+      color: '#457B9D',
+      path: '/proceso-calculo'
+    }
+  ];
 
   return (
     <div className={styles.pageContainer}>
       <Header />
       
-      <main className={styles.mainContent}>
-        <div className={styles.contentWrapper}>
-          <div className={styles.placeholderCard}>
-            <div className={styles.placeholderIcon}>
-              <FaCalculator />
-            </div>
-            <h2 className={styles.pageTitle}>Nuevo Cálculo de Honorarios</h2>
-            <p className={styles.pageSubtitle}>Página en desarrollo</p>
-            <p>Esta sección permitirá generar un nuevo proyecto para cálculo de honorarios profesionales.</p>
-            
-            <div className={styles.backButtonWrapper}>
-              <Button 
-                variant="primary" 
-                onClick={() => navigate(ROUTES.DASHBOARD)}
-              >
-                Volver al Dashboard
-              </Button>
-            </div>
+      <main className={styles.main}>
+        <div className={styles.content}>
+          <div className={styles.header}>
+            <h1 className={styles.title}>Nuevo Cálculo de Honorarios</h1>
+            <p className={styles.subtitle}>
+              Seleccione el tipo de cálculo que desea realizar según sus necesidades
+            </p>
+          </div>
+
+          <div className={styles.cardsGrid}>
+            {calculationTypes.map((type, index) => (
+              <CalculationTypeCard
+                key={index}
+                title={type.title}
+                description={type.description}
+                icon={type.icon}
+                color={type.color}
+                path={type.path}
+              />
+            ))}
           </div>
         </div>
       </main>

@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import NuevoCalculoPage from './pages/NuevoCalculoPage';
+import ProcesoCalculoPage from './pages/ProcesoCalculoPage';
 import CalculosRealizadosPage from './pages/CalculosRealizadosPage';
 import NuevoProyectoPage from './pages/NuevoProyectoPage';
 import ProyectosRealizadosPage from './pages/ProyectosRealizadosPage';
@@ -51,6 +52,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <NuevoCalculoPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/proceso-calculo"
+            element={
+              <ProtectedRoute>
+                <ProcesoCalculoPage />
               </ProtectedRoute>
             }
           />

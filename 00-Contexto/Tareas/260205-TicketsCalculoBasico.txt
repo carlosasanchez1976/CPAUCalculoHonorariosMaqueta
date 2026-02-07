@@ -1,0 +1,417 @@
+================================================================================
+TICKETS - CÁLCULO HONORARIOS DE ESPECIALIDADES - BÁSICO
+================================================================================
+Proyecto: CH2026 - Sistema de Gestión de Cálculo de Honorarios CPAU
+Fecha: 05/02/2026
+Tipo de Cálculo: #1 - Honorarios de Especialidades - Básico
+================================================================================
+
+OBJETIVO GENERAL:
+Desarrollar la funcionalidad específica del cálculo "Honorarios de Especialidades - Básico"
+sin afectar los otros tipos de cálculo existentes.
+
+================================================================================
+TICKET #001 - PASO 1: TAREAS INCLUIDAS EN EL CÁLCULO
+================================================================================
+ESTADO: ✅ COMPLETADO (07/02/2026)
+
+DESCRIPCIÓN:
+Implementar el Paso 1 del wizard con selección de tareas profesionales incluidas
+en el cálculo de honorarios.
+
+SUBTAREAS:
+
+[T001.1] Crear componente de selección de tareas
+  - Implementar checkboxes para cada tarea profesional
+  - Diseño responsive y accesible
+  - Estado local para gestionar selecciones múltiples
+
+[T001.2] Implementar tarea: Proyecto de Obra
+  - Checkbox "Proyecto de Obra"
+  - Descripción breve de la tarea
+  - Estado seleccionado/no seleccionado
+
+[T001.3] Implementar tarea: Dirección de Obra
+  - Checkbox "Dirección de Obra"
+  - Descripción breve de la tarea
+  - Estado seleccionado/no seleccionado
+
+[T001.4] Implementar tarea: Proyecto de Instalaciones
+  - Checkbox principal "Proyecto de Instalaciones"
+  - Sub-grupo expandible con 3 especialidades:
+
+  [T001.4.1] Sub-tarea: Instalaciones Sanitarias
+    - Checkbox anidado "Sanitarias"
+    - Dependiente de checkbox principal
+    
+  [T001.4.2] Sub-tarea: Instalaciones Eléctricas
+    - Checkbox anidado "Eléctrica"
+    - Dependiente de checkbox principal
+    
+  [T001.4.3] Sub-tarea: Instalaciones Contra Incendios
+    - Checkbox anidado "Contra Incendios"
+    - Dependiente de checkbox principal
+
+[T001.5] Implementar tarea: Proyecto de Estructuras
+  - Checkbox "Proyecto de Estructuras"
+  - Descripción breve de la tarea
+  - Estado seleccionado/no seleccionado
+
+[T001.6] Validación y lógica de negocio
+  - Requerir al menos 1 tarea seleccionada
+  - Lógica de dependencias (instalaciones → sub-tareas)
+  - Guardar selecciones en formData
+
+CRITERIOS DE ACEPTACIÓN:
+✓ El paso muestra todas las tareas con checkboxes funcionales
+✓ Las sub-tareas de instalaciones se muestran/ocultan correctamente
+✓ Se requiere al menos una tarea seleccionada para avanzar
+✓ Los datos se guardan correctamente en el estado del wizard
+✓ El diseño es responsive (mobile, tablet, desktop)
+
+ARCHIVOS A MODIFICAR/CREAR:
+- src/components/wizard/steps/TareasIncluidasStep.jsx (NUEVO)
+- src/components/wizard/steps/TareasIncluidasStep.module.css (NUEVO)
+- src/pages/ProcesoCalculoPage.jsx (MODIFICAR)
+
+ESTIMACIÓN: 4-6 horas
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #002 - PASO 2: DATOS DE LA OBRA
+================================================================================
+
+DESCRIPCIÓN:
+Implementar el Paso 2 del wizard con campos para definir características
+técnicas y económicas de la obra.
+
+SUBTAREAS:
+
+[T002.1] Campo: Metros cuadrados de Obra
+  - Input numérico para superficie total
+  - Validación: solo números positivos
+  - Unidad de medida: m²
+  - Label: "Superficie Total de la Obra (m²)"
+
+[T002.2] Campo: Complejidad de la Obra
+  - Select/Dropdown con 3 opciones:
+    · Baja (factor 0.8)
+    · Media (factor 1.0)
+    · Alta (factor 1.3)
+  - Mostrar descripción de cada nivel
+  - Label: "Complejidad de la Obra"
+
+[T002.3] Campo: Precio por m² (USD)
+  - Input numérico para valor unitario
+  - Validación: números positivos con decimales
+  - Formato de moneda
+  - Label: "Precio por m² (USD)"
+
+[T002.4] Campo: Cotización del Dólar
+  - Input numérico para tipo de cambio USD/ARS
+  - Validación: números positivos con decimales
+  - Valor sugerido/default actual del mercado
+  - Label: "Cotización USD (Tipo de Cambio)"
+
+[T002.5] Campo calculado: Costo Total
+  - Cálculo automático: m² × precio_m² × cotización
+  - Solo lectura (read-only)
+  - Formato de moneda ARS
+  - Actualización en tiempo real
+  - Label: "Costo Total de la Obra (ARS)"
+
+[T002.6] Validación y actualización de estado
+  - Validar todos los campos requeridos
+  - Cálculo automático del costo total
+  - Guardar datos en formData
+  - Habilitar botón "Siguiente" solo con datos válidos
+
+CRITERIOS DE ACEPTACIÓN:
+✓ Todos los campos muestran labels y placeholders claros
+✓ Validaciones funcionan correctamente
+✓ Costo Total se calcula automáticamente al cambiar cualquier valor
+✓ Formato de moneda correcto (separadores de miles, decimales)
+✓ El formulario es responsive
+✓ Los datos se guardan en el estado del wizard
+
+ARCHIVOS A MODIFICAR/CREAR:
+- src/components/wizard/steps/DatosObraStep.jsx (NUEVO)
+- src/components/wizard/steps/DatosObraStep.module.css (NUEVO)
+- src/utils/formatters.js (NUEVO - funciones de formato de moneda)
+- src/pages/ProcesoCalculoPage.jsx (MODIFICAR)
+
+ESTIMACIÓN: 5-7 horas
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #003 - CÁLCULO DE HONORARIOS
+================================================================================
+
+DESCRIPCIÓN:
+Implementar la lógica de cálculo real de honorarios basada en las tareas
+seleccionadas y datos de la obra, reemplazando los valores mock actuales.
+
+SUBTAREAS:
+
+[T003.1] Definir tablas de referencia
+  - Tabla de factores por tarea profesional
+  - Tabla de porcentajes por tarea vs superficie
+  - Tabla de multiplicadores por complejidad
+  - Configuración de tasas (IVA, gastos administrativos)
+
+[T003.2] Implementar función de cálculo principal
+  - Función: calcularHonorariosBasico(formData)
+  - Parámetros de entrada:
+    · Tareas seleccionadas
+    · m² de obra
+    · Complejidad
+    · Precio por m²
+    · Cotización USD
+  - Retorna objeto con desglose completo
+
+[T003.3] Cálculo por tarea seleccionada
+  - Iterar sobre tareas seleccionadas
+  - Aplicar fórmula específica por tarea:
+    · Honorario_tarea = Costo_obra × Factor_tarea × Multiplicador_complejidad
+  - Acumular subtotales
+
+[T003.4] Cálculo de conceptos adicionales
+  - Calcular IVA (21%)
+  - Calcular gastos administrativos (5%)
+  - Calcular total general
+
+[T003.5] Generar desglose detallado
+  - Array de items con:
+    · Nombre de tarea
+    · Porcentaje aplicado
+    · Factor de complejidad
+    · Subtotal por tarea
+  - Subtotal honorarios profesionales
+  - Subtotal impuestos
+  - Subtotal gastos
+  - Total general
+
+[T003.6] Integrar cálculo en ProcesoCalculoPage
+  - Reemplazar generateMockResults()
+  - Llamar a calcularHonorariosBasico() en Paso 4
+  - Pasar datos reales al componente de resultados
+
+CRITERIOS DE ACEPTACIÓN:
+✓ Los cálculos reflejan valores realistas según CPAU
+✓ Cada tarea seleccionada genera un ítem en el desglose
+✓ Los multiplicadores de complejidad se aplican correctamente
+✓ El total general es la suma correcta de todos los conceptos
+✓ No hay valores mock/aleatorios
+✓ La función es reutilizable y bien documentada
+
+ARCHIVOS A MODIFICAR/CREAR:
+- src/utils/calculos/honorariosBasico.js (NUEVO)
+- src/utils/calculos/tablas.js (NUEVO - tablas de referencia)
+- src/utils/calculos/constants.js (NUEVO - constantes de cálculo)
+- src/pages/ProcesoCalculoPage.jsx (MODIFICAR)
+
+ESTIMACIÓN: 6-8 horas
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #004 - MOSTRAR DETALLE DE CÁLCULO
+================================================================================
+
+DESCRIPCIÓN:
+Mejorar la presentación de resultados en el Paso 5, mostrando desglose
+detallado y profesional de los honorarios calculados.
+
+SUBTAREAS:
+
+[T004.1] Crear componente ResultadoBasicoDetalle
+  - Componente específico para mostrar resultados del cálculo básico
+  - Diseño profesional tipo "factura"
+  - Responsive (desktop, tablet, mobile)
+
+[T004.2] Sección: Resumen del Proyecto
+  - Nombre del proyecto
+  - Cliente
+  - Tipo de obra
+  - Superficie total
+  - Complejidad aplicada
+
+[T004.3] Sección: Tareas Profesionales Incluidas
+  - Lista de tareas seleccionadas con checkmarks
+  - Indicador visual de cada tarea
+  - Orden lógico de presentación
+
+[T004.4] Sección: Desglose Detallado de Honorarios
+  - Tabla con columnas:
+    · Tarea Profesional
+    · Porcentaje s/Costo Obra
+    · Factor Complejidad
+    · Subtotal (ARS)
+  - Formato de moneda profesional
+  - Subtotal de honorarios profesionales
+
+[T004.5] Sección: Conceptos Adicionales
+  - Fila: Subtotal Honorarios Profesionales
+  - Fila: IVA (21%) - cálculo y monto
+  - Fila: Gastos Administrativos (5%) - cálculo y monto
+  - Separador visual
+
+[T004.6] Sección: Total General
+  - Fila destacada con total general
+  - Formato grande y visible
+  - Fondo/color diferenciado
+
+[T004.7] Botones de acción
+  - Botón: Descargar PDF (preparar para futuro)
+  - Botón: Guardar Cálculo (preparar para futuro)
+  - Botón: Nueva Consulta
+  - Botón: Volver al Dashboard
+
+CRITERIOS DE ACEPTACIÓN:
+✓ El desglose muestra todos los datos calculados
+✓ Los formatos de moneda son consistentes
+✓ El diseño es claro y profesional
+✓ La tabla es responsive y legible en móvil
+✓ Los totales coinciden con los cálculos
+✓ El componente es reutilizable
+
+ARCHIVOS A MODIFICAR/CREAR:
+- src/components/wizard/ResultadoBasicoDetalle.jsx (NUEVO)
+- src/components/wizard/ResultadoBasicoDetalle.module.css (NUEVO)
+- src/pages/ProcesoCalculoPage.jsx (MODIFICAR)
+
+ESTIMACIÓN: 5-6 horas
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #005 - DISCLAIMER LEGAL Y CONDICIONES
+================================================================================
+
+DESCRIPCIÓN:
+Definir y agregar disclaimer legal específico para el cálculo básico,
+con condiciones de uso y limitaciones del cálculo.
+
+SUBTAREAS:
+
+[T005.1] Redactar texto del disclaimer
+  - Coordinar con equipo legal/CPAU
+  - Especificar que es un cálculo de referencia
+  - Aclarar que no reemplaza consulta profesional
+  - Indicar vigencia de tarifas e índices
+  - Mencionar variables que pueden afectar el cálculo final
+
+[T005.2] Crear componente DisclaimerBasico
+  - Componente específico para disclaimer
+  - Diseño discreto pero visible
+  - Checkbox de aceptación de términos
+  - Enlace a "Términos completos" (modal)
+
+[T005.3] Integrar en Paso 5 (Resultado)
+  - Mostrar disclaimer antes del total
+  - Requerir checkbox aceptado para finalizar
+  - Deshabilitar botón "Finalizar" hasta aceptación
+
+[T005.4] Modal de términos completos
+  - Versión extendida del disclaimer
+  - Condiciones de uso detalladas
+  - Botón cerrar
+  - Scroll si el contenido es largo
+
+[T005.5] Agregar en PDF exportado (preparación futura)
+  - Incluir disclaimer en footer del PDF
+  - Número de versión del cálculo
+  - Fecha de generación
+
+CRITERIOS DE ACEPTACIÓN:
+✓ El disclaimer es claro y legalmente adecuado
+✓ El checkbox es obligatorio para finalizar
+✓ El modal de términos completos funciona correctamente
+✓ El texto es legible y profesional
+✓ El componente es reutilizable para otros tipos de cálculo
+
+ARCHIVOS A MODIFICAR/CREAR:
+- src/components/wizard/DisclaimerBasico.jsx (NUEVO)
+- src/components/wizard/DisclaimerBasico.module.css (NUEVO)
+- src/components/common/ModalTerminos.jsx (NUEVO)
+- src/components/common/ModalTerminos.module.css (NUEVO)
+- src/pages/ProcesoCalculoPage.jsx (MODIFICAR)
+- src/utils/constants.js (MODIFICAR - agregar texto disclaimer)
+
+ESTIMACIÓN: 3-4 horas
+
+--------------------------------------------------------------------------------
+
+================================================================================
+RESUMEN DE ESTIMACIONES
+================================================================================
+
+TICKET #001 - Paso 1: Tareas Incluidas           →  4-6 horas
+TICKET #002 - Paso 2: Datos de la Obra           →  5-7 horas
+TICKET #003 - Cálculo de Honorarios              →  6-8 horas
+TICKET #004 - Mostrar Detalle de Cálculo         →  5-6 horas
+TICKET #005 - Disclaimer Legal                   →  3-4 horas
+                                                    ─────────
+TOTAL ESTIMADO:                                    23-31 horas
+
+DISTRIBUCIÓN SUGERIDA:
+- Sprint 1 (8-10h): TICKET #001 + TICKET #002
+- Sprint 2 (8-10h): TICKET #003 + parte de TICKET #004
+- Sprint 3 (7-11h): Finalizar TICKET #004 + TICKET #005
+
+================================================================================
+NOTAS IMPORTANTES
+================================================================================
+
+1. AISLAMIENTO DE CÓDIGO:
+   - Todo el código específico del cálculo básico debe estar aislado
+   - No modificar componentes compartidos sin documentar
+   - Usar nombres específicos para evitar conflictos
+
+2. DATOS DE PRUEBA:
+   - Crear datasets de ejemplo para testing
+   - Validar cálculos con casos conocidos
+   - Documentar ejemplos de referencia
+
+3. CONFIGURACIÓN POR TIPO:
+   - Preparar estructura para diferenciar tipos de cálculo
+   - Uso de switch/case o strategy pattern
+   - Componentes específicos por tipo cuando sea necesario
+
+4. BACKWARD COMPATIBILITY:
+   - No romper el flujo actual de otros tipos
+   - Los 3 tipos restantes siguen usando mock hasta su desarrollo
+   - Tests de regresión en flujo general
+
+5. DOCUMENTACIÓN:
+   - Documentar fórmulas y factores utilizados
+   - JSDoc en funciones de cálculo
+   - README específico para cálculo básico
+
+================================================================================
+DEPENDENCIAS EXTERNAS
+================================================================================
+
+- Tablas de aranceles oficiales CPAU (coordinar con cliente)
+- Índices y factores actualizados
+- Validación legal del disclaimer (equipo legal)
+- Diseño/UX review de componentes visuales
+
+================================================================================
+CRITERIOS DE DONE (DEFINITION OF DONE)
+================================================================================
+
+✓ Código implementado y funcional
+✓ Pruebas manuales completadas (happy path + edge cases)
+✓ Código revisado (code review)
+✓ Documentación actualizada (JSDoc + README)
+✓ Responsive verificado (mobile + tablet + desktop)
+✓ Accesibilidad básica verificada
+✓ Sin errores en consola
+✓ Merge a rama develop aprobado
+
+================================================================================
+FIN DEL DOCUMENTO
+================================================================================

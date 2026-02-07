@@ -10,6 +10,13 @@ import Button from '../components/common/Button';
 import { ROUTES } from '../utils/constants';
 import styles from './ProcesoCalculoPage.module.css';
 
+// Componentes específicos para Cálculo Básico
+import DatosPrincipalesBasico from '../components/wizard/steps/DatosPrincipalesBasico';
+import DatosObraBasico from '../components/wizard/steps/DatosObraBasico';
+import TareasProfesionalesBasico from '../components/wizard/steps/TareasProfesionalesBasico';
+import RevisionBasico from '../components/wizard/steps/RevisionBasico';
+import ResultadoBasicoDetalle from '../components/wizard/ResultadoBasicoDetalle';
+
 const ProcesoCalculoPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -21,23 +28,44 @@ const ProcesoCalculoPage = () => {
     tipoCalculo: location.state?.tipo || 'Básico',
     descripcionTipo: location.state?.descripcion || '',
     
-    // Paso 0: Tarea Profesional + Datos Principales
+    // Paso 0: Tarea Profesional + Datos Principales (GENÉRICO)
     tareaProfesional: '',
     nombreProyecto: '',
     cliente: '',
     ubicacion: '',
     tipoObra: '',
     
-    // Paso 1: Datos Específicos
+    // Paso 1: Datos Específicos (GENÉRICO)
     metrosCuadrados: '',
     costoMetroCuadrado: '',
     realizaRecalculo: false,
     
-    // Paso 2: Datos Adicionales
+    // Paso 2: Datos Adicionales (GENÉRICO)
     gastosViaticos: '',
     gastosOperativos: '',
     cantidadOperarios: '',
     otrosGastos: '',
+    
+    // --- CAMPOS ESPECÍFICOS PARA CÁLCULO BÁSICO ---
+    // Paso 0: Datos Principales Básico
+    plazoEjecucion: '',
+    observaciones: '',
+    
+    // Paso 1: Datos de la Obra Básico
+    superficieTotal: '',
+    valorMetro2: '',
+    cotizDolar: '',
+    valorObra: '',
+    complejidad: '',
+    
+    // Paso 2: Tareas Profesionales Básico
+    obraProyecto: false,
+    obraDireccion: false,
+    instalacionSanitaria: false,
+    instalacionElectrica: false,
+    instalacionContraIncendio: false,
+    proyectoEstructuras: false,
+    observacionesTareas: '',
     
     // Paso 5: Aceptación
     aceptaTerminos: false
@@ -76,6 +104,13 @@ const ProcesoCalculoPage = () => {
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleAcceptTerms = (accepted) => {
+    setFormData(prev => ({
+      ...prev,
+      aceptaTerminos: accepted
     }));
   };
 
@@ -179,169 +214,199 @@ const ProcesoCalculoPage = () => {
     }
   };
 
-  const renderStep0 = () => (
-    <div className={styles.formContainer}>
-      <h2 className={styles.stepTitle}>Datos Principales del Proyecto</h2>
-      <p className={styles.stepDescription}>
-        Ingrese los datos básicos del proyecto para el cálculo de honorarios
-      </p>
+  const renderStep0 = () => {
+    // Si es Cálculo Básico, usar componente específico
+    if (formData.tipoCalculo === 'Básico') {
+      return <DatosPrincipalesBasico formData={formData} onChange={handleInputChange} />;
+    }
 
-      <div className={styles.formGrid}>
-        {/* Tarea Profesional - Campo FUNDAMENTAL como primer campo */}
-        <div style={{ gridColumn: '1 / -1' }}>
-          <label className={styles.label}>
-            Tarea Profesional *
-            <select
-              name="tareaProfesional"
-              value={formData.tareaProfesional}
-              onChange={handleInputChange}
-              className={styles.select}
-            >
-              <option value="">Seleccione la tarea profesional...</option>
-              {tareasProfesionales.map((tarea) => (
-                <option key={tarea.codigo} value={tarea.codigo}>
-                  {tarea.codigo} - {tarea.descripcion}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
+    // Componente genérico para otros tipos
+    return (
+      <div className={styles.formContainer}>
+        <h2 className={styles.stepTitle}>Datos Principales del Proyecto</h2>
+        <p className={styles.stepDescription}>
+          Ingrese los datos básicos del proyecto para el cálculo de honorarios
+        </p>
 
-        <Input
-          label="Nombre del Proyecto"
-          name="nombreProyecto"
-          value={formData.nombreProyecto}
-          onChange={handleInputChange}
-          placeholder="Ej: Edificio Residencial Torre Sur"
-        />
+        <div className={styles.formGrid}>
+          {/* Tarea Profesional - Campo FUNDAMENTAL como primer campo */}
+          <div style={{ gridColumn: '1 / -1' }}>
+            <label className={styles.label}>
+              Tarea Profesional *
+              <select
+                name="tareaProfesional"
+                value={formData.tareaProfesional}
+                onChange={handleInputChange}
+                className={styles.select}
+              >
+                <option value="">Seleccione la tarea profesional...</option>
+                {tareasProfesionales.map((tarea) => (
+                  <option key={tarea.codigo} value={tarea.codigo}>
+                    {tarea.codigo} - {tarea.descripcion}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
 
-        <Input
-          label="Cliente"
-          name="cliente"
-          value={formData.cliente}
-          onChange={handleInputChange}
-          placeholder="Ej: Constructora ABC S.A."
-        />
+          <Input
+            label="Nombre del Proyecto"
+            name="nombreProyecto"
+            value={formData.nombreProyecto}
+            onChange={handleInputChange}
+            placeholder="Ej: Edificio Residencial Torre Sur"
+          />
 
-        <Input
-          label="Ubicación"
-          name="ubicacion"
-          value={formData.ubicacion}
-          onChange={handleInputChange}
-          placeholder="Ej: CABA, Palermo"
-        />
+          <Input
+            label="Cliente"
+            name="cliente"
+            value={formData.cliente}
+            onChange={handleInputChange}
+            placeholder="Ej: Constructora ABC S.A."
+          />
 
-        <div>
-          <label className={styles.label}>
-            Tipo de Obra
-            <select
-              name="tipoObra"
-              value={formData.tipoObra}
-              onChange={handleInputChange}
-              className={styles.select}
-            >
-              <option value="">Seleccione...</option>
-              <option value="Vivienda">Vivienda</option>
-              <option value="Edificio">Edificio</option>
-              <option value="Industrial">Industrial</option>
-              <option value="Comercial">Comercial</option>
-            </select>
-          </label>
-        </div>
-      </div>
-    </div>
-  );
+          <Input
+            label="Ubicación"
+            name="ubicacion"
+            value={formData.ubicacion}
+            onChange={handleInputChange}
+            placeholder="Ej: CABA, Palermo"
+          />
 
-  const renderStep1 = () => (
-    <div className={styles.formContainer}>
-      <h2 className={styles.stepTitle}>Datos Específicos</h2>
-      <p className={styles.stepDescription}>
-        Detalles técnicos y económicos del proyecto
-      </p>
-
-      <div className={styles.formGrid}>
-        <Input
-          label="Cantidad de metros cuadrados"
-          name="metrosCuadrados"
-          type="number"
-          value={formData.metrosCuadrados}
-          onChange={handleInputChange}
-          placeholder="Ej: 1500"
-        />
-
-        <Input
-          label="Costo del metro cuadrado ($)"
-          name="costoMetroCuadrado"
-          type="number"
-          value={formData.costoMetroCuadrado}
-          onChange={handleInputChange}
-          placeholder="Ej: 250000"
-        />
-
-        <div className={styles.checkboxWrapper}>
-          <label className={styles.checkboxLabel}>
-            <input
-              type="checkbox"
-              name="realizaRecalculo"
-              checked={formData.realizaRecalculo}
-              onChange={handleInputChange}
-              className={styles.checkbox}
-            />
-            Realiza recálculo final
-          </label>
+          <div>
+            <label className={styles.label}>
+              Tipo de Obra
+              <select
+                name="tipoObra"
+                value={formData.tipoObra}
+                onChange={handleInputChange}
+                className={styles.select}
+              >
+                <option value="">Seleccione...</option>
+                <option value="Vivienda">Vivienda</option>
+                <option value="Edificio">Edificio</option>
+                <option value="Industrial">Industrial</option>
+                <option value="Comercial">Comercial</option>
+              </select>
+            </label>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
-  const renderStep2 = () => (
-    <div className={styles.formContainer}>
-      <h2 className={styles.stepTitle}>Datos Adicionales</h2>
-      <p className={styles.stepDescription}>
-        Costos adicionales asociados al proyecto
-      </p>
+  const renderStep1 = () => {
+    // Si es Cálculo Básico, usar componente específico
+    if (formData.tipoCalculo === 'Básico') {
+      return <DatosObraBasico formData={formData} onChange={handleInputChange} />;
+    }
 
-      <div className={styles.formGrid}>
-        <Input
-          label="Gastos de viáticos ($)"
-          name="gastosViaticos"
-          type="number"
-          value={formData.gastosViaticos}
-          onChange={handleInputChange}
-          placeholder="Ej: 50000"
-        />
+    // Componente genérico para otros tipos
+    return (
+      <div className={styles.formContainer}>
+        <h2 className={styles.stepTitle}>Datos Específicos</h2>
+        <p className={styles.stepDescription}>
+          Detalles técnicos y económicos del proyecto
+        </p>
 
-        <Input
-          label="Gastos operativos ($)"
-          name="gastosOperativos"
-          type="number"
-          value={formData.gastosOperativos}
-          onChange={handleInputChange}
-          placeholder="Ej: 75000"
-        />
+        <div className={styles.formGrid}>
+          <Input
+            label="Cantidad de metros cuadrados"
+            name="metrosCuadrados"
+            type="number"
+            value={formData.metrosCuadrados}
+            onChange={handleInputChange}
+            placeholder="Ej: 1500"
+          />
 
-        <Input
-          label="Cantidad de operarios"
-          name="cantidadOperarios"
-          type="number"
-          value={formData.cantidadOperarios}
-          onChange={handleInputChange}
-          placeholder="Ej: 5"
-        />
+          <Input
+            label="Costo del metro cuadrado ($)"
+            name="costoMetroCuadrado"
+            type="number"
+            value={formData.costoMetroCuadrado}
+            onChange={handleInputChange}
+            placeholder="Ej: 250000"
+          />
 
-        <Input
-          label="Otros gastos ($)"
-          name="otrosGastos"
-          type="number"
-          value={formData.otrosGastos}
-          onChange={handleInputChange}
-          placeholder="Ej: 25000"
-        />
+          <div className={styles.checkboxWrapper}>
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                name="realizaRecalculo"
+                checked={formData.realizaRecalculo}
+                onChange={handleInputChange}
+                className={styles.checkbox}
+              />
+              Realiza recálculo final
+            </label>
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  const renderStep2 = () => {
+    // Si es Cálculo Básico, usar componente específico
+    if (formData.tipoCalculo === 'Básico') {
+      return <TareasProfesionalesBasico formData={formData} onChange={handleInputChange} />;
+    }
+
+    // Componente genérico para otros tipos
+    return (
+      <div className={styles.formContainer}>
+        <h2 className={styles.stepTitle}>Datos Adicionales</h2>
+        <p className={styles.stepDescription}>
+          Costos adicionales asociados al proyecto
+        </p>
+
+        <div className={styles.formGrid}>
+          <Input
+            label="Gastos de viáticos ($)"
+            name="gastosViaticos"
+            type="number"
+            value={formData.gastosViaticos}
+            onChange={handleInputChange}
+            placeholder="Ej: 50000"
+          />
+
+          <Input
+            label="Gastos operativos ($)"
+            name="gastosOperativos"
+            type="number"
+            value={formData.gastosOperativos}
+            onChange={handleInputChange}
+            placeholder="Ej: 75000"
+          />
+
+          <Input
+            label="Cantidad de operarios"
+            name="cantidadOperarios"
+            type="number"
+            value={formData.cantidadOperarios}
+            onChange={handleInputChange}
+            placeholder="Ej: 5"
+          />
+
+          <Input
+            label="Otros gastos ($)"
+            name="otrosGastos"
+            type="number"
+            value={formData.otrosGastos}
+            onChange={handleInputChange}
+            placeholder="Ej: 25000"
+          />
+        </div>
+      </div>
+    );
+  };
 
   const renderStep3 = () => {
+    // Si es Cálculo Básico, usar componente específico
+    if (formData.tipoCalculo === 'Básico') {
+      return <RevisionBasico formData={formData} onEditStep={(step) => setCurrentStep(step)} />;
+    }
+
+    // Componente genérico para otros tipos
     const tareaSeleccionada = tareasProfesionales.find(t => t.codigo === formData.tareaProfesional);
     
     return (
@@ -449,83 +514,98 @@ const ProcesoCalculoPage = () => {
     </div>
   );
 
-  const renderStep5 = () => (
-    <div className={styles.formContainer}>
-      <h2 className={styles.stepTitle}>Resultado del Cálculo</h2>
-      <p className={styles.stepDescription}>
-        Cálculo de honorarios para: {formData.nombreProyecto || 'Proyecto sin nombre'}
-      </p>
+  const renderStep5 = () => {
+    // Si es Cálculo Básico, usar componente específico
+    if (formData.tipoCalculo === 'Básico') {
+      return (
+        <ResultadoBasicoDetalle 
+          formData={formData}
+          calculationResult={calculationResult}
+          onAcceptTerms={handleAcceptTerms}
+          termsAccepted={formData.aceptaTerminos}
+        />
+      );
+    }
 
-      {calculationResult && (
-        <div className={styles.resultContainer}>
-          <div className={styles.resultSummary}>
-            <div className={styles.resultItem}>
-              <span className={styles.resultLabel}>Honorarios Profesionales:</span>
-              <span className={styles.resultValue}>{formatCurrency(calculationResult.honorariosProfesionales)}</span>
-            </div>
-            <div className={styles.resultItem}>
-              <span className={styles.resultLabel}>Impuestos (21%):</span>
-              <span className={styles.resultValue}>{formatCurrency(calculationResult.impuestos)}</span>
-            </div>
-            <div className={styles.resultItem}>
-              <span className={styles.resultLabel}>Gastos Administrativos (5%):</span>
-              <span className={styles.resultValue}>{formatCurrency(calculationResult.gastosAdministrativos)}</span>
-            </div>
-            <div className={`${styles.resultItem} ${styles.resultTotal}`}>
-              <span className={styles.resultLabel}>TOTAL GENERAL:</span>
-              <span className={styles.resultValue}>{formatCurrency(calculationResult.totalGeneral)}</span>
-            </div>
-          </div>
+    // Componente genérico para otros tipos
+    return (
+      <div className={styles.formContainer}>
+        <h2 className={styles.stepTitle}>Resultado del Cálculo</h2>
+        <p className={styles.stepDescription}>
+          Cálculo de honorarios para: {formData.nombreProyecto || 'Proyecto sin nombre'}
+        </p>
 
-          <div className={styles.detailTable}>
-            <h3 className={styles.tableTitle}>Desglose por Concepto</h3>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Concepto</th>
-                  <th>Horas</th>
-                  <th>Tarifa/Hora</th>
-                  <th>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {calculationResult.items.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.concepto}</td>
-                    <td>{item.horas}</td>
-                    <td>{formatCurrency(item.tarifa)}</td>
-                    <td>{formatCurrency(item.subtotal)}</td>
+        {calculationResult && (
+          <div className={styles.resultContainer}>
+            <div className={styles.resultSummary}>
+              <div className={styles.resultItem}>
+                <span className={styles.resultLabel}>Honorarios Profesionales:</span>
+                <span className={styles.resultValue}>{formatCurrency(calculationResult.honorariosProfesionales)}</span>
+              </div>
+              <div className={styles.resultItem}>
+                <span className={styles.resultLabel}>Impuestos (21%):</span>
+                <span className={styles.resultValue}>{formatCurrency(calculationResult.impuestos)}</span>
+              </div>
+              <div className={styles.resultItem}>
+                <span className={styles.resultLabel}>Gastos Administrativos (5%):</span>
+                <span className={styles.resultValue}>{formatCurrency(calculationResult.gastosAdministrativos)}</span>
+              </div>
+              <div className={`${styles.resultItem} ${styles.resultTotal}`}>
+                <span className={styles.resultLabel}>TOTAL GENERAL:</span>
+                <span className={styles.resultValue}>{formatCurrency(calculationResult.totalGeneral)}</span>
+              </div>
+            </div>
+
+            <div className={styles.detailTable}>
+              <h3 className={styles.tableTitle}>Desglose por Concepto</h3>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Concepto</th>
+                    <th>Horas</th>
+                    <th>Tarifa/Hora</th>
+                    <th>Subtotal</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {calculationResult.items.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.concepto}</td>
+                      <td>{item.horas}</td>
+                      <td>{formatCurrency(item.tarifa)}</td>
+                      <td>{formatCurrency(item.subtotal)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          <div className={styles.disclaimer}>
-            <p>
-              Los valores informados aquí son resultado del cálculo de múltiples variables e índices 
-              afectados a este momento. Los resultados pueden variar entre cálculos de obras del mismo 
-              tipo en diferentes momentos. El arancel propuesto debe ser considerado como referencia y 
-              de ninguna manera el CPAU dispone el valor final que el profesional debe informar.
-            </p>
-          </div>
+            <div className={styles.disclaimer}>
+              <p>
+                Los valores informados aquí son resultado del cálculo de múltiples variables e índices 
+                afectados a este momento. Los resultados pueden variar entre cálculos de obras del mismo 
+                tipo en diferentes momentos. El arancel propuesto debe ser considerado como referencia y 
+                de ninguna manera el CPAU dispone el valor final que el profesional debe informar.
+              </p>
+            </div>
 
-          <div className={styles.termsWrapper}>
-            <label className={styles.termsLabel}>
-              <input
-                type="checkbox"
-                name="aceptaTerminos"
-                checked={formData.aceptaTerminos}
-                onChange={handleInputChange}
-                className={styles.termsCheckbox}
-              />
-              Acepta las condiciones del servicio y el reglamento de uso de datos del CPAU
-            </label>
+            <div className={styles.termsWrapper}>
+              <label className={styles.termsLabel}>
+                <input
+                  type="checkbox"
+                  name="aceptaTerminos"
+                  checked={formData.aceptaTerminos}
+                  onChange={handleInputChange}
+                  className={styles.termsCheckbox}
+                />
+                Acepta las condiciones del servicio y el reglamento de uso de datos del CPAU
+              </label>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className={styles.pageContainer}>

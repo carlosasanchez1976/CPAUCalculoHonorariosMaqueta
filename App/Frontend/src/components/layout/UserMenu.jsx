@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaChevronDown, FaCog, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser, FaChevronDown, FaCog, FaUserCircle, FaSignOutAlt, FaSlidersH } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import { ROUTES } from '../../utils/constants';
 import styles from './UserMenu.module.css';
@@ -74,6 +74,15 @@ const UserMenu = () => {
         >
           <FaCog className={styles.menuIcon} />
           <span>Preferencias</span>
+        </button>
+
+        <button
+          className={styles.menuItem}
+          onClick={() => handleMenuItemClick(ROUTES.PARAMETROS)}
+          role="menuitem"
+        >
+          <FaSlidersH className={styles.menuIcon} />
+          <span>Parámetros</span>
         </button>
 
         <button

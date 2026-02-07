@@ -1,4 +1,5 @@
-import { FaCalculator, FaFileInvoiceDollar, FaChartLine, FaCog } from 'react-icons/fa';
+import { FaCalculator, FaFileInvoiceDollar, FaChartLine, FaCog, FaArrowLeft } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import CalculationTypeCard from '../components/common/CalculationTypeCard';
@@ -8,11 +9,12 @@ import styles from './NuevoCalculoPage.module.css';
  * Página de selección de tipo de cálculo de honorarios
  */
 const NuevoCalculoPage = () => {
+  const navigate = useNavigate();
+
   const calculationTypes = [
     {
-      title: 'Básico',
-      description: 'Cálculo de honorarios desarrollado para utilizarse como referencia a partir de obras de construcción estándares con materiales y procedimientos involucrados comunes en el mercado.',
-      icon: <FaCalculator />,
+      title: 'Honorarios de Especialidades – Básico',
+      description: 'Cálculo de honorarios enfocado en tareas profesionales específicas, ideal para proyectos de menor complejidad o para obtener una estimación rápida de honorarios con datos básicos.',      icon: <FaCalculator />,
       color: '#2D5016',
       path: '/proceso-calculo'
     },
@@ -45,6 +47,15 @@ const NuevoCalculoPage = () => {
       
       <main className={styles.main}>
         <div className={styles.content}>
+          <button 
+            className={styles.backButton}
+            onClick={() => navigate('/dashboard')}
+            aria-label="Volver al Dashboard"
+          >
+            <FaArrowLeft className={styles.backIcon} />
+            <span>Volver al Dashboard</span>
+          </button>
+
           <div className={styles.header}>
             <h1 className={styles.title}>Nuevo Cálculo de Honorarios</h1>
             <p className={styles.subtitle}>

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { ParametrosProvider } from './contexts/ParametrosContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
@@ -12,6 +13,7 @@ import ConsultaPreciosPage from './pages/ConsultaPreciosPage';
 import PersonalizarPage from './pages/PersonalizarPage';
 import PreferenciasPage from './pages/PreferenciasPage';
 import MiCuentaPage from './pages/MiCuentaPage';
+import ParametrosPage from './pages/ParametrosPage';
 import { ROUTES } from './utils/constants';
 import './styles/variables.css';
 
@@ -22,10 +24,11 @@ import './styles/variables.css';
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Ruta pública - Login */}
-          <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+      <ParametrosProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Ruta pública - Login */}
+            <Route path={ROUTES.LOGIN} element={<LoginPage />} />
 
           {/* Ruta raíz - Redirige a Dashboard */}
           <Route 
@@ -120,6 +123,15 @@ function App() {
           />
 
           <Route
+            path={ROUTES.PARAMETROS}
+            element={
+              <ProtectedRoute>
+                <ParametrosPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path={ROUTES.MI_CUENTA}
             element={
               <ProtectedRoute>
@@ -139,6 +151,7 @@ function App() {
           />
         </Routes>
       </BrowserRouter>
+      </ParametrosProvider>
     </AuthProvider>
   );
 }

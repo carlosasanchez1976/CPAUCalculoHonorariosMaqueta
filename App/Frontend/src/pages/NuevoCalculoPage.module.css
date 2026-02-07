@@ -15,6 +15,36 @@
   margin: 0 auto;
 }
 
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--color-gray-700);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 8px 12px;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-900);
+  transform: translateX(-2px);
+}
+
+.backButton:active {
+  transform: translateX(-4px);
+}
+
+.backIcon {
+  font-size: 0.875rem;
+}
+
 .header {
   text-align: center;
   margin-bottom: 48px;
@@ -47,6 +77,11 @@
 @media (max-width: 768px) {
   .main {
     padding: 24px 16px;
+  }
+
+  .backButton {
+    font-size: 0.875rem;
+    margin-bottom: 16px;
   }
 
   .header {

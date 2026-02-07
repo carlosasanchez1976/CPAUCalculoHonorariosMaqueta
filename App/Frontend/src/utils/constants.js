@@ -23,7 +23,8 @@ export const ROUTES = {
   CONSULTA_PRECIOS: '/consulta-precios',
   PERSONALIZAR: '/personalizar',
   PREFERENCIAS: '/preferencias',
-  MI_CUENTA: '/mi-cuenta'
+  MI_CUENTA: '/mi-cuenta',
+  PARAMETROS: '/parametros'
 };
 
 // Mensajes de validación

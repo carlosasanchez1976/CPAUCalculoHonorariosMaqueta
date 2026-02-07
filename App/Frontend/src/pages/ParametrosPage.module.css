@@ -1,0 +1,295 @@
+/* Parámetros Page */
+.pageContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+}
+
+.main {
+  flex: 1;
+  padding: 40px 20px;
+}
+
+.content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--color-gray-700);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 8px 12px;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-900);
+  transform: translateX(-2px);
+}
+
+.backButton:active {
+  transform: translateX(-4px);
+}
+
+.backIcon {
+  font-size: 0.875rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin: 0 0 16px 0;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: var(--color-gray-600);
+  margin: 0;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Grid de Parámetros */
+.parametrosGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* Card individual de parámetro */
+.parametroCard {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-gray-200);
+  transition: all 0.3s ease;
+}
+
+.parametroCard:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.parametroContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.parametroInfo {
+  flex: 1;
+  min-width: 250px;
+}
+
+.parametroDescripcion {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin: 0 0 8px 0;
+}
+
+.parametroNote {
+  font-size: 0.875rem;
+  color: var(--color-gray-500);
+  margin: 0;
+  font-style: italic;
+}
+
+.parametroControl {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 200px;
+}
+
+.numberInput {
+  width: 100%;
+  max-width: 200px;
+  padding: 10px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: 2px solid var(--color-gray-300);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  text-align: right;
+}
+
+.numberInput:focus {
+  outline: none;
+  border-color: #2D5016;
+  box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+}
+
+.numberInput:hover {
+  border-color: var(--color-gray-400);
+}
+
+/* Acciones del parámetro */
+.parametroActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.saveButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background-color: #2D5016;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.saveButton:hover:not(:disabled) {
+  background-color: #234012;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(45, 80, 22, 0.3);
+}
+
+.saveButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.saveButton.saved {
+  background-color: #28a745;
+  cursor: default;
+}
+
+.saveButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.unsavedIndicator {
+  font-size: 0.875rem;
+  color: #d97706;
+  font-weight: 500;
+}
+
+/* Info Box */
+.infoBox {
+  background-color: #fff8e1;
+  border-left: 4px solid #fbbf24;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-top: 32px;
+}
+
+.infoBox p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--color-gray-700);
+  line-height: 1.6;
+}
+
+.infoBox strong {
+  color: var(--color-gray-900);
+}
+
+/* Responsive Mobile */
+@media (max-width: 768px) {
+  .main {
+    padding: 24px 16px;
+  }
+
+  .header {
+    margin-bottom: 32px;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .parametrosGrid {
+    gap: 16px;
+  }
+
+  .parametroCard {
+    padding: 20px;
+  }
+
+  .parametroContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .parametroControl {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .numberInput {
+    max-width: none;
+  }
+
+  .parametroActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .saveButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .unsavedIndicator {
+    text-align: center;
+  }
+
+  .backButton {
+    font-size: 0.875rem;
+    margin-bottom: 16px;
+  }
+}
+
+/* Responsive Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .main {
+    padding: 32px 20px;
+  }
+
+  .title {
+    font-size: 2.25rem;
+  }
+
+  .parametrosGrid {
+    gap: 20px;
+  }
+}

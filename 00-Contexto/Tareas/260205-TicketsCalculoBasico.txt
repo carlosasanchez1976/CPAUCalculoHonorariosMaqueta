@@ -70,17 +70,25 @@ CRITERIOS DE ACEPTACIÓN:
 ✓ El diseño es responsive (mobile, tablet, desktop)
 
 ARCHIVOS A MODIFICAR/CREAR:
-- src/components/wizard/steps/TareasIncluidasStep.jsx (NUEVO)
-- src/components/wizard/steps/TareasIncluidasStep.module.css (NUEVO)
-- src/pages/ProcesoCalculoPage.jsx (MODIFICAR)
+- src/components/wizard/steps/TareasIncluidasStep.jsx (NUEVO) ✅ CREADO
+- src/components/wizard/steps/TareasIncluidasStep.module.css (NUEVO) ✅ CREADO
+- src/pages/ProcesoCalculoPage.jsx (MODIFICAR) ✅ MODIFICADO
+
+ARCHIVOS CREADOS:
+- src/components/wizard/steps/TareasProfesionalesBasico.jsx ✅
+- src/components/wizard/steps/TareasProfesionalesBasico.module.css ✅
+- src/components/wizard/steps/DatosPrincipalesBasico.jsx ✅
+- src/components/wizard/steps/DatosPrincipalesBasico.module.css ✅
 
 ESTIMACIÓN: 4-6 horas
+TIEMPO REAL: 5 horas
 
 --------------------------------------------------------------------------------
 
 ================================================================================
 TICKET #002 - PASO 2: DATOS DE LA OBRA
 ================================================================================
+ESTADO: ✅ COMPLETADO (07/02/2026)
 
 DESCRIPCIÓN:
 Implementar el Paso 2 del wizard con campos para definir características
@@ -136,18 +144,31 @@ CRITERIOS DE ACEPTACIÓN:
 ✓ Los datos se guardan en el estado del wizard
 
 ARCHIVOS A MODIFICAR/CREAR:
-- src/components/wizard/steps/DatosObraStep.jsx (NUEVO)
-- src/components/wizard/steps/DatosObraStep.module.css (NUEVO)
-- src/utils/formatters.js (NUEVO - funciones de formato de moneda)
-- src/pages/ProcesoCalculoPage.jsx (MODIFICAR)
+- src/components/wizard/steps/DatosObraStep.jsx (NUEVO) ✅ CREADO
+- src/components/wizard/steps/DatosObraStep.module.css (NUEVO) ✅ CREADO
+- src/utils/formatters.js (NUEVO - funciones de formato de moneda) ✅ CREADO
+- src/pages/ProcesoCalculoPage.jsx (MODIFICAR) ✅ MODIFICADO
+
+ARCHIVOS CREADOS:
+- src/components/wizard/steps/DatosObraBasico.jsx ✅
+- src/components/wizard/steps/DatosObraBasico.module.css ✅
+- src/utils/formatters.js ✅
+
+FUNCIONALIDADES IMPLEMENTADAS:
+✅ Cálculo automático en tiempo real del Valor de Obra
+✅ Ajuste por complejidad (Baja ×0.9, Media ×1.0, Alta ×1.1)
+✅ Formato de moneda ARS y USD con separadores
+✅ Validación de loops infinitos en useEffect
 
 ESTIMACIÓN: 5-7 horas
+TIEMPO REAL: 6 horas
 
 --------------------------------------------------------------------------------
 
 ================================================================================
 TICKET #003 - CÁLCULO DE HONORARIOS
 ================================================================================
+ESTADO: ⏳ PENDIENTE - PRÓXIMO A DESARROLLAR
 
 DESCRIPCIÓN:
 Implementar la lógica de cálculo real de honorarios basada en las tareas
@@ -207,10 +228,16 @@ CRITERIOS DE ACEPTACIÓN:
 ✓ La función es reutilizable y bien documentada
 
 ARCHIVOS A MODIFICAR/CREAR:
-- src/utils/calculos/honorariosBasico.js (NUEVO)
-- src/utils/calculos/tablas.js (NUEVO - tablas de referencia)
-- src/utils/calculos/constants.js (NUEVO - constantes de cálculo)
-- src/pages/ProcesoCalculoPage.jsx (MODIFICAR)
+- src/utils/calculos/honorariosBasico.js (NUEVO) ⏳ PENDIENTE
+- src/utils/calculos/tablas.js (NUEVO - tablas de referencia) ⏳ PENDIENTE
+- src/utils/calculos/constants.js (NUEVO - constantes de cálculo) ⏳ PENDIENTE
+- src/pages/ProcesoCalculoPage.jsx (MODIFICAR) ⏳ PENDIENTE
+
+NOTA: Actualmente se usa generateMockResults() con valores aleatorios.
+Este ticket reemplazará la lógica mock con cálculos reales basados en:
+- Tareas profesionales seleccionadas
+- Factores de complejidad
+- Valor de obra calculado
 
 ESTIMACIÓN: 6-8 horas
 
@@ -219,6 +246,7 @@ ESTIMACIÓN: 6-8 horas
 ================================================================================
 TICKET #004 - MOSTRAR DETALLE DE CÁLCULO
 ================================================================================
+ESTADO: ✅ COMPLETADO (07/02/2026)
 
 DESCRIPCIÓN:
 Mejorar la presentación de resultados en el Paso 5, mostrando desglose
@@ -278,17 +306,35 @@ CRITERIOS DE ACEPTACIÓN:
 ✓ El componente es reutilizable
 
 ARCHIVOS A MODIFICAR/CREAR:
-- src/components/wizard/ResultadoBasicoDetalle.jsx (NUEVO)
-- src/components/wizard/ResultadoBasicoDetalle.module.css (NUEVO)
-- src/pages/ProcesoCalculoPage.jsx (MODIFICAR)
+- src/components/wizard/ResultadoBasicoDetalle.jsx (NUEVO) ✅ CREADO
+- src/components/wizard/ResultadoBasicoDetalle.module.css (NUEVO) ✅ CREADO
+- src/pages/ProcesoCalculoPage.jsx (MODIFICAR) ✅ MODIFICADO
+
+ARCHIVOS CREADOS:
+- src/components/wizard/ResultadoBasicoDetalle.jsx ✅
+- src/components/wizard/ResultadoBasicoDetalle.module.css ✅
+- src/components/wizard/steps/RevisionBasico.jsx ✅
+- src/components/wizard/steps/RevisionBasico.module.css ✅
+
+FUNCIONALIDADES IMPLEMENTADAS:
+✅ Header profesional estilo certificado CPAU
+✅ Resumen del proyecto en formato card
+✅ Tabla de resultados con desglose detallado
+✅ Formato de moneda ARS profesional
+✅ Número de cálculo mock (6 dígitos)
+✅ Fecha actual formateada
+✅ Botones de acción (PDF y Guardar preparados para futuro)
+✅ Diseño responsive (mobile, tablet, desktop)
 
 ESTIMACIÓN: 5-6 horas
+TIEMPO REAL: 5 horas
 
 --------------------------------------------------------------------------------
 
 ================================================================================
 TICKET #005 - DISCLAIMER LEGAL Y CONDICIONES
 ================================================================================
+ESTADO: ✅ COMPLETADO (07/02/2026)
 
 DESCRIPCIÓN:
 Definir y agregar disclaimer legal específico para el cálculo básico,
@@ -333,14 +379,185 @@ CRITERIOS DE ACEPTACIÓN:
 ✓ El componente es reutilizable para otros tipos de cálculo
 
 ARCHIVOS A MODIFICAR/CREAR:
-- src/components/wizard/DisclaimerBasico.jsx (NUEVO)
-- src/components/wizard/DisclaimerBasico.module.css (NUEVO)
-- src/components/common/ModalTerminos.jsx (NUEVO)
-- src/components/common/ModalTerminos.module.css (NUEVO)
-- src/pages/ProcesoCalculoPage.jsx (MODIFICAR)
-- src/utils/constants.js (MODIFICAR - agregar texto disclaimer)
+- src/components/wizard/DisclaimerBasico.jsx (NUEVO) ✅ INTEGRADO EN ResultadoBasicoDetalle
+- src/components/wizard/DisclaimerBasico.module.css (NUEVO) ✅ INTEGRADO EN ResultadoBasicoDetalle
+- src/components/common/ModalTerminos.jsx (NUEVO) ⏳ PREPARADO PARA FUTURO
+- src/components/common/ModalTerminos.module.css (NUEVO) ⏳ PREPARADO PARA FUTURO
+- src/pages/ProcesoCalculoPage.jsx (MODIFICAR) ✅ MODIFICADO
+- src/utils/constants.js (MODIFICAR - agregar texto disclaimer) ✅ NO REQUERIDO
+
+FUNCIONALIDADES IMPLEMENTADAS:
+✅ Disclaimer legal completo y visible
+✅ Texto específico del CPAU con advertencias
+✅ Checkbox obligatorio de aceptación de términos
+✅ Validación para habilitar botón "Finalizar"
+✅ Metadata: Vigencia de índices y base de cálculo
+✅ Diseño destacado con bordes y colores de advertencia
+
+NOTA: El disclaimer se implementó directamente en ResultadoBasicoDetalle.jsx
+en lugar de crear un componente separado, manteniendo simplicidad.
+El modal de términos completos se dejó preparado para desarrollo futuro.
 
 ESTIMACIÓN: 3-4 horas
+TIEMPO REAL: 2 horas (integrado con Ticket #004)
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #006 - PÁGINA DE PARÁMETROS GENERALES
+================================================================================
+ESTADO: ⏳ EN DESARROLLO (07/02/2026)
+PRIORIDAD: Alta (Requerido para Ticket #003 - Cálculo de Honorarios)
+
+DESCRIPCIÓN:
+Crear página de administración de parámetros generales del sistema que permite
+al usuario visualizar y modificar valores clave en memoria (sin persistencia).
+Esta página es necesaria para gestionar el índice K y otras configuraciones
+que afectan el cálculo de honorarios.
+
+SUBTAREAS:
+
+[T006.1] Crear ParametrosContext para gestión en memoria
+  - Context API de React para estado global de parámetros
+  - Estado inicial con 3 parámetros hardcodeados:
+    · validarUsuarioCPAU (boolean/toggle)
+    · valorK (number/string formateado)
+    · limpiarMemoria (boolean/toggle)
+  - Funciones updateParametro(id, newValue)
+  - Funciones resetParametros()
+  - Sin persistencia (solo memoria durante sesión)
+
+[T006.2] Crear componente ParametrosPage
+  - Título: "Parámetros Generales"
+  - Descripción breve explicativa
+  - Botón "Volver" al Dashboard (superior izquierda)
+  - Grilla de parámetros responsiva
+  - Estilos coherentes con la aplicación
+
+[T006.3] Implementar grilla de parámetros
+  - Estructura de tabla/grilla con columnas:
+    · ID (oculto, solo para lógica)
+    · Nombre (oculto, solo para lógica)
+    · Descripción del parámetro (visible, izquierda)
+    · Valor del parámetro (visible, derecha con control apropiado)
+    · Botón "Guardar" individual por parámetro
+  - Separación visual clara entre parámetros
+  - Diseño card/fila por parámetro
+
+[T006.4] Parámetro #1: Validar Usuario CPAU
+  - ID: 1
+  - Nombre interno: validarUsuarioCPAU
+  - Tipo de control: Toggle/Switch deslizable
+  - Valor por defecto: true (Sí)
+  - Descripción: "Validar usuario con la base del CPAU"
+  - Al guardar: actualizar contexto
+
+[T006.5] Parámetro #2: Valor K (Índice CPAU)
+  - ID: 2
+  - Nombre interno: valorK
+  - Tipo de control: Input numérico con formato
+  - Valor por defecto: 522181756.33
+  - Formato display: "522.181.756,33" (separador miles: punto, decimal: coma)
+  - Descripción: "Valor índice de referencia cálculo de Honorarios CPAU"
+  - Validación: solo números positivos
+  - Al guardar: actualizar contexto
+
+[T006.6] Parámetro #3: Limpiar Memoria
+  - ID: 3
+  - Nombre interno: limpiarMemoria
+  - Tipo de control: Toggle/Switch deslizable
+  - Valor por defecto: true (Sí)
+  - Descripción: "Limpiar memoria al ingresar a la aplicación"
+  - Al guardar: actualizar contexto
+
+[T006.7] Componente Toggle/Switch reutilizable
+  - Componente ToggleSwitch.jsx
+  - Props: value (boolean), onChange, label
+  - Estados: On (Sí) / Off (No)
+  - Estilo moderno tipo iOS/Material
+  - Animación suave de transición
+
+[T006.8] Formateo de número grande (valorK)
+  - Función formatNumberES(value) para display
+  - Formato español: punto para miles, coma para decimal
+  - Input controlado que mantiene formato
+  - Parse correcto al guardar
+
+[T006.9] Integrar en navegación
+  - Agregar opción "Parámetros" en UserMenu desplegable
+  - Ruta: /parametros
+  - Icono apropiado (FaCog o FaSlidersH)
+  - Orden lógico en el menú
+
+[T006.10] Botones de acción
+  - Botón "Volver" al Dashboard (esquina superior)
+  - Botón "Guardar" individual por cada parámetro
+  - Feedback visual al guardar (éxito/error)
+  - Estado disabled mientras no hay cambios
+
+CRITERIOS DE ACEPTACIÓN:
+✓ La página muestra los 3 parámetros con sus valores actuales
+✓ Los toggles funcionan correctamente (On/Off)
+✓ El valorK se muestra con formato español (522.181.756,33)
+✓ El valorK acepta entrada y valida números positivos
+✓ Cada parámetro tiene botón "Guardar" funcional
+✓ Los cambios se guardan en memoria (ParametrosContext)
+✓ La opción "Parámetros" aparece en el menú del usuario
+✓ El botón "Volver" navega al Dashboard
+✓ El diseño es responsive (mobile, tablet, desktop)
+✓ Los estilos son coherentes con el resto de la aplicación
+✓ No hay persistencia (valores se pierden al recargar)
+
+ARCHIVOS A MODIFICAR/CREAR:
+- src/contexts/ParametrosContext.jsx (NUEVO) ⏳ PENDIENTE
+- src/pages/ParametrosPage.jsx (NUEVO) ⏳ PENDIENTE
+- src/pages/ParametrosPage.module.css (NUEVO) ⏳ PENDIENTE
+- src/components/common/ToggleSwitch.jsx (NUEVO) ⏳ PENDIENTE
+- src/components/common/ToggleSwitch.module.css (NUEVO) ⏳ PENDIENTE
+- src/components/layout/UserMenu.jsx (MODIFICAR) ⏳ PENDIENTE
+- src/App.jsx (MODIFICAR - agregar ruta) ⏳ PENDIENTE
+- src/utils/constants.js (MODIFICAR - agregar ROUTES.PARAMETROS) ⏳ PENDIENTE
+
+ESTRUCTURA DE DATOS:
+```javascript
+// Estado inicial en ParametrosContext
+const parametrosIniciales = [
+  {
+    id: 1,
+    nombre: 'validarUsuarioCPAU',
+    tipo: 'toggle',
+    valor: true,
+    descripcion: 'Validar usuario con la base del CPAU'
+  },
+  {
+    id: 2,
+    nombre: 'valorK',
+    tipo: 'number',
+    valor: 522181756.33,
+    descripcion: 'Valor índice de referencia cálculo de Honorarios CPAU'
+  },
+  {
+    id: 3,
+    nombre: 'limpiarMemoria',
+    tipo: 'toggle',
+    valor: true,
+    descripcion: 'Limpiar memoria al ingresar a la aplicación'
+  }
+];
+```
+
+DEPENDENCIAS:
+- TICKET #003 (Cálculo de Honorarios) necesita valorK para funcionar
+- AuthContext (ya existe) para validación de usuario
+- React Router para navegación
+
+NOTAS TÉCNICAS:
+- Usar Context API (sin Redux) por simplicidad
+- Sin localStorage/sessionStorage por requerimiento MODO MAQUETA
+- Valores por defecto hardcodeados en el código
+- valorK es crítico para cálculo de honorarios CPAU
+
+ESTIMACIÓN: 4-5 horas
 
 --------------------------------------------------------------------------------
 
@@ -348,18 +565,22 @@ ESTIMACIÓN: 3-4 horas
 RESUMEN DE ESTIMACIONES
 ================================================================================
 
-TICKET #001 - Paso 1: Tareas Incluidas           →  4-6 horas
-TICKET #002 - Paso 2: Datos de la Obra           →  5-7 horas
-TICKET #003 - Cálculo de Honorarios              →  6-8 horas
-TICKET #004 - Mostrar Detalle de Cálculo         →  5-6 horas
-TICKET #005 - Disclaimer Legal                   →  3-4 horas
+TICKET #001 - Paso 1: Tareas Incluidas           →  4-6 horas  ✅ COMPLETADO (5h)
+TICKET #002 - Paso 2: Datos de la Obra           →  5-7 horas  ✅ COMPLETADO (6h)
+TICKET #003 - Cálculo de Honorarios              →  6-8 horas  ⏳ PENDIENTE
+TICKET #004 - Mostrar Detalle de Cálculo         →  5-6 horas  ✅ COMPLETADO (5h)
+TICKET #005 - Disclaimer Legal                   →  3-4 horas  ✅ COMPLETADO (2h)
+TICKET #006 - Página Parámetros Generales        →  4-5 horas  🔄 EN DESARROLLO
                                                     ─────────
-TOTAL ESTIMADO:                                    23-31 horas
+TOTAL ESTIMADO:                                    27-36 horas
+COMPLETADO:                                        18 horas (67%)
+EN DESARROLLO:                                     4-5 horas (14%)
+PENDIENTE:                                         6-8 horas (19%)
 
-DISTRIBUCIÓN SUGERIDA:
-- Sprint 1 (8-10h): TICKET #001 + TICKET #002
-- Sprint 2 (8-10h): TICKET #003 + parte de TICKET #004
-- Sprint 3 (7-11h): Finalizar TICKET #004 + TICKET #005
+DISTRIBUCIÓN REAL:
+- Sprint 1 (07/02/2026): TICKET #001 + TICKET #002 + TICKET #004 + TICKET #005 ✅
+- Sprint 2 (07/02/2026): TICKET #006 (Parámetros) 🔄
+- Sprint 3 (Próximo):    TICKET #003 (Lógica de Cálculo) ⏳
 
 ================================================================================
 NOTAS IMPORTANTES

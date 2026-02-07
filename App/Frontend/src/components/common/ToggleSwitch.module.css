@@ -1,0 +1,71 @@
+/* Toggle Switch Component */
+.toggleContainer {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toggleInput {
+  opacity: 0;
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.toggleLabel {
+  display: inline-block;
+  position: relative;
+  width: 52px;
+  height: 28px;
+  background-color: #ccc;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggleInput:checked + .toggleLabel {
+  background-color: #2D5016;
+}
+
+.toggleInput:disabled + .toggleLabel {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toggleButton {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggleInput:checked + .toggleLabel .toggleButton {
+  transform: translateX(24px);
+}
+
+.toggleText {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-gray-700);
+  min-width: 32px;
+}
+
+/* Hover effect */
+.toggleLabel:hover {
+  opacity: 0.9;
+}
+
+.toggleInput:disabled ~ .toggleText {
+  color: var(--color-gray-400);
+}
+
+/* Focus state for accessibility */
+.toggleInput:focus + .toggleLabel {
+  outline: 2px solid #2D5016;
+  outline-offset: 2px;
+}

@@ -14,30 +14,35 @@ const NuevoCalculoPage = () => {
   const calculationTypes = [
     {
       title: 'Honorarios de Especialidades – Básico',
-      description: 'Cálculo de honorarios enfocado en tareas profesionales específicas, ideal para proyectos de menor complejidad o para obtener una estimación rápida de honorarios con datos básicos.',      icon: <FaCalculator />,
+      description: 'Cálculo de honorarios enfocado en tareas profesionales específicas, ideal para proyectos de menor complejidad o para obtener una estimación rápida de honorarios con datos básicos.',
+      icon: <FaCalculator />,
       color: '#2D5016',
-      path: '/proceso-calculo'
+      path: '/proceso-calculo',
+      tipoId: 'Básico'
     },
     {
       title: 'Arancel CPAU',
       description: 'Arancel propuesto por el CPAU en su resolución número 3220 y actualizaciones, a partir de un índice K de referencia y haciendo hincapié de manera detallada en cada tarea y rol que puede desarrollar el profesional matriculado',
       icon: <FaFileInvoiceDollar />,
       color: '#D4A574',
-      path: '/proceso-calculo'
+      path: '/proceso-calculo',
+      tipoId: 'Arancel'
     },
     {
       title: 'Costo+Arancel',
       description: 'Cálculo basado en el Arancel CPAU, tomando como base el Cálculo de Costo de Obra realizado previamente de manera detallada',
       icon: <FaChartLine />,
       color: '#A8DADC',
-      path: '/proceso-calculo'
+      path: '/proceso-calculo',
+      tipoId: 'Costo+Arancel'
     },
     {
       title: 'Personalizado',
       description: 'Cálculo que permite al usuario cambiar los valores de referencia y los índices para poder analizar impacto de esos cambios en el resultado final',
       icon: <FaCog />,
       color: '#457B9D',
-      path: '/proceso-calculo'
+      path: '/proceso-calculo',
+      tipoId: 'Personalizado'
     }
   ];
 
@@ -72,6 +77,7 @@ const NuevoCalculoPage = () => {
                 icon={type.icon}
                 color={type.color}
                 path={type.path}
+                tipoId={type.tipoId}
               />
             ))}
           </div>

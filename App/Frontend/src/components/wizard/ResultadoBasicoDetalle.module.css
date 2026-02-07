@@ -200,6 +200,17 @@
   text-align: right;
 }
 
+.centered {
+  text-align: center;
+  font-weight: 600;
+  color: var(--color-gray-600);
+}
+
+.descripcion {
+  color: var(--color-gray-600);
+  font-size: 0.95rem;
+}
+
 .table tfoot tr {
   border-top: 2px solid var(--color-gray-300);
 }
@@ -226,6 +237,22 @@
 .totalAmount {
   color: #1e40af;
   font-size: 1.5rem;
+}
+
+/* Nota Final */
+.notaFinal {
+  background-color: #f0f9ff;
+  border-left: 4px solid #3b82f6;
+  padding: 1rem 1.25rem;
+  margin-top: 1.5rem;
+  border-radius: 8px;
+}
+
+.notaFinal p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--color-gray-700);
+  line-height: 1.6;
 }
 
 /* Checkbox de Términos */

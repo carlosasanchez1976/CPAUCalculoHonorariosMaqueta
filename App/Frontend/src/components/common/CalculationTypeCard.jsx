@@ -9,14 +9,16 @@ import styles from './CalculationTypeCard.module.css';
  * @param {React.ReactNode} props.icon - Ícono del tipo
  * @param {string} props.color - Color de acento
  * @param {string} props.path - Ruta a navegar
+ * @param {string} props.tipoId - Identificador corto del tipo ('Básico', 'Arancel', etc.)
  */
-const CalculationTypeCard = ({ title, description, icon, color, path }) => {
+const CalculationTypeCard = ({ title, description, icon, color, path, tipoId }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(path, { 
       state: { 
-        tipo: title,
+        tipo: tipoId || title,
+        tipoNombre: title,
         descripcion: description 
       } 
     });

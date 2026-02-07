@@ -8,6 +8,8 @@ import WizardNavigation from '../components/wizard/WizardNavigation';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import { ROUTES } from '../utils/constants';
+import { useParametros } from '../contexts/ParametrosContext';
+import { calcularHonorariosBasico } from '../utils/calculos/honorariosBasico';
 import styles from './ProcesoCalculoPage.module.css';
 
 // Componentes específicos para Cálculo Básico
@@ -20,6 +22,7 @@ import ResultadoBasicoDetalle from '../components/wizard/ResultadoBasicoDetalle'
 const ProcesoCalculoPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { getParametro } = useParametros();
   const [currentStep, setCurrentStep] = useState(0);
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationResult, setCalculationResult] = useState(null);
@@ -140,7 +143,25 @@ const ProcesoCalculoPage = () => {
     
     // Simular cálculo con timeout
     setTimeout(() => {
-      const result = generateMockResults();
+      let result;
+      
+      if (formData.tipoCalculo === 'Básico') {
+        // CÁLCULO REAL para tipo Básico
+        const valorK = getParametro('valorK') || 522181756.33;
+        const detalleHonorarios = calcularHonorariosBasico(formData, valorK);
+        
+        // Guardar detalle en formData para uso en ResultadoBasicoDetalle
+        setFormData(prev => ({ ...prev, detalleHonorarios }));
+        
+        result = {
+          detalleHonorarios,
+          tipoCalculo: 'Básico'
+        };
+      } else {
+        // Mock para otros tipos de cálculo (temporal)
+        result = generateMockResults();
+      }
+      
       setCalculationResult(result);
       setIsCalculating(false);
       setCurrentStep(5); // Avanzar a Resultado

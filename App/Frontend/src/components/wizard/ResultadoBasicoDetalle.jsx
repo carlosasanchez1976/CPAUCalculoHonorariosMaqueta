@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaDownload, FaSave, FaCalculator, FaHome } from 'react-icons/fa';
+import html2pdf from 'html2pdf.js';
 import { formatCurrencyARS, formatDate, generateCalculationNumber } from '../../utils/formatters';
 import Button from '../common/Button';
 import { ROUTES } from '../../utils/constants';
@@ -12,6 +13,7 @@ import styles from './ResultadoBasicoDetalle.module.css';
  */
 const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, termsAccepted }) => {
   const navigate = useNavigate();
+  const pdfRef = useRef(null);
   const [calculationNumber] = useState(generateCalculationNumber());
   const currentDate = formatDate(new Date());
 
@@ -23,8 +25,22 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
     navigate(ROUTES.DASHBOARD);
   };
 
+  const handleDescargarPDF = () => {
+    const element = pdfRef.current;
+    
+    const opt = {
+      margin: 10,
+      filename: `Honorarios-CPAU-${calculationNumber}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
+  };
+
   return (
-    <div className={styles.container}>
+    <div className={styles.container} ref={pdfRef}>
       {/* Header del Certificado */}
       <div className={styles.certificateHeader}>
         <div className={styles.headerBorder}></div>
@@ -99,7 +115,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
       </div>
 
       {/* Tabla de Resultados */}
-      {calculationResult && (
+      {formData.detalleHonorarios && formData.detalleHonorarios.length > 0 && (
         <div className={styles.resultsSection}>
           <h4 className={styles.sectionTitle}>Detalle de Honorarios</h4>
           
@@ -107,45 +123,42 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Concepto</th>
-                  <th className={styles.rightAlign}>Horas</th>
-                  <th className={styles.rightAlign}>Tarifa/Hora</th>
-                  <th className={styles.rightAlign}>Subtotal</th>
+                  <th>Ítem</th>
+                  <th>Tarea Profesional</th>
+                  <th>Descripción</th>
+                  <th className={styles.rightAlign}>Importe</th>
                 </tr>
               </thead>
               <tbody>
-                {calculationResult.items.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.concepto}</td>
-                    <td className={styles.rightAlign}>{item.horas}</td>
-                    <td className={styles.rightAlign}>{formatCurrencyARS(item.tarifa)}</td>
-                    <td className={styles.rightAlign}>{formatCurrencyARS(item.subtotal)}</td>
+                {formData.detalleHonorarios.map((item) => (
+                  <tr key={item.item}>
+                    <td className={styles.centered}>{item.item}</td>
+                    <td>{item.tareaProfesional}</td>
+                    <td className={styles.descripcion}>{item.descripcion}</td>
+                    <td className={styles.rightAlign}>{formatCurrencyARS(item.importe)}</td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
-                <tr className={styles.subtotalRow}>
-                  <td colSpan={3}><strong>Subtotal Honorarios Profesionales</strong></td>
-                  <td className={styles.rightAlign}>
-                    <strong>{formatCurrencyARS(calculationResult.honorariosProfesionales)}</strong>
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan={3}>IVA (21%)</td>
-                  <td className={styles.rightAlign}>{formatCurrencyARS(calculationResult.impuestos)}</td>
-                </tr>
-                <tr>
-                  <td colSpan={3}>Gastos Administrativos (5%)</td>
-                  <td className={styles.rightAlign}>{formatCurrencyARS(calculationResult.gastosAdministrativos)}</td>
-                </tr>
                 <tr className={styles.totalRow}>
-                  <td colSpan={3}><strong>TOTAL GENERAL</strong></td>
+                  <td colSpan={3}><strong>TOTAL HONORARIOS PROFESIONALES</strong></td>
                   <td className={styles.rightAlign}>
-                    <strong className={styles.totalAmount}>{formatCurrencyARS(calculationResult.totalGeneral)}</strong>
+                    <strong className={styles.totalAmount}>
+                      {formatCurrencyARS(
+                        formData.detalleHonorarios.reduce((sum, item) => sum + item.importe, 0)
+                      )}
+                    </strong>
                   </td>
                 </tr>
               </tfoot>
             </table>
+          </div>
+          
+          <div className={styles.notaFinal}>
+            <p>
+              <strong>Nota:</strong> Este honorario corresponde únicamente a las tareas profesionales seleccionadas. 
+              No incluye IVA ni gastos administrativos que deberán agregarse según corresponda.
+            </p>
           </div>
         </div>
       )}
@@ -175,9 +188,9 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
 
         <Button
           variant="secondary"
-          disabled
+          disabled={!termsAccepted}
+          onClick={handleDescargarPDF}
           icon={<FaDownload />}
-          title="Próximamente"
         >
           Descargar PDF
         </Button>

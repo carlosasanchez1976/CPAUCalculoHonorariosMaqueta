@@ -692,7 +692,35 @@ SUBTAREAS:
   EJEMPLO: "Proyecto de Obra" con 2 ítems ($50.926.320 + $9.399.272)
            → 1 ítem agrupado: $60.325.592
            Descripción: "Rango de... (8%) // Rango de... (K 3%)"
-  IMPACTO: Medio - mejora visualización, tabla más compacta y clara 
+  IMPACTO: Medio - mejora visualización, tabla más compacta y clara
+
+[T007.8] Ajustar PDF a formato Legal y optimizar tamaños
+  ESTADO: ✅ COMPLETADO (09/02/2026)
+  PROBLEMA: El PDF exportado se veía desprolijo, desfasado y ocupaba 2 páginas
+            cuando debería caber en una sola. El contenido estaba mal centrado
+  SOLUCIÓN ITERATIVA:
+    - Paso 1: Cambiar de formato A4 a Legal/Oficio para mayor espacio vertical
+    - Paso 2: Eliminar transform: scale() que causaba desfase visual
+    - Paso 3: Crear clase CSS temporal .pdfExport con estilos compactos
+    - Paso 4: Reducir todos los tamaños de fuente, paddings y márgenes:
+      · Header: 2rem → padding 1rem, márgenes 0.8rem
+      · Organización: 0.75rem (line-height 1.2)
+      · Secciones: padding 0.8rem, margin-bottom 0.8rem
+      · Tabla: font 0.8rem, padding celdas 0.45rem × 0.6rem
+      · Disclaimer: texto 0.75rem (line-height 1.35)
+      · Nota final: 0.7rem
+    - Paso 5: Reducir márgenes del PDF de 12mm a 10mm
+    - Paso 6: Aplicar clase .pdfExport temporalmente durante generación
+  ARCHIVOS:
+    - src/components/wizard/ResultadoBasicoDetalle.jsx (handleDescargarPDF)
+    - src/components/wizard/ResultadoBasicoDetalle.module.css (clase .pdfExport)
+  CONFIGURACIÓN FINAL:
+    - Formato: Legal (216 × 356 mm)
+    - Márgenes: 10mm todos los lados
+    - html2canvas: scale: 2, windowWidth: 1000
+    - Max width contenido: 850px
+  IMPACTO: Alto - mejora significativa en presentación profesional del PDF,
+           todo el contenido cabe correctamente en una sola página centrado
 
 CRITERIOS DE ACEPTACIÓN:
 ✓ Todas las correcciones resuelven el problema reportado

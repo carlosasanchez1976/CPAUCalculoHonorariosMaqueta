@@ -28,24 +28,25 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
   const handleDescargarPDF = () => {
     const element = pdfRef.current;
     
-    // Aplicar escala temporal para ajustar contenido a una página
-    element.style.transform = 'scale(0.85)';
-    element.style.transformOrigin = 'top left';
-    element.style.width = '117.6%'; // Compensar el scale de 0.85
+    // Aplicar clase temporal para estilos compactos de PDF
+    element.classList.add(styles.pdfExport);
     
     const opt = {
-      margin: 10,
+      margin: [10, 10, 10, 10],
       filename: `Honorarios-CPAU-${calculationNumber}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      html2canvas: { 
+        scale: 2, 
+        useCORS: true,
+        logging: false,
+        windowWidth: 1000
+      },
+      jsPDF: { unit: 'mm', format: 'legal', orientation: 'portrait' }
     };
 
     html2pdf().set(opt).from(element).save().then(() => {
-      // Remover escala después de generar el PDF
-      element.style.transform = '';
-      element.style.transformOrigin = '';
-      element.style.width = '';
+      // Quitar clase temporal después de generar el PDF
+      element.classList.remove(styles.pdfExport);
     });
   };
 

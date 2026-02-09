@@ -13,13 +13,15 @@ import styles from './WizardNavigation.module.css';
  * @param {Function} props.onPrevious - Callback para botón anterior
  * @param {Function} props.onNext - Callback para botón siguiente
  * @param {string} props.nextLabel - Label personalizado para botón siguiente
+ * @param {boolean} props.isCalculating - Indica si se está ejecutando un cálculo
  */
 const WizardNavigation = ({
   currentStep,
   totalSteps,
   onPrevious,
   onNext,
-  nextLabel
+  nextLabel,
+  isCalculating = false
 }) => {
   const navigate = useNavigate();
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -28,8 +30,8 @@ const WizardNavigation = ({
   const getNextButtonLabel = () => {
     if (nextLabel) return nextLabel;
     
-    if (currentStep === 3) return 'Revisar';
-    if (currentStep === 4) return 'Calcular';
+    if (currentStep === 2) return 'Revisar';
+    if (currentStep === 3) return 'Calcular';
     if (currentStep === 5) return 'Finalizar';
     return 'Siguiente';
   };
@@ -57,6 +59,7 @@ const WizardNavigation = ({
             variant="secondary"
             onClick={onPrevious}
             className={styles.prevButton}
+            disabled={isCalculating}
           >
             <FaChevronLeft className={styles.icon} />
             {getPrevButtonLabel()}
@@ -70,6 +73,7 @@ const WizardNavigation = ({
               onClick={() => setShowHelpModal(true)}
               className={styles.helpButton}
               title="Ayuda"
+              disabled={isCalculating}
             >
               <FaQuestionCircle className={styles.iconLarge} />
             </Button>
@@ -81,6 +85,7 @@ const WizardNavigation = ({
                 onClick={handleBackToSelection}
                 className={styles.backButton}
                 title="Volver a selección de tipo de cálculo"
+                disabled={isCalculating}
               >
                 <FaHome className={styles.iconLarge} />
               </Button>
@@ -92,6 +97,7 @@ const WizardNavigation = ({
             variant="primary"
             onClick={onNext}
             className={styles.nextButton}
+            disabled={isCalculating}
           >
             {getNextButtonLabel()}
             <FaChevronRight className={styles.icon} />

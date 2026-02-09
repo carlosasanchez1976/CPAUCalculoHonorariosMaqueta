@@ -29,6 +29,7 @@ const ProcesoCalculoPage = () => {
   const [formData, setFormData] = useState({
     // Datos del tipo de cálculo
     tipoCalculo: location.state?.tipo || 'Básico',
+    tipoNombre: location.state?.tipoNombre || 'Honorarios de Especialidades – Básico',
     descripcionTipo: location.state?.descripcion || '',
     
     // Paso 0: Tarea Profesional + Datos Principales (GENÉRICO)
@@ -120,6 +121,7 @@ const ProcesoCalculoPage = () => {
   const handleNext = () => {
     if (currentStep === 3) {
       // Paso Revisión → Cálculo
+      setIsCalculating(true); // Deshabilitar botones ANTES de cambiar de paso
       setCurrentStep(4);
       performCalculation();
     } else if (currentStep < steps.length - 1) {
@@ -133,13 +135,16 @@ const ProcesoCalculoPage = () => {
   const handlePrevious = () => {
     if (currentStep === 0) {
       navigate('/nuevo-calculo');
+    } else if (currentStep === 5) {
+      // Desde Resultado (paso 5) volver a Revisión (paso 3), saltando el paso de Cálculo
+      setCurrentStep(3);
     } else if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
     }
   };
 
   const performCalculation = () => {
-    setIsCalculating(true);
+    // isCalculating ya se puso en true en handleNext
     
     // Simular cálculo con timeout
     setTimeout(() => {
@@ -530,7 +535,7 @@ const ProcesoCalculoPage = () => {
       <FaSpinner className={styles.spinner} />
       <h2 className={styles.calculatingTitle}>Calculando honorarios...</h2>
       <p className={styles.calculatingText}>
-        Procesando datos según {formData.tipoCalculo}
+        Procesando datos según {formData.tipoNombre}
       </p>
     </div>
   );
@@ -633,7 +638,7 @@ const ProcesoCalculoPage = () => {
       <Header />
       
       <div className={styles.wizardHeader}>
-        <h1 className={styles.wizardTitle}>{formData.tipoCalculo}</h1>
+        <h1 className={styles.wizardTitle}>{formData.tipoNombre}</h1>
         <p className={styles.wizardSubtitle}>{formData.descripcionTipo}</p>
       </div>
 
@@ -645,12 +650,16 @@ const ProcesoCalculoPage = () => {
         </div>
       </main>
 
-      <WizardNavigation
-        currentStep={currentStep}
-        totalSteps={steps.length}
-        onPrevious={handlePrevious}
-        onNext={handleNext}
-      />
+      {/* Ocultar navegación durante el cálculo (paso 4) */}
+      {currentStep !== 4 && (
+        <WizardNavigation
+          currentStep={currentStep}
+          totalSteps={steps.length}
+          onPrevious={handlePrevious}
+          onNext={handleNext}
+          isCalculating={isCalculating}
+        />
+      )}
 
       <Footer />
     </div>

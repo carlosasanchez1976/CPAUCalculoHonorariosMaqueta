@@ -562,6 +562,122 @@ ESTIMACIÓN: 4-5 horas
 --------------------------------------------------------------------------------
 
 ================================================================================
+TICKET #007 - CORRECCIONES Y AJUSTES CON CLIENTE
+================================================================================
+ESTADO: 🔄 EN PROGRESO (09/02/2026)
+
+DESCRIPCIÓN:
+Ticket de seguimiento para correcciones y observaciones reportadas por el cliente
+durante la revisión del cálculo básico. Se documentan aquí todas las mejoras y
+ajustes solicitados post-implementación inicial.
+
+SUBTAREAS:
+
+[T007.1] Corregir campo valorObra en ResultadoBasicoDetalle
+  ESTADO: ✅ COMPLETADO (09/02/2026)
+  PROBLEMA: El resumen del proyecto en el paso 6 (Resultado) mostraba $0 en
+            "Costo total de Obra"
+  CAUSA: El componente usaba formData.valorObraCalculado pero el campo correcto
+         es formData.valorObra
+  SOLUCIÓN: Cambiar formData.valorObraCalculado → formData.valorObra en línea 101
+  ARCHIVO: src/components/wizard/ResultadoBasicoDetalle.jsx
+  IMPACTO: Bajo - solo presentación, no afecta cálculos
+
+[T007.2] Excluir botones del PDF exportado
+  ESTADO: ✅ COMPLETADO (09/02/2026)
+  PROBLEMA: Al exportar PDF, se incluían los botones de acción y el checkbox
+            de términos al final del documento
+  SOLUCIÓN: Mover la referencia pdfRef para que solo contenga el contenido
+            del reporte (header + resumen + disclaimer + tabla) excluyendo
+            checkbox y botones de acción
+  ARCHIVO: src/components/wizard/ResultadoBasicoDetalle.jsx
+  IMPACTO: Bajo - solo exportación PDF, mejora presentación profesional
+
+[T007.3] Ajustar zoom del PDF exportado
+  ESTADO: ✅ COMPLETADO (09/02/2026)
+  PROBLEMA: El contenido del PDF generado se mostraba muy grande, ocupando
+            dos páginas en lugar de una
+  SOLUCIÓN: Aplicar escala temporal del 85% al contenido antes de generar el PDF
+            usando transform: scale(0.85) y width compensado al 117.6%
+            Restaurar estilos normales después de la generación
+  ARCHIVO: src/components/wizard/ResultadoBasicoDetalle.jsx (handleDescargarPDF)
+  IMPACTO: Bajo - solo exportación PDF, mejora ajuste del contenido a una página
+
+[T007.4] Deshabilitar botones durante proceso de cálculo
+  ESTADO: ✅ COMPLETADO (09/02/2026)
+  PROBLEMA: Durante el paso 5 (Cálculo), los botones de navegación quedaban
+            habilitados permitiendo al usuario interrumpir el proceso
+  SOLUCIÓN: Ocultar completamente el componente WizardNavigation durante el
+            paso 4 (Cálculo). Añadida prop isCalculating y lógica condicional
+            para renderizar navegación solo cuando currentStep !== 4
+  ARCHIVOS: 
+    - src/components/wizard/WizardNavigation.jsx (añadir prop isCalculating)
+    - src/pages/ProcesoCalculoPage.jsx (ocultar navegación en paso 4)
+  IMPACTO: Medio - mejora UX evitando navegación durante cálculo asíncrono
+
+[T007.5] Corregir navegación "Anterior" desde Resultado
+  ESTADO: ✅ COMPLETADO (09/02/2026)
+  PROBLEMA: Desde el paso "Resultado" (paso 5), el botón "Anterior" navega
+            al paso "Cálculo" (paso 4) cuando debería ir directamente al
+            paso "Revisión" (paso 3)
+  SOLUCIÓN: Modificar función handlePrevious() para detectar cuando currentStep === 5
+            y saltar directamente a paso 3, evitando pasar por paso de cálculo
+  ARCHIVO: src/pages/ProcesoCalculoPage.jsx (función handlePrevious)
+  IMPACTO: Bajo - mejora flujo de navegación del wizard
+
+[T007.6] Mostrar nombre completo del tipo de cálculo
+  ESTADO: ✅ COMPLETADO (09/02/2026)
+  PROBLEMA: El título del wizard mostraba solo "Básico" en lugar del nombre
+            completo "Honorarios de Especialidades – Básico". También el mensaje
+            durante el cálculo mostraba texto incorrecto
+  CAUSA: Se estaba usando formData.tipoCalculo (ID corto) en lugar del nombre
+         completo que se pasa desde la selección
+  SOLUCIÓN: Agregar campo tipoNombre al formData desde location.state?.tipoNombre
+            y actualizar dos lugares:
+            - Título del wizard (wizardHeader): usar tipoNombre
+            - Mensaje de cálculo (renderStep4): usar tipoNombre
+  ARCHIVO: src/pages/ProcesoCalculoPage.jsx
+  IMPACTO: Bajo - solo presentación, mejora claridad del título mostrado
+
+[T007.7] Agrupar ítems por tarea profesional en tabla de resultados
+  ESTADO: ✅ COMPLETADO (09/02/2026)
+  PROBLEMA: Cuando una tarea profesional genera múltiples ítems (ej: coeficiente
+            de obra + coeficiente K), se mostraban como líneas separadas en la
+            tabla de resultados
+  REQUERIMIENTO: Agrupar todos los ítems de la misma tarea profesional en una
+                 sola línea sumando los importes y concatenando descripciones
+                 con separador "//"
+  SOLUCIÓN: Crear función agruparItemsPorTarea() que:
+            - Recibe array de ítems sin agrupar
+            - Agrupa por campo tareaProfesional
+            - Suma los importes de cada grupo
+            - Concatena descripciones con " // "
+            - Renumera los ítems agrupados
+            Aplicar agrupación al final de calcularHonorariosBasico()
+  ARCHIVO: src/utils/calculos/honorariosBasico.js
+  EJEMPLO: "Proyecto de Obra" con 2 ítems ($50.926.320 + $9.399.272)
+           → 1 ítem agrupado: $60.325.592
+           Descripción: "Rango de... (8%) // Rango de... (K 3%)"
+  IMPACTO: Medio - mejora visualización, tabla más compacta y clara 
+
+CRITERIOS DE ACEPTACIÓN:
+✓ Todas las correcciones resuelven el problema reportado
+✓ No se introducen regresiones en funcionalidad existente
+✓ Los cambios están documentados en este ticket
+✓ El cliente valida cada corrección
+
+ARCHIVOS MODIFICADOS:
+- src/components/wizard/ResultadoBasicoDetalle.jsx ✅
+- src/components/wizard/WizardNavigation.jsx ✅
+- src/pages/ProcesoCalculoPage.jsx ✅
+- src/utils/calculos/honorariosBasico.js ✅
+
+ESTIMACIÓN: 2-4 horas (estimado total)
+TIEMPO REAL: 2.5 horas (acumulado)
+
+--------------------------------------------------------------------------------
+
+================================================================================
 RESUMEN DE ESTIMACIONES
 ================================================================================
 
@@ -570,16 +686,19 @@ TICKET #002 - Paso 2: Datos de la Obra           →  5-7 horas  ✅ COMPLETADO 
 TICKET #003 - Cálculo de Honorarios              →  6-8 horas  ⏳ PENDIENTE
 TICKET #004 - Mostrar Detalle de Cálculo         →  5-6 horas  ✅ COMPLETADO (5h)
 TICKET #005 - Disclaimer Legal                   →  3-4 horas  ✅ COMPLETADO (2h)
-TICKET #006 - Página Parámetros Generales        →  4-5 horas  🔄 EN DESARROLLO
+TICKET #006 - Página Parámetros Generales        →  4-5 horas  🔄 EN DESARROLLO.5h)
                                                     ─────────
-TOTAL ESTIMADO:                                    27-36 horas
-COMPLETADO:                                        18 horas (67%)
-EN DESARROLLO:                                     4-5 horas (14%)
+TOTAL ESTIMADO:                                    29-40 horas
+COMPLETADO:                                        18 horas (54%)
+EN DESARROLLO:                                     4-5 horas (13%)
+EN PROGRESO:                                       2.5 horas (7(13%)
+EN PROGRESO:                                       2 horas (6%)
 PENDIENTE:                                         6-8 horas (19%)
 
 DISTRIBUCIÓN REAL:
 - Sprint 1 (07/02/2026): TICKET #001 + TICKET #002 + TICKET #004 + TICKET #005 ✅
 - Sprint 2 (07/02/2026): TICKET #006 (Parámetros) 🔄
+- Sprint 2 (09/02/2026): TICKET #007 (Correcciones Cliente) 🔄
 - Sprint 3 (Próximo):    TICKET #003 (Lógica de Cálculo) ⏳
 
 ================================================================================

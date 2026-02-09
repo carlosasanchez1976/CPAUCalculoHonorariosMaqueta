@@ -28,6 +28,11 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
   const handleDescargarPDF = () => {
     const element = pdfRef.current;
     
+    // Aplicar escala temporal para ajustar contenido a una página
+    element.style.transform = 'scale(0.85)';
+    element.style.transformOrigin = 'top left';
+    element.style.width = '117.6%'; // Compensar el scale de 0.85
+    
     const opt = {
       margin: 10,
       filename: `Honorarios-CPAU-${calculationNumber}.pdf`,
@@ -36,11 +41,18 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(opt).from(element).save();
+    html2pdf().set(opt).from(element).save().then(() => {
+      // Remover escala después de generar el PDF
+      element.style.transform = '';
+      element.style.transformOrigin = '';
+      element.style.width = '';
+    });
   };
 
   return (
-    <div className={styles.container} ref={pdfRef}>
+    <div className={styles.container}>
+      {/* Contenido para PDF */}
+      <div ref={pdfRef}>
       {/* Header del Certificado */}
       <div className={styles.certificateHeader}>
         <div className={styles.headerBorder}></div>
@@ -96,6 +108,11 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
               <span className={styles.resumenValue}>{formData.complejidad}</span>
             </div>
           )}
+          <div className={styles.resumenItem}>
+            <span className={styles.resumenLabel}>Costo total de Obra:</span>
+            <span className={styles.resumenValue}>{formatCurrencyARS(formData.valorObra)}</span>
+          </div>
+
         </div>
       </div>
 
@@ -110,7 +127,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
         </p>
         <div className={styles.disclaimerMeta}>
           <span><strong>Vigencia de índices:</strong> Febrero 2026</span>
-          <span><strong>Base de cálculo:</strong> Resolución CPAU 3220 (adaptada)</span>
+          <span><strong>Base de cálculo:</strong> Arancel sugerido CPAU (versión 2025)</span>
         </div>
       </div>
 
@@ -162,6 +179,9 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
           </div>
         </div>
       )}
+
+      </div>
+      {/* Fin contenido para PDF */}
 
       {/* Checkbox de Términos */}
       <div className={styles.termsCheckbox}>

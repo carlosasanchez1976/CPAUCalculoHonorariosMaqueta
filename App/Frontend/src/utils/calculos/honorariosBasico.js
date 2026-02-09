@@ -64,6 +64,43 @@ function agregarItemsTarea(items, tareaProfesional, coeficientes, nombreRango, v
 }
 
 /**
+ * Agrupa ítems por tarea profesional, sumando importes y concatenando descripciones
+ * @param {Array<Object>} items - Array de ítems sin agrupar
+ * @returns {Array<Object>} Array de ítems agrupados por tarea profesional
+ */
+function agruparItemsPorTarea(items) {
+  if (!Array.isArray(items) || items.length === 0) return items;
+  
+  // Agrupar por tareaProfesional
+  const gruposPorTarea = {};
+  
+  items.forEach(item => {
+    const tarea = item.tareaProfesional;
+    
+    if (!gruposPorTarea[tarea]) {
+      gruposPorTarea[tarea] = {
+        tareaProfesional: tarea,
+        descripciones: [],
+        importeTotal: 0
+      };
+    }
+    
+    gruposPorTarea[tarea].descripciones.push(item.descripcion);
+    gruposPorTarea[tarea].importeTotal += item.importe;
+  });
+  
+  // Convertir a array y formatear
+  const itemsAgrupados = Object.values(gruposPorTarea).map((grupo, index) => ({
+    item: index + 1,
+    tareaProfesional: grupo.tareaProfesional,
+    descripcion: grupo.descripciones.join(' // '),
+    importe: grupo.importeTotal
+  }));
+  
+  return itemsAgrupados;
+}
+
+/**
  * Calcula honorarios para tipo Básico según especificaciones CPAU
  * @param {Object} formData - Datos del formulario completo
  * @param {number} formData.valorObra - Valor total de la obra en ARS
@@ -182,10 +219,15 @@ export function calcularHonorariosBasico(formData, valorK = VALOR_K_DEFAULT) {
     );
   }
   
-  console.log(`Total de ítems generados: ${items.length}`);
-  console.log('Detalle de honorarios:', items);
+  console.log(`Total de ítems generados (antes de agrupar): ${items.length}`);
   
-  return items;
+  // PASO 3: Agrupar ítems por tarea profesional
+  const itemsAgrupados = agruparItemsPorTarea(items);
+  
+  console.log(`Total de ítems agrupados: ${itemsAgrupados.length}`);
+  console.log('Detalle de honorarios agrupado:', itemsAgrupados);
+  
+  return itemsAgrupados;
 }
 
 /**

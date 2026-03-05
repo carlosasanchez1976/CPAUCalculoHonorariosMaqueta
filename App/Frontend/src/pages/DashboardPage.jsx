@@ -36,7 +36,7 @@ const DashboardPage = () => {
       icon: <FaListAlt />,
       route: ROUTES.CALCULOS_REALIZADOS
     },
-    {
+    /*{
       id: 3,
       title: 'Nuevo Proyecto de Obra',
       description: 'Genera un nuevo proyecto para la gestión de una obra de construcción',
@@ -63,7 +63,7 @@ const DashboardPage = () => {
       description: 'Permite preestablecer opciones para una experiencia personalizada',
       icon: <FaCog />,
       route: ROUTES.PERSONALIZAR
-    }
+    }*/
   ];
 
   /**

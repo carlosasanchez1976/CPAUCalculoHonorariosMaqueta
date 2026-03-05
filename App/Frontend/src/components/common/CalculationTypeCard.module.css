@@ -12,6 +12,7 @@
   text-align: center;
   gap: 16px;
   min-height: 280px;
+  height: 100%;
 }
 
 .card:hover {
@@ -59,6 +60,49 @@
   flex: 1;
   display: flex;
   align-items: center;
+}
+
+/* Estilos para cards no vigentes (en construcción) */
+.noVigente {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(50%);
+  position: relative;
+}
+
+.noVigente:hover {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-top-width: 4px;
+}
+
+.noVigente .iconWrapper {
+  background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%);
+  box-shadow: 0 4px 12px rgba(158, 158, 158, 0.4);
+}
+
+.noVigente:hover .iconWrapper {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(158, 158, 158, 0.4);
+}
+
+.noVigente .title {
+  color: var(--color-gray-600);
+}
+
+.badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
 }
 
 /* Responsive Mobile */

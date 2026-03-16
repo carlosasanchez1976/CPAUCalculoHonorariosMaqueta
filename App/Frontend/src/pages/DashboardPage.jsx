@@ -28,7 +28,7 @@ const DashboardPage = () => {
       description: 'Genera un nuevo proyecto para cálculo de honorarios profesionales',
       icon: <FaCalculator />,
       route: ROUTES.NUEVO_CALCULO
-    },
+    }/*,
     {
       id: 2,
       title: 'Cálculos Realizados',
@@ -36,7 +36,7 @@ const DashboardPage = () => {
       icon: <FaListAlt />,
       route: ROUTES.CALCULOS_REALIZADOS
     },
-    /*{
+    {
       id: 3,
       title: 'Nuevo Proyecto de Obra',
       description: 'Genera un nuevo proyecto para la gestión de una obra de construcción',

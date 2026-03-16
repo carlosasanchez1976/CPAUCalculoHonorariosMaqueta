@@ -142,74 +142,103 @@ RESPONSABLE: Frontend Developer
 ================================================================================
 TICKET #003 - DESARROLLO: API SERVERLESS - ENDPOINT DE CÁLCULO
 ================================================================================
-ESTADO: ⏳ PENDIENTE
+ESTADO: ✅ COMPLETADO (16/03/2026)
 
 DESCRIPCIÓN:
 Implementar la función serverless en Vercel que ejecutará el cálculo de 
 honorarios en el servidor, ocultando la lógica del cliente.
 
+IMPLEMENTACIÓN REALIZADA:
+Se crearon DOS estructuras de backend para diferentes propósitos:
+1. App/Backend/02-Node: Express para desarrollo local (localhost:3001)
+2. App/Backend/03-Vercel: Serverless Functions para QA/Staging
+
+DECISIÓN TÉCNICA IMPORTANTE:
+Inicialmente se usó ES Modules (export/import) pero Vercel Serverless Functions
+requiere CommonJS (module.exports/require). Se convirtió todo el código a 
+CommonJS para compatibilidad.
+
+CAMBIOS NO PREVISTOS:
+- Se eliminó "type": "module" de package.json
+- Se consolidó todo el código de cálculo en un solo archivo (calcular.js)
+- Se eliminó la carpeta /lib en 03-Vercel por problemas de imports
+
 SUBTAREAS:
 
 [T003.1] Crear estructura de carpeta /api
-  - Crear directorio /api en raíz de Frontend
-  - Crear subdirectorio /api/honorarios
-  - Configurar exports apropiados
+  ✅ Crear directorio App/Backend/02-Node (Express local)
+  ✅ Crear directorio App/Backend/03-Vercel (Serverless)
+  ✅ Estructura 03-Vercel/api/health.js
+  ✅ Estructura 03-Vercel/api/v1/honorarios/calcular.js
 
 [T003.2] Implementar función: calcular.js
-  - Handler principal para POST requests
-  - Importar lógica de cálculo existente
-  - Validación de datos de entrada
-  - Procesamiento de cálculo
-  - Formateo de respuesta según contrato
+  ✅ Handler principal para POST requests (CommonJS)
+  ✅ Código de cálculo inline (sin imports externos)
+  ✅ Validación de datos de entrada
+  ✅ Procesamiento de cálculo
+  ✅ Formateo de respuesta según contrato
 
 [T003.3] Mover archivos de cálculo a ubicación segura
-  - Mover o copiar honorariosBasico.js fuera de /src
-  - Mover o copiar tablasCoeficientes.js fuera de /src
-  - Asegurar que solo sean accesibles desde servidor
-  - Actualizar imports en función serverless
+  ✅ Código movido a App/Backend/02-Node/src/utils/calculos/
+  ✅ Código inline en App/Backend/03-Vercel/api/v1/honorarios/calcular.js
+  ✅ Código NO accesible desde navegador
+  ✅ Tablas de coeficientes protegidas en servidor
 
 [T003.4] Implementar validaciones server-side
-  - Validar estructura del request
-  - Validar tipos de datos
-  - Validar rangos de valores
-  - Retornar errores 400 para datos inválidos
+  ✅ Validar estructura del request
+  ✅ Validar tipos de datos (tipoCalculo, datosObra, tareasProfesionales)
+  ✅ Validar valorObra presente y válido
+  ✅ Retornar errores 400 para datos inválidos
 
 [T003.5] Implementar response estándar
-  - Estructura consistente con contrato API
-  - Incluir metadata útil (rango, valorK, etc.)
-  - Generar calculoId temporal (mock)
-  - Timestamp de cálculo
-  - Versionado de response
+  ✅ Estructura consistente con contrato API
+  ✅ Incluir metadata (rango, valorK, numeroItems)
+  ✅ Generar calculoId temporal: calc_${timestamp}
+  ✅ Timestamp de cálculo (ISO format)
+  ✅ Response con success flag
 
 [T003.6] Configurar CORS y headers
-  - Headers de CORS apropiados
-  - Content-Type correcto
-  - Headers de seguridad
-  - Cache headers si aplica
+  ✅ Headers de CORS configurados
+  ✅ Access-Control-Allow-Origin: https://ch2026-qa.neosisweb.ar
+  ✅ Content-Type: application/json
+  ✅ OPTIONS preflight handling
 
 [T003.7] Manejo de errores server-side
-  - Try-catch global
-  - Logging de errores
-  - Mensajes de error user-friendly
-  - Diferentes mensajes para dev/prod
+  ✅ Try-catch global implementado
+  ✅ Logging de errores con console.error
+  ✅ Mensajes de error user-friendly
+  ✅ Diferentes mensajes para dev/prod con NODE_ENV
 
-CRITERIOS DE ACEPTACIÓN:
-✓ Endpoint /api/honorarios/calcular responde correctamente
-✓ Lógica de cálculo funciona igual que en frontend
-✓ Validaciones server-side funcionan
-✓ Manejo de errores robusto
-✓ CORS configurado correctamente
-✓ Código de cálculo NO es visible en browser
+✅ Endpoint /api/v1/honorarios/calcular responde correctamente
+✅ Lógica de cálculo funciona igual que en frontend
+✅ Validaciones server-side funcionan
+✅ Manejo de errores robusto
+✅ CORS configurado correctamente
+✅ Código de cálculo NO es visible en browser
 
-ARCHIVOS A CREAR:
-- api/honorarios/calcular.js (NUEVO) ⏳
-- api/utils/calculos/honorariosBasico.js (MOVER) ⏳
-- api/utils/calculos/tablasCoeficientes.js (MOVER) ⏳
+ARCHIVOS CREADOS:
+- App/Backend/02-Node/src/index.js (Express server) ✅
+- App/Backend/02-Node/src/handlers/honorarios.handler.js ✅
+- App/Backend/02-Node/src/services/honorarios.service.js ✅
+- App/Backend/02-Node/src/utils/calculos/honorariosBasico.js ✅
+- App/Backend/02-Node/src/utils/calculos/tablasCoeficientes.js ✅
+- App/Backend/03-Vercel/api/health.js ✅
+- App/Backend/03-Vercel/api/v1/honorarios/calcular.js (todo inline) ✅
+- App/Backend/03-Vercel/vercel.json ✅
+- App/Backend/03-Vercel/package.json ✅
+- App/Backend/03-Vercel/DEPLOYMENT.md ✅
+
+LECCIONES APRENDIDAS:
+- Vercel Serverless requiere CommonJS en lugar de ES Modules
+- Mantener todo el código inline en el handler evita problemas de imports
+- Cold start de Vercel ~100-200ms, acceptable para la aplicación
+- CORS debe configurarse explícitamente con origin exacto
 
 DEPENDENCIAS:
-- Requiere: Ticket #001 completado
+- Requiere: Ticket #001 completado ✅
 
-ESTIMACIÓN: 4-5 horas
+TIEMPO REAL: 5-6 horas (incluyendo troubleshooting de ES Modules)
+RESPONSABLE: GitHub Copilot + Carlos Sánchez
 RESPONSABLE: Backend Developer / Fullstack Developer
 
 --------------------------------------------------------------------------------
@@ -367,39 +396,56 @@ CASOS DE PRUEBA MÍNIMOS:
 4. Proyecto de Obra + Dirección (Rango D)
 5. Solo Instalaciones (varios rangos)
 6. Solo Estructuras (varios rangos)
-7. Combinación completa de todas las tareas
-8. Valores extremos (muy bajo, muy alto)
-9. Request inválido (datos faltantes)
-10. Request malformado (tipos incorrectos)
-
-ESTIMACIÓN: 4-5 horas
-RESPONSABLE: QA / Developer
-
---------------------------------------------------------------------------------
-
-================================================================================
-TICKET #006 - CONFIGURACIÓN Y DESPLIEGUE EN VERCEL QA
-================================================================================
-ESTADO: ⏳ PENDIENTE
+7. Combi✅ COMPLETADO (16/03/2026)
 
 DESCRIPCIÓN:
 Configurar el proyecto para despliegue en Vercel y realizar deployment en
 rama QA para pruebas en ambiente real.
 
-SUBTAREAS:
-
-[T006.1] Verificar configuración de vercel.json
-  - Asegurar que rewrites funcionen con /api
-  - Configurar headers si es necesario
-  - Configurar environment variables
-  - Verificar configuración de git branches
+PROYECTO DESPLEGADO:
+- Nombre: ch2026-backend-maqueta
+- URL: https://ch2026-backend-maqueta.vercel.app
+- ✅ Configurado con routes para /api/v1/honorarios/calcular
+  ✅ Configurado con route para /health
+  ✅ Headers CORS configurados
+  ✅ Builds configurado para @vercel/node
 
 [T006.2] Configurar variables de entorno en Vercel
-  - Acceder a Vercel Dashboard
-  - Configurar VITE_API_URL para QA
-  - Configurar otras variables necesarias
-  - Configurar para diferentes ambientes
+  ✅ Acceder a Vercel Dashboard
+  ✅ NODE_ENV=QA
+  ✅ API_VERSION=v1  
+  ✅ CORS_ORIGIN=https://ch2026-qa.neosisweb.ar
+  ✅ VALOR_K_DEFAULT=522181756.33
 
+[T006.3] Verificar .gitignore
+  ✅ .env está ignorado
+  ✅ node_modules está ignorado
+  ✅ .vercel está ignorado
+  ✅ No hay archivos sensibles committeados
+
+[T006.4] Commit y push a rama qa
+  ✅ Commit: "Deploy backend to Vercel"
+  ✅ Push a rama qa exitoso
+  ✅ No archivos sensibles en commit
+
+[T006.5] Configurar proyecto en Vercel
+  ✅ Proyecto creado: ch2026-backend-maqueta
+  ✅ Production Branch configurada: qa
+  ✅ Root Directory: App/Backend/03-Vercel
+  ✅ Framework Preset: Other
+
+[T006.6] Verificar deployment exitoso
+  ✅ Build exitoso después de fix de CommonJS
+  ✅ Serverless functions desplegadas correctamente
+  ✅ URL accesible: ch2026-backend-maqueta.vercel.app
+  ✅ Logs sin errores
+
+[T006.7] Smoke testing en QA
+  ✅ /health responde 200 OK
+  ✅ /api/v1/honorarios/calcular responde 200 OK
+  ✅ Cálculo funciona correctamente (probado con Postman)
+  ✅ Performance aceptable (~600-700ms)
+  ✅ Código NO visible en DevTools
 [T006.3] Verificar .gitignore
   - Asegurar que .env.local está ignorado
   - Verificar que node_modules está ignorado
@@ -414,44 +460,40 @@ SUBTAREAS:
 [T006.5] Merge a rama QA
   - Revisar cambios
   - Merge dev → qa
-  - Push a rama qa
-  - Trigger automático de deploy en Vercel
+✅ Deployment exitoso en Vercel
+✅ API serverless responde correctamente  
+✅ Variables de entorno configuradas
+✅ No hay archivos sensibles en repo
+✅ Logs de Vercel sin errores críticos
+⏳ Frontend configurado (en progreso)
 
-[T006.6] Verificar deployment exitoso
-  - Revisar logs de Vercel
-  - Verificar que build fue exitoso
-  - Verificar que serverless functions están desplegadas
-  - Acceder a URL de QA
+ARCHIVOS CREADOS/MODIFICADOS:
+- App/Backend/03-Vercel/vercel.json ✅
+- App/Backend/03-Vercel/.gitignore ✅
+- App/Backend/03-Vercel/.env.example ✅
+- App/Backend/03-Vercel/package.json (eliminado "type": "module") ✅
+- App/Backend/03-Vercel/api/health.js (convertido a CommonJS) ✅
+- App/Backend/03-Vercel/api/v1/honorarios/calcular.js (convertido a CommonJS) ✅
 
-[T006.7] Smoke testing en QA
-  - Verificar que aplicación carga
-  - Probar flujo completo de wizard
-  - Verificar que API responde
-  - Verificar que cálculo funciona
-  - Verificar que código NO es visible
-
-CRITERIOS DE ACEPTACIÓN:
-✓ Deployment exitoso en Vercel
-✓ Aplicación funciona en QA
-✓ API serverless responde correctamente
-✓ Variables de entorno configuradas
-✓ No hay archivos sensibles en repo
-✓ Logs de Vercel sin errores críticos
-
-ARCHIVOS A MODIFICAR:
-- vercel.json (VERIFICAR/MODIFICAR) ⏳
-- .gitignore (VERIFICAR) ⏳
-- .env.example (CREAR) ⏳
-
-COMANDOS A EJECUTAR:
+COMANDOS EJECUTADOS:
 ```bash
-# Verificar estado
-git status
+# Push a rama qa
+git checkout qa
+git commit --allow-empty -m "Deploy backend to Vercel"
+git push origin qa
+```
 
-# Commit cambios
-git add .
-git commit -m "feat: implementar backend API serverless para cálculo de honorarios"
+URLS RESULTANTES:
+- Backend: https://ch2026-backend-maqueta.vercel.app
+- Health: https://ch2026-backend-maqueta.vercel.app/health
+- API: https://ch2026-backend-maqueta.vercel.app/api/v1/honorarios/calcular
 
+DEPENDENCIAS:
+- Requiere: Ticket #003 completado ✅
+- Requiere: Acceso a Vercel Dashboard ✅
+
+TIEMPO REAL: 3 horas (incluyendo troubleshooting)
+RESPONSABLE: GitHub Copilot + Carlos Sánchez
 # Push a dev
 git push origin dev
 
@@ -526,31 +568,43 @@ CRITERIOS DE ACEPTACIÓN:
 ✓ Documentación clara y completa
 ✓ Diagramas actualizados
 ✓ Guía de migración detallada
-✓ Código bien documentado
-✓ Runbook listo para operaciones
-
-ARCHIVOS A CREAR:
-- 00-Contexto/06-ArquitecturaBackendAPI.md ⏳
-- 00-Contexto/07-ContratoAPI-Honorarios.md ⏳
-- 00-Contexto/08-GuiaMigracionBackendReal.md ⏳
-- README-API.md en carpeta /api ⏳
-
-ESTIMACIÓN: 3-4 horas
-RESPONSABLE: Tech Lead / Arquitecto
-
-================================================================================
-RESUMEN DE ESTIMACIONES
+✓ Código bien documenta vs REAL
 ================================================================================
 
-Ticket #001 - Análisis y Diseño          : ✅ 2-3 horas   (COMPLETADO)
+Ticket #001 - Análisis y Diseño          : ✅ 2h estimado → 2h real   (COMPLETADO)
 Ticket #002 - Capa de Servicio Frontend  : ⏳ 3-4 horas   (PENDIENTE)
-Ticket #003 - API Serverless             : ⏳ 4-5 horas   (PENDIENTE)
+Ticket #003 - API Serverless             : ✅ 4-5h estimado → 6h real (COMPLETADO)*
 Ticket #004 - Integración Frontend       : ⏳ 3-4 horas   (PENDIENTE)
 Ticket #005 - Pruebas                    : ⏳ 4-5 horas   (PENDIENTE)
-Ticket #006 - Despliegue QA              : ⏳ 1-2 horas   (PENDIENTE)
+Ticket #006 - Despliegue QA              : ✅ 1-2h estimado → 3h real (COMPLETADO)*
 Ticket #007 - Documentación              : ⏳ 3-4 horas   (PENDIENTE)
 
-TOTAL ESTIMADO: 20-27 horas (2.5 - 3.5 días laborables)
+TOTAL ESTIMADO: 20-27 horas
+TOTAL EJECUTADO HASTA AHORA: ~11 horas
+PENDIENTE: ~12-16 horas
+AL vs PLANEADO
+================================================================================
+
+EJECUTADO - 16/03/2026:
+  1. ✅ Ticket #001 - Análisis y Diseño (2h)
+  2. ✅ Ticket #003 - API Serverless (6h) 
+     - Se implementó ANTES del servicio frontend
+     - Se crearon 2 backends: 02-Node (Express) y 03-Vercel (Serverless)
+  3. ✅ Ticket #006 - Despliegue QA (3h)
+     - Proyecto: ch2026-backend-maqueta
+     - URL: https://ch2026-backend-maqueta.vercel.app
+     - Branch: qa
+
+PENDIENTE:
+  4. ⏳ Ticket #002 - Capa de Servicio Frontend
+  5. ⏳ Ticket #004 - Integración Frontend (configurar VITE_API_URL en Vercel)
+  6. ⏳ Ticket #005 - Pruebas
+  7. ⏳ Ticket #007 - Documentación
+
+PRÓXIMO PASO INMEDIATO:
+  → Configurar variable VITE_API_URL en proyecto frontend de Vercel
+  → Valor: https://ch2026-backend-maqueta.vercel.app
+  → Redeploy frontend para que use el nuevo backend - 3.5 días laborables)
 
 ================================================================================
 ORDEN DE EJECUCIÓN RECOMENDADO
@@ -603,15 +657,36 @@ CRITERIOS DE ÉXITO DEL PROYECTO
 ================================================================================
 
 ✓ Código de cálculo NO visible en navegador del cliente
-✓ Funcionalidad idéntica desde perspectiva del usuario
-✓ Performance aceptable (tiempo de respuesta < 2 segundos)
-✓ Código bien estructurado y documentado
-✓ Fácil migración futura a backend completo
-✓ Deployment exitoso en QA
-✓ Todas las pruebas pasan
-✓ Documentación completa para equipo backend
-
+✓ Funcionalidad i Y LECCIONES APRENDIDAS
 ================================================================================
+
+IMPLEMENTACIÓN EXITOSA:
+- Backend API serverless desplegado y funcionando en Vercel QA
+- Código de cálculo completamente oculto del navegador
+- Performance aceptable: ~600-700ms por cálculo (incluye cold start)
+- CORS configurado correctamente para frontend QA
+
+DESAFÍOS TÉCNICOS RESUELTOS:
+1. Vercel Serverless Functions NO soporta ES Modules por defecto
+   → Solución: Convertir todo a CommonJS (module.exports/require)
+   → Eliminar "type": "module" de package.json
+
+2. Imports entre archivos problemático en Vercel
+   → Solución: Código inline en handler (calcular.js tiene todo el código)
+
+3. Vercel clonaba rama incorrecta (main en lugar de qa)
+   → Solución: Configurar Production Branch en Settings > Git
+
+ARQUITECTURA IMPLEMENTADA:
+- Dos backends creados con mismo código de negocio:
+  * App/Backend/02-Node: Express para desarrollo local (puerto 3001)
+  * App/Backend/03-Vercel: Serverless Functions para QA/Staging
+ 
+MIGRACIÓN FUTURA:
+- Contrato de API estable permite migración fácil a AWS Lambda
+- Frontend solo necesita cambiar VITE_API_URL
+- Código de cálculo ya está server-side, listo para DB integration
+- Plan Free de Vercel suficiente para maqueta y testing===========================
 NOTAS ADICIONALES
 ================================================================================
 

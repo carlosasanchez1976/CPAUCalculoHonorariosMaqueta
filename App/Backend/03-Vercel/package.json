@@ -2,7 +2,6 @@
   "name": "ch2026-backend-vercel",
   "version": "1.0.0",
   "description": "Backend Vercel Serverless Functions - Sistema de Cálculo de Honorarios CPAU",
-  "type": "module",
   "engines": {
     "node": ">=18.0.0"
   },

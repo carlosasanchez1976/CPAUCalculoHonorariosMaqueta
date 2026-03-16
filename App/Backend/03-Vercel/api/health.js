@@ -3,7 +3,7 @@
  * Endpoint: GET /api/health
  */
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -19,4 +19,4 @@ export default function handler(req, res) {
     version: process.env.API_VERSION || 'v1',
     environment: process.env.NODE_ENV || 'production'
   });
-}
+};

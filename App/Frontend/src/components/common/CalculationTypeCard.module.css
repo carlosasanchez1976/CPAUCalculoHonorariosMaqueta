@@ -1,7 +1,7 @@
 .card {
   background: var(--color-white);
   border-radius: 12px;
-  padding: 32px 24px;
+  padding: 28px 20px;
   cursor: pointer;
   transition: all 0.3s ease;
   border-top: 4px solid var(--accent-color);
@@ -10,8 +10,8 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 16px;
-  min-height: 280px;
+  gap: 12px;
+  min-height: 240px;
   height: 100%;
 }
 
@@ -26,17 +26,19 @@
 }
 
 .iconWrapper {
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent-color) 0%, color-mix(in srgb, var(--accent-color) 80%, black) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-white);
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 40%, transparent);
   transition: all 0.3s ease;
+  position: relative;
+  cursor: help;
 }
 
 .card:hover .iconWrapper {
@@ -44,8 +46,50 @@
   box-shadow: 0 6px 16px color-mix(in srgb, var(--accent-color) 50%, transparent);
 }
 
+/* Tooltip para mostrar al hacer hover sobre el ícono */
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px) scale(0.95) rotate(-5deg);
+  background: #2C3E50;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  white-space: normal;
+  max-width: 280px;
+  min-width: 220px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  text-align: left;
+  font-weight: normal;
+}
+
+/* Flecha del tooltip */
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #2C3E50;
+}
+
+/* Mostrar tooltip al hacer hover sobre el ícono */
+.iconWrapper:hover .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-8px) scale(1) rotate(-5deg);
+  pointer-events: auto;
+}
+
 .title {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-gray-900);
   margin: 0;
@@ -79,11 +123,12 @@
 .noVigente .iconWrapper {
   background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%);
   box-shadow: 0 4px 12px rgba(158, 158, 158, 0.4);
+  cursor: help;
 }
 
 .noVigente:hover .iconWrapper {
-  transform: none;
-  box-shadow: 0 4px 12px rgba(158, 158, 158, 0.4);
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 6px 16px rgba(158, 158, 158, 0.5);
 }
 
 .noVigente .title {
@@ -144,4 +189,83 @@
   .title {
     font-size: 1.375rem;
   }
+}
+
+/* === Botón expandir (Móvil) === */
+
+.expandButton {
+  display: none; /* Oculto por defecto en desktop */
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 0;
+  margin-top: 4px;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.expandButton:hover:not(:disabled) {
+  color: color-mix(in srgb, var(--color-primary) 80%, black);
+}
+
+.expandButton:disabled {
+  color: var(--color-gray-400);
+  cursor: not-allowed;
+}
+
+/* Descripción completa expandida (móvil) */
+.fullDescription {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+  margin: 8px 0 0 0;
+  padding: 12px;
+  background: var(--color-gray-50);
+  border-radius: 6px;
+  border-left: 3px solid var(--accent-color);
+  animation: expandIn 0.3s ease;
+  text-align: left;
+}
+
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 200px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+
+/* === Responsive: Móvil === */
+
+@media (max-width: 768px) {
+  /* Ocultar tooltip en móvil */
+  .tooltip {
+    display: none;
+  }
+  
+  /* Mostrar botón expandir en móvil */
+  .expandButton {
+    display: block;
+  }
+}
+
+/* Ajustes para tarjetas no vigentes */
+.noVigente .expandButton {
+  color: var(--color-gray-500);
+}
+
+.noVigente .expandButton:hover {
+  color: var(--color-gray-500);
 }

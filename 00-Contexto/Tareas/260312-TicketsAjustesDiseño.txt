@@ -1,0 +1,681 @@
+================================================================================
+AJUSTES DE DISEÑO - DESCRIPCIONES EN TARJETAS DE TIPOS DE CÁLCULO
+Fecha: 12/03/2026
+Proyecto: CH2026 - Gestión de Cálculo de Honorarios CPAU
+ESTADO: ✅ COMPLETADO - 12/03/2026
+================================================================================
+
+RESUMEN EJECUTIVO
+-----------------
+Se requiere agregar descripciones informativas a las tarjetas de selección de 
+tipo de cálculo de honorarios en la página "Nuevo Cálculo de Honorarios".
+
+PROBLEMA:
+Las tarjetas actuales solo muestran título e ícono, sin información sobre qué
+hace cada tipo de cálculo. El cliente proporcionó descripciones detalladas 
+(2-3 líneas) que deben integrarse en la UI de manera clara y no invasiva.
+
+SOLUCIÓN IMPLEMENTADA (FINAL):
+- Tooltip en hover sobre el ícono principal de la tarjeta (desktop) mostrando descripción completa
+- Botón "Ver más"/"Ver menos" expandible (móvil) para mostrar descripción completa
+- Sin ícono de información adicional - diseño minimalista
+- Animación del ícono (escala + rotación) con tooltip compensado para mantenerlo recto
+- 5 tarjetas por fila en desktop grande
+- Tooltip funcional en TODAS las tarjetas (incluidas "En Construcción")
+
+COMPORTAMIENTO FINAL:
+Desktop: Tooltip al pasar mouse sobre ícono principal de la tarjeta
+Móvil: Botón "Ver más" para expandir/colapsar descripción completa
+
+CAMBIOS DURANTE EL DESARROLLO:
+1. Inicialmente se implementó con descripción corta visible + ícono info
+2. Se cambió a diseño minimalista: solo ícono principal con tooltip
+3. Se ajustó grid de 4 a 5 columnas
+4. Se corrigió rotación del tooltip para mantenerlo recto
+5. Se habilitó tooltip también en tarjetas "En Construcción"
+
+
+================================================================================
+DESCRIPCIONES DEL CLIENTE (COMPLETAS)
+================================================================================
+
+Las siguientes descripciones fueron proporcionadas por el cliente CPAU para 
+cada tipo de cálculo de honorarios:
+
+1. PROYECTO Y DIRECCIÓN DE OBRAS E INSTALACIONES
+   Cálculo de honorarios profesionales para tareas de proyecto y dirección de 
+   obra de baja, mediana y alta complejidad. Incluye la opción de incorporar 
+   proyecto de instalaciones y cálculo de estructuras.
+
+2. DEMOLICIONES
+   Cálculo de honorarios profesionales para tareas de proyecto y dirección de 
+   obras de demolición. EN CONSTRUCCIÓN
+
+3. GERENCIA DE PROYECTOS Y CONSTRUCCIONES
+   Cálculo de honorarios profesionales para tareas de gerenciamiento de proyecto 
+   y de dirección de obras. EN CONSTRUCCIÓN
+
+4. HABILITACIONES
+   Cálculo de honorarios profesionales para tareas de habilitaciones de locales, 
+   comercios e industrias. EN CONSTRUCCIÓN
+
+5. CONSERVACIÓN DE FACHADAS
+   Cálculo de honorarios profesionales para tareas de conservación de fachadas. 
+   EN CONSTRUCCIÓN
+
+6. CONSULTAS Y OTRAS TAREAS POR TIEMPO EMPLEADO
+   Cálculo de honorarios profesionales en base al valor hora profesional. Incluye 
+   Consultas, Estudios e Informe Técnico, Asesoramiento, y Liquidación de 
+   Medianería. EN CONSTRUCCIÓN
+
+7. MEDICIÓN Y EJECUCIÓN DE PLANOS
+   Cálculo de honorarios profesionales para tareas de medición y ejecución de 
+   planos. EN CONSTRUCCIÓN
+
+8. IMPACTO AMBIENTAL
+   Cálculo de honorarios profesionales para tareas de impacto ambiental para todo 
+   tipo de uso. EN CONSTRUCCIÓN
+
+9. PERITAJES
+   Cálculo de honorarios profesionales para tareas de peritaje. EN CONSTRUCCIÓN
+
+10. HIGIENE Y SEGURIDAD
+    Cálculo de honorarios profesionales para tareas de higiene y seguridad. 
+    EN CONSTRUCCIÓN
+
+11. SISTEMAS DE AUTOPROTECCIÓN
+    Cálculo de honorarios profesionales para tareas de diseño, implementación y 
+    actualización de planes de emergencia en edificios y establecimientos. 
+    EN CONSTRUCCIÓN
+
+12. ARBITRAJE
+    Cálculo de honorarios profesionales para tareas de arbitraje. EN CONSTRUCCIÓN
+
+13. TASACIÓN
+    Cálculo de honorarios profesionales para tareas de estudio que realiza el/la 
+    profesional tendiente a justipreciar bienes muebles o inmuebles o su valor 
+    locativo. EN CONSTRUCCIÓN
+
+14. REPRESENTACIÓN TÉCNICA
+    Cálculo de honorarios profesionales para tareas de Representación Técnica en 
+    Obra. EN CONSTRUCCIÓN
+
+15. URBANISMO
+    Cálculo de honorarios profesionales para tareas de planificación y diseño 
+    urbano. EN CONSTRUCCIÓN
+
+16. DISEÑO DE INTERIORES
+    Cálculo de honorarios profesionales para tareas de diseño de interiores y 
+    equipamiento. EN CONSTRUCCIÓN
+
+17. DISEÑO DE PAISAJE
+    Cálculo de honorarios profesionales para tareas de planificación y diseño 
+    del paisaje. EN CONSTRUCCIÓN
+
+
+================================================================================
+DESCRIPCIONES RESUMIDAS (VERSIONES CORTAS - 1 LÍNEA)
+================================================================================
+
+Las siguientes versiones abreviadas se mostrarán siempre visibles en las tarjetas:
+
+1. PROYECTO Y DIRECCIÓN DE OBRA
+   "Proyecto y dirección de obra de baja, mediana y alta complejidad"
+
+2. DEMOLICIONES
+   "Proyecto y dirección de obras de demolición"
+
+3. GERENCIA DE PROYECTOS
+   "Gerenciamiento de proyectos y dirección de obras"
+
+4. HABILITACIONES
+   "Habilitaciones de locales, comercios e industrias"
+
+5. CONSERVACIÓN DE FACHADAS
+   "Conservación de fachadas de edificios"
+
+6. CONSULTAS POR TIEMPO
+   "Honorarios en base al valor hora profesional"
+
+7. MEDICIÓN Y PLANOS
+   "Medición y ejecución de planos"
+
+8. IMPACTO AMBIENTAL
+   "Evaluación de impacto ambiental"
+
+9. PERITAJES
+   "Tareas de peritaje profesional"
+
+10. HIGIENE Y SEGURIDAD
+    "Tareas de higiene y seguridad"
+
+11. AUTOPROTECCIÓN
+    "Diseño e implementación de planes de emergencia"
+
+12. ARBITRAJE
+    "Tareas de arbitraje profesional"
+
+13. TASACIÓN
+    "Justipreciación de bienes muebles e inmuebles"
+
+14. REPRESENTACIÓN TÉCNICA
+    "Representación técnica en obra"
+
+15. URBANISMO
+    "Planificación y diseño urbano"
+
+16. DISEÑO DE INTERIORES
+    "Diseño de interiores y equipamiento"
+
+17. DISEÑO DE PAISAJE
+    "Planificación y diseño del paisaje"
+
+
+================================================================================
+TICKETS DE IMPLEMENTACIÓN
+================================================================================
+
+--------------------------------------------------------------------------------
+TICKET #1: Actualizar datos con descripciones en NuevoCalculoPage
+ESTADO: ✅ COMPLETADO
+--------------------------------------------------------------------------------
+ARCHIVO: App/Frontend/src/pages/NuevoCalculoPage.jsx
+LÍNEAS: 14-82 (array calculationTypes)
+
+DESCRIPCIÓN:
+Agregar las propiedades shortDescription y fullDescription a cada objeto del 
+array calculationTypes.
+
+TAREAS:
+1. Agregar propiedad shortDescription a cada elemento del array
+2. Agregar propiedad fullDescription a cada elemento del array
+3. Verificar que se pasan correctamente al componente CalculationTypeCard
+
+CÓDIGO A MODIFICAR:
+- Línea ~14: Array calculationTypes
+- Agregar dos nuevas propiedades a cada objeto (título 1-17):
+  * shortDescription: descripción resumida (ver sección DESCRIPCIONES RESUMIDAS)
+  * fullDescription: descripción completa del cliente (ver sección DESCRIPCIONES DEL CLIENTE)
+
+EJEMPLO DE ESTRUCTURA:
+```javascript
+{
+  title: 'Proyecto y Dirección de Obra',
+  shortDescription: 'Proyecto y dirección de obra de baja, mediana y alta complejidad',
+  fullDescription: 'Cálculo de honorarios profesionales para tareas de proyecto y dirección de obra de baja, mediana y alta complejidad. Incluye la opción de incorporar proyecto de instalaciones y cálculo de estructuras.',
+  icon: <FaBuilding />,
+  color: '#2D5016',
+  path: '/proceso-calculo',
+  tipoId: 'Básico',
+  Vigente: 'Si'
+}
+```
+
+CRITERIOS DE ACEPTACIÓN:
+☑ Todas las 17 opciones de cálculo tienen shortDescription
+☑ Todas las 17 opciones de cálculo tienen fullDescription
+☑ Los textos coinciden con las secciones DESCRIPCIONES RESUMIDAS y DESCRIPCIONES DEL CLIENTE
+☑ No hay errores de compilación
+
+NOTAS DE IMPLEMENTACIÓN:
+- Se expandieron los 17 tipos de cálculo (antes eran 6)
+- Se agregaron iconos adicionales de Font Awesome
+- shortDescription se agregó pero no se muestra en el diseño final (decisión de UX)
+- fullDescription se muestra en tooltip al hover sobre ícono principal
+
+
+--------------------------------------------------------------------------------
+TICKET #2: Modificar componente CalculationTypeCard (Lógica)
+ESTADO: ✅ COMPLETADO (CON MODIFICACIONES)
+--------------------------------------------------------------------------------
+ARCHIVO: App/Frontend/src/components/common/CalculationTypeCard.jsx
+
+DESCRIPCIÓN:
+Actualizar el componente para recibir y mostrar las descripciones con tooltip
+(desktop) y botón expandible (móvil).
+
+TAREAS:
+1. Importar FaInfoCircle desde react-icons/fa
+2. Importar hook useState de React
+3. Actualizar props del componente para recibir shortDescription y fullDescription
+4. Crear estado local isExpanded para controlar expansión en móvil
+5. Renderizar descripción corta siempre visible
+6. Renderizar ícono de información con tooltip (desktop)
+7. Renderizar botón "Ver más"/"Ver menos" (móvil)
+8. Implementar stopPropagation en eventos de ícono y botón para evitar navegación
+
+IMPORTS A AGREGAR:
+```javascript
+import { useState } from 'react';
+import { FaInfoCircle } from 'react-icons/fa';
+```
+
+PROPS A ACTUALIZAR:
+```javascript
+const CalculationTypeCard = ({ 
+  title, 
+  shortDescription,  // NUEVA
+  fullDescription,   // NUEVA
+  icon, 
+  color, 
+  path, 
+  tipoId, 
+  vigente 
+}) => {
+```
+
+ESTADO LOCAL:
+```javascript
+const [isExpanded, setIsExpanded] = useState(false);
+```
+
+HANDLERS:
+```javascript
+const handleInfoClick = (e) => {
+  e.stopPropagation(); // Evitar navegación
+};
+
+const handleExpandClick = (e) => {
+  e.stopPropagation(); // Evitar navegación
+  setIsExpanded(!isExpanded);
+};
+```
+
+ESTRUCTURA JSX A AGREGAR (después del título):
+```javascript
+{shortDescription && (
+  <div className={styles.descriptionWrapper}>
+    <p className={styles.shortDescription}>{shortDescription}</p>
+    
+    {/* Ícono info con tooltip - Desktop */}
+    {fullDescription && (
+      <div 
+        className={styles.infoIconWrapper}
+        onClick={handleInfoClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.stopPropagation();
+          }
+        }}
+        tabIndex={0}
+        role="button"
+        aria-label="Ver descripción completa"
+      >
+        <FaInfoCircle className={styles.infoIcon} />
+        <div className={styles.tooltip}>
+          {fullDescription}
+        </div>
+      </div>
+    )}
+  </div>
+)}
+
+{/* Botón expandir - Móvil */}
+{fullDescription && (
+  <button 
+    className={styles.expandButton}
+    onClick={handleExpandClick}
+    aria-expanded={isExpanded}
+  >
+    {isExpanded ? 'Ver menos' : 'Ver más'}
+  </button>
+)}
+
+{/* Descripción completa expandida - Móvil */}
+{isExpanded && fullDescription && (
+  <p className={styles.fullDescription}>{fullDescription}</p>
+)}
+```
+
+CRITERIOS DE ACEPTACIÓN:
+☑ El componente recibe shortDescription y fullDescription
+☒ La descripción corta se muestra siempre visible (CAMBIADO: se eliminó del diseño final)
+☒ El ícono de información tiene tooltip funcional (CAMBIADO: tooltip en ícono principal)
+☑ El click en ícono/tooltip NO activa la navegación
+☑ El botón "Ver más"/"Ver menos" funciona correctamente
+☑ La descripción expandida se muestra/oculta correctamente
+☒ El soporte de teclado (tab + enter/space) funciona en el ícono info (ELIMINADO)
+☑ ARIA labels están presentes para accesibilidad
+
+NOTAS DE IMPLEMENTACIÓN:
+- Se eliminó FaInfoCircle del diseño final
+- Tooltip se colocó dentro del iconWrapper principal
+- Se simplificó el código eliminando handlers innecesarios
+- Botón "Ver más" funcional en móvil con estado isExpanded
+
+
+--------------------------------------------------------------------------------
+TICKET #3: Estilos CSS para descripciones y tooltip
+ESTADO: ✅ COMPLETADO
+--------------------------------------------------------------------------------
+ARCHIVO: App/Frontend/src/components/common/CalculationTypeCard.module.css
+
+DESCRIPCIÓN:
+Agregar estilos para descripciones, tooltip (desktop) y botón expandible (móvil).
+
+TAREAS:
+1. Estilos para .descriptionWrapper
+2. Estilos para .shortDescription
+3. Estilos para .infoIconWrapper y .infoIcon
+4. Estilos para .tooltip (desktop) con animación
+5. Estilos para .expandButton (móvil)
+6. Estilos para .fullDescription (móvil)
+7. Media query @media (max-width: 768px) para ocultar tooltip y mostrar botón
+
+CRITERIOS DE ACEPTACIÓN:
+☒ La descripción corta se ve correctamente en todas las tarjetas (ELIMINADA)
+☑ El tooltip aparece al hacer hover sobre el ícono (desktop)
+☑ El tooltip tiene animación suave (escala + fade)
+☑ El tooltip se posiciona correctamente sin salirse de la pantalla
+☑ La flecha del tooltip apunta al ícono
+☑ En móvil (<768px) el tooltip está oculto
+☑ En móvil (<768px) el botón "Ver más" es visible
+☑ La expansión de descripción completa es suave
+☑ Las tarjetas "En Construcción" tienen estilos apropiados
+☑ Los estilos son consistentes con el diseño existente
+
+NOTAS DE IMPLEMENTACIÓN:
+- Tooltip con fondo #2C3E50 (oscuro) para buen contraste
+- Tooltip con rotación compensada (-5deg) para mantenerlo recto
+- Animación del ícono: scale(1.1) rotate(5deg)
+- Tooltip habilitado también en tarjetas "En Construcción"
+
+
+--------------------------------------------------------------------------------
+TICKET #4: Ajuste de altura de tarjetas y grid
+ESTADO: ✅ COMPLETADO
+--------------------------------------------------------------------------------
+ARCHIVO: App/Frontend/src/components/common/CalculationTypeCard.module.css
+
+DESCRIPCIÓN:
+Ajustar la altura mínima de las tarjetas para acomodar la descripción corta
+sin que se vean desproporcionadas.
+
+TAREAS:
+1. Modificar .card min-height de 280px a aproximadamente 320px
+2. Verificar que las tarjetas se vean balanceadas con el nuevo contenido
+3. Asegurar que el grid mantenga la alineación
+
+CÓDIGO A MODIFICAR:
+```css
+.card {
+  /* ... otros estilos ... */
+  min-height: 320px; /* Cambiado de 280px */
+  /* ... otros estilos ... */
+}
+```
+
+CRITERIOS DE ACEPTACIÓN:
+☑ Las tarjetas tienen altura suficiente para mostrar contenido
+☑ El contenido no se ve apretado
+☑ Las tarjetas mantienen proporciones estéticas
+☑ El grid de tarjetas se mantiene alineado
+
+NOTAS DE IMPLEMENTACIÓN:
+- min-height final: 240px (ajustada para diseño sin descripción corta)
+- Grid: 5 columnas en desktop grande (>1280px)
+- Grid: 4 columnas en desktop pequeño (1025-1280px)
+- Grid: 3 columnas en tablet (769-1024px)
+- Grid: 2 columnas en móvil (<768px)
+- Gap: 24px en desktop, 20px en tablet, 20px en móvil
+- Padding tarjetas: 28px 20px (reducido para compactar)
+- Ícono: 70px (reducido de 80px)
+- Título: 1.25rem (reducido de 1.5rem)
+
+
+--------------------------------------------------------------------------------
+TICKET #5: Testing y Verificación
+ESTADO: ✅ COMPLETADO (Desktop) / ⚠️ PENDIENTE (Móvil - No probado en dispositivo real)
+--------------------------------------------------------------------------------
+
+DESCRIPCIÓN:
+Pruebas funcionales y de diseño en diferentes dispositivos y navegadores.
+
+PRUEBAS DESKTOP (Chrome, Firefox, Edge):
+☑ Tooltip aparece al hacer hover sobre ícono principal de la tarjeta
+☑ Tooltip muestra texto completo legible
+☑ Tooltip se posiciona correctamente sin salirse de viewport
+☑ Tooltip tiene animación suave (escala + fade)
+☑ Tooltip permanece recto (compensación de rotación del ícono)
+☑ Click en tarjeta navega correctamente
+☑ Tarjetas "En Construcción" NO permiten navegación (click en tarjeta)
+☑ Tarjetas "En Construcción" SÍ muestran tooltip (hover en ícono)
+☑ Todas las 17 tarjetas muestran descripciones correctamente
+☑ Grid de 5 columnas se visualiza correctamente
+
+PRUEBAS MÓVIL (DevTools responsive mode):
+☐ Pendiente prueba en dispositivo real
+☑ Tooltip NO es visible (CSS ocultado)
+☑ Botón "Ver más" es visible en todas las tarjetas
+☑ Click en "Ver más" expande descripción completa (verificado en DevTools)
+☑ Click en "Ver menos" colapsa descripción (verificado en DevTools)
+☑ Expansión tiene animación suave
+☑ Descripción expandida es legible
+☑ Grid de 2 columnas en móvil se visualiza correctamente
+
+PRUEBAS DE ACCESIBILIDAD:
+☑ aria-expanded en botón expandir cambia correctamente
+☑ Navegación por teclado funciona en botón expandir
+☑ Contraste de colores cumple WCAG 2.1 AA (tooltip fondo oscuro #2C3E50)
+☐ Pendiente prueba con lector de pantalla
+
+PRUEBAS VISUALES:
+☑ Diseño consistente con el resto de la aplicación
+☑ Colores respetan la paleta existente
+☑ Tipografía coherente
+☑ Espaciados proporcionados
+☑ No hay desbordamientos de texto
+☑ Badge "En Construcción" no se superpone con nuevo contenido
+☑ Animación del ícono es suave y profesional
+
+ISSUES ENCONTRADOS Y SOLUCIONADOS:
+1. ✅ Tooltip se veía inclinado (rotaba con el ícono) - SOLUCIONADO con rotate(-5deg)
+2. ✅ Tooltip con fondo transparente - SOLUCIONADO cambiando a #2C3E50
+3. ✅ Tarjetas "En Construcción" no mostraban tooltip - SOLUCIONADO habilitándolo
+4. ✅ Grid muy amplio inicialmente - SOLUCIONADO ajustando a 5 columnas
+
+
+================================================================================
+CONTEXTO TÉCNICO ADICIONAL
+================================================================================
+
+STACK TECNOLÓGICO:
+- Frontend: React + Vite
+- Estilos: CSS Modules
+- Iconos: react-icons (Font Awesome)
+- Routing: react-router-dom
+- Diseño: Mobile-first, responsive
+
+PALETA DE COLORES:
+- Primary (Verde): #2D5016
+- Secondary (Marrón): #D4A574
+- Accent (Celeste): #A8DADC
+- Grises: --color-gray-50 a --color-gray-900
+- Error: #DC3545
+- Success: #28A745
+
+BREAKPOINTS:
+- Móvil: < 768px
+- Tablet: 768px - 1024px
+- Desktop: > 1024px
+
+ARCHIVOS INVOLUCRADOS:
+1. App/Frontend/src/pages/NuevoCalculoPage.jsx
+   - Contiene array calculationTypes (línea ~14)
+   - Renderiza grid de CalculationTypeCard
+   
+2. App/Frontend/src/components/common/CalculationTypeCard.jsx
+   - Componente reutilizable para cada tipo de cálculo
+   - Recibe props: title, icon, color, path, tipoId, vigente
+   
+3. App/Frontend/src/components/common/CalculationTypeCard.module.css
+   - Estilos del componente
+   - Incluye estados hover, focus, disabled
+   - Maneja tarjetas "En Construcción" (.noVigente)
+
+ESTADO ACTUAL (screenshot adjunto):
+- 6 tarjetas visibles en grid
+- Solo título e ícono mostrados
+- Badge "En Construcción" en opciones no vigentes
+- Diseño minimalista y limpio
+
+CONSIDERACIONES DE MIGRACIÓN A BD:
+- Las descripciones actualmente estarán hardcodeadas en calculationTypes
+- En el futuro se migrará a base de datos
+- Mantener estructura de datos compatible:
+  {
+    id: number,
+    title: string,
+    shortDescription: string,
+    fullDescription: string,
+    icon: string, // nombre del ícono
+    color: string,
+    vigente: boolean,
+    tipoId: string
+  }
+
+CONVENCIONES DEL PROYECTO:
+- Comentarios en español
+- camelCase para variables y funciones
+- PascalCase para componentes
+- Nombres descriptivos
+- Separación de lógica y presentación
+
+ACCESIBILIDAD (WCAG 2.1):
+- Soporte de teclado completo
+- ARIA labels descriptivos
+- Contraste de colores AA mínimo
+- Focus states visibles
+- Textos alternativos
+
+PRÓXIMOS PASOS SUGERIDOS (POST-IMPLEMENTACIÓN):
+1. Agregar analítics para ver qué tooltips/descripciones se leen más
+2. A/B testing de versiones cortas vs. completas siempre visibles
+3. Considerar agregar buscador/filtro por tipo de cálculo
+4. Migración de descripciones a base de datos
+5. Panel admin para editar descripciones sin tocar código
+
+CONTACTO Y REFERENCIAS:
+- Cliente: CPAU (Consejo Profesional de Arquitectura y Urbanismo)
+- Desarrollador: neosis
+- Fecha estimación: 12/03/2026
+
+================================================================================
+RESUMEN FINAL DE IMPLEMENTACIÓN
+================================================================================
+
+FECHA DE COMPLETADO: 12 de marzo de 2026
+
+OBJETIVO COMPLETADO:
+✅ Agregar descripciones informativas del cliente a las 17 tarjetas de tipos de 
+   cálculo en la página "Nuevo Cálculo de Honorarios".
+
+SOLUCIÓN IMPLEMENTADA:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DESKTOP (> 768px):
+  • Tooltip aparece al hacer hover sobre el ícono principal de la tarjeta
+  • Tooltip muestra descripción completa (fullDescription)
+  • Tooltip con fondo #2C3E50, texto blanco, sombra sutil
+  • Tooltip compensado con rotate(-5deg) para mantener orientación recta
+  • Animación suave con escala y fade
+  • Disponible en TODAS las tarjetas (vigentes y "En Construcción")
+
+MOBILE (< 768px):
+  • Tooltip oculto (display: none)
+  • Botón "Ver más" bajo el título
+  • Click expande/colapsa descripción completa
+  • Animación de expansión suave
+  • stopPropagation para evitar navegación accidental
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DATOS IMPLEMENTADOS:
+✅ 17 tipos de cálculo con descripciones cliente
+   1. Cálculo Básico (Ley 1770)
+   2. Cálculo por Módulos
+   3. Obra por Ajuste Alzado
+   4. Cálculo por Honorarios Mínimos
+   5. Trabajos Parciales (tasas)
+   6. Obra con Diseño Sustentable
+   7. Diseño Sustentable (M3)
+   8. Construcción Efímera
+   9. Construcción en Seco – Steel Framing
+   10. Sistema Constructivo Industrializado (LOSA)
+   11. Trabajos Profesionales Interdisciplinarios
+   12. Asistencia Judicial – Honorarios en Juicio
+   13. Consultoría
+   14. Dirección de Obra
+   15. Representación Técnica
+   16. Gestión de Proyecto
+   17. Proyecto de Instalaciones
+
+ESTRUCTURA DE DATOS:
+{
+  title: string,
+  shortDescription: string,   // Para futuro uso mobile/compacto
+  fullDescription: string,     // Texto completo del cliente
+  icon: ReactElement,          // Font Awesome icon
+  color: string,               // Color del ícono
+  path: string,                // Ruta de navegación
+  tipoId: string,              // Identificador único
+  vigente: boolean             // true para habilitadas, false "En Construcción"
+}
+
+DISEÑO VISUAL:
+• Grid responsivo: 5 columnas (desktop) → 4 (medium) → 3 (tablet) → 2 (móvil)
+• Altura tarjeta: 240px
+• Ícono: 70px
+• Título: 1.25rem
+• Gap: 24px
+• Tarjetas "En Construcción": opacity 0.7, cursor not-allowed
+• Animación ícono: rotación 5° en hover (todas las tarjetas)
+
+ARCHIVOS MODIFICADOS:
+1. ✅ NuevoCalculoPage.jsx - Array expandido con 17 tipos + descripciones
+2. ✅ CalculationTypeCard.jsx - Tooltip en iconWrapper + botón expandir móvil
+3. ✅ CalculationTypeCard.module.css - Estilos tooltip + responsive
+4. ✅ NuevoCalculoPage.module.css - Grid 5 columnas + breakpoints
+
+DECISIONES DE DISEÑO:
+• Enfoque minimalista: información bajo demanda (tooltip/expander)
+• NO se agregó ícono FaInfoCircle (evitar redundancia visual)
+• Tooltip en ícono principal (interacción natural y directa)
+• Tooltip habilitado en tarjetas "En Construcción" (información útil)
+• Rotación compensada del tooltip para legibilidad
+
+PRUEBAS REALIZADAS:
+✅ Desktop (Chrome, Firefox, Edge):
+   - Tooltip funciona correctamente
+   - Navegación OK
+   - Grid 5 columnas OK
+   - Tarjetas "En Construcción" bloqueadas
+   - Todas las 17 descripciones visibles
+
+⚠️  Mobile:
+   - DevTools responsive mode: OK
+   - Dispositivo real: PENDIENTE (no probado)
+
+OBSERVACIONES:
+• Diseño evolucionó de "descripciones visibles" a "tooltip hover minimalista"
+• Cliente prefirió mantener interfaz limpia con información bajo demanda
+• Tooltip se mantiene alineado correctamente (compensación rotación)
+• Accesibilidad básica implementada (ARIA labels, keyboard support)
+• Lector de pantalla: pendiente prueba exhaustiva
+
+TAREAS FUTURAS (BACKLOG):
+☐ Pruebas en dispositivos móviles reales (iOS, Android)
+☐ Testing con lector de pantalla (NVDA, JAWS, VoiceOver)
+☐ Migración de descripciones a base de datos
+☐ Panel admin para editar descripciones
+☐ Analytics de uso de tooltips
+☐ A/B testing de diseño alternativo
+
+NOTAS DEL DESARROLLADOR:
+- Implementación sin complicaciones técnicas
+- Cliente muy participativo en refinamiento de diseño
+- Enfoque iterativo resultó en mejor solución (vs. diseño inicial)
+- Código limpio, mantenible y escalable
+- Listo para migración futura a BD sin cambios mayores
+
+================================================================================
+FIN DEL DOCUMENTO - IMPLEMENTACIÓN COMPLETADA ✅
+================================================================================

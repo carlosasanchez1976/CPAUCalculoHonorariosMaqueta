@@ -248,6 +248,7 @@ JSON Support: FOR JSON PATH nativo
 - Tests unitarios (cobertura >80%)
 - Documentación Swagger
 - Manual de deployment
+- **Comunicación a Frontend:** Informar que VITE_API_URL debe incluir `/v1` y remover hardcode de honorariosService.js
 
 ---
 
@@ -1350,6 +1351,7 @@ custom:
 - [ ] Plan de rollback revisado y aprobado
 - [ ] Equipo de soporte notificado
 - [ ] Cliente informado de ventana de mantenimiento
+- [ ] **Frontend refactorizado:** `/v1` movido de hardcode a variable de entorno VITE_API_URL
 
 ### Pasos de Migración
 
@@ -1397,13 +1399,39 @@ functions:
 #### 3. Migración Frontend (Día 0)
 
 **3.1. Actualizar variable de entorno**
-```bash
-# .env.production - ANTES
-VITE_API_URL=/api
 
-# .env.production - DESPUÉS
+⚠️ **IMPORTANTE - Refactorización de Versión de API:**  
+En la maqueta actual (Fase 1), el `/v1` está hardcodeado en `honorariosService.js`.  
+Al migrar al backend real, **mover el versionado a la variable de entorno** para mayor flexibilidad:
+
+```bash
+# .env.production - ANTES (Maqueta - Fase 1)
+VITE_API_URL=/api
+# Nota: /v1 hardcodeado en honorariosService.js línea ~32
+
+# .env.production - DESPUÉS (Backend Real - Fase 2)
 VITE_API_URL=https://api.cpau-honorarios.com/v1
+# Nota: /v1 ahora está en la variable, remover hardcodeo de honorariosService.js
 ```
+
+**Cambio requerido en código:**
+```javascript
+// App/Frontend/src/services/honorariosService.js
+
+// ANTES (Fase 1 - Maqueta):
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const response = await fetch(`${API_BASE_URL}/v1/honorarios/calcular`, { ... });
+
+// DESPUÉS (Fase 2 - Backend Real):
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const response = await fetch(`${API_BASE_URL}/honorarios/calcular`, { ... });
+// El /v1 ya viene en VITE_API_URL
+```
+
+**Ventajas de mover /v1 a variable de entorno:**
+- ✅ Permite cambiar versión de API sin tocar código
+- ✅ Facilita pruebas de diferentes versiones (v1, v2, beta)
+- ✅ Configuración centralizada por ambiente
 
 **3.2. Deploy frontend**
 ```bash
@@ -1665,6 +1693,30 @@ Este documento ha sido actualizado para reflejar el **stack específico ya imple
 3. **Alta disponibilidad:** Multi-AZ por defecto
 4. **Zero maintenance:** AWS gestiona infraestructura, patching, actualizaciones
 5. **Integración nativa:** Con todo el ecosistema AWS
+
+### Deuda Técnica de Fase 1 (Maqueta Serverless)
+Durante la implementación de la **maqueta serverless** (Fase 1, solo para ocultar lógica de cálculo), se tomaron decisiones temporales que deben resolverse en la migración a backend real (Fase 2):
+
+⚠️ **Hardcode de Versión de API:**
+- **Ubicación:** `App/Frontend/src/services/honorariosService.js` línea ~32
+- **Problema:** El `/v1` está hardcodeado en la URL del endpoint
+- **Código actual:** `fetch(\`\${API_BASE_URL}/v1/honorarios/calcular\`)`
+- **Solución en Fase 2:** Mover `/v1` a la variable de entorno `VITE_API_URL`
+- **Beneficio:** Permite cambiar versión de API sin tocar código, configuración por ambiente
+
+**Justificación temporal:**  
+En maqueta no hay versionado real de API, todo es versión 1. Al migrar a backend con DB y posibilidad de múltiples versiones (v1, v2), esto debe estar en configuración.
+
+**Cambio requerido al migrar:**
+```javascript
+// ANTES (Maqueta):
+VITE_API_URL=/api
+const response = await fetch(`${API_BASE_URL}/v1/honorarios/calcular`);
+
+// DESPUÉS (Backend Real):
+VITE_API_URL=https://api.cpau-honorarios.com/v1
+const response = await fetch(`${API_BASE_URL}/honorarios/calcular`);
+```
 
 ---
 

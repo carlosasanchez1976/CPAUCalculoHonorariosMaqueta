@@ -9,7 +9,7 @@ import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import { ROUTES } from '../utils/constants';
 import { useParametros } from '../contexts/ParametrosContext';
-import { calcularHonorariosBasico } from '../utils/calculos/honorariosBasico';
+import { calcularHonorarios, formatearErrorAPI } from '../services/honorariosService';
 import styles from './ProcesoCalculoPage.module.css';
 
 // Componentes específicos para Cálculo Básico
@@ -143,24 +143,63 @@ const ProcesoCalculoPage = () => {
     }
   };
 
-  const performCalculation = () => {
+  const performCalculation = async () => {
     // isCalculating ya se puso en true en handleNext
     
-    // Simular cálculo con timeout
-    setTimeout(() => {
+    try {
       let result;
       
       if (formData.tipoCalculo === 'Básico') {
-        // CÁLCULO REAL para tipo Básico
+        // CÁLCULO REAL para tipo Básico - Llamada a API
         const valorK = getParametro('valorK') || 522181756.33;
-        const detalleHonorarios = calcularHonorariosBasico(formData, valorK);
+        
+        // Preparar datos para API según contrato
+        const datosAPI = {
+          tipoCalculo: 'basico',
+          datosProyecto: {
+            nombre: formData.nombreProyecto,
+            ubicacion: formData.ubicacion,
+            cliente: formData.cliente
+          },
+          datosObra: {
+            valorObra: formData.valorObra,
+            superficie: formData.superficieTotal,
+            tipologia: formData.tipoObra,
+            complejidad: formData.complejidad
+          },
+          tareasProfesionales: {
+            obraProyecto: formData.obraProyecto,
+            obraDireccion: formData.obraDireccion,
+            instalacionSanitaria: formData.instalacionSanitaria,
+            instalacionElectrica: formData.instalacionElectrica,
+            instalacionContraIncendio: formData.instalacionContraIncendio,
+            proyectoEstructuras: formData.proyectoEstructuras
+          },
+          parametros: {
+            valorK: valorK
+          }
+        };
+        
+        // Llamada a API serverless
+        const apiResult = await calcularHonorarios(datosAPI);
+        
+        // Extraer datos de la respuesta
+        const detalleHonorarios = apiResult.resultado.detalleHonorarios;
         
         // Guardar detalle en formData para uso en ResultadoBasicoDetalle
-        setFormData(prev => ({ ...prev, detalleHonorarios }));
+        setFormData(prev => ({ 
+          ...prev, 
+          detalleHonorarios,
+          calculoId: apiResult.calculoId,
+          fechaCalculo: apiResult.fechaCalculo,
+          metadataCalculo: apiResult.resultado.metadata
+        }));
         
         result = {
           detalleHonorarios,
-          tipoCalculo: 'Básico'
+          tipoCalculo: 'Básico',
+          calculoId: apiResult.calculoId,
+          metadata: apiResult.resultado.metadata
         };
       } else {
         // Mock para otros tipos de cálculo (temporal)
@@ -170,7 +209,18 @@ const ProcesoCalculoPage = () => {
       setCalculationResult(result);
       setIsCalculating(false);
       setCurrentStep(5); // Avanzar a Resultado
-    }, 1500);
+      
+    } catch (error) {
+      console.error('Error al calcular honorarios:', error);
+      
+      // Mostrar error al usuario
+      const errorMessage = formatearErrorAPI(error);
+      alert(`Error en el cálculo:\n\n${errorMessage}\n\nPor favor, verifique los datos e intente nuevamente.`);
+      
+      // Volver a paso de revisión
+      setIsCalculating(false);
+      setCurrentStep(3);
+    }
   };
 
   const generateMockResults = () => {

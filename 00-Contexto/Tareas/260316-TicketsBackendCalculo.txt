@@ -1,0 +1,627 @@
+================================================================================
+TICKETS - BACKEND API PARA CÁLCULO DE HONORARIOS (SERVERLESS)
+================================================================================
+Proyecto: CH2026 - Sistema de Gestión de Cálculo de Honorarios CPAU
+Fecha: 16/03/2026
+Versión: 1.0 - Implementación Serverless (Maqueta)
+================================================================================
+
+OBJETIVO GENERAL:
+Proteger la lógica de cálculo de honorarios moviendo el código desde el frontend
+hacia una API serverless, ocultando coeficientes, fórmulas y reglas de negocio
+del navegador del usuario. Esta implementación servirá como base para la futura
+migración a un backend completo con base de datos y stored procedures.
+
+JUSTIFICACIÓN:
+Actualmente todo el código de cálculo (coeficientes, fórmulas, rangos, etc.) 
+está visible en el navegador del cliente, lo que expone propiedad intelectual 
+y permite a competidores copiar la lógica. Se requiere ocultar esta información
+manteniendo la funcionalidad actual.
+
+ESTRATEGIA DE IMPLEMENTACIÓN:
+- Fase 1 (HOY): API Serverless en Vercel (maqueta funcional)
+- Fase 2 (FUTURO): Backend real con DB y Stored Procedures
+- Principio clave: "API Contract First" - el contrato de API permanece estable
+
+================================================================================
+TICKET #001 - ANÁLISIS Y DISEÑO DE ARQUITECTURA API
+================================================================================
+ESTADO: ✅ COMPLETADO (16/03/2026)
+
+DESCRIPCIÓN:
+Diseñar la arquitectura de backend API que permita:
+1. Ocultar lógica de cálculo del frontend
+2. Mantener compatibilidad con wizard existente
+3. Facilitar migración futura a backend completo
+4. Definir contrato de API estable
+
+SUBTAREAS:
+
+[T001.1] Definir contrato de API (Request/Response)
+  ✅ Estructura del Request POST /api/honorarios/calcular
+  ✅ Estructura del Response estándar
+  ✅ Códigos de estado HTTP apropiados
+  ✅ Manejo de errores consistente
+  ✅ Versionado de API
+
+[T001.2] Diseñar capa de abstracción en Frontend
+  ✅ Servicio único de comunicación con API (honorariosService.js)
+  ✅ Separación de responsabilidades
+  ✅ Preparación para cambio de endpoint futuro
+  ✅ Manejo de errores centralizado
+
+[T001.3] Arquitectura de Serverless Functions
+  ✅ Estructura de carpeta /api para Vercel
+  ✅ Organización modular de funciones
+  ✅ Reutilización de código de cálculo existente
+  ✅ Validaciones server-side
+
+[T001.4] Plan de migración progresiva
+  ✅ Fase serverless (actual)
+  ✅ Fase backend real (futuro)
+  ✅ Estrategia de rollback
+  ✅ Documentación para equipo backend
+
+CRITERIOS DE ACEPTACIÓN:
+✓ Contrato de API documentado y versionado
+✓ Arquitectura permite cambio de backend sin tocar frontend
+✓ Plan de migración claro y documentado
+✓ Diseño revisado y aprobado
+
+ARCHIVOS A CREAR:
+- 00-Contexto/06-ArquitecturaBackendAPI.md (NUEVO) ⏳ PENDIENTE
+- 00-Contexto/07-ContratoAPI-Honorarios.md (NUEVO) ⏳ PENDIENTE
+
+ESTIMACIÓN: 2-3 horas
+RESPONSABLE: Arquitecto de Software / Tech Lead
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #002 - DESARROLLO: CAPA DE SERVICIO FRONTEND
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Crear la capa de abstracción en el frontend que maneje todas las comunicaciones
+con la API de backend. Este será el ÚNICO punto de cambio al migrar al backend
+real en el futuro.
+
+SUBTAREAS:
+
+[T002.1] Crear archivo de servicio
+  - Crear src/services/honorariosService.js
+  - Configuración de URL base con variables de entorno
+  - Exportar funciones públicas del servicio
+
+[T002.2] Implementar función: calcularHonorarios()
+  - Recibe datos completos del wizard
+  - Realiza POST a /api/honorarios/calcular
+  - Maneja respuesta y errores
+  - Retorna datos en formato esperado por componentes
+
+[T002.3] Implementar funciones futuras (stubs)
+  - guardarCalculo() - para persistencia futura
+  - obtenerHistoricoCalculos() - para consultas futuras
+  - obtenerCalculoPorId() - para recuperar cálculo existente
+  - Actualmente retornan mensajes de "pendiente backend"
+
+[T002.4] Manejo de errores y loading states
+  - Captura de errores de red
+  - Timeout handling
+  - Mensajes de error user-friendly
+  - Estados de carga (loading)
+
+[T002.5] Configuración de variables de entorno
+  - Crear .env.local con VITE_API_URL
+  - Crear .env.example como template
+  - Documentar variables necesarias
+  - Configuración para diferentes ambientes (dev/qa/prod)
+
+CRITERIOS DE ACEPTACIÓN:
+✓ Servicio encapsula toda comunicación con API
+✓ Manejo robusto de errores
+✓ Variables de entorno configuradas
+✓ Código documentado con JSDoc
+✓ Funciones futuras preparadas (stubs)
+
+ARCHIVOS A CREAR/MODIFICAR:
+- src/services/honorariosService.js (NUEVO) ⏳
+- .env.local (NUEVO) ⏳
+- .env.example (NUEVO) ⏳
+- .gitignore (VERIFICAR que .env.local esté ignorado) ⏳
+
+DEPENDENCIAS:
+- Requiere: Ticket #001 completado
+
+ESTIMACIÓN: 3-4 horas
+RESPONSABLE: Frontend Developer
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #003 - DESARROLLO: API SERVERLESS - ENDPOINT DE CÁLCULO
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Implementar la función serverless en Vercel que ejecutará el cálculo de 
+honorarios en el servidor, ocultando la lógica del cliente.
+
+SUBTAREAS:
+
+[T003.1] Crear estructura de carpeta /api
+  - Crear directorio /api en raíz de Frontend
+  - Crear subdirectorio /api/honorarios
+  - Configurar exports apropiados
+
+[T003.2] Implementar función: calcular.js
+  - Handler principal para POST requests
+  - Importar lógica de cálculo existente
+  - Validación de datos de entrada
+  - Procesamiento de cálculo
+  - Formateo de respuesta según contrato
+
+[T003.3] Mover archivos de cálculo a ubicación segura
+  - Mover o copiar honorariosBasico.js fuera de /src
+  - Mover o copiar tablasCoeficientes.js fuera de /src
+  - Asegurar que solo sean accesibles desde servidor
+  - Actualizar imports en función serverless
+
+[T003.4] Implementar validaciones server-side
+  - Validar estructura del request
+  - Validar tipos de datos
+  - Validar rangos de valores
+  - Retornar errores 400 para datos inválidos
+
+[T003.5] Implementar response estándar
+  - Estructura consistente con contrato API
+  - Incluir metadata útil (rango, valorK, etc.)
+  - Generar calculoId temporal (mock)
+  - Timestamp de cálculo
+  - Versionado de response
+
+[T003.6] Configurar CORS y headers
+  - Headers de CORS apropiados
+  - Content-Type correcto
+  - Headers de seguridad
+  - Cache headers si aplica
+
+[T003.7] Manejo de errores server-side
+  - Try-catch global
+  - Logging de errores
+  - Mensajes de error user-friendly
+  - Diferentes mensajes para dev/prod
+
+CRITERIOS DE ACEPTACIÓN:
+✓ Endpoint /api/honorarios/calcular responde correctamente
+✓ Lógica de cálculo funciona igual que en frontend
+✓ Validaciones server-side funcionan
+✓ Manejo de errores robusto
+✓ CORS configurado correctamente
+✓ Código de cálculo NO es visible en browser
+
+ARCHIVOS A CREAR:
+- api/honorarios/calcular.js (NUEVO) ⏳
+- api/utils/calculos/honorariosBasico.js (MOVER) ⏳
+- api/utils/calculos/tablasCoeficientes.js (MOVER) ⏳
+
+DEPENDENCIAS:
+- Requiere: Ticket #001 completado
+
+ESTIMACIÓN: 4-5 horas
+RESPONSABLE: Backend Developer / Fullstack Developer
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #004 - DESARROLLO: INTEGRACIÓN FRONTEND CON API
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Modificar los componentes del frontend que actualmente realizan cálculos locales
+para que utilicen la nueva API serverless a través del servicio creado.
+
+SUBTAREAS:
+
+[T004.1] Identificar componentes que usan cálculo
+  - Buscar imports de honorariosBasico.js
+  - Buscar imports de tablasCoeficientes.js
+  - Listar todos los componentes afectados
+  - Priorizar componentes críticos
+
+[T004.2] Actualizar RevisionBasico.jsx
+  - Eliminar import directo de honorariosBasico
+  - Importar honorariosService
+  - Convertir cálculo a llamada async
+  - Agregar estados de loading
+  - Manejar errores de API
+  - Mantener UI/UX actual
+
+[T004.3] Actualizar ProcesoCalculoPage.jsx
+  - Revisar si usa cálculos directos
+  - Actualizar a usar servicio si aplica
+  - Agregar indicadores de loading
+  - Manejar errores
+
+[T004.4] Actualizar otros componentes afectados
+  - Buscar cualquier otro uso de cálculo directo
+  - Actualizar según sea necesario
+  - Mantener consistencia en manejo de errores
+
+[T004.5] Agregar indicadores visuales
+  - Spinner/Loading durante cálculo
+  - Mensajes de error user-friendly
+  - Feedback visual apropiado
+  - Estados de carga consistentes
+
+[T004.6] Eliminar o comentar código obsoleto
+  - Eliminar imports no utilizados
+  - Comentar código de cálculo local (mantener como referencia)
+  - Limpiar código muerto
+  - Mantener archivos originales en carpeta de backup
+
+CRITERIOS DE ACEPTACIÓN:
+✓ Todos los componentes usan honorariosService
+✓ No hay imports directos de lógica de cálculo
+✓ Loading states funcionan correctamente
+✓ Manejo de errores consistente
+✓ UX no cambia desde perspectiva del usuario
+✓ Código limpio y bien documentado
+
+ARCHIVOS A MODIFICAR:
+- src/components/wizard/steps/RevisionBasico.jsx ⏳
+- src/pages/ProcesoCalculoPage.jsx ⏳
+- (Otros componentes según análisis) ⏳
+
+ARCHIVOS A ELIMINAR/MOVER:
+- src/utils/calculos/honorariosBasico.js (COMENTAR/MOVER) ⏳
+- src/utils/calculos/tablasCoeficientes.js (COMENTAR/MOVER) ⏳
+
+DEPENDENCIAS:
+- Requiere: Ticket #002 completado
+- Requiere: Ticket #003 completado
+
+ESTIMACIÓN: 3-4 horas
+RESPONSABLE: Frontend Developer
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #005 - PRUEBAS UNITARIAS Y DE INTEGRACIÓN
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Realizar pruebas exhaustivas del nuevo flujo con API para garantizar que:
+1. La funcionalidad sigue siendo idéntica para el usuario
+2. Los cálculos son correctos
+3. El manejo de errores funciona apropiadamente
+4. La lógica está efectivamente oculta
+
+SUBTAREAS:
+
+[T005.1] Pruebas de API Serverless
+  - Test: Request válido retorna cálculo correcto
+  - Test: Request inválido retorna error 400
+  - Test: Validaciones de datos funcionan
+  - Test: Response cumple contrato de API
+  - Test: Manejo de errores 500
+
+[T005.2] Pruebas de Servicio Frontend
+  - Test: calcularHonorarios() con datos válidos
+  - Test: Manejo de errores de red
+  - Test: Timeout handling
+  - Test: Parsing de response correcto
+
+[T005.3] Pruebas de Integración E2E
+  - Test: Flujo completo del wizard
+  - Test: Cálculo se ejecuta correctamente
+  - Test: Resultados mostrados en UI
+  - Test: Manejo de errores visible al usuario
+
+[T005.4] Pruebas de Equivalencia de Cálculos
+  - Comparar resultados: versión anterior vs. nueva
+  - Ejecutar 10+ casos de prueba diferentes
+  - Verificar que resultados sean idénticos
+  - Documentar cualquier diferencia
+
+[T005.5] Pruebas de Seguridad
+  - Verificar: Código de cálculo NO visible en DevTools
+  - Verificar: tablasCoeficientes.js NO descargable
+  - Verificar: honorariosBasico.js NO descargable
+  - Test: Intentar acceder a archivos directamente
+
+[T005.6] Pruebas de Performance
+  - Medir tiempo de respuesta de API
+  - Comparar con cálculo local anterior
+  - Verificar que delay sea aceptable (<2 segundos)
+  - Optimizar si es necesario
+
+[T005.7] Pruebas en diferentes navegadores
+  - Chrome (última versión)
+  - Firefox (última versión)
+  - Safari (si aplica)
+  - Edge (última versión)
+  - Mobile (responsive)
+
+CRITERIOS DE ACEPTACIÓN:
+✓ Todas las pruebas pasan exitosamente
+✓ Resultados de cálculo son idénticos a versión anterior
+✓ Código de cálculo NO es visible en navegador
+✓ Performance es aceptable (< 2 seg)
+✓ Manejo de errores funciona correctamente
+✓ Funciona en todos los navegadores soportados
+
+HERRAMIENTAS:
+- DevTools de Chrome (verificar Sources)
+- Postman/Thunder Client (test de API)
+- Console logs para debugging
+- Network tab para verificar requests
+
+CASOS DE PRUEBA MÍNIMOS:
+1. Proyecto de Obra + Dirección (Rango A)
+2. Proyecto de Obra + Dirección (Rango B)
+3. Proyecto de Obra + Dirección (Rango C)
+4. Proyecto de Obra + Dirección (Rango D)
+5. Solo Instalaciones (varios rangos)
+6. Solo Estructuras (varios rangos)
+7. Combinación completa de todas las tareas
+8. Valores extremos (muy bajo, muy alto)
+9. Request inválido (datos faltantes)
+10. Request malformado (tipos incorrectos)
+
+ESTIMACIÓN: 4-5 horas
+RESPONSABLE: QA / Developer
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #006 - CONFIGURACIÓN Y DESPLIEGUE EN VERCEL QA
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Configurar el proyecto para despliegue en Vercel y realizar deployment en
+rama QA para pruebas en ambiente real.
+
+SUBTAREAS:
+
+[T006.1] Verificar configuración de vercel.json
+  - Asegurar que rewrites funcionen con /api
+  - Configurar headers si es necesario
+  - Configurar environment variables
+  - Verificar configuración de git branches
+
+[T006.2] Configurar variables de entorno en Vercel
+  - Acceder a Vercel Dashboard
+  - Configurar VITE_API_URL para QA
+  - Configurar otras variables necesarias
+  - Configurar para diferentes ambientes
+
+[T006.3] Verificar .gitignore
+  - Asegurar que .env.local está ignorado
+  - Verificar que node_modules está ignorado
+  - Verificar que archivos sensibles están ignorados
+  - Limpiar repo si es necesario
+
+[T006.4] Commit y push a rama dev
+  - Crear commit con mensaje descriptivo
+  - Push a rama dev
+  - Verificar que no hay archivos sensibles
+
+[T006.5] Merge a rama QA
+  - Revisar cambios
+  - Merge dev → qa
+  - Push a rama qa
+  - Trigger automático de deploy en Vercel
+
+[T006.6] Verificar deployment exitoso
+  - Revisar logs de Vercel
+  - Verificar que build fue exitoso
+  - Verificar que serverless functions están desplegadas
+  - Acceder a URL de QA
+
+[T006.7] Smoke testing en QA
+  - Verificar que aplicación carga
+  - Probar flujo completo de wizard
+  - Verificar que API responde
+  - Verificar que cálculo funciona
+  - Verificar que código NO es visible
+
+CRITERIOS DE ACEPTACIÓN:
+✓ Deployment exitoso en Vercel
+✓ Aplicación funciona en QA
+✓ API serverless responde correctamente
+✓ Variables de entorno configuradas
+✓ No hay archivos sensibles en repo
+✓ Logs de Vercel sin errores críticos
+
+ARCHIVOS A MODIFICAR:
+- vercel.json (VERIFICAR/MODIFICAR) ⏳
+- .gitignore (VERIFICAR) ⏳
+- .env.example (CREAR) ⏳
+
+COMANDOS A EJECUTAR:
+```bash
+# Verificar estado
+git status
+
+# Commit cambios
+git add .
+git commit -m "feat: implementar backend API serverless para cálculo de honorarios"
+
+# Push a dev
+git push origin dev
+
+# Checkout a QA y merge
+git checkout qa
+git merge dev
+git push origin qa
+
+# Vercel desplegará automáticamente
+```
+
+DEPENDENCIAS:
+- Requiere: Ticket #005 completado (pruebas pasadas)
+- Requiere: Acceso a Vercel Dashboard
+
+ESTIMACIÓN: 1-2 horas
+RESPONSABLE: DevOps / Tech Lead
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #007 - DOCUMENTACIÓN Y TRANSFERENCIA DE CONOCIMIENTO
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Documentar la implementación realizada para:
+1. Facilitar mantenimiento futuro
+2. Preparar migración a backend completo
+3. Transferir conocimiento al equipo
+
+SUBTAREAS:
+
+[T007.1] Documentar arquitectura implementada
+  - Diagrama de arquitectura actual
+  - Flujo de datos request/response
+  - Decisiones técnicas tomadas
+  - Trade-offs considerados
+
+[T007.2] Documentar contrato de API
+  - Endpoints disponibles
+  - Estructura de requests
+  - Estructura de responses
+  - Códigos de error
+  - Ejemplos de uso
+
+[T007.3] Crear guía de migración a backend real
+  - Pasos para crear backend definitivo
+  - Checklist de tareas
+  - Consideraciones de base de datos
+  - Diseño de stored procedures sugerido
+  - Estrategia de migración sin downtime
+
+[T007.4] Documentar código
+  - JSDoc en honorariosService.js
+  - Comentarios en función serverless
+  - README actualizado
+  - Documentación inline donde sea necesario
+
+[T007.5] Crear runbook operativo
+  - Cómo verificar que API funciona
+  - Cómo revisar logs en Vercel
+  - Troubleshooting común
+  - Contactos y responsables
+
+[T007.6] Actualizar archivo de contexto del proyecto
+  - Agregar esta implementación al contexto
+  - Actualizar estado del proyecto
+  - Documentar próximos pasos
+
+CRITERIOS DE ACEPTACIÓN:
+✓ Documentación clara y completa
+✓ Diagramas actualizados
+✓ Guía de migración detallada
+✓ Código bien documentado
+✓ Runbook listo para operaciones
+
+ARCHIVOS A CREAR:
+- 00-Contexto/06-ArquitecturaBackendAPI.md ⏳
+- 00-Contexto/07-ContratoAPI-Honorarios.md ⏳
+- 00-Contexto/08-GuiaMigracionBackendReal.md ⏳
+- README-API.md en carpeta /api ⏳
+
+ESTIMACIÓN: 3-4 horas
+RESPONSABLE: Tech Lead / Arquitecto
+
+================================================================================
+RESUMEN DE ESTIMACIONES
+================================================================================
+
+Ticket #001 - Análisis y Diseño          : ✅ 2-3 horas   (COMPLETADO)
+Ticket #002 - Capa de Servicio Frontend  : ⏳ 3-4 horas   (PENDIENTE)
+Ticket #003 - API Serverless             : ⏳ 4-5 horas   (PENDIENTE)
+Ticket #004 - Integración Frontend       : ⏳ 3-4 horas   (PENDIENTE)
+Ticket #005 - Pruebas                    : ⏳ 4-5 horas   (PENDIENTE)
+Ticket #006 - Despliegue QA              : ⏳ 1-2 horas   (PENDIENTE)
+Ticket #007 - Documentación              : ⏳ 3-4 horas   (PENDIENTE)
+
+TOTAL ESTIMADO: 20-27 horas (2.5 - 3.5 días laborables)
+
+================================================================================
+ORDEN DE EJECUCIÓN RECOMENDADO
+================================================================================
+
+SPRINT 1 - Día 1:
+  1. Ticket #001 ✅ (Completado)
+  2. Ticket #002 (Servicio Frontend)
+  3. Ticket #003 (API Serverless)
+
+SPRINT 2 - Día 2:
+  4. Ticket #004 (Integración)
+  5. Ticket #005 (Pruebas)
+
+SPRINT 3 - Día 3:
+  6. Ticket #006 (Despliegue QA)
+  7. Ticket #007 (Documentación)
+
+================================================================================
+RIESGOS Y MITIGACIONES
+================================================================================
+
+RIESGO 1: Vercel serverless functions no soportan sintaxis usada
+IMPACTO: Alto
+PROBABILIDAD: Baja
+MITIGACIÓN: Verificar compatibilidad de sintaxis early, usar CommonJS si necesario
+
+RIESGO 2: Performance de API serverless no aceptable
+IMPACTO: Medio
+PROBABILIDAD: Baja
+MITIGACIÓN: Cold start de Vercel es ~100ms, tiempo total esperado <1s
+
+RIESGO 3: Límites del plan Free de Vercel
+IMPACTO: Bajo (para maqueta)
+PROBABILIDAD: Muy baja
+MITIGACIÓN: Monitorear uso, plan Free tiene 100 GB-Hrs suficiente para demo
+
+RIESGO 4: Problemas de CORS en producción
+IMPACTO: Medio
+PROBABILIDAD: Baja
+MITIGACIÓN: Configurar CORS correctamente desde inicio, probar en QA
+
+RIESGO 5: Breaking changes en componentes existentes
+IMPACTO: Medio
+PROBABILIDAD: Media
+MITIGACIÓN: Testing exhaustivo pre-deployment, mantener backup de código
+
+================================================================================
+CRITERIOS DE ÉXITO DEL PROYECTO
+================================================================================
+
+✓ Código de cálculo NO visible en navegador del cliente
+✓ Funcionalidad idéntica desde perspectiva del usuario
+✓ Performance aceptable (tiempo de respuesta < 2 segundos)
+✓ Código bien estructurado y documentado
+✓ Fácil migración futura a backend completo
+✓ Deployment exitoso en QA
+✓ Todas las pruebas pasan
+✓ Documentación completa para equipo backend
+
+================================================================================
+NOTAS ADICIONALES
+================================================================================
+
+- Este es un paso intermedio hacia backend completo
+- El diseño prioriza facilidad de migración futura
+- Mantener contrato de API estable es crítico
+- Código de cálculo actual se reutiliza en serverless
+- Variables de entorno permiten cambiar endpoint fácilmente
+- Plan Free de Vercel es suficiente para esta maqueta
+
+================================================================================
+FIN DEL DOCUMENTO
+================================================================================

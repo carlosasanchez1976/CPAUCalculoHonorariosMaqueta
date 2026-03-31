@@ -57,16 +57,16 @@
 }
 
 .nextButton {
-  background: linear-gradient(135deg, var(--color-primary) 0%, #3d6b1e 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #3d1f70 100%);
   color: var(--color-white);
   border: none;
-  box-shadow: 0 2px 8px rgba(45, 80, 22, 0.3);
+  box-shadow: 0 2px 8px rgba(91, 47, 230, 0.3);
 }
 
 .nextButton:hover {
-  background: linear-gradient(135deg, #3d6b1e 0%, var(--color-primary) 100%);
+  background: linear-gradient(135deg, #3d1f70 0%, var(--color-primary) 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(45, 80, 22, 0.4);
+  box-shadow: 0 4px 12px rgba(91, 47, 230, 0.4);
 }
 
 .nextButton:active {
@@ -102,7 +102,7 @@
   background: var(--color-primary);
   color: var(--color-white);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(45, 80, 22, 0.3);
+  box-shadow: 0 4px 12px rgba(91, 47, 230, 0.3);
 }
 
 .backButton {

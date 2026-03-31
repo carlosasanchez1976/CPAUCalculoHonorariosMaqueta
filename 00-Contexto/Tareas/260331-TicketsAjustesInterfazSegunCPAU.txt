@@ -1,0 +1,1625 @@
+================================================================================
+ACTUALIZACIÓN DE PALETA DE COLORES SEGÚN PROPUESTA CLIENTE CPAU
+Fecha: 31/03/2026
+Proyecto: CH2026 - Gestión de Cálculo de Honorarios CPAU
+ESTADO: 📋 PENDIENTE
+================================================================================
+
+RESUMEN EJECUTIVO
+-----------------
+Se requiere actualizar la paleta de colores de toda la aplicación para alinearla
+con la propuesta de diseño oficial del cliente CPAU.
+
+PROBLEMA:
+La aplicación actual utiliza una paleta de colores verde/marrón/celeste que no
+coincide con la identidad visual institucional del CPAU. El cliente proporcionó
+una propuesta de diseño definitiva con la paleta oficial: morado institucional,
+turquesa y azul oscuro.
+
+SOLUCIÓN:
+Actualizar ÚNICAMENTE los valores de color en las variables CSS y archivos de
+estilos existentes. NO se agregan ni modifican componentes, estructura HTML
+ni funcionalidad. Es un cambio puramente visual.
+
+ALCANCE:
+✅ Modificar variables CSS globales
+✅ Actualizar colores en todos los archivos .module.css
+✅ Ajustar gradientes y efectos visuales
+✅ Mantener estructura, componentes y lógica existente
+❌ NO agregar nuevos elementos HTML/JSX
+❌ NO modificar funcionalidad o comportamiento
+
+
+================================================================================
+ANÁLISIS DE PALETA DE COLORES
+================================================================================
+
+COLORES ACTUALES (A REEMPLAZAR):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Variable CSS              | Color Actual  | Uso Actual
+─────────────────────────────────────────────────────────────────────────────
+--color-primary           | #2D5016       | Botones, links, acentos principales
+--color-secondary         | #D4A574       | Botones secundarios, highlights
+--color-accent            | #A8DADC       | Fondos, headers, acentos
+--color-gray-700          | #495057       | Texto principal
+--color-gray-200          | #DEE2E6       | Bordes, divisores
+--color-gray-100          | #E9ECEF       | Fondos claros
+--color-gray-50           | #F8F9FA       | Background página
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+NUEVOS COLORES CPAU (PROPUESTA CLIENTE):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Variable CSS              | Nuevo Color   | Uso Propuesto
+─────────────────────────────────────────────────────────────────────────────
+--color-primary           | #5B2FE6       | Morado CPAU institucional
+--color-secondary         | #8DD5D9       | Turquesa claro (acentos)
+--color-accent            | #8DD5D9       | Turquesa claro (headers)
+--color-text-primary      | #1E1E6B       | Títulos y texto principal (NUEVA)
+--color-text-body         | #333333       | Texto de cuerpo (NUEVA)
+--color-gray-700          | #1E1E6B       | Texto oscuro
+--color-gray-200          | #B0B0B0       | Bordes y badges
+--color-gray-100          | #F5F5F5       | Fondos claros
+--color-gray-50           | #F5F5F5       | Background página
+--color-purple-dark       | #4A25B8       | Hover morado (NUEVA)
+--color-turquoise-light   | #B8E8EA       | Turquesa claro hover (NUEVA)
+--color-badge-gray        | #B0B0B0       | Badges NO/deshabilitado (NUEVA)
+--color-badge-disabled    | #E0E0E0       | Fondo cards deshabilitadas (NUEVA)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MAPEO DE COLORES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Buscar                    | Reemplazar por
+─────────────────────────────────────────────────────────────────────────────
+#2D5016 (Verde)           | #5B2FE6 (Morado CPAU)
+#234011 (Verde oscuro)    | #4A25B8 (Morado oscuro)
+#D4A574 (Marrón)          | #8DD5D9 (Turquesa)
+#c29664 (Marrón oscuro)   | #7CC5C9 (Turquesa oscuro)
+#A8DADC (Celeste)         | #8DD5D9 (Turquesa)
+#495057 (Gris texto)      | #1E1E6B (Azul oscuro)
+#E9ECEF (Gris claro)      | #F5F5F5 (Gris claro)
+rgba(45, 80, 22, *)       | rgba(91, 47, 230, *) (Sombras morado)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+================================================================================
+TICKETS DE IMPLEMENTACIÓN
+================================================================================
+
+--------------------------------------------------------------------------------
+TICKET #1: Actualizar variables CSS globales
+ESTADO: ☐ PENDIENTE
+PRIORIDAD: 🔴 CRÍTICA (debe completarse primero)
+--------------------------------------------------------------------------------
+ARCHIVO: App/Frontend/src/styles/variables.css
+LÍNEAS: 3-11 (variables de colores)
+
+DESCRIPCIÓN:
+Actualizar la paleta de colores principal en las variables CSS globales. Este
+es el primer ticket que debe completarse ya que afecta a toda la aplicación.
+
+CAMBIOS ESPECÍFICOS:
+
+1. LÍNEA 4 - Color Primario:
+   ANTES: --color-primary: #2D5016;        /* Verde */
+   DESPUÉS: --color-primary: #5B2FE6;      /* Morado CPAU */
+
+2. LÍNEA 5 - Color Secundario:
+   ANTES: --color-secondary: #D4A574;      /* Marrón claro */
+   DESPUÉS: --color-secondary: #8DD5D9;    /* Turquesa */
+
+3. LÍNEA 6 - Color Accent:
+   ANTES: --color-accent: #A8DADC;         /* Celeste claro */
+   DESPUÉS: --color-accent: #8DD5D9;       /* Turquesa */
+
+4. LÍNEA 8 - Gris 50:
+   ANTES: --color-gray-50: #F8F9FA;
+   DESPUÉS: --color-gray-50: #F5F5F5;
+
+5. LÍNEA 9 - Gris 100:
+   ANTES: --color-gray-100: #E9ECEF;
+   DESPUÉS: --color-gray-100: #F5F5F5;
+
+6. LÍNEA 10 - Gris 200:
+   ANTES: --color-gray-200: #DEE2E6;
+   DESPUÉS: --color-gray-200: #B0B0B0;
+
+7. LÍNEA 11 - Gris 700 (texto):
+   ANTES: --color-gray-700: #495057;
+   DESPUÉS: --color-gray-700: #1E1E6B;      /* Azul oscuro */
+
+NUEVAS VARIABLES A AGREGAR (después de --color-success, línea ~12):
+
+```css
+  /* Variantes de colores primarios */
+  --color-purple-dark: #4A25B8;      /* Hover/Active del morado */
+  --color-turquoise-light: #B8E8EA;  /* Turquesa claro hover */
+  
+  /* Colores de texto específicos */
+  --color-text-primary: #1E1E6B;     /* Títulos principales */
+  --color-text-body: #333333;        /* Texto de cuerpo */
+  --color-text-secondary: #666666;   /* Texto secundario */
+  --color-text-muted: #B0B0B0;       /* Texto deshabilitado */
+  
+  /* Badges y estados */
+  --color-badge-gray: #B0B0B0;       /* Badges NO/EN CONSTRUCCIÓN */
+  --color-badge-disabled: #E0E0E0;   /* Fondo cards deshabilitadas */
+```
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Todas las variables de color están actualizadas
+☐ Las 8 nuevas variables están agregadas en la posición correcta
+☐ Los comentarios descriptivos están actualizados
+☐ No hay errores de sintaxis CSS
+☐ El archivo se guarda correctamente
+
+IMPACTO:
+🔴 ALTO - Afecta toda la aplicación de manera inmediata
+⏱️ Tiempo estimado: 5 minutos
+
+
+--------------------------------------------------------------------------------
+TICKET #2: Actualizar estilos de botones primarios y secundarios
+ESTADO: ☐ PENDIENTE
+PRIORIDAD: 🔴 ALTA
+--------------------------------------------------------------------------------
+ARCHIVO: App/Frontend/src/components/common/Button.module.css
+LÍNEAS: 18-42 (variantes primary y secondary)
+
+DESCRIPCIÓN:
+Cambiar los colores de los botones primary (morado) y secondary (turquesa)
+incluyendo sus estados hover y active.
+
+CAMBIOS ESPECÍFICOS:
+
+1. LÍNEA 22 - Botón Primary Background:
+   ANTES: background-color: var(--color-primary);
+   DESPUÉS: (mantener - ya heredará el nuevo valor de variable)
+
+2. LÍNEA 27 - Botón Primary Hover:
+   ANTES: background-color: #234011;
+   DESPUÉS: background-color: #4A25B8;  /* Morado oscuro */
+
+3. LÍNEA 36 - Botón Secondary Background:
+   ANTES: background-color: var(--color-secondary);
+   DESPUÉS: (mantener - ya heredará el nuevo valor de variable)
+
+4. LÍNEA 41 - Botón Secondary Hover:
+   ANTES: background-color: #c29664;
+   DESPUÉS: background-color: #7CC5C9;  /* Turquesa oscuro */
+
+NOTA IMPORTANTE:
+Los valores de las líneas 22 y 36 ya usan variables CSS, por lo que heredarán
+automáticamente los nuevos colores del Ticket #1. Solo necesitas cambiar los
+valores hardcodeados de los estados hover (líneas 27 y 41).
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Botones primary tienen fondo morado #5B2FE6
+☐ Hover botones primary es morado oscuro #4A25B8
+☐ Botones secondary tienen fondo turquesa #8DD5D9
+☐ Hover botones secondary es turquesa oscuro #7CC5C9
+☐ Botones disabled mantienen opacity 0.6
+☐ Transiciones y efectos se mantienen suaves
+☐ Verificación visual en dashboard y formularios
+
+IMPACTO:
+🟡 MEDIO - Afecta todos los botones de la aplicación
+⏱️ Tiempo estimado: 3 minutos
+
+
+--------------------------------------------------------------------------------
+TICKET #3: Rediseñar CalculationTypeCard según propuesta cliente
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🔴 CRÍTICA (cambio de diseño completo solicitado por cliente)
+--------------------------------------------------------------------------------
+ARCHIVOS:
+- App/Frontend/src/components/common/CalculationTypeCard.module.css
+- App/Frontend/src/components/common/CalculationTypeCard.jsx
+- App/Frontend/src/pages/NuevoCalculoPage.module.css (grid)
+
+DESCRIPCIÓN:
+Rediseño completo de las tarjetas de selección de tipo de cálculo según nueva
+propuesta visual del cliente CPAU. Incluye cambios de layout, colores, tamaños
+y grid responsive.
+
+⚠️ CAMBIOS IMPORTANTES DE DISEÑO DEL CLIENTE:
+1. Cards más grandes (320px altura vs 240px actual)
+2. Grid de 4 columnas en desktop (vs 5 actual)
+3. Background turquesa completo para cards habilitadas
+4. Background gris para cards deshabilitadas
+5. Badge morado "EN CONSTRUCCIÓN" en esquina superior derecha
+6. Descripción completa (fullDescription) visible en centro de card
+7. Título en caja blanca en parte inferior
+8. ELIMINAR tooltips hover completamente
+
+═══════════════════════════════════════════════════════════════════════════════
+A) CAMBIOS EN LAYOUT Y ESTRUCTURA JSX (CalculationTypeCard.jsx)
+═══════════════════════════════════════════════════════════════════════════════
+
+NUEVA ESTRUCTURA COMPLETA:
+```jsx
+<div className={styles.card} onClick={handleClick}>
+  {/* FILA SUPERIOR: Ícono + Badge */}
+  <div className={styles.headerRow}>
+    <div className={styles.iconWrapper}>
+      {icon}
+      {/* TOOLTIP ELIMINADO - no tooltip aquí */}
+    </div>
+    {!vigente && (
+      <span className={styles.badge}>EN CONSTRUCCIÓN</span>
+    )}
+  </div>
+
+  {/* CENTRO: Descripción completa visible */}
+  {fullDescription && (
+    <p className={styles.description}>{fullDescription}</p>
+  )}
+
+  {/* INFERIOR: Título en caja blanca */}
+  <div className={styles.titleBox}>
+    <h3 className={styles.title}>{title}</h3>
+  </div>
+</div>
+```
+
+EXPLICACIÓN DEL CAMBIO JSX:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Elemento              | Ubicación                  | Cambio vs Actual
+─────────────────────────────────────────────────────────────────────────────
+Badge                 | Superior derecha           | Mover fuera de overlap
+Ícono                 | Superior izquierda         | MANTENER posición
+Descripción           | Centro (2-3 líneas)        | NUEVA - fullDescription visible
+Título                | Inferior en caja blanca    | Mover abajo + agregar caja
+Tooltip               | ELIMINAR                   | Remover completamente
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CAMBIOS JSX ESPECÍFICOS:
+1. ELIMINAR: Todo el código del div .tooltip dentro de iconWrapper
+2. ELIMINAR: Lógica de estado isExpanded y botones "Ver más" (móvil)
+3. AGREGAR: Div .headerRow para contener ícono + badge horizontalmente
+4. MOVER: Badge dentro de .headerRow (no como overlay absolute)
+5. AGREGAR: Div .titleBox para la caja blanca del título
+6. CAMBIAR: Mostrar fullDescription en vez de shortDescription
+7. MANTENER: Click handler en card para navegación
+
+═══════════════════════════════════════════════════════════════════════════════
+B) CAMBIOS CSS (CalculationTypeCard.module.css)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. CARD - Backgrounds y tamaño:
+   
+   LÍNEA ~1-15 (.card):
+   ANTES: 
+   - background: var(--color-white);
+   - min-height: 240px;
+   - border-top: 4px solid var(--accent-color);
+   
+   DESPUÉS:
+   - background: DINÁMICO
+     • Card vigente: #8DD5D9 (turquesa completo)
+     • Card !vigente: #E0E0E0 (gris claro)
+   - min-height: 320px; (incrementado de 240px)
+   - border-top: ELIMINAR (ya no se usa borde superior)
+   - padding: ajustar para acomodar nuevo layout
+
+2. HEADER ROW - Nueva sección:
+   
+   AGREGAR clase .headerRow:
+   ```css
+   .headerRow {
+     display: flex;
+     justify-content: space-between;
+     align-items: flex-start;
+     width: 100%;
+     margin-bottom: 16px;
+   }
+   ```
+
+3. ICON WRAPPER - Mantener con ajustes menores:
+   
+   LÍNEA ~26-40 (.iconWrapper):
+   - Mantener width: 70px, height: 70px
+   - Mantener gradiente con var(--accent-color)
+   - ELIMINAR cursor: help (ya no hay tooltip)
+
+4. BADGE - Reposicionar y cambiar color:
+   
+   LÍNEA ~110+ (.badge):
+   ANTES:
+   - position: absolute; top: 12px; right: 12px;
+   - background: rgba(108, 117, 125, 0.9);
+   
+   DESPUÉS:
+   - position: static; (flujo normal dentro de .headerRow)
+   - background: #5B2FE6; (morado CPAU)
+   - color: white;
+   - padding: 4px 12px;
+   - border-radius: 4px;
+   - font-size: 0.7rem;
+   - font-weight: 600;
+   - text-transform: uppercase;
+   - white-space: nowrap;
+
+5. DESCRIPTION - Nueva clase para texto visible:
+   
+   AGREGAR clase .description:
+   ```css
+   .description {
+     font-size: 0.875rem;
+     line-height: 1.5;
+     color: var(--color-text-body);
+     text-align: center;
+     margin: 0 0 16px 0;
+     flex: 1;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+   }
+   ```
+
+6. TITLE BOX - Nueva caja blanca para el título:
+   
+   AGREGAR clase .titleBox:
+   ```css
+   .titleBox {
+     background: white;
+     padding: 12px 16px;
+     border-radius: 8px;
+     width: 100%;
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   }
+   ```
+
+7. TITLE - Ajustar estilos dentro de titleBox:
+   
+   LÍNEA ~85-95 (.title):
+   DESPUÉS:
+   - font-size: 1.1rem; (ajustar si es necesario)
+   - color: var(--color-text-primary); (azul oscuro #1E1E6B)
+   - margin: 0;
+   - text-align: center;
+
+8. TOOLTIP - ELIMINAR COMPLETAMENTE:
+   
+   LÍNEAS ~48-70 (.tooltip, .tooltip::after):
+   ELIMINAR todas las reglas CSS relacionadas con tooltip
+
+9. EXPAND BUTTON (móvil) - ELIMINAR:
+   
+   ELIMINAR clase .expandButton y .fullDescription (ya no se necesita)
+
+10. NO VIGENTE (.noVigente) - Actualizar background:
+    
+    LÍNEA ~120+ (.noVigente):
+    ANTES: opacity: 0.7;
+    DESPUÉS:
+    - background: #E0E0E0; (gris claro)
+    - opacity: 1; (sin transparencia)
+    - cursor: not-allowed;
+
+═══════════════════════════════════════════════════════════════════════════════
+C) CAMBIOS EN GRID (NuevoCalculoPage.module.css)
+═══════════════════════════════════════════════════════════════════════════════
+
+ARCHIVO: App/Frontend/src/pages/NuevoCalculoPage.module.css
+
+LÍNEA ~12-35 (.cardsGrid y media queries):
+
+CAMBIO DE GRID:
+ANTES: 5 columnas desktop → 4 → 3 → 2 → 1
+DESPUÉS: 4 columnas desktop → 3 tablet → 2 móvil
+
+```css
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);  /* 4 columnas desktop */
+  gap: 24px;
+  margin-top: var(--spacing-3);
+  justify-content: center;
+}
+
+/* Tablet: 3 columnas */
+@media (max-width: 1024px) {
+  .cardsGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+/* Móvil: 2 columnas */
+@media (max-width: 768px) {
+  .cardsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+/* Móvil muy pequeño: 1 columna */
+@media (max-width: 480px) {
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+```
+
+NOTA: Mantener ancho actual de cards, NO hacerlas más anchas.
+
+═══════════════════════════════════════════════════════════════════════════════
+D) RESUMEN VISUAL DEL NUEVO DISEÑO
+═══════════════════════════════════════════════════════════════════════════════
+
+CARD HABILITADA (vigente: true):
+┌────────────────────────────────────┐
+│ 🏢                                 │ ← Ícono con gradiente morado
+│                                    │
+│ Cálculo de honorarios profesio-   │
+│ nales para tareas de proyecto y    │ ← fullDescription
+│ dirección de obra de baja, media-  │   (2-3 líneas, texto oscuro)
+│ na y alta complejidad...           │
+│                                    │
+│ ┌────────────────────────────────┐ │
+│ │ Proyecto y Dirección de Obras  │ │ ← title en caja blanca
+│ │ e Instalaciones                │ │
+│ └────────────────────────────────┘ │
+└────────────────────────────────────┘
+   ↑ Background: Turquesa #8DD5D9
+
+CARD DESHABILITADA (vigente: false):
+┌────────────────────────────────────┐
+│ 🔨    [EN CONSTRUCCIÓN] ← Morado   │ ← Fila superior
+│      badge derecha                 │
+│                                    │
+│ Cálculo de honorarios profesio-   │
+│ nales para tareas de proyecto y    │ ← fullDescription
+│ dirección de obras de demolición.  │   (texto oscuro)
+│                                    │
+│ ┌────────────────────────────────┐ │
+│ │      Demoliciones              │ │ ← title en caja blanca
+│ └────────────────────────────────┘ │
+└────────────────────────────────────┘
+   ↑ Background: Gris #E0E0E0
+
+DIMENSIONES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Elemento              | Valor
+─────────────────────────────────────────────────────────────────────────────
+Card min-height       | 320px (aumentado de 240px)
+Card width            | Mantener actual (no más ancho)
+Card padding          | 24px (ajustado para acomodar contenido)
+Ícono size            | 70px (mantener)
+Badge padding         | 4px 12px
+Badge font-size       | 0.7rem
+Description font-size | 0.875rem (14px)
+TitleBox padding      | 12px 16px
+TitleBox border-radius| 8px
+Gap grid desktop      | 24px
+Gap grid tablet       | 20px
+Gap grid móvil        | 16px
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COLORES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Elemento              | Vigente               | No Vigente
+─────────────────────────────────────────────────────────────────────────────
+Card background       | #8DD5D9 (turquesa)    | #E0E0E0 (gris)
+Ícono gradiente       | #5B2FE6 (morado)      | #5B2FE6 (morado)
+Badge background      | N/A                   | #5B2FE6 (morado)
+Badge text            | N/A                   | white
+Description text      | #333333 (oscuro)      | #333333 (oscuro)
+TitleBox background   | white                 | white
+Title text            | #1E1E6B (azul oscuro) | #1E1E6B (azul oscuro)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+GRID RESPONSIVE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Breakpoint            | Columnas | Gap
+─────────────────────────────────────────────────────────────────────────────
+Desktop (>1024px)     | 4        | 24px
+Tablet (768-1024px)   | 3        | 20px
+Móvil (480-768px)     | 2        | 16px
+Móvil pequeño (<480px)| 1        | 16px
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Card tiene altura mínima de 320px
+☐ Grid muestra 4 columnas en desktop (>1024px)
+☐ Grid muestra 3 columnas en tablet (768-1024px)
+☐ Grid muestra 2 columnas en móvil (480-768px)
+☐ Cards habilitadas tienen fondo turquesa #8DD5D9 completo
+☐ Cards deshabilitadas tienen fondo gris #E0E0E0 completo
+☐ Badge "EN CONSTRUCCIÓN" en esquina superior derecha (dentro de card)
+☐ Badge tiene fondo morado #5B2FE6 con texto blanco
+☐ fullDescription visible en centro de card (2-3 líneas)
+☐ Título dentro de caja blanca en parte inferior
+☐ Ícono mantiene gradiente morado (hereda de Ticket #9)
+☐ Tooltips ELIMINADOS completamente (CSS y JSX)
+☐ Botones "Ver más" móvil ELIMINADOS
+☐ Hover effect suave se mantiene (transform + shadow)
+☐ Cursor apropiado (pointer para vigente, not-allowed para !vigente)
+☐ No se superponen elementos (badge, descripción, título)
+☐ Verificación visual en todas las 17 tarjetas
+☐ Diseño 100% coherente con propuesta del cliente
+
+COORDINACIÓN CON TICKET #9:
+Este ticket se coordina con Ticket #9 donde se actualizan los colores del
+array calculationTypes (color: '#5B2FE6' para íconos).
+
+IMPACTO:
+🔴 MUY ALTO - Rediseño completo de componente visual crítico + grid layout
+⏱️ Tiempo estimado: 30 minutos (aumentado por rediseño completo)
+
+
+--------------------------------------------------------------------------------
+TICKET #4: Actualizar colores de LoginPage
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🔴 ALTA
+--------------------------------------------------------------------------------
+ARCHIVO: App/Frontend/src/pages/LoginPage.module.css
+LÍNEAS: 6, 31, 50
+
+DESCRIPCIÓN:
+Actualizar el gradiente de fondo del login, el color del título de la app
+y el accent-color del checkbox.
+
+CAMBIOS ESPECÍFICOS:
+
+1. LÍNEA 6 - Gradiente Background:
+   ANTES: background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%);
+   DESPUÉS: background: linear-gradient(135deg, #8DD5D9 0%, #5B2FE6 100%);
+   EXPLICACIÓN: Degradado de turquesa a morado (como header propuesta)
+
+2. LÍNEA 31 - Título App:
+   ANTES: color: var(--color-primary);
+   DESPUÉS: color: #5B2FE6;  /* Morado CPAU */
+
+3. LÍNEA 50 - Checkbox Accent:
+   ANTES: accent-color: var(--color-primary);
+   DESPUÉS: accent-color: #5B2FE6;  /* Morado CPAU */
+   NOTA: Puede usar variable ya que heredará de Ticket #1
+
+OPCIÓN SIMPLIFICADA (si Ticket #1 está completo):
+Las líneas 31 y 50 pueden mantener var(--color-primary) ya que heredarán
+automáticamente. Solo es obligatorio cambiar la línea 6 con valores explícitos
+para garantizar el gradiente exacto turquesa→morado.
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Fondo login tiene gradiente turquesa (#8DD5D9) a morado (#5B2FE6)
+☐ Título "Calculadora de Honorarios" es morado
+☐ Checkbox usa color morado en estado checked
+☐ Contraste de texto sobre card blanco es adecuado
+☐ Verificación visual en login page
+
+IMPACTO:
+🟢 BAJO - Solo afecta página de login
+⏱️ Tiempo estimado: 2 minutos
+
+
+--------------------------------------------------------------------------------
+TICKET #5: Actualizar colores del Header
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🟡 MEDIA
+--------------------------------------------------------------------------------
+ARCHIVO: App/Frontend/src/components/layout/Header.module.css
+LÍNEAS: 2-3, 32
+
+DESCRIPCIÓN:
+Actualizar el color de fondo del header y el color del título.
+
+CAMBIOS ESPECÍFICOS:
+
+1. LÍNEA 2 - Header Background:
+   ANTES: background-color: var(--color-accent);
+   DESPUÉS: (mantener - heredará turquesa de Ticket #1)
+
+2. LÍNEA 3 - Header Text Color:
+   ANTES: color: var(--color-gray-700);
+   DESPUÉS: (mantener - heredará azul oscuro de Ticket #1)
+
+3. LÍNEA 32 - Title Color:
+   ANTES: color: var(--color-gray-700);
+   DESPUÉS: (mantener - heredará azul oscuro de Ticket #1)
+
+NOTA:
+Este componente ya usa variables CSS correctamente, por lo que NO requiere
+cambios manuales. Heredará automáticamente los nuevos colores del Ticket #1.
+
+Este ticket es principalmente de VERIFICACIÓN VISUAL después de aplicar
+Ticket #1.
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Header tiene fondo turquesa #8DD5D9
+☐ Título del header es azul oscuro #1E1E6B
+☐ Contraste de texto es legible
+☐ Logo CPAU se ve claro sobre fondo turquesa
+☐ Verificación en todas las páginas
+
+IMPACTO:
+🟡 MEDIO - Visible en todas las páginas
+⏱️ Tiempo estimado: 1 minuto (solo verificación)
+
+
+--------------------------------------------------------------------------------
+TICKET #6: Actualizar colores de StepperProgress (Wizard)
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🔴 ALTA
+--------------------------------------------------------------------------------
+ARCHIVO: App/Frontend/src/components/wizard/StepperProgress.module.css
+LÍNEAS: 40-57 (estados del stepper)
+
+DESCRIPCIÓN:
+Actualizar los colores del stepper de progreso del wizard: pasos completados,
+paso actual y pasos pendientes.
+
+CAMBIOS ESPECÍFICOS:
+
+1. LÍNEA 41-43 - Paso Completado Background:
+   ANTES: background: var(--color-primary);
+   DESPUÉS: (mantener - heredará morado de Ticket #1)
+
+2. LÍNEA 44 - Sombra Paso Completado:
+   ANTES: box-shadow: 0 2px 8px rgba(45, 80, 22, 0.3);
+   DESPUÉS: box-shadow: 0 2px 8px rgba(91, 47, 230, 0.3);
+
+3. LÍNEA 48 - Paso Actual Background:
+   ANTES: background: var(--color-accent);
+   DESPUÉS: (mantener - heredará turquesa de Ticket #1)
+
+4. LÍNEA 49 - Paso Actual Text Color:
+   ANTES: color: var(--color-gray-900);
+   DESPUÉS: color: #1E1E6B;  /* Azul oscuro */
+
+5. LÍNEA 50 - Paso Actual Border:
+   ANTES: border: 3px solid var(--color-primary);
+   DESPUÉS: (mantener - heredará morado de Ticket #1)
+
+6. LÍNEA 51 - Paso Actual Box Shadow:
+   ANTES: box-shadow: 0 0 0 4px rgba(45, 80, 22, 0.1);
+   DESPUÉS: box-shadow: 0 0 0 4px rgba(91, 47, 230, 0.1);
+
+7. LÍNEA 55-57 - Paso Pendiente:
+   ANTES: background: var(--color-gray-100);
+           color: var(--color-gray-500);
+           border: 2px solid var(--color-gray-300);
+   DESPUÉS: (mantener - los grises ya se actualizarán o son apropiados)
+
+8. LÍNEA 60-64 - Animation Pulse:
+   ANTES: box-shadow: 0 0 0 4px rgba(45, 80, 22, 0.1);
+          box-shadow: 0 0 0 8px rgba(45, 80, 22, 0.05);
+   DESPUÉS: box-shadow: 0 0 0 4px rgba(91, 47, 230, 0.1);
+            box-shadow: 0 0 0 8px rgba(91, 47, 230, 0.05);
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Pasos completados tienen checkmark con fondo morado #5B2FE6
+☐ Paso actual tiene fondo turquesa #8DD5D9 con borde morado
+☐ Paso actual tiene texto azul oscuro #1E1E6B
+☐ Pasos pendientes tienen fondo y borde gris claro
+☐ Animación pulse usa color morado
+☐ Verificación visual en ProcesoCalculoPage
+
+IMPACTO:
+🔴 ALTO - Componente crítico del flujo de cálculo
+⏱️ Tiempo estimado: 5 minutos
+
+
+--------------------------------------------------------------------------------
+TICKET #7: Actualizar colores de Input y formularios
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🟡 MEDIA
+--------------------------------------------------------------------------------
+ARCHIVO: App/Frontend/src/components/common/Input.module.css
+LÍNEAS: 14-18, 38-40
+
+DESCRIPCIÓN:
+Actualizar colores de focus y labels de los campos de formulario.
+
+CAMBIOS ESPECÍFICOS:
+
+1. LÍNEA 16 - Input Focus Border:
+   ANTES: border-color: var(--color-primary);
+   DESPUÉS: (mantener - heredará morado de Ticket #1)
+
+2. LÍNEA 39 - Label Focus Color:
+   ANTES: color: var(--color-primary);
+   DESPUÉS: (mantener - heredará morado de Ticket #1)
+
+NOTA:
+Este componente ya usa variables CSS correctamente. Solo necesita VERIFICACIÓN
+VISUAL después de aplicar Ticket #1.
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Inputs focused tienen borde morado #5B2FE6
+☐ Labels focused tienen color morado #5B2FE6
+☐ Placeholder mantiene color gris apropiado
+☐ Error messages mantienen color rojo #DC3545
+☐ Verificación en todos los formularios de la app
+
+IMPACTO:
+🟡 MEDIO - Afecta todos los formularios
+⏱️ Tiempo estimado: 2 minutos (verificación)
+
+
+--------------------------------------------------------------------------------
+TICKET #8: Actualizar colores de ToggleSwitch
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🟡 MEDIA
+--------------------------------------------------------------------------------
+ARCHIVO: App/Frontend/src/components/common/ToggleSwitch.module.css
+LÍNEAS: 22-24, 58-61
+
+DESCRIPCIÓN:
+Actualizar el color del toggle switch en estado checked y su focus outline.
+
+CAMBIOS ESPECÍFICOS:
+
+1. LÍNEA 23 - Toggle Checked Background:
+   ANTES: background-color: #2D5016;
+   DESPUÉS: background-color: #5B2FE6;  /* Morado CPAU */
+
+2. LÍNEA 59 - Focus Outline:
+   ANTES: outline: 2px solid #2D5016;
+   DESPUÉS: outline: 2px solid #5B2FE6;  /* Morado CPAU */
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Toggle activado tiene fondo morado #5B2FE6
+☐ Toggle desactivado mantiene fondo gris #ccc
+☐ Focus outline es morado #5B2FE6
+☐ Animación de transición suave se mantiene
+☐ Verificación en página de tareas profesionales (SÍ/NO toggles)
+
+IMPACTO:
+🟢 BAJO - Solo afecta toggles en wizard
+⏱️ Tiempo estimado: 2 minutos
+
+
+--------------------------------------------------------------------------------
+TICKET #9: Actualizar colores del array calculationTypes y eliminar tooltips
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🟡 MEDIA
+--------------------------------------------------------------------------------
+ARCHIVO: App/Frontend/src/pages/NuevoCalculoPage.jsx
+LÍNEAS: ~15-87 (array calculationTypes, propiedad color de cada objeto)
+
+DESCRIPCIÓN:
+Actualizar el valor de la propiedad 'color' en cada objeto del array
+calculationTypes. Este color se usa para el gradiente del ícono de cada tarjeta.
+
+⚠️ IMPORTANTE - CAMBIO DE DISEÑO POR SOLICITUD DEL CLIENTE:
+Los tooltips que actualmente aparecen al hacer hover sobre el ícono deben
+ELIMINARSE. El cliente solicita que la descripción resumida aparezca DENTRO
+de cada tarjeta (botón) en el nuevo diseño, NO como tooltip.
+
+CAMBIOS ESPECÍFICOS:
+
+1. Cambiar TODOS los valores de la propiedad 'color' de:
+   ANTES: color: '#2D5016' (verde)
+   DESPUÉS: color: '#5B2FE6' (morado)
+
+2. ELIMINAR tooltips:
+   Los tooltips implementados en el Ticket #260312 (CalculationTypeCard) que
+   muestran fullDescription al hacer hover sobre el ícono deben ser REMOVIDOS.
+   La descripción ahora debe mostrarse directamente en la tarjeta.
+
+NOTA IMPORTANTE:
+- Hay 17 objetos en el array calculationTypes
+- TODOS deben tener color: '#5B2FE6'
+- Esto afecta el gradiente del ícono en cada tarjeta
+- Asegurar que se mantiene el formato string con comillas simples
+- Las propiedades shortDescription y fullDescription se mantienen en los datos
+  pero la forma de mostrarlas cambia (dentro de tarjeta, no tooltip)
+
+EJEMPLO DE CAMBIO:
+```javascript
+{
+  title: 'Proyecto y Dirección de Obra',
+  shortDescription: 'Proyecto y dirección de obra de baja, mediana y alta complejidad',
+  fullDescription: 'Cálculo de honorarios profesionales para tareas de proyecto y dirección de obra...',
+  icon: <FaBuilding />,
+  color: '#5B2FE6',  // <-- CAMBIAR DE #2D5016
+  path: '/proceso-calculo',
+  tipoId: 'Básico',
+  vigente: true
+}
+```
+
+COORDINACIÓN CON TICKET #3:
+Este ticket debe coordinarse con Ticket #3 (CalculationTypeCard.module.css)
+donde se debe eliminar el tooltip del ícono y agregar la descripción visible
+dentro de la tarjeta.
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Los 17 objetos tienen color: '#5B2FE6'
+☐ No hay errores de sintaxis JavaScript
+☐ Los íconos de las tarjetas muestran gradiente morado
+☐ Sombras de los íconos son moradas
+☐ Tooltips sobre íconos están ELIMINADOS
+☐ Descripción resumida visible dentro de cada tarjeta (según diseño cliente)
+☐ Verificación visual en NuevoCalculoPage con nuevo diseño
+
+IMPACTO:
+🔴 ALTO - Afecta visual y comportamiento de 17 tarjetas + cambio UX
+⏱️ Tiempo estimado: 10 minutos (aumentado por cambio de diseño)
+
+
+--------------------------------------------------------------------------------
+TICKET #10: Actualizar gradientes y backgrounds de páginas
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🟢 BAJA
+--------------------------------------------------------------------------------
+ARCHIVOS MÚLTIPLES:
+- App/Frontend/src/pages/ProcesoCalculoPage.module.css
+- App/Frontend/src/pages/NuevoCalculoPage.module.css
+- App/Frontend/src/pages/ParametrosPage.module.css
+
+DESCRIPCIÓN:
+Actualizar fondos y elementos visuales decorativos en las páginas principales
+que usen colores de la paleta antigua.
+
+CAMBIOS A BUSCAR Y REEMPLAZAR:
+- Buscar todos los usos de #2D5016, #234011 (verde) → reemplazar por #5B2FE6
+- Buscar todos los usos de #D4A574, #c29664 (marrón) → reemplazar por #8DD5D9
+- Buscar todos los rgba(45, 80, 22, *) → reemplazar por rgba(91, 47, 230, *)
+
+MÉTODO:
+1. Usar búsqueda global en proyecto (Ctrl+Shift+F)
+2. Buscar "#2D5016" en todos los archivos .module.css
+3. Reemplazar por "#5B2FE6" caso por caso
+4. Repetir para otros colores antiguos
+5. Verificar que no se rompan estilos
+
+CRITERIOS DE ACEPTACIÓN:
+☐ No quedan referencias a #2D5016 (verde) en archivos CSS
+☐ No quedan referencias a #D4A574 (marrón) en archivos CSS
+☐ Todos los rgba() usan los nuevos valores RGB
+☐ Búsqueda global confirma eliminación completa de colores antiguos
+☐ Verificación visual en todas las páginas
+
+IMPACTO:
+🟢 BAJO - Limpieza de colores residuales
+⏱️ Tiempo estimado: 10 minutos
+
+
+--------------------------------------------------------------------------------
+TICKET #11: Actualizar colores en componentes wizard
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🟢 BAJA
+--------------------------------------------------------------------------------
+ARCHIVOS:
+- App/Frontend/src/components/wizard/WizardNavigation.module.css
+- App/Frontend/src/components/wizard/steps/*.module.css
+- App/Frontend/src/components/wizard/ResultadoBasicoDetalle.module.css
+
+DESCRIPCIÓN:
+Revisión y actualización de colores en los componentes del wizard de cálculo.
+
+CAMBIOS A VERIFICAR:
+- Botones de navegación (Anterior/Siguiente)
+- Secciones destacadas con fondo
+- Badges de estado (SÍ/NO)
+- Resaltados y borders
+
+MÉTODO:
+1. Abrir cada archivo wizard/*.module.css
+2. Buscar referencias a colores antiguos hardcodeados
+3. Reemplazar por variables CSS o valores nuevos
+4. Asegurar consistencia visual
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Botones de navegación usan colores nuevos
+☐ Secciones destacadas tienen fondo turquesa o appropriate
+☐ Badges SÍ son morado, badges NO son gris
+☐ No hay colores antiguos hardcodeados
+☐ Verificación visual completa del wizard
+
+IMPACTO:
+🟡 MEDIO - Afecta experiencia de cálculo completa
+⏱️ Tiempo estimado: 15 minutos
+
+
+--------------------------------------------------------------------------------
+TICKET #12: Actualizar colores de componentes comunes adicionales
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🟢 BAJA
+--------------------------------------------------------------------------------
+ARCHIVOS:
+- App/Frontend/src/components/common/Card.module.css
+- App/Frontend/src/components/common/Spinner.module.css
+- App/Frontend/src/components/common/Modal.module.css
+
+DESCRIPCIÓN:
+Revisar y actualizar colores en componentes comunes reutilizables.
+
+CAMBIOS A VERIFICAR:
+
+Card.module.css:
+- Borde de cards destacadas
+- Backgrounds de cards activas
+
+Spinner.module.css:
+- Color del spinner/loader
+
+Modal.module.css:
+- Botones de acción
+- Headers de modal
+
+MÉTODO:
+1. Revisar cada archivo
+2. Buscar colores hardcodeados de paleta antigua
+3. Reemplazar por variables o valores nuevos
+4. Probar modales y componentes en contexto
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Cards usan colores nuevos en bordes y backgrounds
+☐ Spinner usa color morado
+☐ Modales tienen botones con colores actualizados
+☐ Verificación visual de todos los componentes comunes
+
+IMPACTO:
+🟢 BAJO - Componentes usados esporádicamente
+⏱️ Tiempo estimado: 10 minutos
+
+
+--------------------------------------------------------------------------------
+TICKET #13: Testing visual completo - Desktop
+ESTADO: ⏸️ PENDIENTE TESTING (requiere verificación manual)
+PRIORIDAD: 🔴 CRÍTICA
+--------------------------------------------------------------------------------
+NAVEGADORES A PROBAR:
+- Chrome (versión reciente)
+- Firefox (versión reciente)
+- Edge (versión reciente)
+
+DESCRIPCIÓN:
+Pruebas visuales exhaustivas en todos los navegadores desktop para verificar
+que la nueva paleta de colores se aplica correctamente en toda la aplicación.
+
+PÁGINAS A VERIFICAR:
+
+📄 LoginPage:
+☐ Gradiente de fondo turquesa→morado
+☐ Título morado legible
+☐ Botón de login morado
+☐ Checkbox morado en checked
+☐ Card blanco con buen contraste
+
+📄 DashboardPage:
+☐ Header turquesa con texto azul oscuro legible
+☐ Tarjetas de "Nuevo Cálculo" y "Consulta Precios" coherentes
+☐ Botones con colores nuevos
+
+📄 NuevoCalculoPage:
+☐ 17 tarjetas con íconos morados (gradiente)
+☐ Tooltips con fondo azul oscuro #1E1E6B
+☐ Badges "EN CONSTRUCCIÓN" grises
+☐ Tarjetas hover con animación suave
+☐ Sombras moradas apropiadas
+
+📄 ProcesoCalculoPage (Wizard):
+☐ StepperProgress con pasos completados morados
+☐ Paso actual: fondo turquesa + borde morado
+☐ Pasos pendientes: grises
+☐ Botones "Anterior" (secundario turquesa) y "Siguiente" (primario morado)
+☐ Secciones destacadas con fondo turquesa
+☐ Inputs con focus morado
+
+📄 ParametrosPage:
+☐ Headers de secciones coherentes
+☐ Tablas con colores actualizados
+☐ Botones de acción morados
+
+📄 MiCuentaPage / PreferenciasPage:
+☐ Formularios con inputs focus morado
+☐ Toggles morados en checked
+☐ Botones coherentes con paleta
+
+COMPONENTES GLOBALES:
+
+🎨 Header:
+☐ Fondo turquesa #8DD5D9
+☐ Título azul oscuro #1E1E6B
+☐ Logo CPAU visible y claro
+☐ UserMenu coherente
+
+🎨 Footer:
+☐ Colores coherentes con diseño
+☐ Links legibles
+
+🎨 Botones:
+☐ Primary: morado #5B2FE6, hover #4A25B8
+☐ Secondary: turquesa #8DD5D9, hover #7CC5C9
+☐ Estados disabled apropiados
+
+🎨 Tooltips:
+☐ Fondo azul oscuro #1E1E6B
+☐ Texto blanco legible
+☐ Contraste WCAG AA cumplido
+
+ASPECTOS GENERALES:
+☐ No quedan elementos con colores antiguos (verde/marrón)
+☐ Consistencia visual en toda la aplicación
+☐ Transiciones y animaciones suaves
+☐ Sombras y efectos apropiados con nuevos colores
+☐ Legibilidad de textos en todos los contextos
+☐ Contraste adecuado en todos los elementos
+
+CRITERIOS DE ACEPTACIÓN:
+☐ ✅ TODAS las páginas verificadas en Chrome
+☐ ✅ TODAS las páginas verificadas en Firefox
+☐ ✅ TODAS las páginas verificadas en Edge
+☐ No se detectan regresiones visuales
+☐ La identidad visual CPAU es coherente y profesional
+
+IMPACTO:
+🔴 CRÍTICO - Validación completa del cambio
+⏱️ Tiempo estimado: 45 minutos
+
+
+--------------------------------------------------------------------------------
+TICKET #14: Testing visual completo - Responsive/Mobile
+ESTADO: ⏸️ PENDIENTE TESTING (requiere verificación manual)
+PRIORIDAD: 🟡 MEDIA
+--------------------------------------------------------------------------------
+DISPOSITIVOS A PROBAR:
+- Chrome DevTools (responsive mode)
+- Dispositivo móvil real (iOS/Android) - si disponible
+
+DESCRIPCIÓN:
+Verificación visual en breakpoints móvil y tablet para asegurar que los
+colores se ven correctamente en todas las resoluciones.
+
+BREAKPOINTS A VERIFICAR:
+
+📱 Móvil (< 768px):
+☐ Header turquesa legible y compacto
+☐ Tarjetas de cálculo con íconos morados visibles
+☐ Botones táctiles con colores apropiados
+☐ Tooltips ocultos correctamente
+☐ Botones "Ver más" visibles y funcionales
+☐ Wizard stepper compacto con colores legibles
+
+📱 Tablet (768-1024px):
+☐ Grid de tarjetas (3 columnas) con colores coherentes
+☐ Wizard con stepper horizontal legible
+☐ Botones y forms apropiados
+
+PÁGINAS CRÍTICAS MÓVIL:
+☐ LoginPage: gradiente y formulario
+☐ DashboardPage: navegación principal
+☐ NuevoCalculoPage: grid de tarjetas
+☐ ProcesoCalculoPage: wizard completo
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Todos los elementos legibles en pantallas pequeñas
+☐ Contraste adecuado en todos los breakpoints
+☐ No hay overlaps o elementos cortados
+☐ Colores consistentes en todas las resoluciones
+☐ Touch targets (botones/toggles) visibles y accesibles
+
+IMPACTO:
+🟡 MEDIO - Validación responsive
+⏱️ Tiempo estimado: 30 minutos
+
+
+--------------------------------------------------------------------------------
+TICKET #15: Testing de accesibilidad - Contraste y WCAG
+ESTADO: ⏸️ PENDIENTE TESTING (requiere verificación manual)
+PRIORIDAD: 🟡 MEDIA
+--------------------------------------------------------------------------------
+HERRAMIENTAS:
+- Chrome DevTools > Lighthouse (Accessibility)
+- WebAIM Contrast Checker
+- axe DevTools extension
+
+DESCRIPCIÓN:
+Verificar que la nueva paleta de colores cumple con los estándares de
+accesibilidad WCAG 2.1 nivel AA, especialmente en contraste de textos.
+
+COMBINACIONES CRÍTICAS A VERIFICAR:
+
+CONTRASTE DE TEXTO:
+☐ Texto blanco sobre morado #5B2FE6 (botones primary)
+   Requerido: 4.5:1 (AA) para texto normal
+   
+☐ Texto azul oscuro #1E1E6B sobre blanco (títulos)
+   Requerido: 4.5:1 (AA) para texto normal
+   
+☐ Texto azul oscuro #1E1E6B sobre turquesa #8DD5D9 (paso actual wizard)
+   Requerido: 4.5:1 (AA) para texto normal
+   
+☐ Texto blanco sobre tooltip #1E1E6B
+   Requerido: 4.5:1 (AA) para texto normal
+   
+☐ Texto gris #B0B0B0 sobre blanco (badges NO)
+   Verificar legibilidad
+
+ELEMENTOS INTERACTIVOS:
+☐ Focus states visibles (outline morado)
+☐ Estados disabled claramente distinguibles
+☐ Links y botones con suficiente contraste
+☐ Íconos visibles sobre sus fondos
+
+LIGHTHOUSE AUDIT:
+☐ Score de Accessibility > 90
+☐ No hay errores críticos de contraste
+☐ ARIA labels apropiados
+☐ Navegación por teclado funcional
+
+ACCIONES SI FALLA CONTRASTE:
+- Opción 1: Ajustar luminosidad del color problemático
+- Opción 2: Cambiar peso de fuente (bold mejora contraste percibido)
+- Opción 3: Agregar stroke/shadow sutil para mejorar legibilidad
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Todas las combinaciones críticas pasan WCAG AA (4.5:1)
+☐ Lighthouse Accessibility score > 90
+☐ No hay warnings de contraste en DevTools
+☐ Textos legibles para usuarios con deficiencias visuales
+
+IMPACTO:
+🟡 MEDIO - Cumplimiento legal y UX inclusiva
+⏱️ Tiempo estimado: 20 minutos
+
+
+--------------------------------------------------------------------------------
+TICKET #16: Búsqueda global y limpieza de colores residuales
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🟢 BAJA (hacer al final)
+--------------------------------------------------------------------------------
+MÉTODO: Búsqueda global en VS Code
+
+DESCRIPCIÓN:
+Última revisión para encontrar y reemplazar cualquier color antiguo que haya
+quedado en el código, incluyendo inline styles o valores hardcodeados.
+
+BÚSQUEDAS A REALIZAR:
+
+1. Buscar "#2D5016" (verde) en todo el proyecto:
+   ☐ Archivos .css y .module.css
+   ☐ Archivos .jsx (inline styles)
+   ☐ Archivos de configuración
+   Reemplazar por: #5B2FE6 o var(--color-primary)
+
+2. Buscar "#234011" (verde oscuro) en todo el proyecto:
+   ☐ Estados hover hardcodeados
+   Reemplazar por: #4A25B8 o var(--color-purple-dark)
+
+3. Buscar "#D4A574" (marrón) en todo el proyecto:
+   ☐ Archivos .css y .module.css
+   ☐ Archivos .jsx (inline styles)
+   Reemplazar por: #8DD5D9 o var(--color-secondary)
+
+4. Buscar "#c29664" (marrón oscuro) en todo el proyecto:
+   ☐ Estados hover hardcodeados
+   Reemplazar por: #7CC5C9
+
+5. Buscar "#A8DADC" (celeste antiguo) en todo el proyecto:
+   ☐ Archivos CSS
+   Reemplazar por: #8DD5D9
+
+6. Buscar "rgba(45, 80, 22" (verde en sombras) en todo el proyecto:
+   ☐ Box-shadows
+   ☐ Animaciones
+   Reemplazar por: rgba(91, 47, 230
+
+7. Buscar "rgb(45, 80, 22" en todo el proyecto:
+   ☐ Backgrounds o efectos
+   Reemplazar por: rgb(91, 47, 230
+
+ARCHIVOS A EXCLUIR DE LA BÚSQUEDA:
+- node_modules/
+- .git/
+- build/
+- dist/
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Búsqueda "#2D5016" → 0 resultados en código fuente
+☐ Búsqueda "#D4A574" → 0 resultados en código fuente
+☐ Búsqueda "#A8DADC" → 0 resultados en código fuente
+☐ Búsqueda "rgba(45, 80, 22" → 0 resultados
+☐ Todas las instancias reemplazadas y verificadas
+☐ No se rompió ningún estilo en el proceso
+
+IMPACTO:
+🟢 BAJO - Limpieza final
+⏱️ Tiempo estimado: 15 minutos
+
+
+================================================================================
+TESTING Y VERIFICACIÓN FINAL
+================================================================================
+
+--------------------------------------------------------------------------------
+CHECKLIST DE VERIFICACIÓN GENERAL
+--------------------------------------------------------------------------------
+
+VISUAL CONSISTENCY:
+☐ Paleta CPAU aplicada consistentemente en toda la app
+☐ Morado #5B2FE6 domina como color primario
+☐ Turquesa #8DD5D9 usado apropiadamente como acento
+☐ Azul oscuro #1E1E6B para títulos y texto principal
+☐ No quedan elementos con colores antiguos (verde/marrón)
+
+COMPONENTES CRÍTICOS:
+☐ Botones primary (morado) funcionan en todos los contextos
+☐ Botones secondary (turquesa) funcionan en todos los contextos
+☐ Header con fondo turquesa visible en todas las páginas
+☐ Wizard stepper con estados claros (morado completado, turquesa actual)
+☐ Tarjetas de cálculo con íconos morados y tooltips azul oscuro
+
+ESTADOS INTERACTIVOS:
+☐ Hover states funcionan correctamente con nuevos colores
+☐ Focus states morados visibles para teclado
+☐ Active states apropiados
+☐ Disabled states claramente distinguibles
+
+CROSS-BROWSER:
+☐ Chrome: todo funciona correctamente
+☐ Firefox: todo funciona correctamente
+☐ Edge: todo funciona correctamente
+
+RESPONSIVE:
+☐ Desktop (>1024px): diseño correcto con colores CPAU
+☐ Tablet (768-1024px): diseño responsivo OK
+☐ Mobile (<768px): legibilidad y contraste OK
+
+ACCESIBILIDAD:
+☐ Contraste WCAG AA cumplido en todas las combinaciones
+☐ Lighthouse Accessibility > 90
+☐ Navegación por teclado funcional
+☐ Screen readers (opcional): información apropiada
+
+
+--------------------------------------------------------------------------------
+CHECKLIST POR PÁGINA
+--------------------------------------------------------------------------------
+
+☐ LoginPage
+  ├─ Gradiente turquesa→morado
+  ├─ Título morado
+  ├─ Botón login morado + hover
+  └─ Checkbox morado
+
+☐ DashboardPage
+  ├─ Header turquesa
+  ├─ Cards principales coherentes
+  └─ Footer consistente
+
+☐ NuevoCalculoPage
+  ├─ 17 tarjetas con íconos morados
+  ├─ Tooltips azul oscuro
+  ├─ Badges "EN CONSTRUCCIÓN" grises
+  ├─ Hover effects suaves
+  └─ Grid responsivo correcto
+
+☐ ProcesoCalculoPage (Wizard Completo)
+  ├─ Stepper: completado morado, actual turquesa+borde morado, pending gris
+  ├─ Paso 1: DatosPrincipalesBasico
+  │   ├─ Sección destacada fondo turquesa
+  │   ├─ Inputs focus morado
+  │   └─ Labels azul oscuro
+  ├─ Paso 2: DatosObraBasico
+  │   ├─ Inputs focus morado
+  │   └─ Dropdowns coherentes
+  ├─ Paso 3: TareasProfesionalesBasico
+  │   ├─ Toggles SÍ/NO: morado/gris
+  │   └─ Grupos de tareas claramente separados
+  ├─ Paso 4: RevisionBasico
+  │   ├─ Resumen con colores coherentes
+  │   └─ Botones "Editar" apropiados
+  └─ Paso 5: ResultadoBasicoDetalle
+      ├─ Tabla de honorarios legible
+      ├─ Totales destacados en morado
+      ├─ Botones de acción coherentes
+      └─ Checkbox de aceptación morado
+
+☐ ParametrosPage
+  ├─ Tablas de parámetros
+  └─ Botones de edición
+
+☐ ConsultaPreciosPage
+  ├─ Tablas con headers coherentes
+  └─ Elementos destacados apropiados
+
+☐ Otras páginas
+  ├─ CalculosRealizadosPage
+  ├─ ProyectosRealizadosPage
+  ├─ PreferenciasPage
+  └─ PersonalizarPage
+
+
+================================================================================
+DOCUMENTACIÓN DE COLORES CPAU (Referencia)
+================================================================================
+
+PALETA OFICIAL CPAU:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Nombre                | HEX       | RGB              | Uso
+─────────────────────────────────────────────────────────────────────────────
+Morado CPAU           | #5B2FE6   | rgb(91,47,230)   | Color institucional
+Morado oscuro         | #4A25B8   | rgb(74,37,184)   | Hover/active
+Turquesa claro        | #8DD5D9   | rgb(141,213,217) | Acentos/fondos
+Turquesa oscuro       | #7CC5C9   | rgb(124,197,201) | Hover turquesa
+Azul oscuro           | #1E1E6B   | rgb(30,30,107)   | Títulos/texto
+Gris medio            | #B0B0B0   | rgb(176,176,176) | Badges/bordes
+Gris claro            | #F5F5F5   | rgb(245,245,245) | Fondos
+Blanco                | #FFFFFF   | rgb(255,255,255) | Fondos cards
+Negro texto           | #333333   | rgb(51,51,51)    | Texto cuerpo
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+RATIOS DE CONTRASTE (WCAG 2.1 AA):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Combinación                              | Ratio    | Estado
+─────────────────────────────────────────────────────────────────────────────
+Blanco sobre Morado #5B2FE6              | ~8.1:1   | ✅ AAA (excelente)
+Azul oscuro #1E1E6B sobre Blanco         | ~12.5:1  | ✅ AAA (excelente)
+Azul oscuro #1E1E6B sobre Turquesa       | ~4.8:1   | ✅ AA (apropiado)
+Blanco sobre Tooltip #1E1E6B             | ~12.5:1  | ✅ AAA (excelente)
+Gris #B0B0B0 sobre Blanco                | ~2.8:1   | ⚠️ Falla AA (revisar)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+NOTA IMPORTANTE - BADGES GRISES:
+El gris #B0B0B0 para badges "NO" y "EN CONSTRUCCIÓN" puede no cumplir AA
+si se usa texto oscuro. SOLUCIÓN: usar texto BLANCO sobre fondo #B0B0B0
+para mejorar contraste (ratio ~3.1:1, border AA).
+
+
+================================================================================
+CONTEXTO TÉCNICO
+================================================================================
+
+STACK TECNOLÓGICO:
+- Frontend: React 18 + Vite
+- Estilos: CSS Modules
+- Variables CSS: Custom properties
+- Iconos: react-icons (Font Awesome)
+
+ARCHIVOS CLAVE:
+1. App/Frontend/src/styles/variables.css (variables globales)
+2. App/Frontend/src/components/common/*.module.css (componentes reutilizables)
+3. App/Frontend/src/pages/*.module.css (páginas)
+4. App/Frontend/src/components/wizard/*.module.css (wizard de cálculo)
+5. App/Frontend/src/components/layout/*.module.css (header/footer)
+
+TOTAL DE ARCHIVOS CSS A REVISAR: 23 archivos .module.css
+
+ESTRATEGIA DE IMPLEMENTACIÓN:
+1. ✅ Analizar propuesta cliente (PDF)
+2. ✅ Documentar mapeo de colores
+3. ✅ Crear tickets detallados (este documento)
+4. ⏳ Implementar Ticket #1 (variables globales) PRIMERO
+5. ⏳ Implementar tickets #2-#12 (componentes específicos)
+6. ⏳ Testing visual completo (tickets #13-#14)
+7. ⏳ Validación accesibilidad (ticket #15)
+8. ⏳ Limpieza final (ticket #16)
+
+ORDEN DE EJECUCIÓN SUGERIDO:
+1. 🔴 Ticket #1 (variables globales) - BASE FUNDAMENTAL
+2. 🔴 Ticket #2 (botones) - ALTA VISIBILIDAD
+3. 🔴 Ticket #6 (wizard stepper) - FLUJO CRÍTICO
+4. 🔴 Ticket #4 (login) - PRIMERA IMPRESIÓN
+5. 🟡 Ticket #9 (array calculationTypes) - TARJETAS PRINCIPALES
+6. 🟡 Ticket #3 (CalculationTypeCard CSS) - TARJETAS
+7. 🟡 Ticket #7-#8 (inputs/toggles) - INTERACCIONES
+8. 🟢 Ticket #10-#12 (componentes adicionales) - COMPLETITUD
+9. 🟢 Ticket #16 (limpieza) - REFINAMIENTO
+10. 🔴 Ticket #13-#14 (testing visual) - VALIDACIÓN
+11. 🟡 Ticket #15 (accesibilidad) - CERTIFICACIÓN
+
+TIEMPO TOTAL ESTIMADO: ~2.5 horas
+- Implementación: 1 hora
+- Testing: 1 hora
+- Ajustes y validación: 30 minutos
+
+
+================================================================================
+CONSIDERACIONES IMPORTANTES
+================================================================================
+
+PRINCIPIOS A RESPETAR:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ SOLO cambiar colores en archivos CSS existentes
+✅ NO agregar nuevas clases CSS
+✅ NO modificar estructura HTML/JSX
+✅ NO agregar nuevos componentes React
+✅ NO cambiar funcionalidad o lógica
+✅ Mantener nombres de variables CSS existentes
+✅ Mantener sistema de diseño (spacing, borders, shadows)
+✅ Preservar animaciones y transiciones existentes
+✅ Respetar states (hover, focus, active, disabled)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+USO DE VARIABLES CSS:
+- PREFERIR usar variables CSS (var(--color-primary)) cuando ya existan
+- SOLO usar valores hardcoded cuando sea necesario para gradientes específicos
+  o cuando la variable se actualizará en Ticket #1
+
+GRADIENTES:
+- LoginPage background: linear-gradient(135deg, #8DD5D9 0%, #5B2FE6 100%)
+- IconWrapper: mantener uso de var(--accent-color) dinámico
+
+BRAND CONSISTENCY:
+- Morado #5B2FE6 es el color DOMINANTE (identidad CPAU)
+- Turquesa #8DD5D9 es SECUNDARIO (acentos, fondos, secciones)
+- Azul oscuro #1E1E6B para JERARQUÍA TIPOGRÁFICA
+- Grises para ESTADOS y ELEMENTOS PASIVOS
+
+FALLBACK:
+Si algún color no se ve bien después de cambiar:
+1. Revisar contraste con WebAIM
+2. Ajustar luminosidad (+/- 5-10%)
+3. Documentar cambio en este archivo
+
+
+================================================================================
+RECURSOS DE REFERENCIA
+================================================================================
+
+DOCUMENTO FUENTE:
+- Propuesta de diseño cliente CPAU (PDF adjunto - 7 páginas)
+- Páginas relevantes: 1-6 (flujo completo de wizard)
+
+HERRAMIENTAS ÚTILES:
+- WebAIM Contrast Checker: https://webaim.org/resources/contrastchecker/
+- Chrome DevTools > Lighthouse
+- VS Code: Ctrl+Shift+F (búsqueda global)
+- VS Code: Ctrl+H (buscar y reemplazar)
+
+CONTACTO:
+- Cliente: CPAU (Consejo Profesional de Arquitectura y Urbanismo)
+- Email: red@cpau.org
+- Tel: +54 11 5238 1068
+
+
+================================================================================
+NOTAS DEL DESARROLLADOR
+================================================================================
+
+OBSERVACIONES:
+- La propuesta del cliente está muy bien definida con colores consistentes
+- El diseño actual ya usa variables CSS apropiadamente (buena arquitectura)
+- La mayoría de cambios son automáticos al actualizar variables globales
+- Algunos valores hardcodeados (hover states) requieren cambio manual
+- El array calculationTypes en NuevoCalculoPage.jsx necesita actualización manual
+
+RIESGOS IDENTIFICADOS:
+⚠️ BAJO: Contraste de gris #B0B0B0 sobre blanco para badges
+   MITIGACIÓN: Usar texto blanco en badges grises
+
+⚠️ BAJO: Degradados con color-mix() pueden variar entre navegadores
+   MITIGACIÓN: Probar en los 3 navegadores principales
+
+⚠️ BAJO: rgba() con valores antiguos pueden quedar en código
+   MITIGACIÓN: Búsqueda global exhaustiva (Ticket #16)
+
+BENEFICIOS ESPERADOS:
+✅ Identidad visual profesional del CPAU
+✅ Consistencia con materiales oficiales del cliente
+✅ Mejor reconocimiento de marca
+✅ Diseño más moderno y vibrante
+✅ Diferenciación clara de estados (morado=acción, turquesa=info)
+
+MEJORAS FUTURAS (POST-IMPLEMENTACIÓN):
+☐ Considerar modo oscuro (dark theme) con paleta CPAU adaptada
+☐ Documentar guía de estilo oficial CPAU
+☐ Crear componentes de UI kit con colores CPAU
+☐ Exportar paleta a Figma/Sketch para diseñadores
+☐ Generar tokens de diseño (design tokens) para otros proyectos CPAU
+
+
+================================================================================
+RESUMEN DE CAMBIOS POR ARCHIVO
+================================================================================
+
+📁 App/Frontend/src/styles/
+   └─ variables.css
+      ├─ 7 variables modificadas
+      └─ 8 variables nuevas agregadas
+
+📁 App/Frontend/src/components/common/
+   ├─ Button.module.css
+   │  └─ 2 hover states actualizados
+   ├─ CalculationTypeCard.module.css
+   │  └─ 1 tooltip background actualizado
+   ├─ Input.module.css
+   │  └─ Hereda de variables (verificar)
+   ├─ ToggleSwitch.module.css
+   │  └─ 2 valores hardcoded actualizados
+   ├─ Card.module.css
+   │  └─ Revisar y actualizar si necesario
+   ├─ Spinner.module.css
+   │  └─ Revisar color del loader
+   └─ Modal.module.css
+      └─ Revisar botones del modal
+
+📁 App/Frontend/src/components/layout/
+   ├─ Header.module.css
+   │  └─ Hereda de variables (verificar)
+   └─ Footer.module.css
+      └─ Revisar consistencia
+
+📁 App/Frontend/src/components/wizard/
+   ├─ StepperProgress.module.css
+   │  └─ 5 sombras rgba() actualizadas
+   ├─ WizardNavigation.module.css
+   │  └─ Revisar botones navegación
+   ├─ ResultadoBasicoDetalle.module.css
+   │  └─ Revisar tabla resumen
+   └─ steps/*.module.css
+      └─ Revisar cada paso del wizard
+
+📁 App/Frontend/src/pages/
+   ├─ LoginPage.module.css
+   │  └─ 1 gradiente + 2 colores actualizados
+   ├─ DashboardPage.module.css
+   │  └─ Hereda de variables (verificar)
+   ├─ NuevoCalculoPage.jsx
+   │  └─ 17 valores 'color' en array actualizados
+   ├─ NuevoCalculoPage.module.css
+   │  └─ Revisar backgrounds
+   ├─ ProcesoCalculoPage.module.css
+   │  └─ Revisar secciones destacadas
+   └─ ParametrosPage.module.css
+      └─ Revisar tablas y headers
+
+TOTAL ESTIMADO DE CAMBIOS:
+- ~15 cambios manuales en variables.css
+- ~2 cambios en Button.module.css
+- ~1 cambio en CalculationTypeCard.module.css
+- ~2 cambios en ToggleSwitch.module.css
+- ~5 cambios en StepperProgress.module.css
+- ~3 cambios en LoginPage.module.css
+- ~17 cambios en NuevoCalculoPage.jsx (array colors)
+- ~10-20 verificaciones adicionales en otros archivos
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOTAL: ~55-65 cambios puntuales en 23 archivos
+
+
+================================================================================
+PROGRESO DE IMPLEMENTACIÓN
+================================================================================
+
+FECHA INICIO: 31/03/2026
+FECHA OBJETIVO: 31/03/2026 (mismo día - cambios solo de estilos)
+
+ESTADO ACTUAL:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Fase                      | Estado        | Progreso
+─────────────────────────────────────────────────────────────────────────────
+Análisis propuesta        | ✅ COMPLETO  | 100%
+Documentación tickets     | ✅ COMPLETO  | 100%
+Implementación            | ☐ PENDIENTE  | 0%
+Testing visual            | ☐ PENDIENTE  | 0%
+Validación accesibilidad  | ☐ PENDIENTE  | 0%
+Limpieza final            | ☐ PENDIENTE  | 0%
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PRÓXIMO PASO:
+🎯 Ejecutar Ticket #1 (actualizar variables CSS globales)
+
+
+================================================================================
+COMPARATIVA VISUAL ANTES/DESPUÉS
+================================================================================
+
+ELEMENTO                  | ANTES (Verde/Marrón)  | DESPUÉS (Morado/Turquesa)
+─────────────────────────────────────────────────────────────────────────────
+Botón Primary             | Verde #2D5016         | Morado #5B2FE6
+Botón Secondary           | Marrón #D4A574        | Turquesa #8DD5D9
+Header Background         | Celeste #A8DADC       | Turquesa #8DD5D9
+Títulos                   | Gris oscuro #495057   | Azul oscuro #1E1E6B
+Wizard Paso Completado    | Verde #2D5016         | Morado #5B2FE6
+Wizard Paso Actual        | Celeste #A8DADC       | Turquesa #8DD5D9
+Íconos Tarjetas           | Verde (gradiente)     | Morado (gradiente)
+Tooltips                  | Gris #2C3E50          | Azul oscuro #1E1E6B
+Login Background          | Celeste→Verde         | Turquesa→Morado
+Toggle Checked            | Verde #2D5016         | Morado #5B2FE6
+Input Focus Border        | Verde #2D5016         | Morado #5B2FE6
+
+
+================================================================================
+FIN DEL DOCUMENTO
+================================================================================
+
+Este documento será actualizado a medida que se completen los tickets.
+Marcar cada checkbox ☐ → ☑/✅ a medida que se verifique.
+
+Última actualización: 31/03/2026
+Estado general: 📋 PENDIENTE - Listo para implementación

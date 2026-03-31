@@ -24,7 +24,7 @@
 }
 
 .toggleInput:checked + .toggleLabel {
-  background-color: #2D5016;
+  background-color: #5B2FE6;
 }
 
 .toggleInput:disabled + .toggleLabel {
@@ -66,6 +66,6 @@
 
 /* Focus state for accessibility */
 .toggleInput:focus + .toggleLabel {
-  outline: 2px solid #2D5016;
+  outline: 2px solid #5B2FE6;
   outline-offset: 2px;
 }

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CalculationTypeCard.module.css';
 
@@ -17,7 +16,6 @@ import styles from './CalculationTypeCard.module.css';
 const CalculationTypeCard = ({ title, shortDescription, fullDescription, icon, color, path, tipoId, vigente }) => {
   const navigate = useNavigate();
   const isVigente = vigente === 'Si';
-  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleClick = () => {
     if (!isVigente) return; // No permitir click si no está vigente
@@ -31,52 +29,30 @@ const CalculationTypeCard = ({ title, shortDescription, fullDescription, icon, c
     });
   };
 
-  // Handler para expandir/colapsar descripción en móvil
-  const handleExpandClick = (e) => {
-    e.stopPropagation();
-    setIsExpanded(!isExpanded);
-  };
-
   return (
     <div 
       className={`${styles.card} ${!isVigente ? styles.noVigente : ''}`}
       onClick={handleClick}
       style={{ '--accent-color': color }}
     >
-      <div className={styles.iconWrapper}>
-        {icon}
-        {/* Tooltip con descripción completa - Desktop */}
-        {fullDescription && (
-          <div className={styles.tooltip}>
-            {fullDescription}
+      <div className={styles.headerRow}>
+        <div className={styles.iconWrapper}>
+          {icon}
+        </div>
+        {!isVigente && (
+          <div className={styles.badge}>
+            <span>En Construcción</span>
           </div>
         )}
       </div>
       
-      <h3 className={styles.title}>{title}</h3>
-
-      {/* Botón expandir - Móvil */}
       {fullDescription && (
-        <button 
-          className={styles.expandButton}
-          onClick={handleExpandClick}
-          aria-expanded={isExpanded}
-          disabled={!isVigente}
-        >
-          {isExpanded ? 'Ver menos' : 'Ver más'}
-        </button>
-      )}
-
-      {/* Descripción completa expandida - Móvil */}
-      {isExpanded && fullDescription && (
-        <p className={styles.fullDescription}>{fullDescription}</p>
+        <p className={styles.description}>{fullDescription}</p>
       )}
       
-      {!isVigente && (
-        <div className={styles.badge}>
-          <span>En Construcción</span>
-        </div>
-      )}
+      <div className={styles.titleBox}>
+        <h3 className={styles.title}>{title}</h3>
+      </div>
     </div>
   );
 };

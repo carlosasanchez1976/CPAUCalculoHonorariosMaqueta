@@ -17,9 +17,10 @@ const Header = () => {
           />
         </div>
         
-        <h1 className={styles.title}>
-          Gestión de Cálculo de Honorarios
-        </h1>
+        <div className={styles.titleWrapper}>
+          <h1 className={styles.titleLine1}>Calculadora</h1>
+          <h1 className={styles.titleLine2}>DE HONORARIOS</h1>
+        </div>
         
         <UserMenu />
       </div>

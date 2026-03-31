@@ -1,0 +1,693 @@
+================================================================================
+TICKETS - AJUSTES DE DISEÑO HOME/DASHBOARD SEGÚN PROPUESTA CPAU
+================================================================================
+Fecha: 31 de Marzo 2026
+Cliente: CPAU
+Proyecto: CH2026 - Calculadora de Honorarios
+Archivo: 260331-TicketsAjusteHome.txt
+
+OBJETIVO:
+Rediseño completo del DashboardPage según propuesta del cliente CPAU.
+Cambios principales: Header con título en 2 líneas, layout de 2 columnas,
+texto de bienvenida, footer con logo, eliminar 5 cards innecesarias.
+
+================================================================================
+RESUMEN DE CAMBIOS
+================================================================================
+
+HEADER:
+✅ Modificar título de 1 línea → 2 líneas ("Calculadora" / "DE HONORARIOS")
+✅ Mantener logo CPAU a la izquierda
+✅ Mantener UserMenu a la derecha
+
+DASHBOARD:
+✅ Cambiar de grid 6 cards → layout 2 columnas
+✅ Columna 1: Bloque de texto de bienvenida con título morado
+✅ Columna 2: Solo 1 card "Nuevo Cálculo de Honorarios"
+✅ Eliminar 5 cards restantes (Cálculos Realizados, Nuevo Proyecto, etc.)
+
+FOOTER:
+✅ Agregar logo CPAU al footer (izquierda)
+✅ Actualizar texto copyright según propuesta
+✅ Mantener iconos redes sociales (Instagram, Facebook)
+
+LIMPIEZA:
+✅ Eliminar código residual de cards eliminadas
+✅ Ajustar estilos y responsive
+
+
+================================================================================
+TICKET #1: Modificar título del Header a 2 líneas
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🔴 ALTA
+================================================================================
+ARCHIVO: App/Frontend/src/components/layout/Header.jsx
+LÍNEAS: 19-21
+
+DESCRIPCIÓN:
+Cambiar el título del Header de 1 línea a 2 líneas según diseño del cliente:
+- Línea 1: "Calculadora"
+- Línea 2: "DE HONORARIOS"
+
+CAMBIOS ESPECÍFICOS:
+
+ANTES:
+```jsx
+<h1 className={styles.title}>
+  Gestión de Cálculo de Honorarios
+</h1>
+```
+
+DESPUÉS:
+```jsx
+<div className={styles.titleWrapper}>
+  <h1 className={styles.titleLine1}>Calculadora</h1>
+  <h1 className={styles.titleLine2}>DE HONORARIOS</h1>
+</div>
+```
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Header muestra "Calculadora" en la primera línea
+☐ Header muestra "DE HONORARIOS" en la segunda línea
+☐ Ambas líneas centradas o alineadas según diseño
+☐ Color morado #5B2FE6 para el texto
+☐ Tamaños de fuente apropiados
+☐ Responsive funciona correctamente en móvil
+
+IMPACTO:
+🟡 MEDIO - Afecta todas las páginas
+⏱️ Tiempo estimado: 5 minutos
+
+
+================================================================================
+TICKET #2: Actualizar estilos del Header para título en 2 líneas
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🔴 ALTA
+================================================================================
+ARCHIVO: App/Frontend/src/components/layout/Header.module.css
+LÍNEAS: 30-36
+
+DESCRIPCIÓN:
+Agregar estilos CSS para el nuevo título en 2 líneas del Header.
+
+CAMBIOS ESPECÍFICOS:
+
+ELIMINAR:
+```css
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-gray-700);
+}
+```
+
+AGREGAR:
+```css
+.titleWrapper {
+  text-align: center;
+  flex: 1;
+}
+
+.titleLine1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
+  color: #5B2FE6;
+}
+
+.titleLine2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+  color: #5B2FE6;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .titleLine1,
+  .titleLine2 {
+    font-size: 1.125rem;
+  }
+}
+```
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Ambas líneas tienen color morado #5B2FE6
+☐ "Calculadora" tiene font-weight 600
+☐ "DE HONORARIOS" tiene font-weight 700 (más bold)
+☐ Line-height adecuado entre líneas
+☐ Centrado funciona correctamente
+☐ Tamaños de fuente reducidos en móvil
+
+IMPACTO:
+🟡 MEDIO - Visual del header
+⏱️ Tiempo estimado: 5 minutos
+
+
+================================================================================
+TICKET #3: Rediseñar DashboardPage con layout de 2 columnas
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🔴 CRÍTICA
+================================================================================
+ARCHIVO: App/Frontend/src/pages/DashboardPage.jsx
+LÍNEAS: 23-76 (completo)
+
+DESCRIPCIÓN:
+Cambiar completamente el layout del Dashboard:
+- Eliminar grid de 6 cards
+- Implementar layout de 2 columnas
+- Columna 1: Bloque de texto de bienvenida
+- Columna 2: Solo 1 card "Nuevo Cálculo de Honorarios"
+
+ESTRUCTURA NUEVA:
+
+```jsx
+const DashboardPage = () => {
+  const navigate = useNavigate();
+
+  return (
+    <div className={styles.dashboardContainer}>
+      <Header />
+      
+      <main className={styles.mainContent}>
+        <div className={styles.contentWrapper}>
+          <div className={styles.twoColumnLayout}>
+            
+            {/* COLUMNA 1 - Texto de Bienvenida */}
+            <div className={styles.welcomeSection}>
+              <h2 className={styles.welcomeTitle}>
+                Bienvenido/a a la Calculadora de Honorarios del CPAU.
+              </h2>
+              <p className={styles.welcomeText}>
+                Esta herramienta permite estimar de manera orientativa los 
+                honorarios profesionales, en base a los sugeridos por el MEPAU.
+              </p>
+              <p className={styles.welcomeText}>
+                Su objetivo es brindar una guía clara para acompañar el 
+                ejercicio profesional.
+              </p>
+            </div>
+
+            {/* COLUMNA 2 - Card Único */}
+            <div className={styles.cardSection}>
+              <Card
+                title="Nuevo cálculo de honorarios"
+                description="Genera un nuevo proyecto para cálculo de honorarios profesionales"
+                icon={<FaCalculator />}
+                onClick={() => navigate(ROUTES.NUEVO_CALCULO)}
+              />
+            </div>
+            
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+};
+```
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Layout de 2 columnas implementado
+☐ Columna izquierda con texto de bienvenida
+☐ Título de bienvenida en morado #5B2FE6
+☐ Columna derecha con 1 sola card
+☐ Card "Nuevo Cálculo de Honorarios" funcional
+☐ Click en card navega a /nuevo-calculo
+☐ No quedan referencias a las 5 cards eliminadas
+☐ Código limpio sin imports innecesarios
+
+IMPACTO:
+🔴 CRÍTICO - Cambio estructural completo del Dashboard
+⏱️ Tiempo estimado: 15 minutos
+
+
+================================================================================
+TICKET #4: Crear estilos para layout de 2 columnas en Dashboard
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🔴 CRÍTICA
+================================================================================
+ARCHIVO: App/Frontend/src/pages/DashboardPage.module.css
+LÍNEAS: Todo el archivo
+
+DESCRIPCIÓN:
+Reemplazar completamente los estilos del Dashboard para soportar
+el nuevo layout de 2 columnas.
+
+NUEVO CONTENIDO COMPLETO:
+
+```css
+/* Estilos para DashboardPage */
+.dashboardContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.mainContent {
+  flex: 1;
+  padding: var(--spacing-5) 0;
+  background-color: var(--color-gray-50);
+}
+
+.contentWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-3);
+}
+
+/* Layout de 2 columnas */
+.twoColumnLayout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-5);
+  align-items: start;
+}
+
+/* COLUMNA 1 - Sección de Bienvenida */
+.welcomeSection {
+  background-color: var(--color-white);
+  padding: var(--spacing-5);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.welcomeTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #5B2FE6;
+  margin: 0 0 var(--spacing-3) 0;
+  line-height: 1.3;
+}
+
+.welcomeText {
+  font-size: 1.125rem;
+  color: var(--color-gray-700);
+  line-height: 1.6;
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.welcomeText:last-child {
+  margin-bottom: 0;
+}
+
+/* COLUMNA 2 - Sección de Card */
+.cardSection {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* Responsive - Tablet */
+@media (max-width: 1024px) {
+  .twoColumnLayout {
+    gap: var(--spacing-4);
+  }
+  
+  .welcomeTitle {
+    font-size: 1.5rem;
+  }
+  
+  .welcomeText {
+    font-size: 1rem;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .mainContent {
+    padding: var(--spacing-3) 0;
+  }
+  
+  .twoColumnLayout {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-3);
+  }
+  
+  .welcomeSection {
+    padding: var(--spacing-3);
+  }
+  
+  .welcomeTitle {
+    font-size: 1.375rem;
+  }
+  
+  .welcomeText {
+    font-size: 0.9375rem;
+  }
+}
+```
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Layout de 2 columnas en desktop (50/50)
+☐ Card de bienvenida con fondo blanco y sombra
+☐ Título morado #5B2FE6 con tamaño 1.75rem
+☐ Texto legible con line-height 1.6
+☐ Responsive: stack vertical en móvil (<768px)
+☐ Espaciado apropiado entre elementos
+☐ Bordes redondeados y sombras sutiles
+
+IMPACTO:
+🔴 CRÍTICO - Define toda la apariencia del Dashboard
+⏱️ Tiempo estimado: 10 minutos
+
+
+================================================================================
+TICKET #5: Actualizar Footer con logo CPAU y nuevo texto
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🟡 MEDIA
+================================================================================
+ARCHIVO: App/Frontend/src/components/layout/Footer.jsx
+LÍNEAS: 6-14
+
+DESCRIPCIÓN:
+Agregar logo CPAU al footer y actualizar el texto de copyright según diseño.
+
+CAMBIOS ESPECÍFICOS:
+
+ANTES:
+```jsx
+<footer className={styles.footer}>
+  <div className={styles.footerContainer}>
+    <p className={styles.copyright}>
+      © 2026 - Desarrollado por neosis para el CPAU
+    </p>
+```
+
+DESPUÉS:
+```jsx
+<footer className={styles.footer}>
+  <div className={styles.footerContainer}>
+    <div className={styles.footerLeft}>
+      <img 
+        src={cpauLogo} 
+        alt="Logo CPAU" 
+        className={styles.footerLogo}
+      />
+    </div>
+    
+    <p className={styles.copyright}>
+      © Consejo Profesional de Arquitectura y Urbanismo. 25 de Mayo 482. C1002ABJ CABA. 
+      Tel: +5411 5238 1068. Email: rect@cpau.org. Atención: lunes a viernes de 9 a 16 horas.
+    </p>
+```
+
+TAMBIÉN AGREGAR IMPORT:
+```jsx
+import cpauLogo from '../../assets/images/cpau.svg';
+```
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Logo CPAU visible en el footer (izquierda)
+☐ Texto de copyright actualizado con información completa
+☐ Logo tiene tamaño apropiado (aprox 60-80px alto)
+☐ Layout: logo izquierda, texto centro, redes derecha
+☐ Responsive: stack vertical en móvil
+☐ Colores y espaciado coherentes
+
+IMPACTO:
+🟡 MEDIO - Afecta todas las páginas
+⏱️ Tiempo estimado: 5 minutos
+
+
+================================================================================
+TICKET #6: Actualizar estilos del Footer para logo y layout
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🟡 MEDIA
+================================================================================
+ARCHIVO: App/Frontend/src/components/layout/Footer.module.css
+LÍNEAS: Todo el archivo
+
+DESCRIPCIÓN:
+Actualizar estilos del footer para incluir logo CPAU y nuevo layout.
+
+CAMBIOS ESPECÍFICOS:
+
+AGREGAR después de .footerContainer:
+```css
+.footerLeft {
+  display: flex;
+  align-items: center;
+}
+
+.footerLogo {
+  height: 60px;
+  width: auto;
+}
+
+.copyright {
+  flex: 1;
+  text-align: center;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--color-gray-700);
+  margin: 0;
+  padding: 0 var(--spacing-2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footerContainer {
+    flex-direction: column;
+    gap: var(--spacing-2);
+    text-align: center;
+  }
+  
+  .footerLogo {
+    height: 50px;
+  }
+  
+  .copyright {
+    font-size: 0.75rem;
+    padding: 0;
+  }
+  
+  .socialLinks {
+    justify-content: center;
+  }
+}
+```
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Logo CPAU tiene altura de 60px en desktop
+☐ Logo tiene altura de 50px en móvil
+☐ Texto copyright centrado y legible
+☐ Footer con display: flex y distribución correcta
+☐ Stack vertical en móvil (<768px)
+☐ Espaciado apropiado entre elementos
+☐ Color de texto coherente con el diseño
+
+IMPACTO:
+🟡 MEDIO - Apariencia del footer
+⏱️ Tiempo estimado: 5 minutos
+
+
+================================================================================
+TICKET #7: Eliminar código residual de cards no utilizadas
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🟢 BAJA
+================================================================================
+ARCHIVOS: Múltiples
+
+DESCRIPCIÓN:
+Limpieza y verificación de que no queden referencias a las 5 cards eliminadas.
+
+VERIFICACIONES A REALIZAR:
+
+1. DashboardPage.jsx:
+   ☐ No hay referencias a dashboardCards array antiguo
+   ☐ No hay imports innecesarios (FaListAlt, FaHardHat, FaFolderOpen, FaSearchDollar, FaCog)
+   ☐ Solo queda FaCalculator importado
+   ☐ Solo queda 1 Card en el JSX
+
+2. ROUTES en utils/constants.js:
+   ☐ Verificar que las rutas eliminadas NO se usen en otros lugares
+   ☐ Si no se usan, MANTENER por si se necesitan en el futuro
+   ☐ NO eliminar rutas, solo confirmar que no están en uso activo
+
+3. Búsqueda global:
+   ☐ Buscar "Cálculos Realizados" en proyecto
+   ☐ Buscar "Nuevo Proyecto" en proyecto
+   ☐ Buscar "Proyectos Realizados" en proyecto
+   ☐ Buscar "Consulta de Precios" en proyecto
+   ☐ Buscar "Personalizar" en proyecto
+   ☐ Confirmar que solo aparecen en páginas placeholder (esperado)
+
+4. App.jsx:
+   ☐ MANTENER todas las rutas (las páginas existen como placeholder)
+   ☐ NO eliminar rutas ni componentes
+
+NOTA IMPORTANTE:
+NO eliminar las páginas placeholder ni las rutas. Solo asegurarse de que no haya
+código residual en el Dashboard que haga referencia a cards que ya no existen.
+
+CRITERIOS DE ACEPTACIÓN:
+☐ DashboardPage.jsx solo tiene 1 Card
+☐ No hay imports innecesarios de íconos
+☐ No hay variables o arrays no utilizados
+☐ Rutas siguen existiendo para acceso directo si es necesario
+☐ Páginas placeholder siguen funcionando
+☐ No hay console.log o código de debug
+
+IMPACTO:
+🟢 BAJO - Limpieza de código
+⏱️ Tiempo estimado: 10 minutos
+
+
+================================================================================
+TICKET #8: Testing visual completo - Desktop
+ESTADO: ☐ PENDIENTE
+PRIORIDAD: 🔴 ALTA
+================================================================================
+DISPOSITIVOS: Chrome, Firefox, Edge
+
+DESCRIPCIÓN:
+Verificación visual completa del nuevo diseño del Dashboard en navegadores desktop.
+
+PÁGINAS A VERIFICAR:
+
+📄 DashboardPage:
+☐ Header con título en 2 líneas "Calculadora" / "DE HONORARIOS"
+☐ Título del header en morado #5B2FE6
+☐ Logo CPAU visible en header (izquierda)
+☐ UserMenu funcional en header (derecha)
+☐ Layout de 2 columnas centrado
+☐ Columna 1: Bloque blanco con texto de bienvenida
+☐ Título de bienvenida morado #5B2FE6
+☐ Texto legible con buen line-height
+☐ Columna 2: Card "Nuevo cálculo de honorarios"
+☐ Card clickeable y con hover effect
+☐ Footer con logo CPAU (izquierda)
+☐ Footer con texto copyright completo (centro)
+☐ Footer con iconos redes sociales (derecha)
+
+NAVEGACIÓN:
+☐ Click en card navega a /nuevo-calculo
+☐ UserMenu desplegable funciona
+☐ Links del footer funcionan
+
+ASPECTOS GENERALES:
+☐ No hay elementos desalineados
+☐ Espaciado consistente y apropiado
+☐ Colores coherentes con paleta CPAU
+☐ Sombras y efectos apropiados
+☐ No hay errores en consola
+☐ Performance fluida y rápida
+
+CRITERIOS DE ACEPTACIÓN:
+☐ ✅ Verificado en Chrome
+☐ ✅ Verificado en Firefox
+☐ ✅ Verificado en Edge
+☐ No hay regresiones visuales
+☐ Diseño coincide con propuesta del cliente
+
+IMPACTO:
+🔴 CRÍTICO - Validación final del diseño
+⏱️ Tiempo estimado: 20 minutos
+
+
+================================================================================
+TICKET #9: Testing visual completo - Responsive/Mobile
+ESTADO: ☐ PENDIENTE
+PRIORIDAD: 🟡 MEDIA
+================================================================================
+DISPOSITIVOS: Chrome DevTools, dispositivo real si está disponible
+
+DESCRIPCIÓN:
+Verificación visual del Dashboard en breakpoints móvil y tablet.
+
+BREAKPOINTS A VERIFICAR:
+
+📱 Móvil (< 768px):
+☐ Header compacto con título legible
+☐ Logo CPAU visible y no muy grande
+☐ UserMenu accesible
+☐ Layout cambia a 1 columna (stack vertical)
+☐ Texto de bienvenida arriba
+☐ Card de cálculo abajo
+☐ Textos legibles en pantalla pequeña
+☐ Footer en stack vertical
+☐ Logo footer visible
+☐ Texto copyright legible (puede ser más pequeño)
+
+📱 Tablet (768-1024px):
+☐ Layout de 2 columnas se mantiene
+☐ Textos con tamaños apropiados
+☐ Espaciado reducido pero apropiado
+☐ Card responsive y clickeable
+
+INTERACCIÓN TÁCTIL:
+☐ Card tiene área táctil suficiente (min 44x44px)
+☐ UserMenu se puede abrir fácilmente
+☐ Links del footer son clickeables
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Stack vertical funciona en móvil
+☐ Todo el contenido es visible sin scroll horizontal
+☐ Textos legibles en todas las resoluciones
+☐ Touch targets apropiados
+☐ No hay overlaps o elementos cortados
+
+IMPACTO:
+🟡 MEDIO - Experiencia móvil
+⏱️ Tiempo estimado: 20 minutos
+
+
+================================================================================
+CHECKLIST DE VERIFICACIÓN GENERAL
+================================================================================
+
+VISUAL CONSISTENCY:
+☐ Paleta CPAU aplicada consistentemente
+☐ Morado #5B2FE6 en títulos importantes
+☐ Turquesa #8DD5D9 en elementos de acento
+☐ Espaciado coherente usando variables CSS
+☐ Bordes redondeados y sombras sutiles
+
+FUNCIONALIDAD:
+☐ Header visible en todas las páginas
+☐ Footer visible en todas las páginas
+☐ Navegación desde Dashboard a /nuevo-calculo funciona
+☐ UserMenu funcional
+☐ Links de redes sociales funcionan (aunque sean #)
+
+CÓDIGO LIMPIO:
+☐ No hay código comentado innecesario
+☐ No hay imports no utilizados
+☐ Variables CSS utilizadas apropiadamente
+☐ No hay console.log de debug
+☐ Estructura de carpetas coherente
+
+RESPONSIVE:
+☐ Desktop (>1024px): 2 columnas
+☐ Tablet (768-1024px): 2 columnas ajustadas
+☐ Mobile (<768px): 1 columna stack vertical
+☐ Textos escalados apropiadamente
+
+ACCESIBILIDAD:
+☐ Contraste de colores WCAG AA
+☐ Textos legibles con buen line-height
+☐ Focus states visibles
+☐ Navegación por teclado funcional
+
+
+================================================================================
+ORDEN DE IMPLEMENTACIÓN RECOMENDADO
+================================================================================
+
+1. Tickets #1-2: Header (título en 2 líneas)
+2. Tickets #3-4: Dashboard (layout 2 columnas)
+3. Tickets #5-6: Footer (logo y texto)
+4. Ticket #7: Limpieza de código
+5. Tickets #8-9: Testing visual
+
+TIEMPO TOTAL ESTIMADO: ~1.5 horas
+
+================================================================================
+FIN DEL DOCUMENTO DE TICKETS
+================================================================================

@@ -1,16 +1,30 @@
 /* Variables CSS Globales - CH2026 */
 :root {
   /* Paleta de colores */
-  --color-primary: #2D5016;        /* Verde */
-  --color-secondary: #D4A574;      /* Marrón claro */
-  --color-accent: #A8DADC;         /* Celeste claro */
+  --color-primary: #5B2FE6;        /* Morado CPAU */
+  --color-secondary: #8DD5D9;      /* Turquesa */
+  --color-accent: #8DD5D9;         /* Turquesa */
   --color-white: #FFFFFF;
-  --color-gray-50: #F8F9FA;
-  --color-gray-100: #E9ECEF;
-  --color-gray-200: #DEE2E6;
-  --color-gray-700: #495057;
+  --color-gray-50: #F5F5F5;
+  --color-gray-100: #F5F5F5;
+  --color-gray-200: #B0B0B0;
+  --color-gray-700: #1E1E6B;       /* Azul oscuro */
   --color-error: #DC3545;
   --color-success: #28A745;
+  
+  /* Variantes de colores primarios */
+  --color-purple-dark: #4A25B8;      /* Hover/Active del morado */
+  --color-turquoise-light: #B8E8EA;  /* Turquesa claro hover */
+  
+  /* Colores de texto específicos */
+  --color-text-primary: #1E1E6B;     /* Títulos principales */
+  --color-text-body: #333333;        /* Texto de cuerpo */
+  --color-text-secondary: #666666;   /* Texto secundario */
+  --color-text-muted: #B0B0B0;       /* Texto deshabilitado */
+  
+  /* Badges y estados */
+  --color-badge-gray: #B0B0B0;       /* Badges NO/EN CONSTRUCCIÓN */
+  --color-badge-disabled: #E0E0E0;   /* Fondo cards deshabilitadas */
   
   /* Tipografía */
   --font-family: 'Inter', 'Roboto', sans-serif;
@@ -52,7 +66,7 @@ body {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
   color: var(--color-gray-700);
-  background-color: var(--color-gray-50);
+  background-color: var(--color-white);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

@@ -139,8 +139,8 @@
 
 .numberInput:focus {
   outline: none;
-  border-color: #2D5016;
-  box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+  border-color: #5B2FE6;
+  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.1);
 }
 
 .numberInput:hover {
@@ -162,7 +162,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background-color: #2D5016;
+  background-color: #5B2FE6;
   color: white;
   border: none;
   border-radius: 8px;
@@ -173,9 +173,9 @@
 }
 
 .saveButton:hover:not(:disabled) {
-  background-color: #234012;
+  background-color: #4A25B8;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(45, 80, 22, 0.3);
+  box-shadow: 0 4px 12px rgba(91, 47, 230, 0.3);
 }
 
 .saveButton:active:not(:disabled) {

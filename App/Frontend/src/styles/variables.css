@@ -27,7 +27,7 @@
   --color-badge-disabled: #E0E0E0;   /* Fondo cards deshabilitadas */
   
   /* Tipografía */
-  --font-family: 'Inter', 'Roboto', sans-serif;
+  --font-family: 'Avenir', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
   --font-size-lg: 1.125rem;

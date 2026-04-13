@@ -1,0 +1,22 @@
+@ch2026-dev Crea un componente Card para mostrar estadísticas en el dashboard
+
+@ch2026-dev Revisa el componente Button.jsx y sugiere mejoras según nuestras convenciones
+
+@ch2026-dev Implementa una nueva página para mostrar el historial de cálculos con filtros
+
+@ch2026-dev Crea un hook personalizado para manejar la autenticación del usuario
+
+@ch2026-dev Agrega una nueva serverless function para obtener parámetros desde DB
+
+
+Customizaciones relacionadas sugeridas
+Podrías crear complementos:
+
+.github/instructions/componentes-ui.instructions.md
+→ Patrones específicos para botones, cards, modals, formularios
+
+.github/skills/deployment/SKILL.md
+→ Workflow para deploy a Vercel (build, test, deploy)
+
+.github/prompts/generar-calculo-test.prompt.md
+→ Prompt parametrizado para generar datos de prueba de cálculos

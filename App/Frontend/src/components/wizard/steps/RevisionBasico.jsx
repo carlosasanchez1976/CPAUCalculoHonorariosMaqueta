@@ -7,7 +7,7 @@ import styles from './RevisionBasico.module.css';
  * Paso 3 - Revisión de Datos
  * Específico para el cálculo "Honorarios de Especialidades - Básico"
  */
-const RevisionBasico = ({ formData, onEditStep }) => {
+const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
   const DataRow = ({ label, value }) => (
     <div className={styles.dataRow}>
       <span className={styles.dataLabel}>{label}:</span>
@@ -23,7 +23,7 @@ const RevisionBasico = ({ formData, onEditStep }) => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.stepTitle}>Revisión de Datos Ingresados</h2>
+      <h2 className={styles.stepTitle}>{stepTitle}</h2>
       <p className={styles.stepDescription}>
         Verifique que todos los datos sean correctos antes de proceder con el cálculo
       </p>

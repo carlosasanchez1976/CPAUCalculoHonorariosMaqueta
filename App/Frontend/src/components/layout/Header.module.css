@@ -31,28 +31,6 @@
   width: auto;
 }
 
-/* Título */
-.titleWrapper {
-  text-align: center;
-  flex: 1;
-}
-
-.titleLine1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
-  line-height: 1.2;
-  color: #5B2FE6;
-}
-
-.titleLine2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0;
-  line-height: 1.2;
-  color: #5B2FE6;
-  letter-spacing: 0.5px;
-}
 
 /* Responsive */
 @media (max-width: 767px) {

@@ -8,7 +8,7 @@ import styles from './DatosObraBasico.module.css';
  * Específico para el cálculo "Honorarios de Especialidades - Básico"
  * Incluye cálculo automático del valor de obra
  */
-const DatosObraBasico = ({ formData, onChange }) => {
+const DatosObraBasico = ({ formData, onChange, stepTitle }) => {
   const [valorObraCalculado, setValorObraCalculado] = useState(0);
   const [camposCompletos, setCamposCompletos] = useState(false);
 
@@ -67,7 +67,7 @@ const DatosObraBasico = ({ formData, onChange }) => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.stepTitle}>Datos Específicos de la Obra</h2>
+      <h2 className={styles.stepTitle}>{stepTitle}</h2>
       <p className={styles.stepDescription}>
         Ingrese las características técnicas y económicas del proyecto
       </p>

@@ -23,14 +23,14 @@ const DashboardPage = () => {
             
             {/* COLUMNA 1 - Texto de Bienvenida */}
             <div className={styles.welcomeSection}>
-              <h2 className={styles.welcomeTitle}>
+              <p className={styles.welcomeTitle}>
                 Bienvenido/a a la Calculadora de Honorarios del CPAU.
-              </h2>
-              <p className={styles.welcomeText}>
+              </p>
+              <p className={styles.welcomeTitle}>
                 Esta herramienta permite estimar de manera orientativa los 
                 honorarios profesionales, en base a los sugeridos por el MEPAU.
               </p>
-              <p className={styles.welcomeText}>
+              <p className={styles.welcomeTitle}>
                 Su objetivo es brindar una guía clara para acompañar el 
                 ejercicio profesional.
               </p>
@@ -39,7 +39,8 @@ const DashboardPage = () => {
             {/* COLUMNA 2 - Card Único */}
             <div className={styles.cardSection}>
               <Card
-                title="Nuevo cálculo de honorarios"
+                title="Nuevo cálculo"
+                title2="de honorarios"
                 description="Genera un nuevo proyecto para cálculo de honorarios profesionales"
                 icon={<FaCalculator />}
                 onClick={() => navigate(ROUTES.NUEVO_CALCULO)}

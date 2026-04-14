@@ -196,11 +196,11 @@ const NuevoCalculoPage = () => {
             aria-label="Volver al Dashboard"
           >
             <FaArrowLeft className={styles.backIcon} />
-            <span>Volver al Dashboard</span>
+            <span>Volver al Panel</span>
           </button>
 
           <div className={styles.header}>
-            <h1 className={styles.title}>Nuevo Cálculo de Honorarios</h1>
+            <h1 className={styles.title}>Nuevo cálculo de Honorarios</h1>
             <p className={styles.subtitle}>
               Seleccione la tarea profesional para la cual desea realizar el cálculo de honorarios.
             </p>

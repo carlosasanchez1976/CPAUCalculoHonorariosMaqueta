@@ -5,7 +5,7 @@ import styles from './TareasProfesionalesBasico.module.css';
  * Paso 2 - Tareas Profesionales a Realizar
  * Específico para el cálculo "Honorarios de Especialidades - Básico"
  */
-const TareasProfesionalesBasico = ({ formData, onChange }) => {
+const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
   const [hasError, setHasError] = useState(false);
 
   // Validar que al menos una tarea esté en "Sí"
@@ -68,7 +68,7 @@ const TareasProfesionalesBasico = ({ formData, onChange }) => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.stepTitle}>Tareas Profesionales a Realizar</h2>
+      <h2 className={styles.stepTitle}>{stepTitle}</h2>
       <p className={styles.stepDescription}>
         Seleccione las tareas profesionales que se incluirán en el cálculo de honorarios
       </p>

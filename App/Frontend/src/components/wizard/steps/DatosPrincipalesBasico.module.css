@@ -1,33 +1,45 @@
 .container {
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 10px;
 }
 
 .stepTitle {
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-gray-900);
-  margin-bottom: 0.5rem;
-  text-align: center;
-}
-
-.stepDescription {
-  color: var(--color-gray-600);
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 1rem;
+  margin-bottom: 1rem;
+  text-align: left;
 }
 
 .formGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Fila con 3 inputs */
+.inputRow {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+
+
+/* Fila con 2 desplegables */
+.selectRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
 }
 
-.selectWrapper,
+.selectWrapper {
+  width: 100%;
+}
+
 .textareaWrapper {
-  grid-column: 1 / -1;
+  width: 100%;
 }
 
 .label {
@@ -47,11 +59,11 @@
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  border: 1px solid var(--color-gray-200);
-  border-radius: 8px;
+  border: 2px solid var(--color-gray-200);
   background-color: white;
   color: var(--color-gray-900);
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .select:hover {
@@ -65,10 +77,18 @@
   box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2);
 }
 
-/* Estilos para opciones del dropdown */
+/* Estilos para las opciones del dropdown con fondo blanco */
+.select option {
+  background-color: white;
+  color: var(--color-gray-900);
+  padding: 0.5rem;
+}
+
+.select option:checked,
 .select option:hover {
-  background-color: rgba(91, 47, 230, 0.1);
+  background-color: #8DD5D9;
   color: #5B2FE6;
+  font-weight: 600;
 }
 
 .textarea {
@@ -78,7 +98,6 @@
   font-family: var(--font-family);
   line-height: 1.6;
   border: 2px solid var(--color-gray-200);
-  border-radius: 8px;
   background-color: white;
   color: #333333;
   transition: all 0.2s ease;
@@ -104,7 +123,12 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .formGrid {
+  .inputRow {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .selectRow {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
@@ -114,6 +138,6 @@
   }
 
   .container {
-    padding: 1.5rem 1rem;
+    padding: 0;
   }
 }

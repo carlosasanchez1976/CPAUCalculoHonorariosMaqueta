@@ -38,6 +38,7 @@ const ProcesoCalculoPage = () => {
     cliente: '',
     ubicacion: '',
     tipoObra: '',
+    destinoUso: '',
     
     // Paso 1: Datos Específicos (GENÉRICO)
     metrosCuadrados: '',
@@ -202,7 +203,7 @@ const ProcesoCalculoPage = () => {
         };
       } else {
         // Mock para otros tipos de cálculo (temporal)
-        result = generateMockResults();
+        result = 1;
       }
       
       setCalculationResult(result);
@@ -222,45 +223,6 @@ const ProcesoCalculoPage = () => {
     }
   };
 
-  const generateMockResults = () => {
-    const base = Math.floor(Math.random() * (2000000 - 500000) + 500000);
-    const iva = Math.floor(base * 0.21);
-    const gastosAdmin = Math.floor(base * 0.05);
-    const total = base + iva + gastosAdmin;
-
-    return {
-      honorariosProfesionales: base,
-      impuestos: iva,
-      gastosAdministrativos: gastosAdmin,
-      totalGeneral: total,
-      items: [
-        {
-          concepto: 'Proyecto arquitectónico',
-          horas: Math.floor(Math.random() * (150 - 50) + 50),
-          tarifa: 15000,
-          get subtotal() { return this.horas * this.tarifa; }
-        },
-        {
-          concepto: 'Dirección de obra',
-          horas: Math.floor(Math.random() * (300 - 100) + 100),
-          tarifa: 18000,
-          get subtotal() { return this.horas * this.tarifa; }
-        },
-        {
-          concepto: 'Cómputos y presupuestos',
-          horas: Math.floor(Math.random() * (80 - 30) + 30),
-          tarifa: 12000,
-          get subtotal() { return this.horas * this.tarifa; }
-        },
-        {
-          concepto: 'Documentación municipal',
-          horas: Math.floor(Math.random() * (60 - 20) + 20),
-          tarifa: 14000,
-          get subtotal() { return this.horas * this.tarifa; }
-        }
-      ]
-    };
-  };
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('es-AR', {
@@ -292,7 +254,7 @@ const ProcesoCalculoPage = () => {
   const renderStep0 = () => {
     // Si es Cálculo Básico, usar componente específico
     if (formData.tipoCalculo === 'Básico') {
-      return <DatosPrincipalesBasico formData={formData} onChange={handleInputChange} />;
+      return <DatosPrincipalesBasico formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
     }
 
     // Componente genérico para otros tipos
@@ -333,7 +295,7 @@ const ProcesoCalculoPage = () => {
           />
 
           <Input
-            label="Cliente"
+            label="Comitente"
             name="cliente"
             value={formData.cliente}
             onChange={handleInputChange}
@@ -373,7 +335,7 @@ const ProcesoCalculoPage = () => {
   const renderStep1 = () => {
     // Si es Cálculo Básico, usar componente específico
     if (formData.tipoCalculo === 'Básico') {
-      return <DatosObraBasico formData={formData} onChange={handleInputChange} />;
+      return <DatosObraBasico formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
     }
 
     // Componente genérico para otros tipos
@@ -423,7 +385,7 @@ const ProcesoCalculoPage = () => {
   const renderStep2 = () => {
     // Si es Cálculo Básico, usar componente específico
     if (formData.tipoCalculo === 'Básico') {
-      return <TareasProfesionalesBasico formData={formData} onChange={handleInputChange} />;
+      return <TareasProfesionalesBasico formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
     }
 
     // Componente genérico para otros tipos
@@ -478,7 +440,7 @@ const ProcesoCalculoPage = () => {
   const renderStep3 = () => {
     // Si es Cálculo Básico, usar componente específico
     if (formData.tipoCalculo === 'Básico') {
-      return <RevisionBasico formData={formData} onEditStep={(step) => setCurrentStep(step)} />;
+      return <RevisionBasico formData={formData} onEditStep={(step) => setCurrentStep(step)} stepTitle={steps[currentStep]} />;
     }
 
     // Componente genérico para otros tipos
@@ -536,6 +498,10 @@ const ProcesoCalculoPage = () => {
             <div className={styles.reviewItem}>
               <span className={styles.reviewLabel}>Tipo de Obra:</span>
               <span className={styles.reviewValue}>{formData.tipoObra || '-'}</span>
+            </div>
+            <div className={styles.reviewItem}>
+              <span className={styles.reviewLabel}>Destino/Uso:</span>
+              <span className={styles.reviewValue}>{formData.destinoUso || '-'}</span>
             </div>
           </div>
 
@@ -688,7 +654,6 @@ const ProcesoCalculoPage = () => {
       
       <div className={styles.wizardHeader}>
         <h1 className={styles.wizardTitle}>{formData.tipoNombre}</h1>
-        <p className={styles.wizardSubtitle}>{formData.descripcionTipo}</p>
       </div>
 
       <StepperProgress currentStep={currentStep} steps={steps} />

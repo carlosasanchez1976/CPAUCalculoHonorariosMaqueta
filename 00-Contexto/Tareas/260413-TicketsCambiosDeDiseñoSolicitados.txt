@@ -26,7 +26,7 @@ FORMULARIOS (Wizard de cálculo):
 ✅ Implementar checkboxes con cuadrado azul cuando están seleccionados
 
 PÁGINA DE RESULTADOS:
-✅ Ajustar hover en panel de calendario con texto azul institucional
+❌ Ajustar hover en panel de calendario con texto azul institucional
 
 
 ================================================================================
@@ -482,7 +482,7 @@ RESOLUCIÓN:
 
 ================================================================================
 TICKET #7: Ajustar hover en panel de resultado/calendario con texto azul
-ESTADO: ✅ COMPLETADO
+ESTADO: ❌ NO APLICABLE / ANULADO
 PRIORIDAD: 🟢 BAJA
 ================================================================================
 ARCHIVO: App/Frontend/src/components/wizard/ResultadoBasicoDetalle.module.css
@@ -526,11 +526,11 @@ Identificar el elemento de fecha/calendario y agregar:
 ```
 
 CRITERIOS DE ACEPTACIÓN:
-✅ Elemento de fecha/calendario identificado
-✅ Hover cambia texto a #5B2FE6
-✅ Fondo sutil en hover (opcional)
-✅ Transición suave 0.2s
-✅ Cursor pointer visible
+❌ Elemento de fecha/calendario identificado
+❌ Hover cambia texto a #5B2FE6
+❌ Fondo sutil en hover (opcional)
+❌ Transición suave 0.2s
+❌ Cursor pointer visible
 
 NOTA: Verificar si este elemento existe en la página actual de resultados.
 Si no existe, este ticket puede marcarse como "NO APLICABLE" o pospuesto.
@@ -540,15 +540,16 @@ IMPACTO:
 ⏱️ Tiempo estimado: 10 minutos
 
 RESOLUCIÓN:
-✅ Identificado elemento .metadataItem en ResultadoBasicoDetalle.jsx
-✅ Contiene 3 items: Tipo, Fecha y Nº de Cálculo
-✅ Agregado padding (8px 12px) y border-radius (6px) a .metadataItem
-✅ Agregado cursor: pointer para indicar interactividad
-✅ Hover: background-color rgba(91, 47, 230, 0.05) - fondo morado muy sutil
-✅ Hover: color #5B2FE6 para .metadataLabel y .metadataValue
-✅ Transiciones suaves (0.2s ease) en todos los elementos
-✅ Aplicado en ResultadoBasicoDetalle.module.css
-✅ Efecto aplicado a todos los items de metadata (Tipo, Fecha, Nº Cálculo)
+❌ TICKET ANULADO POR SOLICITUD DEL CLIENTE
+❌ Los labels de metadata (Tipo, Fecha, Nº de Cálculo) NO deben tener efectos hover
+❌ Revertidos todos los cambios CSS:
+  - Eliminado padding (8px 12px) de .metadataItem
+  - Eliminado border-radius (6px)
+  - Eliminado cursor: pointer
+  - Eliminadas reglas :hover con background-color y cambio de color de texto
+  - Eliminadas transiciones en .metadataLabel y .metadataValue
+❌ Archivo ResultadoBasicoDetalle.module.css restaurado a estado original
+❌ Los elementos de metadata ahora NO tienen efectos visuales al pasar el mouse
 
 
 ================================================================================

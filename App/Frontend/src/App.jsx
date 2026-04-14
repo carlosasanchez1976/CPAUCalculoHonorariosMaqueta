@@ -15,6 +15,7 @@ import PreferenciasPage from './pages/PreferenciasPage';
 import MiCuentaPage from './pages/MiCuentaPage';
 import ParametrosPage from './pages/ParametrosPage';
 import { ROUTES } from './utils/constants';
+import './styles/fonts.css';
 import './styles/variables.css';
 
 /**

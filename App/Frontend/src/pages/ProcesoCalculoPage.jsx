@@ -306,7 +306,7 @@ const ProcesoCalculoPage = () => {
 
         <div className={styles.formGrid}>
           {/* Tarea Profesional - Campo FUNDAMENTAL como primer campo */}
-          <div style={{ gridColumn: '1 / -1' }}>
+          <div className={styles.fullGridWidth}>
             <label className={styles.label}>
               Tarea Profesional *
               <select

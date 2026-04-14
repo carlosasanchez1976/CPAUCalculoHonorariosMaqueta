@@ -15,14 +15,17 @@
   border: 2px solid transparent;
 }
 
+/* Hover: solo cambio de color de texto (sin movimiento) */
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--color-primary);
+  cursor: pointer;
 }
 
-.card:active {
-  transform: translateY(-2px);
+.card:hover .title {
+  color: #5B2FE6;
+}
+
+.card:hover .description {
+  color: #5B2FE6;
 }
 
 .card:focus-visible {
@@ -35,11 +38,7 @@
   font-size: 60px;
   color: var(--color-primary);
   margin-bottom: var(--spacing-1);
-  transition: transform var(--transition);
-}
-
-.card:hover .iconWrapper {
-  transform: scale(1.1);
+  transition: none;
 }
 
 /* Título */
@@ -48,6 +47,7 @@
   font-weight: 600;
   color: var(--color-gray-700);
   margin: 0;
+  transition: color 0.2s ease;
 }
 
 /* Descripción */
@@ -56,6 +56,7 @@
   color: var(--color-gray-700);
   line-height: 1.5;
   margin: 0;
+  transition: color 0.2s ease;
 }
 
 /* Responsive */

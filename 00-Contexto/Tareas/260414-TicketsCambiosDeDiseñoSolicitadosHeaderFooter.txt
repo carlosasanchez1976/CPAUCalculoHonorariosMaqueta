@@ -1,0 +1,54 @@
+================================================================================
+TICKETS - CAMBIOS DE DISEÑO SOLICITADOS POR CPAU (13/04/2026)
+================================================================================
+Fecha: 13 de Abril 2026
+Cliente: CPAU
+Proyecto: CH2026 - Calculadora de Honorarios
+Archivo: 260413-TicketsCambiosDeDiseñoSolicitadosHeaderFooter.txt
+
+OBJETIVO:
+Ajustes de diseño UI/UX solicitados por el cliente CPAU según revisión
+de mockups y prototipos. Cambios focalizados en Header y Footer.
+
+
+================================================================================
+TICKET #1: Ajustar Header según diseño
+ESTADO: 
+PRIORIDAD: 🔴 ALTA
+================================================================================
+
+DESCRIPCIÓN:
+
+REQUISITOS:
+
+COMPONENTES A VERIFICAR:
+
+CRITERIOS DE ACEPTACIÓN:
+
+IMPACTO:
+🔴 ALTO - Funcionalidad crítica de navegación
+⏱️ Tiempo estimado: 15 minutos
+
+RESOLUCIÓN:
+
+
+================================================================================
+TICKET #2: Ajustar diseño footer
+ESTADO: 
+PRIORIDAD: 🟡 MEDIA
+================================================================================
+ARCHIVOS: 
+
+DESCRIPCIÓN:
+
+Aplica a:
+
+
+CAMBIOS REQUERIDOS:
+
+
+CRITERIOS DE ACEPTACIÓN:
+
+IMPACTO:
+
+RESOLUCIÓN:

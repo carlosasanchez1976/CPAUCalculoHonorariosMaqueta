@@ -1,5 +1,6 @@
 import UserMenu from './UserMenu';
-import cpauLogo from '../../assets/images/cpau.svg';
+/*import cpauLogo from '../../assets/images/cpau.svg';*/
+import marcaLogo from '../../assets/images/cpau.svg';
 import styles from './Header.module.css';
 
 /**
@@ -11,16 +12,12 @@ const Header = () => {
       <div className={styles.headerContainer}>
         <div className={styles.logoSection}>
           <img 
-            src={cpauLogo} 
-            alt="Logo CPAU" 
+            src={marcaLogo} 
+            alt="Logo Marca" 
             className={styles.logo}
           />
         </div>
         
-        <div className={styles.titleWrapper}>
-          <h1 className={styles.titleLine1}>Calculadora</h1>
-          <h1 className={styles.titleLine2}>DE HONORARIOS</h1>
-        </div>
         
         <UserMenu />
       </div>

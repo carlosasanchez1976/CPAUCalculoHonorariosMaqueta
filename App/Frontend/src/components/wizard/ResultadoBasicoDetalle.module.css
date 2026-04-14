@@ -66,32 +66,15 @@
 .metadataItem {
   display: flex;
   gap: 0.5rem;
-  padding: 8px 12px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.metadataItem:hover {
-  background-color: rgba(91, 47, 230, 0.1);
-}
-
-.metadataItem:hover .metadataLabel {
-  color: #5B2FE6;
-}
-
-.metadataItem:hover .metadataValue {
-  color: #5B2FE6;
 }
 
 .metadataLabel {
   font-weight: 600;
   opacity: 0.9;
-  transition: color 0.2s ease;
 }
 
 .metadataValue {
   opacity: 1;
-  transition: color 0.2s ease;
 }
 
 /* Resumen del Proyecto */

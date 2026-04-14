@@ -95,12 +95,11 @@ const ProcesoCalculoPage = () => {
   ];
 
   const steps = [
-    'Datos Principales',
-    'Datos Específicos',
-    'Datos Adicionales',
-    'Revisión',
-    'Cálculo',
-    'Resultado'
+    'Datos Principales del Proyecto',
+    'Datos Específicos de la Obra',
+    'Tareas profesionales a realizar',
+    'Revisión de datos ingresados',
+    'Cálculo'
   ];
 
   const handleInputChange = (e) => {

@@ -46,21 +46,28 @@
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  border: 1px solid var(--color-gray-300);
+  border: 1px solid var(--color-gray-200);
   border-radius: 8px;
   background-color: white;
   color: var(--color-gray-900);
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+}
+
+.select:hover {
+  border-color: #5B2FE6;
+  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.1);
 }
 
 .select:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #5B2FE6;
+  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2);
 }
 
-.select:hover {
-  border-color: var(--color-gray-400);
+/* Estilos para opciones del dropdown */
+.select option:hover {
+  background-color: rgba(91, 47, 230, 0.1);
+  color: #5B2FE6;
 }
 
 .complejidadInfo {
@@ -77,6 +84,41 @@
   font-weight: 700;
   color: #3b82f6;
   margin-right: 0.5rem;
+}
+
+/* Mensaje de ayuda */
+.helperNote {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-left: 4px solid #ffc107;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  color: #856404;
+  animation: fadeIn 0.3s ease;
+}
+
+.helperNote p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.helperNote strong {
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Campo calculado */

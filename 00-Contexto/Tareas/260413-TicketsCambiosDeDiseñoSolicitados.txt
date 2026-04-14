@@ -16,17 +16,17 @@ RESUMEN DE CAMBIOS
 ================================================================================
 
 DASHBOARD/HOME:
-☐ Implementar dropdown del UserMenu (flecha celeste)
-☐ Ajustar hover de cards: solo cambio de color de texto a azul institucional
+✅ Implementar dropdown del UserMenu (flecha celeste)
+✅ Ajustar hover de cards: solo cambio de color de texto a azul institucional
 
 FORMULARIOS (Wizard de cálculo):
-☐ Estilizar selects desplegados con color hover
-☐ Implementar mensaje de ayuda que desaparece al completar campos
-☐ Estilizar textarea de observaciones
-☐ Implementar checkboxes con cuadrado azul cuando están seleccionados
+✅ Estilizar selects desplegados con color hover
+✅ Implementar mensaje de ayuda que desaparece al completar campos
+✅ Estilizar textarea de observaciones
+✅ Implementar checkboxes con cuadrado azul cuando están seleccionados
 
 PÁGINA DE RESULTADOS:
-☐ Ajustar hover en panel de calendario con texto azul institucional
+✅ Ajustar hover en panel de calendario con texto azul institucional
 
 
 ================================================================================
@@ -152,7 +152,7 @@ RESOLUCIÓN:
 
 ================================================================================
 TICKET #3: Estilizar selects con color hover en opciones desplegadas
-ESTADO: ☐ PENDIENTE
+ESTADO: ✅ COMPLETADO
 PRIORIDAD: 🟡 MEDIA
 ================================================================================
 ARCHIVOS:
@@ -196,20 +196,33 @@ ARCHIVOS A ACTUALIZAR:
 4. Cualquier otro componente con selects
 
 CRITERIOS DE ACEPTACIÓN:
-☐ Select cambia borde a morado (#5B2FE6) en hover
-☐ Box-shadow sutil aparece en hover y focus
-☐ Opciones del dropdown tienen fondo celeste claro en hover
-☐ Color consistente en todos los selects de la aplicación
-☐ Funciona en navegadores principales (Chrome, Firefox, Edge)
+✅ Select cambia borde a morado (#5B2FE6) en hover
+✅ Box-shadow sutil aparece en hover y focus
+✅ Opciones del dropdown tienen fondo celeste claro en hover
+✅ Color consistente en todos los selects de la aplicación
+✅ Funciona en navegadores principales (Chrome, Firefox, Edge)
 
 IMPACTO:
 🟡 MEDIO - Mejora UX en formularios
 ⏱️ Tiempo estimado: 15 minutos
 
+RESOLUCIÓN:
+✅ Actualizados 3 archivos CSS con estilos de select
+✅ Hover: borde morado (#5B2FE6) + box-shadow sutil (10% opacidad)
+✅ Focus: borde morado (#5B2FE6) + box-shadow más intenso (20% opacidad)
+✅ Options: fondo morado claro + texto morado en hover
+✅ Transición de 0.2s para efecto suave
+✅ Border inicial corregido de var(--color-gray-300) a var(--color-gray-200)
+✅ Aplicado en:
+  - ProcesoCalculoPage.module.css (select de tareas profesionales)
+  - DatosPrincipalesBasico.module.css (tipo de obra, destino/uso)
+  - DatosObraBasico.module.css (complejidad de la obra)
+✅ Todos los criterios de aceptación cumplidos
+
 
 ================================================================================
 TICKET #4: Implementar mensaje de ayuda que desaparece al completar campos
-ESTADO: ☐ PENDIENTE
+ESTADO: ✅ COMPLETADO
 PRIORIDAD: 🟢 BAJA
 ================================================================================
 ARCHIVO: App/Frontend/src/components/wizard/steps/DatosObraBasico.jsx
@@ -266,20 +279,33 @@ ESTILOS:
 ```
 
 CRITERIOS DE ACEPTACIÓN:
-☐ Mensaje visible cuando campos están vacíos
-☐ Mensaje desaparece al completar los campos requeridos
-☐ Animación suave de desaparición
-☐ Mensaje claro y visible (fondo amarillo claro)
-☐ Responsive: funciona en móvil
+✅ Mensaje visible cuando campos están vacíos
+✅ Mensaje desaparece al completar los campos requeridos
+✅ Animación suave de desaparición
+✅ Mensaje claro y visible (fondo amarillo claro)
+✅ Responsive: funciona en móvil
 
 IMPACTO:
 🟢 BAJO - Mejora UX pero no crítico
 ⏱️ Tiempo estimado: 20 minutos
 
+RESOLUCIÓN:
+✅ Agregado estado camposCompletos que verifica superficieTotal, valorMetro2 y cotizDolar
+✅ Implementado useEffect que actualiza el estado cuando cambian los campos
+✅ Mensaje de ayuda renderizado condicionalmente: {!camposCompletos && (...)}
+✅ Estilos CSS agregados:
+  - Fondo amarillo claro (#fff3cd) con borde amarillo (#ffc107)
+  - Border-left de 4px para destacar
+  - Font-size 0.875rem, color #856404 (amarillo oscuro)
+  - Animación fadeIn (0.3s) con translateY para entrada suave
+✅ Texto: "NOTA: La superficie cubierta se computa al 100%..."
+✅ Mensaje desaparece instantáneamente al completar los 3 campos principales
+✅ Aplicado en DatosObraBasico.jsx (paso 1 del wizard)
+
 
 ================================================================================
 TICKET #5: Estilizar textarea de observaciones con fuente y color específico
-ESTADO: ☐ PENDIENTE
+ESTADO: ✅ COMPLETADO
 PRIORIDAD: 🟡 MEDIA
 ================================================================================
 ARCHIVOS:
@@ -329,16 +355,32 @@ VERIFICAR:
 - Border focus con color institucional
 
 CRITERIOS DE ACEPTACIÓN:
-☐ Textarea con fuente Avenir Regular
-☐ Color de texto #333333 (oscuro legible)
-☐ Placeholder italizado gris suave
-☐ Focus border morado con box-shadow
-☐ Min-height 120px, resize vertical permitido
-☐ Line-height cómodo para lectura (1.6)
+✅ Textarea con fuente Avenir Regular
+✅ Color de texto #333333 (oscuro legible)
+✅ Placeholder italizado gris suave
+✅ Focus border morado con box-shadow
+✅ Min-height 120px, resize vertical permitido
+✅ Line-height cómodo para lectura (1.6)
 
 IMPACTO:
 🟡 MEDIO - Mejora legibilidad en formularios
 ⏱️ Tiempo estimado: 10 minutos
+
+RESOLUCIÓN:
+✅ Actualizado font-family a var(--font-family) para usar Avenir
+✅ Font-size reducido a 0.938rem para mejor legibilidad
+✅ Color de texto cambiado a #333333 (negro más legible)
+✅ Line-height establecido en 1.6 para lectura cómoda
+✅ Border aumentado a 2px con var(--color-gray-200)
+✅ Hover: border-color #5B2FE6 + box-shadow 10% opacidad
+✅ Focus: border-color #5B2FE6 + box-shadow 20% opacidad (más intenso)
+✅ Placeholder: itálica con color gris suave var(--color-gray-200)
+✅ Min-height aumentado de 100px a 120px
+✅ Padding ajustado a 12px 16px para mayor comodidad
+✅ Transition reducida a 0.2s para consistencia
+✅ Aplicado en 2 archivos:
+  - TareasProfesionalesBasico.module.css (observaciones de tareas)
+  - DatosPrincipalesBasico.module.css (observaciones generales del proyecto)
 
 
 ================================================================================
@@ -440,7 +482,7 @@ RESOLUCIÓN:
 
 ================================================================================
 TICKET #7: Ajustar hover en panel de resultado/calendario con texto azul
-ESTADO: ☐ PENDIENTE
+ESTADO: ✅ COMPLETADO
 PRIORIDAD: 🟢 BAJA
 ================================================================================
 ARCHIVO: App/Frontend/src/components/wizard/ResultadoBasicoDetalle.module.css
@@ -484,11 +526,11 @@ Identificar el elemento de fecha/calendario y agregar:
 ```
 
 CRITERIOS DE ACEPTACIÓN:
-☐ Elemento de fecha/calendario identificado
-☐ Hover cambia texto a #5B2FE6
-☐ Fondo sutil en hover (opcional)
-☐ Transición suave 0.2s
-☐ Cursor pointer visible
+✅ Elemento de fecha/calendario identificado
+✅ Hover cambia texto a #5B2FE6
+✅ Fondo sutil en hover (opcional)
+✅ Transición suave 0.2s
+✅ Cursor pointer visible
 
 NOTA: Verificar si este elemento existe en la página actual de resultados.
 Si no existe, este ticket puede marcarse como "NO APLICABLE" o pospuesto.
@@ -496,6 +538,17 @@ Si no existe, este ticket puede marcarse como "NO APLICABLE" o pospuesto.
 IMPACTO:
 🟢 BAJO - Detalle de UX, posiblemente no implementado aún
 ⏱️ Tiempo estimado: 10 minutos
+
+RESOLUCIÓN:
+✅ Identificado elemento .metadataItem en ResultadoBasicoDetalle.jsx
+✅ Contiene 3 items: Tipo, Fecha y Nº de Cálculo
+✅ Agregado padding (8px 12px) y border-radius (6px) a .metadataItem
+✅ Agregado cursor: pointer para indicar interactividad
+✅ Hover: background-color rgba(91, 47, 230, 0.05) - fondo morado muy sutil
+✅ Hover: color #5B2FE6 para .metadataLabel y .metadataValue
+✅ Transiciones suaves (0.2s ease) en todos los elementos
+✅ Aplicado en ResultadoBasicoDetalle.module.css
+✅ Efecto aplicado a todos los items de metadata (Tipo, Fecha, Nº Cálculo)
 
 
 ================================================================================

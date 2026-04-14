@@ -10,6 +10,15 @@ import styles from './DatosObraBasico.module.css';
  */
 const DatosObraBasico = ({ formData, onChange }) => {
   const [valorObraCalculado, setValorObraCalculado] = useState(0);
+  const [camposCompletos, setCamposCompletos] = useState(false);
+
+  // Verificar si los campos principales están completos
+  useEffect(() => {
+    const completos = formData.superficieTotal && 
+                      formData.valorMetro2 && 
+                      formData.cotizDolar;
+    setCamposCompletos(!!completos);
+  }, [formData.superficieTotal, formData.valorMetro2, formData.cotizDolar]);
 
   // Calcular valor de obra automáticamente
   useEffect(() => {
@@ -62,6 +71,17 @@ const DatosObraBasico = ({ formData, onChange }) => {
       <p className={styles.stepDescription}>
         Ingrese las características técnicas y económicas del proyecto
       </p>
+
+      {/* Mensaje de ayuda - desaparece al completar campos */}
+      {!camposCompletos && (
+        <div className={styles.helperNote}>
+          <p>
+            <strong>NOTA:</strong> La superficie cubierta se computa al 100%, las demás 
+            superficies semicubiertas incorporadas según la condición y los valores 
+            específicos de la obra. Complete todos los campos para calcular el valor total.
+          </p>
+        </div>
+      )}
 
       <div className={styles.formGrid}>
         <Input

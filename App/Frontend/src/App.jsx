@@ -26,7 +26,12 @@ function App() {
   return (
     <AuthProvider>
       <ParametrosProvider>
-        <BrowserRouter>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
           <Routes>
             {/* Ruta pública - Login */}
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />

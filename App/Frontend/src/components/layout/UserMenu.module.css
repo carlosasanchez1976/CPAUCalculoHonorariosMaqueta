@@ -37,11 +37,13 @@
 
 .chevronIcon {
   font-size: 14px;
+  color: #8DD5D9; /* Celeste/Turquesa según diseño CPAU */
   transition: transform var(--transition);
 }
 
 .userButton.open .chevronIcon {
   transform: rotate(180deg);
+  color: #5B2FE6; /* Morado cuando está abierto */
 }
 
 /* Dropdown Menu */
@@ -49,7 +51,7 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  background-color: var(--color-white);
+  background-color: var(--color-gray-50);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   min-width: 200px;
@@ -79,6 +81,7 @@
   width: 100%;
   text-align: left;
   font-size: var(--font-size-base);
+  font-weight: 700;
 }
 
 .menuItem:hover {

@@ -1,0 +1,527 @@
+================================================================================
+TICKETS - CAMBIOS DE DISEÑO SOLICITADOS POR CPAU (13/04/2026)
+================================================================================
+Fecha: 13 de Abril 2026
+Cliente: CPAU
+Proyecto: CH2026 - Calculadora de Honorarios
+Archivo: 260413-TicketsCambiosDeDiseñoSolicitados.txt
+
+OBJETIVO:
+Ajustes de diseño UI/UX solicitados por el cliente CPAU según revisión
+de mockups y prototipos. Cambios focalizados en interacciones hover,
+estados visuales de formularios, y comportamiento de componentes.
+
+================================================================================
+RESUMEN DE CAMBIOS
+================================================================================
+
+DASHBOARD/HOME:
+☐ Implementar dropdown del UserMenu (flecha celeste)
+☐ Ajustar hover de cards: solo cambio de color de texto a azul institucional
+
+FORMULARIOS (Wizard de cálculo):
+☐ Estilizar selects desplegados con color hover
+☐ Implementar mensaje de ayuda que desaparece al completar campos
+☐ Estilizar textarea de observaciones
+☐ Implementar checkboxes con cuadrado azul cuando están seleccionados
+
+PÁGINA DE RESULTADOS:
+☐ Ajustar hover en panel de calendario con texto azul institucional
+
+
+================================================================================
+TICKET #1: Implementar dropdown del UserMenu con flecha celeste
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🔴 ALTA
+================================================================================
+ARCHIVO: App/Frontend/src/components/layout/UserMenu.jsx
+LÍNEAS: Todo el componente
+
+DESCRIPCIÓN:
+Implementar funcionalidad de dropdown para el UserMenu. El menú debe
+abrirse/cerrarse al hacer click en la flecha celeste. Actualmente el
+menú puede no estar desplegándose correctamente.
+
+REQUISITOS:
+- La flecha celeste debe ser clickeable
+- Al hacer click, se despliega el menú con opciones (Mi Cuenta, Salir)
+- Click fuera del menú debe cerrarlo
+- Animación suave de apertura/cierre
+
+COMPONENTES A VERIFICAR:
+```jsx
+UserMenu.jsx - Estado de apertura/cierre del dropdown
+UserMenu.module.css - Estilos de animación y posicionamiento
+```
+
+CRITERIOS DE ACEPTACIÓN:
+✅ Click en flecha/nombre usuario abre el dropdown
+✅ Dropdown muestra opciones: Preferencias, Parámetros, "Mi cuenta" y "Salir"
+✅ Click fuera del dropdown lo cierra
+✅ Animación suave (transition 0.2s)
+✅ Flecha celeste visible y claramente clickeable
+✅ Funciona en desktop y móvil
+
+IMPACTO:
+🔴 ALTO - Funcionalidad crítica de navegación
+⏱️ Tiempo estimado: 15 minutos
+
+RESOLUCIÓN:
+✅ La funcionalidad de dropdown ya estaba completamente implementada
+✅ Se ajustó el color de la flecha (chevronIcon) a celeste #8DD5D9
+✅ Se agregó color morado cuando el menú está abierto
+✅ Todos los criterios de aceptación cumplidos
+
+
+================================================================================
+TICKET #2: Ajustar hover de CalculationTypeCard - solo color de texto
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🟡 MEDIA
+================================================================================
+ARCHIVOS: 
+- App/Frontend/src/components/common/CalculationTypeCard.module.css
+- App/Frontend/src/components/common/Card.module.css
+LÍNEAS: Sección :hover del .card
+
+DESCRIPCIÓN:
+CLIENTE ESPECIFICA: "El único cambio que se produce al pasar con el cursor
+es que el texto cambia de color, el azul institucional. Solo eso. Nada
+cambia de tamaño ni tiene movimiento."
+
+Aplica a:
+1. CalculationTypeCard - Cards de selección de tipo de cálculo (página NuevoCalculo)
+2. Card - Card de Dashboard "Nuevo cálculo de honorarios"
+
+Actualmente el hover de las cards puede tener efectos de transform, scale
+o shadow. Debe simplificarse a SOLO cambio de color de texto.
+
+CAMBIOS REQUERIDOS:
+
+ELIMINAR efectos actuales:
+```css
+.card:hover {
+  transform: translateY(-4px);  /* ❌ ELIMINAR */
+  box-shadow: ...;               /* ❌ ELIMINAR */
+}
+
+.card:hover .iconWrapper {
+  transform: scale(1.05) rotate(3deg);  /* ❌ ELIMINAR */
+}
+```
+
+IMPLEMENTAR solo cambio de color:
+```css
+.card:hover .title {
+  color: #5B2FE6;  /* Azul institucional/morado */
+  transition: color 0.2s ease;
+}
+
+.card:hover .description {
+  color: #5B2FE6;  /* Azul institucional/morado */
+  transition: color 0.2s ease;
+}
+
+/* Mantener cursor pointer pero sin transformaciones */
+.card:hover {
+  cursor: pointer;
+}
+```
+
+CRITERIOS DE ACEPTACIÓN:
+✅ Hover solo cambia color del texto a #5B2FE6
+✅ NO hay transform, scale o translateY
+✅ NO hay cambios de box-shadow
+✅ NO hay animaciones del ícono
+✅ Transición de color suave (0.2s)
+✅ Cursor pointer se mantiene
+
+IMPACTO:
+🟡 MEDIO - Cambio visual en todas las cards
+⏱️ Tiempo estimado: 10 minutos
+
+RESOLUCIÓN:
+✅ Eliminados efectos transform: translateY(-4px) del hover
+✅ Eliminados efectos transform: scale y rotate del iconWrapper
+✅ Eliminados cambios de box-shadow en hover
+✅ Eliminados cambios de border-color en hover
+✅ Agregadas transiciones de color (0.2s) en .title y .description
+✅ Hover ahora solo cambia color del texto a #5B2FE6 (morado institucional)
+✅ Aplicado en CalculationTypeCard.module.css (página NuevoCalculo)
+✅ Aplicado en Card.module.css (card de Dashboard)
+
+
+================================================================================
+TICKET #3: Estilizar selects con color hover en opciones desplegadas
+ESTADO: ☐ PENDIENTE
+PRIORIDAD: 🟡 MEDIA
+================================================================================
+ARCHIVOS:
+- App/Frontend/src/components/common/Input.module.css
+- App/Frontend/src/pages/ProcesoCalculoPage.module.css
+- App/Frontend/src/components/wizard/steps/*.module.css (todos los steps)
+
+DESCRIPCIÓN:
+Cliente solicita: "color cuando pasa el cursor sobre: para todas las
+ventanas donde hay texto para seleccionar"
+
+Todos los elementos <select> deben tener un estilo hover consistente
+cuando el usuario pasa el cursor sobre las opciones del dropdown.
+
+IMPLEMENTACIÓN:
+
+Agregar estilos globales para selects:
+```css
+.select:hover {
+  border-color: #5B2FE6;
+  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.1);
+}
+
+.select:focus {
+  outline: none;
+  border-color: #5B2FE6;
+  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2);
+}
+
+/* Estilos para opciones en dropdown (navegadores modernos) */
+.select option:hover {
+  background-color: rgba(91, 47, 230, 0.1);
+  color: #5B2FE6;
+}
+```
+
+ARCHIVOS A ACTUALIZAR:
+1. Input.module.css (componente reutilizable)
+2. ProcesoCalculoPage.module.css (select de tarea profesional)
+3. DatosPrincipalesBasico.module.css (tipo de obra, destino/uso)
+4. Cualquier otro componente con selects
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Select cambia borde a morado (#5B2FE6) en hover
+☐ Box-shadow sutil aparece en hover y focus
+☐ Opciones del dropdown tienen fondo celeste claro en hover
+☐ Color consistente en todos los selects de la aplicación
+☐ Funciona en navegadores principales (Chrome, Firefox, Edge)
+
+IMPACTO:
+🟡 MEDIO - Mejora UX en formularios
+⏱️ Tiempo estimado: 15 minutos
+
+
+================================================================================
+TICKET #4: Implementar mensaje de ayuda que desaparece al completar campos
+ESTADO: ☐ PENDIENTE
+PRIORIDAD: 🟢 BAJA
+================================================================================
+ARCHIVO: App/Frontend/src/components/wizard/steps/DatosObraBasico.jsx
+LÍNEAS: Sección de superficie y costo
+
+DESCRIPCIÓN:
+Cliente solicita: "este texto desaparece cuando se completan los campos"
+
+Implementar mensaje de ayuda/nota que aparece cuando los campos están
+vacíos y desaparece cuando el usuario completa la información.
+
+EJEMPLO DE IMPLEMENTACIÓN:
+
+```jsx
+const [camposCompletos, setCamposCompletos] = useState(false);
+
+useEffect(() => {
+  // Verificar si los campos principales están completos
+  const completos = formData.superficieTotal && 
+                    formData.valorMetro2 && 
+                    formData.cotizDolar;
+  setCamposCompletos(completos);
+}, [formData.superficieTotal, formData.valorMetro2, formData.cotizDolar]);
+
+// En el render:
+{!camposCompletos && (
+  <div className={styles.helperNote}>
+    <p>
+      NOTA: La superficie cubierta se computa al 100%, las demás 
+      superficies semicubiertas incorporadas según la condición y los 
+      valores específicos de la obra...
+    </p>
+  </div>
+)}
+```
+
+ESTILOS:
+```css
+.helperNote {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 16px;
+  font-size: 0.875rem;
+  color: #856404;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+```
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Mensaje visible cuando campos están vacíos
+☐ Mensaje desaparece al completar los campos requeridos
+☐ Animación suave de desaparición
+☐ Mensaje claro y visible (fondo amarillo claro)
+☐ Responsive: funciona en móvil
+
+IMPACTO:
+🟢 BAJO - Mejora UX pero no crítico
+⏱️ Tiempo estimado: 20 minutos
+
+
+================================================================================
+TICKET #5: Estilizar textarea de observaciones con fuente y color específico
+ESTADO: ☐ PENDIENTE
+PRIORIDAD: 🟡 MEDIA
+================================================================================
+ARCHIVOS:
+- App/Frontend/src/components/wizard/steps/TareasProfesionalesBasico.module.css
+- App/Frontend/src/components/common/Input.module.css (si tiene textarea)
+
+DESCRIPCIÓN:
+Cliente especifica: "así se ve el texto cuando escriben en las ventanas
+de observaciones"
+
+El textarea de observaciones debe tener un estilo específico cuando
+el usuario escribe. Posiblemente requiere fuente, color y tamaño diferente.
+
+IMPLEMENTACIÓN:
+
+```css
+.observacionesTextarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px 16px;
+  border: 2px solid var(--color-gray-300);
+  border-radius: 8px;
+  font-family: var(--font-family);
+  font-size: 0.938rem;
+  line-height: 1.6;
+  color: #333333;
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.observacionesTextarea:focus {
+  outline: none;
+  border-color: #5B2FE6;
+  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.1);
+}
+
+.observacionesTextarea::placeholder {
+  color: var(--color-gray-400);
+  font-style: italic;
+}
+```
+
+VERIFICAR:
+- Fuente legible (Avenir Regular)
+- Tamaño apropiado (0.938rem o similar)
+- Placeholder con estilo suave
+- Border focus con color institucional
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Textarea con fuente Avenir Regular
+☐ Color de texto #333333 (oscuro legible)
+☐ Placeholder italizado gris suave
+☐ Focus border morado con box-shadow
+☐ Min-height 120px, resize vertical permitido
+☐ Line-height cómodo para lectura (1.6)
+
+IMPACTO:
+🟡 MEDIO - Mejora legibilidad en formularios
+⏱️ Tiempo estimado: 10 minutos
+
+
+================================================================================
+TICKET #6: Implementar checkboxes con cuadrado azul cuando están seleccionados
+ESTADO: ✅ COMPLETADO
+PRIORIDAD: 🔴 ALTA
+================================================================================
+ARCHIVOS:
+- App/Frontend/src/pages/ProcesoCalculoPage.module.css
+- App/Frontend/src/pages/LoginPage.module.css
+- App/Frontend/src/components/wizard/ResultadoBasicoDetalle.module.css
+
+DESCRIPCIÓN:
+Cliente solicita: "cuando marcan una opción se pone el cuadradito azul"
+
+Los checkboxes deben cambiar a un cuadrado azul (morado #5B2FE6) cuando
+están seleccionados/marcados.
+
+IMPLEMENTACIÓN:
+
+Reemplazar checkboxes nativos con versión estilizada:
+
+```css
+/* Ocultar checkbox nativo */
+.checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-gray-300);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.checkbox:hover {
+  border-color: #5B2FE6;
+}
+
+/* Estado checked - cuadrado azul/morado */
+.checkbox:checked {
+  background-color: #5B2FE6;
+  border-color: #5B2FE6;
+}
+
+/* Checkmark (✓) blanco dentro del cuadrado azul */
+.checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.checkbox:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2);
+}
+```
+
+ALTERNATIVA (sin símbolo ✓, solo cuadrado sólido):
+```css
+.checkbox:checked {
+  background-color: #5B2FE6;
+  border-color: #5B2FE6;
+}
+```
+
+CRITERIOS DE ACEPTACIÓN:
+✅ Checkbox desmarcado: borde gris, fondo blanco
+✅ Checkbox marcado: fondo morado #5B2FE6
+✅ Checkmark (✓) blanco visible cuando está marcado
+✅ Hover muestra borde morado
+✅ Focus con box-shadow sutil
+✅ Tamaño consistente en todos los checkboxes
+✅ Funciona en todos los checkboxes de la aplicación
+
+IMPACTO:
+🔴 ALTO - Elemento clave de la interfaz
+⏱️ Tiempo estimado: 15 minutos
+
+RESOLUCIÓN:
+✅ Aplicado appearance: none para remover estilos nativos
+✅ Checkboxes desmarcados: borde gris #B0B0B0, fondo blanco
+✅ Checkboxes marcados: fondo morado #5B2FE6 sólido
+✅ Checkmark ✓ blanco centrado con font-size ajustado por componente
+✅ Hover: border-color cambia a #5B2FE6
+✅ Focus: box-shadow rgba(91, 47, 230, 0.2)
+✅ Transiciones suaves 0.2s ease
+✅ Aplicado en 3 archivos:
+    - ProcesoCalculoPage.module.css (checkboxes del wizard)
+    - LoginPage.module.css (checkbox "Recordarme")
+    - ResultadoBasicoDetalle.module.css (checkbox de términos)
+
+
+================================================================================
+TICKET #7: Ajustar hover en panel de resultado/calendario con texto azul
+ESTADO: ☐ PENDIENTE
+PRIORIDAD: 🟢 BAJA
+================================================================================
+ARCHIVO: App/Frontend/src/components/wizard/ResultadoBasicoDetalle.module.css
+LÍNEAS: Sección de metadata/fecha
+
+DESCRIPCIÓN:
+Cliente menciona: "el diseño NI HABLA... está cuando cambio a calendario:
+El panel con el cursor el texto cambia de azul institucional"
+
+En la página de resultados, cuando hay un elemento de fecha/calendario,
+el hover debe cambiar el texto a azul institucional (#5B2FE6).
+
+IMPLEMENTACIÓN:
+
+Identificar el elemento de fecha/calendario y agregar:
+
+```css
+.fechaCalendario {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.fechaCalendario:hover {
+  background-color: rgba(91, 47, 230, 0.05);
+}
+
+.fechaCalendario:hover .fechaTexto {
+  color: #5B2FE6;
+}
+
+.fechaTexto {
+  font-size: 0.938rem;
+  color: var(--color-gray-700);
+  transition: color 0.2s ease;
+}
+```
+
+CRITERIOS DE ACEPTACIÓN:
+☐ Elemento de fecha/calendario identificado
+☐ Hover cambia texto a #5B2FE6
+☐ Fondo sutil en hover (opcional)
+☐ Transición suave 0.2s
+☐ Cursor pointer visible
+
+NOTA: Verificar si este elemento existe en la página actual de resultados.
+Si no existe, este ticket puede marcarse como "NO APLICABLE" o pospuesto.
+
+IMPACTO:
+🟢 BAJO - Detalle de UX, posiblemente no implementado aún
+⏱️ Tiempo estimado: 10 minutos
+
+
+================================================================================
+NOTAS ADICIONALES
+================================================================================
+
+COLORES INSTITUCIONALES A USAR:
+- Morado/Azul institucional: #5B2FE6
+- Turquesa/Celeste: #8DD5D9
+- Gris suave: #B0B0B0
+
+FILOSOFÍA DE INTERACCIONES:
+- Hover: cambio de color sutil, sin movimiento brusco
+- Focus: box-shadow suave con color institucional
+- Transiciones: 0.2s ease para todas las animaciones
+- Accesibilidad: mantener contraste adecuado
+
+ORDEN DE PRIORIDAD RECOMENDADO:
+1. Ticket #1 (UserMenu dropdown) - Funcionalidad crítica
+2. Ticket #6 (Checkboxes azules) - Elemento clave visual
+3. Ticket #2 (Hover cards) - Visible en home
+4. Ticket #3 (Selects hover) - UX formularios
+5. Ticket #5 (Textarea) - UX formularios
+6. Ticket #4 (Mensaje ayuda) - Nice to have
+7. Ticket #7 (Calendario) - Verificar si aplica
+
+================================================================================
+FIN DEL DOCUMENTO
+================================================================================

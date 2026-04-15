@@ -67,7 +67,7 @@ const DatosObraBasico = ({ formData, onChange, stepTitle }) => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.stepTitle}>{stepTitle}</h2>
+      <h2 className="stepTitle">{stepTitle}</h2>
       <p className={styles.stepDescription}>
         Ingrese las características técnicas y económicas del proyecto
       </p>

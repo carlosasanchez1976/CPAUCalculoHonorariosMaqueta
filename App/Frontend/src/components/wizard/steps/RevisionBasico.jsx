@@ -23,7 +23,7 @@ const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.stepTitle}>{stepTitle}</h2>
+      <h2 className="stepTitle">{stepTitle}</h2>
       <p className={styles.stepDescription}>
         Verifique que todos los datos sean correctos antes de proceder con el cálculo
       </p>

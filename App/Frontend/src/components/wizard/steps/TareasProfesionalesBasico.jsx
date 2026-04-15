@@ -68,7 +68,7 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.stepTitle}>{stepTitle}</h2>
+      <h2 className="stepTitle">{stepTitle}</h2>
       <p className={styles.stepDescription}>
         Seleccione las tareas profesionales que se incluirán en el cálculo de honorarios
       </p>
@@ -134,7 +134,7 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
             name="observacionesTareas"
             value={formData.observacionesTareas}
             onChange={onChange}
-            className={styles.textarea}
+            className="textarea"
             placeholder="Ingrese observaciones adicionales sobre las tareas seleccionadas"
             rows={4}
           />

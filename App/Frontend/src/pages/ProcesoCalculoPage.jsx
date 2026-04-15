@@ -260,7 +260,7 @@ const ProcesoCalculoPage = () => {
     // Componente genérico para otros tipos
     return (
       <div className={styles.formContainer}>
-        <h2 className={styles.stepTitle}>Datos Principales del Proyecto</h2>
+        <h2 className="stepTitle">Datos Principales del Proyecto</h2>
         <p className={styles.stepDescription}>
           Ingrese los datos básicos del proyecto para el cálculo de honorarios
         </p>
@@ -341,7 +341,7 @@ const ProcesoCalculoPage = () => {
     // Componente genérico para otros tipos
     return (
       <div className={styles.formContainer}>
-        <h2 className={styles.stepTitle}>Datos Específicos</h2>
+        <h2 className="stepTitle">Datos Específicos</h2>
         <p className={styles.stepDescription}>
           Detalles técnicos y económicos del proyecto
         </p>
@@ -391,7 +391,7 @@ const ProcesoCalculoPage = () => {
     // Componente genérico para otros tipos
     return (
       <div className={styles.formContainer}>
-        <h2 className={styles.stepTitle}>Datos Adicionales</h2>
+        <h2 className="stepTitle">Datos Adicionales</h2>
         <p className={styles.stepDescription}>
           Costos adicionales asociados al proyecto
         </p>
@@ -448,7 +448,7 @@ const ProcesoCalculoPage = () => {
     
     return (
       <div className={styles.formContainer}>
-        <h2 className={styles.stepTitle}>Revisión de Datos</h2>
+        <h2 className="stepTitle">Revisión de Datos</h2>
         <p className={styles.stepDescription}>
           Verifique que todos los datos ingresados sean correctos
         </p>
@@ -571,7 +571,7 @@ const ProcesoCalculoPage = () => {
     // Componente genérico para otros tipos
     return (
       <div className={styles.formContainer}>
-        <h2 className={styles.stepTitle}>Resultado del Cálculo</h2>
+        <h2 className="stepTitle">Resultado del Cálculo</h2>
         <p className={styles.stepDescription}>
           Cálculo de honorarios para: {formData.nombreProyecto || 'Proyecto sin nombre'}
         </p>

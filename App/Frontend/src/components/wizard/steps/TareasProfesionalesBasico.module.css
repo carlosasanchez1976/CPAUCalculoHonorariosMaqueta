@@ -4,14 +4,6 @@
   padding: 2rem 1rem;
 }
 
-.stepTitle {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--color-gray-900);
-  margin-bottom: 0.5rem;
-  text-align: center;
-}
-
 .stepDescription {
   color: var(--color-gray-600);
   text-align: center;
@@ -115,37 +107,6 @@
   margin-bottom: 0.5rem;
 }
 
-.textarea {
-  width: 100%;
-  padding: 12px 16px;
-  font-size: 0.938rem;
-  font-family: var(--font-family);
-  line-height: 1.6;
-  border: 2px solid var(--color-gray-200);
-  border-radius: 8px;
-  background-color: white;
-  color: #333333;
-  transition: all 0.2s ease;
-  resize: vertical;
-  min-height: 120px;
-}
-
-.textarea:hover {
-  border-color: #5B2FE6;
-  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.1);
-}
-
-.textarea:focus {
-  outline: none;
-  border-color: #5B2FE6;
-  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2);
-}
-
-.textarea::placeholder {
-  color: var(--color-gray-200);
-  font-style: italic;
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .radioGroup {
@@ -157,10 +118,6 @@
   .radioButtons {
     width: 100%;
     justify-content: flex-start;
-  }
-
-  .stepTitle {
-    font-size: 1.5rem;
   }
 
   .container {

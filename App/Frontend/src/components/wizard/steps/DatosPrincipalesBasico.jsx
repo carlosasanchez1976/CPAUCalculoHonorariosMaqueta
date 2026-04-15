@@ -8,35 +8,35 @@ import styles from './DatosPrincipalesBasico.module.css';
 const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
   return (
     <div className={styles.container}>
-      <h2 className={styles.stepTitle}>{stepTitle}</h2>
+      <h2 className="stepTitle">{stepTitle}</h2>
 
       <div className={styles.formGrid}>
         {/* FILA 1: Tres campos en una fila */}
         <div className={styles.inputRow}>
           <Input
-            label="Nombre del Proyecto"
+            // label="Nombre del Proyecto"
             name="nombreProyecto"
             value={formData.nombreProyecto}
             onChange={onChange}
-            placeholder="Ej: Edificio Residencial Torre Sur"
+            placeholder="Nombre del proyecto"
             required
           />
 
           <Input
-            label="Comitente"
+            // label="Comitente"
             name="cliente"
             value={formData.cliente}
             onChange={onChange}
-            placeholder="Ej: Constructora ABC S.A."
+            placeholder="Comitente"
             required
           />
 
           <Input
-            label="Ubicación"
+            // label="Ubicación"
             name="ubicacion"
             value={formData.ubicacion}
             onChange={onChange}
-            placeholder="Ej: CABA, Palermo"
+            placeholder="Ubicación"
             required
           />
         </div>
@@ -98,7 +98,7 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
             name="observaciones"
             value={formData.observaciones}
             onChange={onChange}
-            className={styles.textarea}
+            className="textarea"
             placeholder="Ingrese cualquier observación adicional sobre el proyecto"
             rows={4}
           />

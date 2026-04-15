@@ -25,7 +25,7 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
   margin-bottom: 0.5rem;
 }
 
@@ -38,27 +38,27 @@
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  border: 1px solid var(--color-gray-200);
+  border: 1px solid var(--color-gris);
   background-color: white;
   color: var(--color-gray-900);
   transition: all 0.2s ease;
 }
 
 .select:hover {
-  border-color: #5B2FE6;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.1);
 }
 
 .select:focus {
   outline: none;
-  border-color: #5B2FE6;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2);
 }
 
 /* Estilos para opciones del dropdown */
 .select option:hover {
   background-color: rgba(91, 47, 230, 0.1);
-  color: #5B2FE6;
+  color: var(--color-primary);
 }
 
 .complejidadInfo {

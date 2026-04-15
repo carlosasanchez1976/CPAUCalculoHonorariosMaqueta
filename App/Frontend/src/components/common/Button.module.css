@@ -37,8 +37,8 @@
 }
 
 .secondary {
-  background-color: var(--color-secondary);
-  color: var(--color-gray-700);
+  background-color: var(--color-celeste);
+  color: var(--color-celeste);
 }
 
 .secondary:hover:not(:disabled) {

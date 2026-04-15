@@ -4,7 +4,7 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-top: 1px solid var(--color-gray-200);
+  border-top: 1px solid var(--color-gris);
   padding: 20px;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
   z-index: 90;
@@ -41,12 +41,12 @@
 
 .prevButton {
   background: var(--color-white);
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
   border: 2px solid var(--color-gray-300);
 }
 
 .prevButton:hover:not(:disabled) {
-  background: var(--color-gray-50);
+  background: var(--color-gris);
   border-color: var(--color-gray-400);
   transform: translateY(-1px);
 }
@@ -106,7 +106,7 @@
 }
 
 .backButton {
-  border-color: var(--color-accent);
+  border-color: var(--color-celeste);
   color: var(--color-complementary);
 }
 

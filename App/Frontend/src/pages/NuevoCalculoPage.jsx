@@ -17,7 +17,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Proyecto y dirección de obra de baja, mediana y alta complejidad',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de proyecto y dirección de obra de baja, mediana y alta complejidad. Incluye la opción de incorporar proyecto de instalaciones y cálculo de estructuras.',
       icon: <FaBuilding />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Básico',
       Vigente: 'Si'
@@ -27,7 +26,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Proyecto y dirección de obras de demolición',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de proyecto y dirección de obras de demolición.',
       icon: <FaHammer />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Demoliciones',
       Vigente: 'No'
@@ -37,7 +35,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Gerenciamiento de proyectos y dirección de obras',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de gerenciamiento de proyecto y de dirección de obras.',
       icon: <FaCog />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Gerencia',
       Vigente: 'No'
@@ -47,7 +44,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Habilitaciones de locales, comercios e industrias',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de habilitaciones de locales, comercios e industrias.',
       icon: <FaCertificate />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Habilitaciones',
       Vigente: 'No'
@@ -57,7 +53,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Conservación de fachadas de edificios',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de conservación de fachadas.',
       icon: <FaBuilding />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Fachadas',
       Vigente: 'No'
@@ -67,7 +62,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Honorarios en base al valor hora profesional',
       fullDescription: 'Cálculo de honorarios profesionales en base al valor hora profesional. Incluye Consultas, Estudios e Informe Técnico, Asesoramiento, y Liquidación de Medianería.',
       icon: <FaUserTie />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'PorTiempo',
       Vigente: 'No'
@@ -77,7 +71,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Medición y ejecución de planos',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de medición y ejecución de planos.',
       icon: <FaRulerCombined />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Planos',
       Vigente: 'No'
@@ -87,7 +80,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Evaluación de impacto ambiental',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de impacto ambiental para todo tipo de uso.',
       icon: <FaLeaf />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Ambiental',
       Vigente: 'No'
@@ -97,7 +89,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Tareas de peritaje profesional',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de peritaje.',
       icon: <FaGavel />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Peritajes',
       Vigente: 'No'
@@ -107,7 +98,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Tareas de higiene y seguridad',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de higiene y seguridad.',
       icon: <FaShieldAlt />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'HyS',
       Vigente: 'No'
@@ -117,7 +107,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Diseño e implementación de planes de emergencia',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de diseño, implementación y actualización de planes de emergencia en edificios y establecimientos.',
       icon: <FaFire />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Autoproteccion',
       Vigente: 'No'
@@ -127,7 +116,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Tareas de arbitraje profesional',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de arbitraje.',
       icon: <FaBalanceScale />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Arbitraje',
       Vigente: 'No'
@@ -137,7 +125,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Justipreciación de bienes muebles e inmuebles',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de estudio que realiza el/la profesional tendiente a justipreciar bienes muebles o inmuebles o su valor locativo.',
       icon: <FaDollarSign />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Tasacion',
       Vigente: 'No'
@@ -147,7 +134,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Representación técnica en obra',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de Representación Técnica en Obra.',
       icon: <FaHardHat />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'RepTecnica',
       Vigente: 'No'
@@ -157,7 +143,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Planificación y diseño urbano',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de planificación y diseño urbano.',
       icon: <FaCity />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Urbanismo',
       Vigente: 'No'
@@ -167,7 +152,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Diseño de interiores y equipamiento',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de diseño de interiores y equipamiento.',
       icon: <FaCouch />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Interiores',
       Vigente: 'No'
@@ -177,7 +161,6 @@ const NuevoCalculoPage = () => {
       shortDescription: 'Planificación y diseño del paisaje',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de planificación y diseño del paisaje.',
       icon: <FaTree />,
-      color: '#5B2FE6',
       path: '/proceso-calculo',
       tipoId: 'Paisaje',
       Vigente: 'No'
@@ -193,14 +176,14 @@ const NuevoCalculoPage = () => {
           <button 
             className={styles.backButton}
             onClick={() => navigate('/dashboard')}
-            aria-label="Volver al Dashboard"
+            aria-label="Volver al panel"
           >
             <FaArrowLeft className={styles.backIcon} />
-            <span>Volver al Panel</span>
+            <span>Volver al panel</span>
           </button>
 
           <div className={styles.header}>
-            <h1 className={styles.title}>Nuevo cálculo de Honorarios</h1>
+            <h1 className={styles.title}>Nuevo cálculo de honorarios</h1>
             <p className={styles.subtitle}>
               Seleccione la tarea profesional para la cual desea realizar el cálculo de honorarios.
             </p>
@@ -214,7 +197,6 @@ const NuevoCalculoPage = () => {
                 shortDescription={type.shortDescription}
                 fullDescription={type.fullDescription}
                 icon={type.icon}
-                color={type.color}
                 path={type.path}
                 tipoId={type.tipoId}
                 vigente={type.Vigente}

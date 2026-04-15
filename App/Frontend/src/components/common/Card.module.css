@@ -1,6 +1,6 @@
 /* Estilos para el componente Card */
 .card {
-  background-color: #8DD5D9;
+  background-color: var(--color-celeste);
   border-radius: var(--radius-lg);
   padding: var(--spacing-4);
   box-shadow: var(--shadow-md);
@@ -21,11 +21,11 @@
 }
 
 .card:hover .title {
-  color: #5B2FE6;
+  color: var(--color-primary);
 }
 
 .card:hover .description {
-  color: #5B2FE6;
+  color: var(--color-primary);
 }
 
 .card:focus-visible {
@@ -45,7 +45,7 @@
 .title {
   font-size: var(--font-size-lg);
   font-weight: 600;
-  color: var(--color-gray-700);
+  color: var(--color-text-no-sel);
   margin: 0;
   transition: color 0.2s ease;
 }
@@ -61,7 +61,7 @@
 /* Descripción */
 .description {
   font-size: var(--font-size-sm);
-  color: var(--color-gray-700);
+  color: var(--color-text-no-sel);
   line-height: 1.5;
   margin: 0;
   transition: color 0.2s ease;

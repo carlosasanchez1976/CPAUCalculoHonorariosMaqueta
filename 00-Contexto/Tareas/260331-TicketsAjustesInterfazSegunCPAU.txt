@@ -39,12 +39,12 @@ COLORES ACTUALES (A REEMPLAZAR):
 Variable CSS              | Color Actual  | Uso Actual
 ─────────────────────────────────────────────────────────────────────────────
 --color-primary           | #2D5016       | Botones, links, acentos principales
---color-secondary         | #D4A574       | Botones secundarios, highlights
---color-accent            | #A8DADC       | Fondos, headers, acentos
---color-gray-700          | #495057       | Texto principal
---color-gray-200          | #DEE2E6       | Bordes, divisores
---color-gray-100          | #E9ECEF       | Fondos claros
---color-gray-50           | #F8F9FA       | Background página
+--color-celeste         | #D4A574       | Botones secundarios, highlights
+--color-celeste            | #A8DADC       | Fondos, headers, acentos
+--color-celeste          | #495057       | Texto principal
+--color-gris          | #DEE2E6       | Bordes, divisores
+--color-gris          | #E9ECEF       | Fondos claros
+--color-gris           | #F8F9FA       | Background página
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 NUEVOS COLORES CPAU (PROPUESTA CLIENTE):
@@ -52,14 +52,14 @@ NUEVOS COLORES CPAU (PROPUESTA CLIENTE):
 Variable CSS              | Nuevo Color   | Uso Propuesto
 ─────────────────────────────────────────────────────────────────────────────
 --color-primary           | #5B2FE6       | Morado CPAU institucional
---color-secondary         | #8DD5D9       | Turquesa claro (acentos)
---color-accent            | #8DD5D9       | Turquesa claro (headers)
+--color-celeste         | #8DD5D9       | Turquesa claro (acentos)
+--color-celeste            | #8DD5D9       | Turquesa claro (headers)
 --color-text-primary      | #1E1E6B       | Títulos y texto principal (NUEVA)
 --color-text-body         | #333333       | Texto de cuerpo (NUEVA)
---color-gray-700          | #1E1E6B       | Texto oscuro
---color-gray-200          | #B0B0B0       | Bordes y badges
---color-gray-100          | #F5F5F5       | Fondos claros
---color-gray-50           | #F5F5F5       | Background página
+--color-celeste          | #1E1E6B       | Texto oscuro
+--color-gris          | #B0B0B0       | Bordes y badges
+--color-gris          | #F5F5F5       | Fondos claros
+--color-gris           | #F5F5F5       | Background página
 --color-purple-dark       | #4A25B8       | Hover morado (NUEVA)
 --color-turquoise-light   | #B8E8EA       | Turquesa claro hover (NUEVA)
 --color-badge-gray        | #B0B0B0       | Badges NO/deshabilitado (NUEVA)
@@ -104,28 +104,28 @@ CAMBIOS ESPECÍFICOS:
    DESPUÉS: --color-primary: #5B2FE6;      /* Morado CPAU */
 
 2. LÍNEA 5 - Color Secundario:
-   ANTES: --color-secondary: #D4A574;      /* Marrón claro */
-   DESPUÉS: --color-secondary: #8DD5D9;    /* Turquesa */
+   ANTES: --color-celeste: #D4A574;      /* Marrón claro */
+   DESPUÉS: --color-celeste: #8DD5D9;    /* Turquesa */
 
 3. LÍNEA 6 - Color Accent:
-   ANTES: --color-accent: #A8DADC;         /* Celeste claro */
-   DESPUÉS: --color-accent: #8DD5D9;       /* Turquesa */
+   ANTES: --color-celeste: #A8DADC;         /* Celeste claro */
+   DESPUÉS: --color-celeste: #8DD5D9;       /* Turquesa */
 
 4. LÍNEA 8 - Gris 50:
-   ANTES: --color-gray-50: #F8F9FA;
-   DESPUÉS: --color-gray-50: #F5F5F5;
+   ANTES: --color-gris: #F8F9FA;
+   DESPUÉS: --color-gris: #F5F5F5;
 
 5. LÍNEA 9 - Gris 100:
-   ANTES: --color-gray-100: #E9ECEF;
-   DESPUÉS: --color-gray-100: #F5F5F5;
+   ANTES: --color-gris: #E9ECEF;
+   DESPUÉS: --color-gris: #F5F5F5;
 
 6. LÍNEA 10 - Gris 200:
-   ANTES: --color-gray-200: #DEE2E6;
-   DESPUÉS: --color-gray-200: #B0B0B0;
+   ANTES: --color-gris: #DEE2E6;
+   DESPUÉS: --color-gris: #B0B0B0;
 
 7. LÍNEA 11 - Gris 700 (texto):
-   ANTES: --color-gray-700: #495057;
-   DESPUÉS: --color-gray-700: #1E1E6B;      /* Azul oscuro */
+   ANTES: --color-celeste: #495057;
+   DESPUÉS: --color-celeste: #1E1E6B;      /* Azul oscuro */
 
 NUEVAS VARIABLES A AGREGAR (después de --color-success, línea ~12):
 
@@ -180,7 +180,7 @@ CAMBIOS ESPECÍFICOS:
    DESPUÉS: background-color: #4A25B8;  /* Morado oscuro */
 
 3. LÍNEA 36 - Botón Secondary Background:
-   ANTES: background-color: var(--color-secondary);
+   ANTES: background-color: var(--color-celeste);
    DESPUÉS: (mantener - ya heredará el nuevo valor de variable)
 
 4. LÍNEA 41 - Botón Secondary Hover:
@@ -563,17 +563,17 @@ y el accent-color del checkbox.
 CAMBIOS ESPECÍFICOS:
 
 1. LÍNEA 6 - Gradiente Background:
-   ANTES: background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%);
+   ANTES: background: linear-gradient(135deg, var(--color-celeste) 0%, var(--color-primary) 100%);
    DESPUÉS: background: linear-gradient(135deg, #8DD5D9 0%, #5B2FE6 100%);
    EXPLICACIÓN: Degradado de turquesa a morado (como header propuesta)
 
 2. LÍNEA 31 - Título App:
    ANTES: color: var(--color-primary);
-   DESPUÉS: color: #5B2FE6;  /* Morado CPAU */
+   DESPUÉS: color: var(--color-primary);  /* Morado CPAU */
 
 3. LÍNEA 50 - Checkbox Accent:
    ANTES: accent-color: var(--color-primary);
-   DESPUÉS: accent-color: #5B2FE6;  /* Morado CPAU */
+   DESPUÉS: accent-color: var(--color-primary);  /* Morado CPAU */
    NOTA: Puede usar variable ya que heredará de Ticket #1
 
 OPCIÓN SIMPLIFICADA (si Ticket #1 está completo):
@@ -607,15 +607,15 @@ Actualizar el color de fondo del header y el color del título.
 CAMBIOS ESPECÍFICOS:
 
 1. LÍNEA 2 - Header Background:
-   ANTES: background-color: var(--color-accent);
+   ANTES: background-color: var(--color-celeste);
    DESPUÉS: (mantener - heredará turquesa de Ticket #1)
 
 2. LÍNEA 3 - Header Text Color:
-   ANTES: color: var(--color-gray-700);
+   ANTES: color: var(--color-celeste);
    DESPUÉS: (mantener - heredará azul oscuro de Ticket #1)
 
 3. LÍNEA 32 - Title Color:
-   ANTES: color: var(--color-gray-700);
+   ANTES: color: var(--color-celeste);
    DESPUÉS: (mantener - heredará azul oscuro de Ticket #1)
 
 NOTA:
@@ -660,7 +660,7 @@ CAMBIOS ESPECÍFICOS:
    DESPUÉS: box-shadow: 0 2px 8px rgba(91, 47, 230, 0.3);
 
 3. LÍNEA 48 - Paso Actual Background:
-   ANTES: background: var(--color-accent);
+   ANTES: background: var(--color-celeste);
    DESPUÉS: (mantener - heredará turquesa de Ticket #1)
 
 4. LÍNEA 49 - Paso Actual Text Color:
@@ -676,8 +676,8 @@ CAMBIOS ESPECÍFICOS:
    DESPUÉS: box-shadow: 0 0 0 4px rgba(91, 47, 230, 0.1);
 
 7. LÍNEA 55-57 - Paso Pendiente:
-   ANTES: background: var(--color-gray-100);
-           color: var(--color-gray-500);
+   ANTES: background: var(--color-gris);
+           color: var(--color-gris);
            border: 2px solid var(--color-gray-300);
    DESPUÉS: (mantener - los grises ya se actualizarán o son apropiados)
 
@@ -752,7 +752,7 @@ CAMBIOS ESPECÍFICOS:
 
 1. LÍNEA 23 - Toggle Checked Background:
    ANTES: background-color: #2D5016;
-   DESPUÉS: background-color: #5B2FE6;  /* Morado CPAU */
+   DESPUÉS: background-color: var(--color-primary);  /* Morado CPAU */
 
 2. LÍNEA 59 - Focus Outline:
    ANTES: outline: 2px solid #2D5016;
@@ -1184,7 +1184,7 @@ BÚSQUEDAS A REALIZAR:
 3. Buscar "#D4A574" (marrón) en todo el proyecto:
    ☐ Archivos .css y .module.css
    ☐ Archivos .jsx (inline styles)
-   Reemplazar por: #8DD5D9 o var(--color-secondary)
+   Reemplazar por: #8DD5D9 o var(--color-celeste)
 
 4. Buscar "#c29664" (marrón oscuro) en todo el proyecto:
    ☐ Estados hover hardcodeados

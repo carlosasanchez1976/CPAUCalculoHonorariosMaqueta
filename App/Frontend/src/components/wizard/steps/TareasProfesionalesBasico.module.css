@@ -31,7 +31,7 @@
 
 .tareaGroup {
   background-color: white;
-  border: 1px solid var(--color-gray-200);
+  border: 1px solid var(--color-gris);
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -43,7 +43,7 @@
   color: var(--color-gray-800);
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;
-  border-bottom: 2px solid var(--color-gray-200);
+  border-bottom: 2px solid var(--color-gris);
 }
 
 .radioGroup {
@@ -51,7 +51,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 0;
-  border-bottom: 1px solid var(--color-gray-100);
+  border-bottom: 1px solid var(--color-gris);
 }
 
 .radioGroup:last-child {
@@ -60,7 +60,7 @@
 
 .radioLabel {
   font-size: 1rem;
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
   font-weight: 500;
 }
 
@@ -81,12 +81,12 @@
   width: 1.25rem;
   height: 1.25rem;
   cursor: pointer;
-  accent-color: #5B2FE6;
+  accent-color: var(--color-primary);
 }
 
 .radioText {
   font-size: 0.9375rem;
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
   font-weight: 500;
 }
 
@@ -103,7 +103,7 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
   margin-bottom: 0.5rem;
 }
 

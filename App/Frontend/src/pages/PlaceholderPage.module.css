@@ -34,13 +34,13 @@
 
 .pageSubtitle {
   font-size: var(--font-size-lg);
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
   margin: 0 0 var(--spacing-4) 0;
 }
 
 .placeholderIcon {
   font-size: 80px;
-  color: var(--color-accent);
+  color: var(--color-celeste);
   margin-bottom: var(--spacing-3);
 }
 

@@ -112,12 +112,12 @@ ELIMINAR efectos actuales:
 IMPLEMENTAR solo cambio de color:
 ```css
 .card:hover .title {
-  color: #5B2FE6;  /* Azul institucional/morado */
+  color: var(--color-primary);  /* Azul institucional/morado */
   transition: color 0.2s ease;
 }
 
 .card:hover .description {
-  color: #5B2FE6;  /* Azul institucional/morado */
+  color: var(--color-primary);  /* Azul institucional/morado */
   transition: color 0.2s ease;
 }
 
@@ -172,20 +172,20 @@ IMPLEMENTACIÓN:
 Agregar estilos globales para selects:
 ```css
 .select:hover {
-  border-color: #5B2FE6;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.1);
 }
 
 .select:focus {
   outline: none;
-  border-color: #5B2FE6;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2);
 }
 
 /* Estilos para opciones en dropdown (navegadores modernos) */
 .select option:hover {
   background-color: rgba(91, 47, 230, 0.1);
-  color: #5B2FE6;
+  color: var(--color-primary);
 }
 ```
 
@@ -212,7 +212,7 @@ RESOLUCIÓN:
 ✅ Focus: borde morado (#5B2FE6) + box-shadow más intenso (20% opacidad)
 ✅ Options: fondo morado claro + texto morado en hover
 ✅ Transición de 0.2s para efecto suave
-✅ Border inicial corregido de var(--color-gray-300) a var(--color-gray-200)
+✅ Border inicial corregido de var(--color-gray-300) a var(--color-gris)
 ✅ Aplicado en:
   - ProcesoCalculoPage.module.css (select de tareas profesionales)
   - DatosPrincipalesBasico.module.css (tipo de obra, destino/uso)
@@ -338,7 +338,7 @@ IMPLEMENTACIÓN:
 
 .observacionesTextarea:focus {
   outline: none;
-  border-color: #5B2FE6;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.1);
 }
 
@@ -371,10 +371,10 @@ RESOLUCIÓN:
 ✅ Font-size reducido a 0.938rem para mejor legibilidad
 ✅ Color de texto cambiado a #333333 (negro más legible)
 ✅ Line-height establecido en 1.6 para lectura cómoda
-✅ Border aumentado a 2px con var(--color-gray-200)
+✅ Border aumentado a 2px con var(--color-gris)
 ✅ Hover: border-color #5B2FE6 + box-shadow 10% opacidad
 ✅ Focus: border-color #5B2FE6 + box-shadow 20% opacidad (más intenso)
-✅ Placeholder: itálica con color gris suave var(--color-gray-200)
+✅ Placeholder: itálica con color gris suave var(--color-gris)
 ✅ Min-height aumentado de 100px a 120px
 ✅ Padding ajustado a 12px 16px para mayor comodidad
 ✅ Transition reducida a 0.2s para consistencia
@@ -418,13 +418,13 @@ Reemplazar checkboxes nativos con versión estilizada:
 }
 
 .checkbox:hover {
-  border-color: #5B2FE6;
+  border-color: var(--color-primary);
 }
 
 /* Estado checked - cuadrado azul/morado */
 .checkbox:checked {
-  background-color: #5B2FE6;
-  border-color: #5B2FE6;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 /* Checkmark (✓) blanco dentro del cuadrado azul */
@@ -448,8 +448,8 @@ Reemplazar checkboxes nativos con versión estilizada:
 ALTERNATIVA (sin símbolo ✓, solo cuadrado sólido):
 ```css
 .checkbox:checked {
-  background-color: #5B2FE6;
-  border-color: #5B2FE6;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 ```
 
@@ -515,12 +515,12 @@ Identificar el elemento de fecha/calendario y agregar:
 }
 
 .fechaCalendario:hover .fechaTexto {
-  color: #5B2FE6;
+  color: var(--color-primary);
 }
 
 .fechaTexto {
   font-size: 0.938rem;
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
   transition: color 0.2s ease;
 }
 ```

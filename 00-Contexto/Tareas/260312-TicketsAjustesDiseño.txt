@@ -490,7 +490,7 @@ PALETA DE COLORES:
 - Primary (Verde): #2D5016
 - Secondary (Marrón): #D4A574
 - Accent (Celeste): #A8DADC
-- Grises: --color-gray-50 a --color-gray-900
+- Grises: --color-gris a --color-gray-900
 - Error: #DC3545
 - Success: #28A745
 

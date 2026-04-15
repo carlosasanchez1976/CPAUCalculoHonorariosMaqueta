@@ -8,12 +8,11 @@ import styles from './CalculationTypeCard.module.css';
  * @param {string} props.shortDescription - Descripción corta (1 línea) del cálculo
  * @param {string} props.fullDescription - Descripción completa del cálculo
  * @param {React.ReactNode} props.icon - Ícono del tipo
- * @param {string} props.color - Color de acento
  * @param {string} props.path - Ruta a navegar
  * @param {string} props.tipoId - Identificador corto del tipo ('Básico', 'Arancel', etc.)
  * @param {string} props.vigente - 'Si' o 'No' indica si está disponible o en construcción
  */
-const CalculationTypeCard = ({ title, shortDescription, fullDescription, icon, color, path, tipoId, vigente }) => {
+const CalculationTypeCard = ({ title, shortDescription, fullDescription, icon, path, tipoId, vigente }) => {
   const navigate = useNavigate();
   const isVigente = vigente === 'Si';
 
@@ -33,7 +32,6 @@ const CalculationTypeCard = ({ title, shortDescription, fullDescription, icon, c
     <div 
       className={`${styles.card} ${!isVigente ? styles.noVigente : ''}`}
       onClick={handleClick}
-      style={{ '--accent-color': color }}
     >
       <div className={styles.headerRow}>
         <div className={styles.iconWrapper}>

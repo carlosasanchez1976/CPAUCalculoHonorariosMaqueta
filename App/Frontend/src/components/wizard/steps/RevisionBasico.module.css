@@ -136,7 +136,7 @@
   gap: 0.25rem;
   padding: 0.25rem 0.75rem;
   background-color: #fee2e2;
-  color: #991b1b;
+  color: var(--color-error);
   border-radius: 9999px;
   font-size: 0.875rem;
   font-weight: 600;
@@ -147,27 +147,6 @@
   font-weight: 700;
 }
 
-.observacionesBox {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background-color: #fffbeb;
-  border-left: 4px solid #f59e0b;
-  border-radius: 4px;
-}
-
-.observacionesBox strong {
-  display: block;
-  font-weight: 600;
-  color: #92400e;
-  margin-bottom: 0.5rem;
-}
-
-.observacionesBox p {
-  margin: 0;
-  color: #78350f;
-  font-size: 0.9375rem;
-  line-height: 1.6;
-}
 
 /* Info box */
 .infoBox {

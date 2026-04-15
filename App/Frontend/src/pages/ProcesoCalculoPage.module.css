@@ -6,17 +6,16 @@
 }
 
 .wizardHeader {
-  background: var(--color-white);
-  padding: 10px 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  text-align: center;
+
+  padding: 6px 4px;
+
 }
 
 .wizardTitle {
   font-size: 1.5rem;
   font-weight: 700;
-  text-align: left;
-  color: var(--color-primary);
+  text-align: center;
+  color: var(--color-text-no-sel);
 
 }
 
@@ -27,7 +26,7 @@
 }
 
 .content {
-  max-width: 800px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 

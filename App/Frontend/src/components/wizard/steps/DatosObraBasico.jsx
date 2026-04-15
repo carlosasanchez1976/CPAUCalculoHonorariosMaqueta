@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import Input from '../../common/Input';
-import { formatCurrencyARS, formatCurrencyUSD } from '../../../utils/formatters';
+import { formatCurrencyARS } from '../../../utils/formatters';
 import styles from './DatosObraBasico.module.css';
 
 /**
- * Paso 1 - Datos Específicos de la Obra
+ * Paso 2 - Datos Específicos de la Obra
  * Específico para el cálculo "Honorarios de Especialidades - Básico"
  * Incluye cálculo automático del valor de obra
  */
@@ -14,27 +14,16 @@ const DatosObraBasico = ({ formData, onChange, stepTitle }) => {
 
   // Verificar si los campos principales están completos
   useEffect(() => {
-    const completos = formData.superficieTotal && 
-                      formData.valorMetro2 && 
-                      formData.cotizDolar;
+    const completos = formData.superficieTotal && formData.valorMetro2;
     setCamposCompletos(!!completos);
-  }, [formData.superficieTotal, formData.valorMetro2, formData.cotizDolar]);
+  }, [formData.superficieTotal, formData.valorMetro2]);
 
   // Calcular valor de obra automáticamente
   useEffect(() => {
     const superficie = parseFloat(formData.superficieTotal) || 0;
     const valorM2 = parseFloat(formData.valorMetro2) || 0;
-    const cotizacion = parseFloat(formData.cotizDolar) || 0;
 
-    let valorBase = superficie * valorM2 * cotizacion;
-
-    // Aplicar ajuste por complejidad
-    if (formData.complejidad === 'Baja') {
-      valorBase = valorBase * 0.9;
-    } else if (formData.complejidad === 'Alta') {
-      valorBase = valorBase * 1.1;
-    }
-    // Media no modifica el valor
+    const valorBase = superficie * valorM2;
 
     setValorObraCalculado(valorBase);
     
@@ -48,125 +37,80 @@ const DatosObraBasico = ({ formData, onChange, stepTitle }) => {
         }
       });
     }
-  }, [formData.superficieTotal, formData.valorMetro2, formData.cotizDolar, formData.complejidad, formData.valorObra, onChange]);
-
-  const getComplejidadInfo = () => {
-    switch (formData.complejidad) {
-      case 'Baja':
-        return { text: 'Se aplica un descuento del 10% al valor de obra', factor: '×0.9' };
-      case 'Alta':
-        return { text: 'Se aplica un incremento del 10% al valor de obra', factor: '×1.1' };
-      case 'Media':
-        return { text: 'No se aplican modificadores al valor de obra', factor: '×1.0' };
-      default:
-        return { text: '', factor: '' };
-    }
-  };
-
-  const complejidadInfo = getComplejidadInfo();
+  }, [formData.superficieTotal, formData.valorMetro2, formData.valorObra, onChange]);
 
   return (
     <div className={styles.container}>
       <h2 className="stepTitle">{stepTitle}</h2>
-      <p className={styles.stepDescription}>
-        Ingrese las características técnicas y económicas del proyecto
-      </p>
-
-      {/* Mensaje de ayuda - desaparece al completar campos */}
-      {!camposCompletos && (
-        <div className={styles.helperNote}>
-          <p>
-            <strong>NOTA:</strong> La superficie cubierta se computa al 100%, las demás 
-            superficies semicubiertas incorporadas según la condición y los valores 
-            específicos de la obra. Complete todos los campos para calcular el valor total.
-          </p>
-        </div>
-      )}
 
       <div className={styles.formGrid}>
-        <Input
-          label="Superficie Total (m²)"
-          name="superficieTotal"
-          type="number"
-          value={formData.superficieTotal}
-          onChange={onChange}
-          placeholder="Ej: 1500"
-          required
-          min="0"
-          step="0.01"
-        />
-
-        <Input
-          label="Valor por m² (USD)"
-          name="valorMetro2"
-          type="number"
-          value={formData.valorMetro2}
-          onChange={onChange}
-          placeholder="Ej: 1200"
-          required
-          min="0"
-          step="0.01"
-        />
-
-        <Input
-          label="Cotización del Dólar (ARS)"
-          name="cotizDolar"
-          type="number"
-          value={formData.cotizDolar}
-          onChange={onChange}
-          placeholder="Ej: 1000"
-          required
-          min="0"
-          step="0.01"
-        />
-
-        <div className={styles.selectWrapper}>
-          <label className={styles.label}>
-            Complejidad de la Obra
-            <span className={styles.required}>*</span>
-          </label>
-          <select
-            name="complejidad"
-            value={formData.complejidad}
+        {/* Row 1: 2 inputs + campo calculado (3 columnas) */}
+        <div className={styles.inputRow}>
+          <Input
+            label="Superficie total"
+            name="superficieTotal"
+            type="number"
+            value={formData.superficieTotal}
             onChange={onChange}
-            className={styles.select}
-          >
-            <option value="">Seleccione...</option>
-            <option value="Baja">Baja (Factor 0.9)</option>
-            <option value="Media">Media (Factor 1.0)</option>
-            <option value="Alta">Alta (Factor 1.1)</option>
-          </select>
-          {complejidadInfo.text && (
-            <p className={styles.complejidadInfo}>
-              <span className={styles.factor}>{complejidadInfo.factor}</span>
-              {complejidadInfo.text}
-            </p>
-          )}
+            required
+            min="0"
+            step="0.01"
+          />
+
+          <Input
+            label="Costo por m²"
+            name="valorMetro2"
+            type="number"
+            value={formData.valorMetro2}
+            onChange={onChange}
+            required
+            min="0"
+            step="0.01"
+          />
+
+          {/* Campo calculado que se ve como input */}
+          <div className={styles.inputWrapper}>
+            <label className={styles.label}>
+              Costo estimado de obra (ARS)
+            </label>
+            <div className={styles.calculatedInput}>
+              {formData.superficieTotal && formData.valorMetro2 ? (
+                `$ ${formatCurrencyARS(valorObraCalculado, false)}`
+              ) : (
+                '$ 0'
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Campo calculado - Valor de Obra */}
-        <div className={styles.calculatedField}>
-          <label className={styles.label}>
-            Valor Total de la Obra (ARS)
-          </label>
-          <div className={styles.calculatedValue}>
-            <span className={styles.currencySymbol}>$</span>
-            <span className={styles.amount}>
-              {formatCurrencyARS(valorObraCalculado, false)}
-            </span>
+        {/* Row 2: 3 notas, una por columna */}
+        <div className={styles.notesRow}>
+          {/* Nota columna 1 - Superficie */}
+          <div className={styles.noteItem}>
+            <p>
+              <strong>NOTA:</strong> La superficie consideradora deberá definirse en función de las 
+              características específicas de la obra y de los valores de referencia disponibles, 
+              según el criterio técnico profesional, a fin de obtener la superficie total equivalente.
+            </p>
           </div>
-          <p className={styles.calculationFormula}>
-            {formData.superficieTotal && formData.valorMetro2 && formData.cotizDolar ? (
-              <>
-                <strong>Cálculo:</strong> {formData.superficieTotal} m² × {formatCurrencyUSD(formData.valorMetro2, false)} USD × ${formData.cotizDolar}
-                {formData.complejidad && formData.complejidad !== 'Media' && (
-                  <span> {complejidadInfo.factor}</span>
-                )}
-              </>
-            ) : (
-              'Complete los campos para ver el cálculo'
+
+          {/* Nota columna 2 - Costo m2 */}
+          <div className={styles.noteItem}>
+            <p>
+              <strong>NOTA:</strong> El valor considerador deberá definirse en función de las 
+              características específicas de la obra y de los valores de referencia disponibles, 
+              según el criterio técnico profesional.
+            </p>
+          </div>
+
+          {/* Nota columna 3 - Costo total */}
+          <div className={styles.noteItem}>
+            {!camposCompletos && (
+              <p>
+                Completá los campos para ver el cálculo
+              </p>
             )}
-          </p>
+          </div>
         </div>
       </div>
     </div>

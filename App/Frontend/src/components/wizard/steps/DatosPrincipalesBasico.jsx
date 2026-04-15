@@ -2,7 +2,7 @@ import Input from '../../common/Input';
 import styles from './DatosPrincipalesBasico.module.css';
 
 /**
- * Paso 0 - Datos Principales del Proyecto
+ * Paso 1 - Datos Principales del Proyecto
  * Específico para el cálculo "Honorarios de Especialidades - Básico"
  */
 const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {

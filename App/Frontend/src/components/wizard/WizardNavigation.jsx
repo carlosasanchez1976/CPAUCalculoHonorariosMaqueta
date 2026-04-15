@@ -77,19 +77,6 @@ const WizardNavigation = ({
             >
               <FaQuestionCircle className={styles.iconLarge} />
             </Button>
-
-            {/* Botón Volver (oculto en paso 0) */}
-            {currentStep > 0 && (
-              <Button
-                variant="outline"
-                onClick={handleBackToSelection}
-                className={styles.backButton}
-                title="Volver a selección de tipo de cálculo"
-                disabled={isCalculating}
-              >
-                <FaHome className={styles.iconLarge} />
-              </Button>
-            )}
           </div>
 
           {/* Botón Siguiente */}

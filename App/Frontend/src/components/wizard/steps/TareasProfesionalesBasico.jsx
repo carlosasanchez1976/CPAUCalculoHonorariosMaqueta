@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import styles from './TareasProfesionalesBasico.module.css';
 
 /**
- * Paso 2 - Tareas Profesionales a Realizar
+ * Paso 3 - Tareas Profesionales a Realizar
  * Específico para el cálculo "Honorarios de Especialidades - Básico"
  */
 const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
@@ -16,6 +16,7 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
       formData.instalacionSanitaria,
       formData.instalacionElectrica,
       formData.instalacionContraIncendio,
+      formData.instalacionTermomecanica,
       formData.proyectoEstructuras
     ].every(tarea => tarea === false || tarea === 'No');
 
@@ -26,6 +27,7 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
     formData.instalacionSanitaria,
     formData.instalacionElectrica,
     formData.instalacionContraIncendio,
+    formData.instalacionTermomecanica,
     formData.proyectoEstructuras
   ]);
 
@@ -43,6 +45,7 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
       <span className={styles.radioLabel}>{label}</span>
       <div className={styles.radioButtons}>
         <label className={styles.radioOption}>
+          <span className={styles.radioText}>SÍ</span>
           <input
             type="radio"
             name={fieldName}
@@ -50,9 +53,10 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
             onChange={() => handleRadioChange(fieldName, 'Si')}
             className={styles.radio}
           />
-          <span className={styles.radioText}>Sí</span>
+          
         </label>
         <label className={styles.radioOption}>
+          <span className={styles.radioText}>NO</span>
           <input
             type="radio"
             name={fieldName}
@@ -60,7 +64,7 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
             onChange={() => handleRadioChange(fieldName, 'No')}
             className={styles.radio}
           />
-          <span className={styles.radioText}>No</span>
+          
         </label>
       </div>
     </div>
@@ -69,9 +73,6 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
   return (
     <div className={styles.container}>
       <h2 className="stepTitle">{stepTitle}</h2>
-      <p className={styles.stepDescription}>
-        Seleccione las tareas profesionales que se incluirán en el cálculo de honorarios
-      </p>
 
       {hasError && (
         <div className={styles.errorAlert}>
@@ -80,64 +81,98 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
       )}
 
       <div className={styles.tareasContainer}>
-        {/* Grupo 1: Obra */}
-        <div className={styles.tareaGroup}>
-          <h3 className={styles.groupTitle}>Obra de Arquitectura</h3>
-          <RadioGroup
-            label="Proyecto de Obra"
-            fieldName="obraProyecto"
-            value={formData.obraProyecto}
-          />
-          <RadioGroup
-            label="Dirección de Obra"
-            fieldName="obraDireccion"
-            value={formData.obraDireccion}
-          />
+        {/* Columna 1: Grupos de tareas */}
+
+        <div className={styles.tareasColumn}>
+          {/* Grupo 1: Obra */}
+            
+            <label className={styles.label}>
+              Obra de Arquitectura
+            </label>
+
+          <div className={styles.tareaGroup}>
+            
+            <RadioGroup
+              label="Proyecto de Obra"
+              fieldName="obraProyecto"
+              value={formData.obraProyecto}
+            />
+            <RadioGroup
+              label="Dirección de Obra"
+              fieldName="obraDireccion"
+              value={formData.obraDireccion}
+            />
+          </div>
+
+            <label className={styles.label}>
+
+            </label>
+
+            <label className={styles.label}>
+              Estructuras
+            </label>
+
+
+          {/* Grupo 2: Estructuras */}
+          <div className={styles.tareaGroup}>
+            
+            <RadioGroup
+              label="Proyecto de Estructuras"
+              fieldName="proyectoEstructuras"
+              value={formData.proyectoEstructuras}
+            />
+          </div>
+
+            <label className={styles.label}>
+
+            </label>
+
+            <label className={styles.label}>
+              Proyecto de instalaciones
+            </label>
+
+
+          {/* Grupo 3: Instalaciones */}
+          <div className={styles.tareaGroup}>
+
+            <RadioGroup
+              label="Instalación Sanitaria"
+              fieldName="instalacionSanitaria"
+              value={formData.instalacionSanitaria}
+            />
+            <RadioGroup
+              label="Instalación Eléctrica"
+              fieldName="instalacionElectrica"
+              value={formData.instalacionElectrica}
+            />
+            <RadioGroup
+              label="Instalación Contra Incendio"
+              fieldName="instalacionContraIncendio"
+              value={formData.instalacionContraIncendio}
+            />
+            <RadioGroup
+              label="Instalación Termomecánica"
+              fieldName="instalacionTermomecanica"
+              value={formData.instalacionTermomecanica}
+            />
+          </div>
         </div>
 
-        {/* Grupo 2: Instalaciones */}
-        <div className={styles.tareaGroup}>
-          <h3 className={styles.groupTitle}>Proyectos de Instalaciones</h3>
-          <RadioGroup
-            label="Instalación Sanitaria"
-            fieldName="instalacionSanitaria"
-            value={formData.instalacionSanitaria}
-          />
-          <RadioGroup
-            label="Instalación Eléctrica"
-            fieldName="instalacionElectrica"
-            value={formData.instalacionElectrica}
-          />
-          <RadioGroup
-            label="Instalación Contra Incendio"
-            fieldName="instalacionContraIncendio"
-            value={formData.instalacionContraIncendio}
-          />
-        </div>
-
-        {/* Grupo 3: Estructuras */}
-        <div className={styles.tareaGroup}>
-          <h3 className={styles.groupTitle}>Estructuras</h3>
-          <RadioGroup
-            label="Proyecto de Estructuras"
-            fieldName="proyectoEstructuras"
-            value={formData.proyectoEstructuras}
-          />
-        </div>
-
-        {/* Observaciones */}
-        <div className={styles.observacionesWrapper}>
-          <label className={styles.label}>
-            Observaciones de las Tareas
-          </label>
-          <textarea
-            name="observacionesTareas"
-            value={formData.observacionesTareas}
-            onChange={onChange}
-            className="textarea"
-            placeholder="Ingrese observaciones adicionales sobre las tareas seleccionadas"
-            rows={4}
-          />
+        {/* Columna 2: Observaciones */}
+        <div className={styles.observacionesColumn}>
+          <div className={styles.observacionesWrapper}>
+            <label className={styles.label}>
+              Observaciones
+            </label>
+            <textarea
+              name="observacionesTareas"
+              value={formData.observacionesTareas}
+              onChange={onChange}
+              className={styles.textarea}
+              placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy nibh..."
+              rows={12}
+            />
+          </div>
         </div>
       </div>
     </div>

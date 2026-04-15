@@ -126,7 +126,7 @@ textarea {
   font-weight: 700;
   background-color: var(--color-celeste);
   border-radius: 25px;
-  color: var(--color-text-primary);
+  color: var(--color-text-no-sel);
   padding: 8px 12px;
   margin-bottom: 1rem;
   text-align: left;

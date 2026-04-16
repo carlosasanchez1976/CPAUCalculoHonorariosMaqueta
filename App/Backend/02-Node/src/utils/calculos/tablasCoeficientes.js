@@ -18,7 +18,7 @@ export const COEFICIENTES_PROYECTO_DIRECCION = {
 };
 
 /**
- * Coeficientes para Instalaciones (Sanitaria, Eléctrica, Contra Incendio)
+ * Coeficientes para Instalaciones (Sanitaria, Eléctrica, Contra Incendio, Termomecánica)
  * Porcentaje: 100%
  */
 export const COEFICIENTES_INSTALACIONES = {

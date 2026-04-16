@@ -118,6 +118,7 @@ function agruparItemsPorTarea(items) {
  * @param {boolean} formData.instalacionSanitaria - ¿Realiza Instalación Sanitaria?
  * @param {boolean} formData.instalacionElectrica - ¿Realiza Instalación Eléctrica?
  * @param {boolean} formData.instalacionContraIncendio - ¿Realiza Instalación Contra Incendio?
+ * @param {boolean} formData.instalacionTermomecanica - ¿Realiza Instalación Termomecánica?
  * @param {boolean} formData.proyectoEstructuras - ¿Realiza Proyecto de Estructuras?
  * @param {number} valorK - Valor K desde parámetros (default: 522181756.33)
  * @returns {Array<Object>} Array de ítems de honorarios
@@ -180,7 +181,7 @@ export function calcularHonorariosBasico(formData, valorK = VALOR_K_DEFAULT) {
   if (formData.instalacionSanitaria) {
     agregarItemsTarea(
       items,
-      'Proyecto de Instalación Sanitaria',
+      'Proyecto de instalación sanitaria',
       COEFICIENTES_INSTALACIONES[rango],
       nombreRango,
       formData.valorObra,
@@ -193,7 +194,7 @@ export function calcularHonorariosBasico(formData, valorK = VALOR_K_DEFAULT) {
   if (formData.instalacionElectrica) {
     agregarItemsTarea(
       items,
-      'Proyecto de Instalación Eléctrica',
+      'Proyecto de instalación eléctrica',
       COEFICIENTES_INSTALACIONES[rango],
       nombreRango,
       formData.valorObra,
@@ -206,7 +207,7 @@ export function calcularHonorariosBasico(formData, valorK = VALOR_K_DEFAULT) {
   if (formData.instalacionContraIncendio) {
     agregarItemsTarea(
       items,
-      'Proyecto de Instalación contra Incendios',
+      'Proyecto de instalación contra incendios',
       COEFICIENTES_INSTALACIONES[rango],
       nombreRango,
       formData.valorObra,
@@ -214,12 +215,27 @@ export function calcularHonorariosBasico(formData, valorK = VALOR_K_DEFAULT) {
       PORCENTAJES_TAREA.instalaciones
     );
   }
-  
+
+  // 2.55 - Instalación Termomecánica
+  if (formData.instalacionTermomecanica) {
+    agregarItemsTarea(
+      items,
+      'Proyecto de instalación termomecánica',
+      COEFICIENTES_INSTALACIONES[rango],
+      nombreRango,
+      formData.valorObra,
+      valorK,
+      PORCENTAJES_TAREA.instalaciones
+    );
+  }
+
+
+
   // 2.6 - Proyecto de Estructuras
   if (formData.proyectoEstructuras) {
     agregarItemsTarea(
       items,
-      'Proyecto de Estructuras',
+      'Proyecto de estructuras',
       COEFICIENTES_ESTRUCTURAS[rango],
       nombreRango,
       formData.valorObra,

@@ -1,63 +1,59 @@
 .container {
-  max-width: 1000px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
 
-/* Header del Certificado */
+/* Header del Certificado - Dos Columnas */
 .certificateHeader {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  /* background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); */
+  background-color: var(--color-fondo);
   color: white;
-  padding: 2.5rem 2rem;
+
+  
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-primary);
+  padding: 0.25%;
   border-radius: 12px;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
 }
 
-.headerBorder {
-  height: 3px;
-  background: linear-gradient(90deg, transparent 0%, white 50%, transparent 100%);
-  margin: 0 auto 1.5rem;
-}
-
-.headerContent {
-  text-align: center;
-}
-
-.organization {
+.logoPlaceholder {
   font-size: 3rem;
   font-weight: 900;
   letter-spacing: 0.5rem;
-  margin: 0 0 0.5rem 0;
+  color: white;
 }
 
-.organizationFull {
-  font-size: 1rem;
-  font-weight: 400;
-  letter-spacing: 0.2rem;
-  margin: 0 0 1.5rem 0;
-  opacity: 0.95;
-  line-height: 1.4;
-}
-
-.divider {
-  height: 2px;
-  width: 200px;
-  background-color: white;
-  margin: 0 auto 1.5rem;
-  opacity: 0.5;
+.headerRight {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-celeste);
+  color: var(--color-text-no-sel);
+  padding: 0.50rem;
+  border-radius: 12px;
+  
 }
 
 .title {
   font-size: 1.5rem;
   font-weight: 600;
-  margin: 0 0 1.5rem 0;
+  margin: 0;
   letter-spacing: 0.05rem;
+  text-transform: capitalize;
 }
 
 .metadata {
   display: flex;
-  justify-content: center;
   gap: 2rem;
   flex-wrap: wrap;
   font-size: 0.9375rem;
@@ -66,15 +62,26 @@
 .metadataItem {
   display: flex;
   gap: 0.5rem;
-}
-
-.metadataLabel {
+  font-size: 1.25rem;
   font-weight: 600;
-  opacity: 0.9;
+
 }
 
-.metadataValue {
-  opacity: 1;
+
+/* Layout de Dos Columnas */
+.twoColumnLayout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.leftColumn,
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: var(--color-text-no-sel);
 }
 
 /* Resumen del Proyecto */
@@ -85,6 +92,7 @@
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  
 }
 
 .sectionTitle {
@@ -97,41 +105,41 @@
 }
 
 .resumenGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .resumenItem {
   display: flex;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .resumenLabel {
   font-weight: 600;
   color: var(--color-gray-600);
-  font-size: 0.9375rem;
-  min-width: 100px;
+  font-size: 0.875rem;
 }
 
 .resumenValue {
   color: var(--color-gray-900);
   font-size: 0.9375rem;
+  padding-left: 0.5rem;
 }
 
 /* Disclaimer */
 .disclaimer {
-  background-color: #fef3c7;
-  border: 2px solid #f59e0b;
+  
+  border: 2px solid ;
   border-radius: 12px;
   padding: 1.5rem;
-  margin-bottom: 2rem;
 }
 
 .disclaimerTitle {
   font-size: 1rem;
   font-weight: 700;
-  color: #92400e;
+  
   margin: 0 0 1rem 0;
   display: flex;
   align-items: center;
@@ -139,7 +147,7 @@
 }
 
 .disclaimerText {
-  color: #78350f;
+  
   font-size: 0.9375rem;
   line-height: 1.7;
   margin: 0 0 1rem 0;
@@ -150,7 +158,7 @@
   flex-wrap: wrap;
   gap: 1.5rem;
   font-size: 0.875rem;
-  color: #92400e;
+  
   padding-top: 1rem;
   border-top: 1px solid #fbbf24;
 }
@@ -161,18 +169,23 @@
   border: 1px solid var(--color-gris);
   border-radius: 12px;
   padding: 1.5rem;
-  margin-bottom: 2rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  
 }
 
 .tableContainer {
   overflow-x: auto;
+  
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9375rem;
+  
 }
 
 .table thead {
@@ -183,7 +196,7 @@
   padding: 0.75rem 1rem;
   text-align: left;
   font-weight: 600;
-  color: var(--color-celeste);
+  color: var(--color-text-no-sel);
   border-bottom: 2px solid var(--color-gray-300);
 }
 
@@ -225,18 +238,20 @@
 }
 
 .totalRow {
-  background-color: #dbeafe;
+  background-color: var(--color-fondo);
+
 }
 
 .totalRow td {
   padding: 1rem;
   font-size: 1.125rem;
   border-bottom: none;
+  color: var(--color-primary);
 }
 
 .totalAmount {
-  color: #1e40af;
-  font-size: 1.5rem;
+  
+  font-size: 1.125rem;
 }
 
 /* Nota Final */
@@ -244,24 +259,22 @@
   background-color: #f0f9ff;
   border-left: 4px solid #3b82f6;
   padding: 1rem 1.25rem;
-  margin-top: 1.5rem;
   border-radius: 8px;
 }
 
 .notaFinal p {
   margin: 0;
   font-size: 0.95rem;
-  color: var(--color-celeste);
+  color: var(--color-text-no-sel);
   line-height: 1.6;
 }
 
-/* Checkbox de Términos */
+/* Checkbox de Términos - Ahora dentro de resultsSection */
 .termsCheckbox {
-  background-color: white;
-  border: 2px solid var(--color-gray-300);
-  border-radius: 12px;
-  padding: 1.25rem 1.5rem;
-  margin-bottom: 2rem;
+  
+  border: 2px solid ;
+  border-radius: 8px;
+  padding: 1rem;
 }
 
 .checkboxLabel {
@@ -321,22 +334,25 @@
   justify-content: center;
   gap: 1rem;
   flex-wrap: wrap;
+  margin-top: 2rem;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .certificateHeader {
-    padding: 2rem 1rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1.5rem 1rem;
+    text-align: center;
   }
 
-  .organization {
+  .headerLeft {
+    justify-content: center;
+  }
+
+  .logoPlaceholder {
     font-size: 2rem;
     letter-spacing: 0.3rem;
-  }
-
-  .organizationFull {
-    font-size: 0.875rem;
-    letter-spacing: 0.1rem;
   }
 
   .title {
@@ -346,11 +362,12 @@
   .metadata {
     flex-direction: column;
     gap: 0.5rem;
-    align-items: center;
+    align-items: flex-start;
   }
 
-  .resumenGrid {
+  .twoColumnLayout {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .disclaimerMeta {
@@ -398,36 +415,19 @@
 }
 
 .pdfExport .certificateHeader {
-  padding: 1rem 1rem;
+  grid-template-columns: auto 1fr;
+  padding: 1rem;
   margin-bottom: 0.8rem;
 }
 
-.pdfExport .headerBorder {
-  margin: 0 auto 0.5rem;
-  height: 2px;
-}
-
-.pdfExport .organization {
+.pdfExport .logoPlaceholder {
   font-size: 2rem;
-  margin: 0 0 0.2rem 0;
   letter-spacing: 0.3rem;
-}
-
-.pdfExport .organizationFull {
-  font-size: 0.75rem;
-  margin: 0 0 0.6rem 0;
-  line-height: 1.2;
-}
-
-.pdfExport .divider {
-  margin: 0 auto 0.6rem;
-  width: 120px;
-  height: 1px;
 }
 
 .pdfExport .title {
   font-size: 1.05rem;
-  margin: 0 0 0.6rem 0;
+  margin: 0;
 }
 
 .pdfExport .metadata {
@@ -435,15 +435,15 @@
   gap: 0.8rem;
 }
 
-.pdfExport .proyectoResumen,
-.pdfExport .resultsSection {
-  padding: 0.8rem;
-  margin-bottom: 0.8rem;
+.pdfExport .twoColumnLayout {
+  gap: 1rem;
 }
 
-.pdfExport .disclaimer {
+.pdfExport .proyectoResumen,
+.pdfExport .disclaimer,
+.pdfExport .resultsSection {
   padding: 0.8rem;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0;
 }
 
 .pdfExport .sectionTitle {
@@ -454,15 +454,6 @@
 
 .pdfExport .resumenGrid {
   gap: 0.4rem;
-}
-
-.pdfExport .resumenItem {
-  gap: 0.4rem;
-}
-
-.pdfExport .resumenLabel,
-.pdfExport .resumenValue {
-  font-size: 0.8rem;
 }
 
 .pdfExport .disclaimerTitle {
@@ -516,27 +507,17 @@
   }
 
   .certificateHeader {
-    padding: 1.5rem 1.5rem;
+    grid-template-columns: auto 1fr;
+    padding: 1.5rem;
     margin-bottom: 1.2rem;
   }
 
-  .headerBorder {
-    margin: 0 auto 1rem;
-  }
-
-  .organization {
+  .logoPlaceholder {
     font-size: 2.5rem;
-    margin: 0 0 0.3rem 0;
-  }
-
-  .organizationFull {
-    font-size: 0.9rem;
-    margin: 0 0 1rem 0;
   }
 
   .title {
     font-size: 1.3rem;
-    margin: 0 0 1rem 0;
   }
 
   .metadata {
@@ -544,15 +525,15 @@
     gap: 1.5rem;
   }
 
-  .proyectoResumen,
-  .resultsSection {
-    padding: 1.2rem;
-    margin-bottom: 1.2rem;
+  .twoColumnLayout {
+    gap: 1.5rem;
   }
 
-  .disclaimer {
+  .proyectoResumen,
+  .disclaimer,
+  .resultsSection {
     padding: 1.2rem;
-    margin-bottom: 1.2rem;
+    margin-bottom: 0;
   }
 
   .sectionTitle {
@@ -575,7 +556,7 @@
   }
 
   .notaFinal {
-    margin-top: 1rem;
+    margin-top: 0;
   }
 
   .notaFinal p {

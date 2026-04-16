@@ -1,0 +1,2789 @@
+================================================================================
+TICKETS - BACKEND AWS LAMBDA + NODE.JS + MYSQL - FASE 2
+================================================================================
+Proyecto: CH2026 - Sistema de Gestión de Cálculo de Honorarios CPAU
+Fecha: 16/04/2026
+Versión: 2.0 - Migración a AWS Lambda con Persistencia en MySQL
+================================================================================
+
+OBJETIVO GENERAL:
+Migrar la lógica de backend desde Vercel Serverless Functions a AWS Lambda con
+Node.js, implementando persistencia completa de datos en MySQL (AWS RDS), 
+manteniendo el contrato de API estable para no afectar el frontend.
+
+JUSTIFICACIÓN:
+El cliente ha aprobado el desarrollo completo del producto. Se requiere:
+- Persistencia de datos de cálculos realizados
+- Infraestructura escalable en AWS (stack ya probado por el equipo)
+- Preparación para funcionalidades futuras (autenticación, histórico, reportes)
+- Base de datos MySQL ya provisionada en dev (localhost) y qa (AWS RDS)
+
+ESTRATEGIA DE IMPLEMENTACIÓN:
+- Fase 1 (COMPLETADA): API Serverless en Vercel (maqueta funcional)
+- Fase 2 (ACTUAL): Backend AWS Lambda + Node.js + MySQL RDS
+- Principio clave: "API Contract First" - el frontend NO cambia
+
+ESTADO DE INFRAESTRUCTURA:
+- Schema MySQL creado en cpau_ch_dev (localhost)
+- Schema MySQL creado en cpau_ch_qa (AWS RDS)
+- Tablas: Calc_Maq (master) y Calc_Maq_Items (detalle)
+- Stored Procedures: Calc_Maq_Grabar, Calc_Maq_Listar_Calculo_Items
+
+ALCANCE FASE 2.1 (ACTUAL):
+✅ Persistir request completo del cálculo en tabla Calc_Maq
+✅ Persistir response/items del cálculo en tabla Calc_Maq_Items
+✅ Endpoint POST /api/v1/honorarios/calcular (con persistencia)
+✅ Endpoint GET /api/v1/honorarios/:calculoId/items
+❌ NO login/autenticación (fase futura)
+❌ NO histórico avanzado (fase futura)
+⚠️ userId hardcodeado a 1 (Admin) por ahora
+
+STACK TECNOLÓGICO:
+- Runtime: Node.js 18.x
+- Framework: Express.js
+- Database: MySQL 8.0 (AWS RDS)
+- Driver: mysql2 (connection pooling)
+- Deployment: AWS Lambda via Serverless Framework
+- Secrets: AWS Secrets Manager
+- Logging: AWS CloudWatch
+
+AMBIENTES:
+- DEV: cpau_ch_dev (localhost MySQL)
+- QA: cpau_ch_qa (AWS RDS)
+
+================================================================================
+TICKET #001 - SETUP: ESTRUCTURA DE PROYECTO NODE
+================================================================================
+ESTADO: ✅ COMPLETADO (16/04/2026)
+
+DESCRIPCIÓN:
+Crear estructura de carpetas en App/Backend/Node/ siguiendo el patrón del
+proyecto de referencia (imagen adjunta por el cliente).
+
+UBICACIÓN: App/Backend/Node/
+
+ESTRUCTURA A CREAR:
+```
+App/Backend/Node/
+├── src/
+│   ├── config/
+│   │   └── database.js
+│   ├── controllers/
+│   │   └── honorarios.controller.js
+│   ├── middlewares/
+│   │   ├── errorHandler.js
+│   │   └── validator.js
+│   ├── models/
+│   │   └── calculo.model.js
+│   ├── routes/
+│   │   └── honorarios.routes.js
+│   ├── services/
+│   │   └── honorarios.service.js
+│   └── utils/
+│       └── calculos/
+│           ├── honorariosBasico.js
+│           └── tablasCoeficientes.js
+├── .env
+├── .env.dev
+├── .env.example
+├── .env.qa.example
+├── .gitignore
+├── app.js
+├── index.js
+├── lambda.js
+├── package.json
+├── serverless.yml
+└── README.md
+```
+
+SUBTAREAS:
+
+[T001.1] Crear estructura de carpetas
+  ✅ Crear carpeta src/ y subcarpetas
+  ✅ Verificar que carpeta Node/ está vacía
+
+[T001.2] Crear package.json con dependencias base
+  ✅ Configurar project metadata
+  ✅ Agregar dependencies:
+    - express: ^4.18.2
+    - mysql2: ^3.6.0
+    - dotenv: ^16.3.1
+    - cors: ^2.8.5
+    - aws-sdk: ^2.1400.0
+    - serverless-http: ^3.2.0
+  ✅ Agregar devDependencies:
+    - nodemon: ^3.0.1
+    - jest: ^29.6.1
+    - supertest: ^6.3.3
+  ✅ Configurar scripts:
+    - dev: "nodemon index.js"
+    - test: "jest"
+    - deploy:dev: "serverless deploy --stage dev"
+    - deploy:qa: "serverless deploy --stage qa"
+
+[T001.3] Crear .env.example con variables documentadas
+  ✅ NODE_ENV=development
+  ✅ PORT=3000
+  ✅ DB_HOST=localhost
+  ✅ DB_PORT=3306
+  ✅ DB_USER=CPAU_dev
+  ✅ DB_PASSWORD=cpau_dev!2026
+  ✅ DB_NAME=cpau_ch_dev
+  ✅ VALOR_K_DEFAULT=522181756.33
+  ✅ AWS_SECRET_NAME=CH2026/dev/db-credentials
+  ✅ AWS_REGION=us-east-1
+
+[T001.4] Crear .gitignore
+  ✅ node_modules/
+  ✅ .env
+  ✅ .env.dev
+  ✅ .env.qa
+  ✅ .serverless/
+  ✅ coverage/
+  ✅ *.log
+
+[T001.5] Crear README.md inicial
+  ✅ Descripción del proyecto
+  ✅ Instrucciones de instalación
+  ✅ Comandos disponibles
+  ✅ Variables de entorno
+  ✅ Información de contacto
+
+CRITERIOS DE ACEPTACIÓN:
+✅ Estructura de carpetas completa según imagen de referencia
+✅ package.json con todas las dependencias necesarias
+✅ .env.example documentado y completo
+✅ .gitignore configurado correctamente
+✅ README.md con información básica
+✅ Carpeta lista para npm install
+✅ npm install ejecutado exitosamente (1015 packages instalados)
+
+ARCHIVOS CREADOS:
+- App/Backend/Node/package.json ✅
+- App/Backend/Node/.env.example ✅
+- App/Backend/Node/.env ✅ (con credenciales reales)
+- App/Backend/Node/.gitignore ✅
+- App/Backend/Node/README.md ✅
+- App/Backend/Node/src/* (carpetas) ✅
+- App/Backend/Node/__tests__/* (carpetas) ✅
+- App/Backend/Node/scripts/ ✅
+- App/Backend/Node/docs/ ✅
+
+ESTRUCTURA CREADA:
+```
+App/Backend/Node/
+├── src/
+│   ├── config/
+│   ├── controllers/
+│   ├── middlewares/
+│   ├── models/
+│   ├── routes/
+│   ├── services/
+│   └── utils/
+│       └── calculos/
+├── __tests__/
+│   ├── models/
+│   ├── services/
+│   ├── controllers/
+│   ├── middlewares/
+│   ├── routes/
+│   └── integration/
+├── scripts/
+├── docs/
+├── .env ✅
+├── .env.example ✅
+├── .gitignore ✅
+├── package.json ✅
+├── package-lock.json ✅
+└── README.md ✅
+```
+
+DEPENDENCIAS:
+- Ninguna
+
+ESTIMACIÓN: 2 horas
+TIEMPO REAL: 1.5 horas
+RESPONSABLE: Backend Dev
+COMPLETADO POR: GitHub Copilot + Carlos Sánchez
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #002 - DATABASE: DISEÑO Y CREACIÓN DE SCHEMA MYSQL
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Diseñar y crear tablas Calc_Maq (master) y Calc_Maq_Items (detalle) en MySQL,
+mapeando la estructura completa del request y response del endpoint de cálculo.
+
+CONTEXTO:
+- Schema cpau_ch_dev ya existe en localhost
+- Schema cpau_ch_qa ya existe en AWS RDS
+- Tablas deben soportar toda la información del contrato de API
+
+SCHEMA PROPUESTO:
+
+```sql
+-- ============================================================================
+-- TABLA PRINCIPAL: CÁLCULOS DE HONORARIOS (MASTER)
+-- ============================================================================
+CREATE TABLE Calc_Maq (
+  -- Identificación
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  calculo_id VARCHAR(50) NOT NULL UNIQUE,
+  usuario_id INT NOT NULL DEFAULT 1,
+  tipo_calculo VARCHAR(50) NOT NULL,
+  fecha_calculo DATETIME NOT NULL,
+  
+  -- Datos del Proyecto
+  proyecto_nombre VARCHAR(200),
+  proyecto_ubicacion VARCHAR(200),
+  proyecto_cliente VARCHAR(200),
+  
+  -- Datos de la Obra
+  obra_valor_obra DECIMAL(15,2) NOT NULL,
+  obra_superficie DECIMAL(10,2),
+  obra_tipologia VARCHAR(100),
+  obra_complejidad VARCHAR(50),
+  
+  -- Tareas Profesionales (boolean flags)
+  tarea_obra_proyecto BOOLEAN DEFAULT FALSE,
+  tarea_obra_direccion BOOLEAN DEFAULT FALSE,
+  tarea_instalacion_sanitaria BOOLEAN DEFAULT FALSE,
+  tarea_instalacion_electrica BOOLEAN DEFAULT FALSE,
+  tarea_instalacion_contra_incendio BOOLEAN DEFAULT FALSE,
+  tarea_instalacion_termomecanica BOOLEAN DEFAULT FALSE,
+  tarea_proyecto_estructuras BOOLEAN DEFAULT FALSE,
+  
+  -- Parámetros de Cálculo
+  parametro_valor_k DECIMAL(15,2),
+  
+  -- Resultado Total
+  total_honorarios DECIMAL(15,2) NOT NULL,
+  
+  -- Metadata del Resultado
+  metadata_rango VARCHAR(10),
+  metadata_valor_k DECIMAL(15,2),
+  metadata_rango_costo_obra DECIMAL(10,4),
+  metadata_numero_items INT,
+  
+  -- Auditoría
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  
+  -- Índices
+  INDEX idx_usuario (usuario_id),
+  INDEX idx_fecha (fecha_calculo),
+  INDEX idx_calculo_id (calculo_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- TABLA DE DETALLE: ITEMS DE CADA CÁLCULO (DETALLE)
+-- ============================================================================
+CREATE TABLE Calc_Maq_Items (
+  -- Identificación
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  calculo_id VARCHAR(50) NOT NULL,
+  item_numero INT NOT NULL,
+  
+  -- Datos del Item
+  tarea_profesional VARCHAR(200) NOT NULL,
+  descripcion TEXT NOT NULL,
+  importe DECIMAL(15,2) NOT NULL,
+  
+  -- Auditoría
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  
+  -- Foreign Key
+  FOREIGN KEY (calculo_id) REFERENCES Calc_Maq(calculo_id) ON DELETE CASCADE,
+  
+  -- Índices
+  INDEX idx_calculo (calculo_id),
+  INDEX idx_item (item_numero)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+SUBTAREAS:
+
+[T002.1] Crear script SQL de schema
+  ⏳ Crear archivo App/Backend/BD/schema.sql
+  ⏳ Definir tabla Calc_Maq con todos los campos
+  ⏳ Definir tabla Calc_Maq_Items con FK
+  ⏳ Agregar índices optimizados
+  ⏳ Agregar comentarios SQL documentando campos
+
+[T002.2] Ejecutar script en ambiente DEV (localhost)
+  ⏳ Conectar a MySQL local (cpau_ch_dev)
+  ⏳ Ejecutar script schema.sql
+  ⏳ Verificar tablas creadas: SHOW TABLES
+  ⏳ Verificar estructura: DESCRIBE Calc_Maq
+  ⏳ Verificar FK: SHOW CREATE TABLE Calc_Maq_Items
+
+[T002.3] Ejecutar script en ambiente QA (AWS RDS)
+  ⏳ Conectar a MySQL RDS (cpau_ch_qa)
+  ⏳ Ejecutar script schema.sql
+  ⏳ Verificar tablas creadas
+  ⏳ Verificar estructura
+  ⏳ Verificar FK y constraints
+
+[T002.4] Tests de inserción manual
+  ⏳ INSERT manual en Calc_Maq (registro de prueba)
+  ⏳ INSERT manual en Calc_Maq_Items (3-4 items)
+  ⏳ Verificar FK funciona (integridad referencial)
+  ⏳ Verificar ON DELETE CASCADE funciona
+  ⏳ DELETE datos de prueba
+
+[T002.5] Documentar schema
+  ⏳ Crear archivo App/Backend/BD/SCHEMA_DOC.md
+  ⏳ Documentar cada tabla y campos
+  ⏳ Documentar relaciones
+  ⏳ Documentar índices y su propósito
+  ⏳ Incluir diagrama ER (opcional)
+
+CRITERIOS DE ACEPTACIÓN:
+□ Script SQL creado y documentado
+□ Tablas creadas exitosamente en DEV (localhost)
+□ Tablas creadas exitosamente en QA (AWS RDS)
+□ Foreign Keys funcionando correctamente
+□ Índices creados y optimizados
+□ Tests de inserción manual exitosos
+□ Integridad referencial verificada
+□ Documentación de schema completa
+
+ARCHIVOS A CREAR:
+- App/Backend/BD/schema.sql (NUEVO)
+- App/Backend/BD/SCHEMA_DOC.md (NUEVO)
+
+COMANDOS SQL A EJECUTAR:
+```bash
+# DEV (localhost)
+mysql -u root -p cpau_ch_dev < App/Backend/BD/schema.sql
+
+# QA (AWS RDS)
+mysql -h <rds-endpoint> -u admin -p cpau_ch_qa < App/Backend/BD/schema.sql
+```
+
+DEPENDENCIAS:
+- Requiere: Acceso a MySQL localhost
+- Requiere: Acceso a AWS RDS (cpau_ch_qa)
+
+ESTIMACIÓN: 3 horas
+RESPONSABLE: Backend Dev + DBA
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #003 - DATABASE: STORED PROCEDURE - CALC_MAQ_GRABAR
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Crear stored procedure para insertar un cálculo completo (master + items) en
+una sola transacción, garantizando integridad de datos.
+
+CONTEXTO:
+Este SP será llamado desde Node.js después de calcular honorarios para persistir
+todo el resultado. Debe manejar transacciones correctamente y rollback en caso
+de error.
+
+STORED PROCEDURE:
+
+```sql
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS Calc_Maq_Grabar$$
+
+CREATE PROCEDURE Calc_Maq_Grabar(
+  -- Identificación
+  IN p_calculo_id VARCHAR(50),
+  IN p_usuario_id INT,
+  IN p_tipo_calculo VARCHAR(50),
+  IN p_fecha_calculo DATETIME,
+  
+  -- Datos Proyecto
+  IN p_proyecto_nombre VARCHAR(200),
+  IN p_proyecto_ubicacion VARCHAR(200),
+  IN p_proyecto_cliente VARCHAR(200),
+  
+  -- Datos Obra
+  IN p_obra_valor_obra DECIMAL(15,2),
+  IN p_obra_superficie DECIMAL(10,2),
+  IN p_obra_tipologia VARCHAR(100),
+  IN p_obra_complejidad VARCHAR(50),
+  
+  -- Tareas Profesionales
+  IN p_tarea_obra_proyecto BOOLEAN,
+  IN p_tarea_obra_direccion BOOLEAN,
+  IN p_tarea_instalacion_sanitaria BOOLEAN,
+  IN p_tarea_instalacion_electrica BOOLEAN,
+  IN p_tarea_instalacion_contra_incendio BOOLEAN,
+  IN p_tarea_instalacion_termomecanica BOOLEAN,
+  IN p_tarea_proyecto_estructuras BOOLEAN,
+  
+  -- Parámetros
+  IN p_parametro_valor_k DECIMAL(15,2),
+  
+  -- Resultado
+  IN p_total_honorarios DECIMAL(15,2),
+  IN p_metadata_rango VARCHAR(10),
+  IN p_metadata_valor_k DECIMAL(15,2),
+  IN p_metadata_rango_costo_obra DECIMAL(10,4),
+  IN p_metadata_numero_items INT,
+  
+  -- Items como JSON
+  IN p_items_json JSON
+)
+BEGIN
+  DECLARE v_error_msg VARCHAR(500);
+  
+  -- Handler para errores: rollback automático
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
+  
+  -- Iniciar transacción
+  START TRANSACTION;
+  
+  -- Insertar registro principal (master)
+  INSERT INTO Calc_Maq (
+    calculo_id, usuario_id, tipo_calculo, fecha_calculo,
+    proyecto_nombre, proyecto_ubicacion, proyecto_cliente,
+    obra_valor_obra, obra_superficie, obra_tipologia, obra_complejidad,
+    tarea_obra_proyecto, tarea_obra_direccion,
+    tarea_instalacion_sanitaria, tarea_instalacion_electrica,
+    tarea_instalacion_contra_incendio, tarea_instalacion_termomecanica,
+    tarea_proyecto_estructuras,
+    parametro_valor_k,
+    total_honorarios,
+    metadata_rango, metadata_valor_k, metadata_rango_costo_obra,
+    metadata_numero_items
+  ) VALUES (
+    p_calculo_id, p_usuario_id, p_tipo_calculo, p_fecha_calculo,
+    p_proyecto_nombre, p_proyecto_ubicacion, p_proyecto_cliente,
+    p_obra_valor_obra, p_obra_superficie, p_obra_tipologia, p_obra_complejidad,
+    p_tarea_obra_proyecto, p_tarea_obra_direccion,
+    p_tarea_instalacion_sanitaria, p_tarea_instalacion_electrica,
+    p_tarea_instalacion_contra_incendio, p_tarea_instalacion_termomecanica,
+    p_tarea_proyecto_estructuras,
+    p_parametro_valor_k,
+    p_total_honorarios,
+    p_metadata_rango, p_metadata_valor_k, p_metadata_rango_costo_obra,
+    p_metadata_numero_items
+  );
+  
+  -- Insertar items desde JSON array
+  INSERT INTO Calc_Maq_Items (calculo_id, item_numero, tarea_profesional, descripcion, importe)
+  SELECT 
+    p_calculo_id,
+    JSON_UNQUOTE(JSON_EXTRACT(item, '$.item')),
+    JSON_UNQUOTE(JSON_EXTRACT(item, '$.tareaProfesional')),
+    JSON_UNQUOTE(JSON_EXTRACT(item, '$.descripcion')),
+    JSON_UNQUOTE(JSON_EXTRACT(item, '$.importe'))
+  FROM JSON_TABLE(
+    p_items_json,
+    '$[*]' COLUMNS(
+      item JSON PATH '$'
+    )
+  ) AS jt;
+  
+  -- Commit si todo OK
+  COMMIT;
+  
+  -- Retornar confirmación
+  SELECT 'OK' AS status, p_calculo_id AS calculo_id;
+END$$
+
+DELIMITER ;
+```
+
+SUBTAREAS:
+
+[T003.1] Crear script SQL del SP
+  ⏳ Crear archivo App/Backend/BD/sp_calc_maq_grabar.sql
+  ⏳ Implementar lógica de transacción
+  ⏳ Implementar manejo de errores
+  ⏳ Implementar inserción de items desde JSON
+  ⏳ Agregar comentarios explicativos
+
+[T003.2] Ejecutar script en ambiente DEV
+  ⏳ Conectar a MySQL local (cpau_ch_dev)
+  ⏳ DROP PROCEDURE IF EXISTS
+  ⏳ CREATE PROCEDURE
+  ⏳ Verificar creación: SHOW PROCEDURE STATUS LIKE 'Calc%'
+
+[T003.3] Ejecutar script en ambiente QA
+  ⏳ Conectar a MySQL RDS (cpau_ch_qa)
+  ⏳ DROP PROCEDURE IF EXISTS
+  ⏳ CREATE PROCEDURE
+  ⏳ Verificar creación
+
+[T003.4] Tests manuales del SP
+  ⏳ Preparar datos de prueba (JSON de items)
+  ⏳ CALL Calc_Maq_Grabar(...) con datos válidos
+  ⏳ Verificar registro insertado en Calc_Maq
+  ⏳ Verificar items insertados en Calc_Maq_Items
+  ⏳ Test: Forzar error y verificar rollback
+  ⏳ Test: JSON inválido (manejo de error)
+
+[T003.5] Documentar uso del SP
+  ⏳ Crear App/Backend/BD/SP_USAGE.md
+  ⏳ Documentar parámetros de entrada
+  ⏳ Documentar formato JSON de items
+  ⏳ Ejemplos de llamada
+  ⏳ Ejemplos de manejo de errores
+
+CRITERIOS DE ACEPTACIÓN:
+□ SP creado exitosamente en DEV y QA
+□ Transacción funciona correctamente
+□ Rollback automático en caso de error
+□ Inserción de master + items exitosa
+□ Parsing de JSON funciona correctamente
+□ Tests manuales todos exitosos
+□ Documentación completa
+
+ARCHIVOS A CREAR:
+- App/Backend/BD/sp_calc_maq_grabar.sql (NUEVO)
+- App/Backend/BD/SP_USAGE.md (NUEVO)
+
+EJEMPLO DE LLAMADA:
+```sql
+CALL Calc_Maq_Grabar(
+  'calc_1713312000000',  -- calculo_id
+  1,                      -- usuario_id
+  'basico',               -- tipo_calculo
+  NOW(),                  -- fecha_calculo
+  'Proyecto Test',        -- proyecto_nombre
+  'CABA',                 -- proyecto_ubicacion
+  'Cliente Test',         -- proyecto_cliente
+  50000000,               -- obra_valor_obra
+  250,                    -- obra_superficie
+  'Vivienda unifamiliar', -- obra_tipologia
+  'media',                -- obra_complejidad
+  1, 1, 0, 0, 0, 0, 0,    -- tareas (7 booleans)
+  522181756.33,           -- parametro_valor_k
+  5250000,                -- total_honorarios
+  'A',                    -- metadata_rango
+  522181756.33,           -- metadata_valor_k
+  0.0957,                 -- metadata_rango_costo_obra
+  2,                      -- metadata_numero_items
+  '[{"item":1,"tareaProfesional":"Proyecto de Obra","descripcion":"Rango A...","importe":3150000},{"item":2,"tareaProfesional":"Dirección de Obra","descripcion":"Rango A...","importe":2100000}]'
+);
+```
+
+DEPENDENCIAS:
+- Requiere: Ticket #002 completado (tablas creadas)
+
+ESTIMACIÓN: 4 horas
+RESPONSABLE: Backend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #004 - DATABASE: STORED PROCEDURE - CALC_MAQ_LISTAR_CALCULO_ITEMS
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Crear stored procedure para listar todos los items de un cálculo específico,
+con información adicional del master (total, rango, fecha).
+
+STORED PROCEDURE:
+
+```sql
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS Calc_Maq_Listar_Calculo_Items$$
+
+CREATE PROCEDURE Calc_Maq_Listar_Calculo_Items(
+  IN p_calculo_id VARCHAR(50)
+)
+BEGIN
+  SELECT 
+    i.id,
+    i.item_numero,
+    i.tarea_profesional,
+    i.descripcion,
+    i.importe,
+    i.created_at,
+    c.total_honorarios,
+    c.metadata_rango,
+    c.fecha_calculo,
+    c.proyecto_nombre,
+    c.proyecto_ubicacion,
+    c.obra_valor_obra
+  FROM Calc_Maq_Items i
+  INNER JOIN Calc_Maq c ON i.calculo_id = c.calculo_id
+  WHERE i.calculo_id = p_calculo_id
+  ORDER BY i.item_numero;
+END$$
+
+DELIMITER ;
+```
+
+SUBTAREAS:
+
+[T004.1] Crear script SQL del SP
+  ⏳ Crear archivo App/Backend/BD/sp_calc_maq_listar_items.sql
+  ⏳ Implementar query con JOIN
+  ⏳ Incluir campos relevantes del master
+  ⏳ ORDER BY item_numero
+
+[T004.2] Ejecutar script en ambiente DEV
+  ⏳ Conectar a MySQL local
+  ⏳ CREATE PROCEDURE
+  ⏳ Verificar creación
+
+[T004.3] Ejecutar script en ambiente QA
+  ⏳ Conectar a MySQL RDS
+  ⏳ CREATE PROCEDURE
+  ⏳ Verificar creación
+
+[T004.4] Tests manuales del SP
+  ⏳ Preparar datos de prueba (usar SP de grabar)
+  ⏳ CALL Calc_Maq_Listar_Calculo_Items('calc_xxx')
+  ⏳ Verificar resultado incluye todos los items
+  ⏳ Verificar datos del master están presentes
+  ⏳ Test: calculoId inexistente (retorna vacío)
+
+[T004.5] Actualizar documentación
+  ⏳ Agregar a App/Backend/BD/SP_USAGE.md
+  ⏳ Documentar parámetros
+  ⏳ Documentar estructura del resultset
+  ⏳ Ejemplos de uso
+
+CRITERIOS DE ACEPTACIÓN:
+□ SP creado exitosamente en DEV y QA
+□ Query con JOIN funciona correctamente
+□ Resultados ordenados por item_numero
+□ Tests manuales exitosos
+□ Documentación actualizada
+
+ARCHIVOS A CREAR:
+- App/Backend/BD/sp_calc_maq_listar_items.sql (NUEVO)
+
+EJEMPLO DE LLAMADA:
+```sql
+CALL Calc_Maq_Listar_Calculo_Items('calc_1713312000000');
+```
+
+DEPENDENCIAS:
+- Requiere: Ticket #002 completado (tablas)
+- Requiere: Ticket #003 completado (datos de prueba)
+
+ESTIMACIÓN: 2 horas
+RESPONSABLE: Backend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #005 - BACKEND: CONFIGURACIÓN DE CONEXIÓN MYSQL
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Crear módulo de conexión a MySQL con connection pooling optimizado para AWS
+Lambda, soportando variables de entorno y AWS Secrets Manager.
+
+ARCHIVO: App/Backend/Node/src/config/database.js
+
+IMPLEMENTACIÓN:
+
+```javascript
+/**
+ * Configuración de conexión a MySQL
+ * Soporta: env vars (dev) y AWS Secrets Manager (qa/prod)
+ * Optimizado para AWS Lambda (connection pooling)
+ */
+
+const mysql = require('mysql2/promise');
+const AWS = require('aws-sdk');
+
+let pool = null;
+
+/**
+ * Obtiene credenciales de DB desde AWS Secrets Manager o env vars
+ */
+async function getDBCredentials() {
+  // Si estamos en Lambda (QA/PROD), usar Secrets Manager
+  if (process.env.NODE_ENV === 'qa' || process.env.NODE_ENV === 'production') {
+    const secretsManager = new AWS.SecretsManager({ 
+      region: process.env.AWS_REGION || 'us-east-1' 
+    });
+    
+    try {
+      const data = await secretsManager
+        .getSecretValue({ SecretId: process.env.AWS_SECRET_NAME })
+        .promise();
+      
+      return JSON.parse(data.SecretString);
+    } catch (error) {
+      console.error('❌ Error obteniendo credenciales desde Secrets Manager:', error);
+      throw error;
+    }
+  }
+  
+  // En desarrollo local, usar variables de entorno
+  return {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 3306,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+  };
+}
+
+/**
+ * Crea y retorna connection pool (singleton pattern)
+ * Optimizado para AWS Lambda con límites bajos
+ */
+async function createPool() {
+  if (pool) {
+    console.log('♻️  [DB] Reutilizando connection pool existente');
+    return pool;
+  }
+  
+  const credentials = await getDBCredentials();
+  
+  console.log(`🔌 [DB] Creando connection pool para: ${credentials.host}/${credentials.database}`);
+  
+  pool = mysql.createPool({
+    host: credentials.host,
+    port: credentials.port,
+    user: credentials.user,
+    password: credentials.password,
+    database: credentials.database,
+    
+    // Configuración para Lambda (CRÍTICO)
+    waitForConnections: true,
+    connectionLimit: 5,              // BAJO para Lambda (muchas instancias)
+    maxIdle: 2,                      // Máximo de conexiones idle
+    idleTimeout: 60000,              // 60 segundos
+    queueLimit: 0,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0,
+    
+    // Timeouts
+    connectTimeout: 10000,           // 10 segundos
+    acquireTimeout: 10000,
+    
+    // Charset y timezone
+    charset: 'utf8mb4',
+    timezone: 'Z'                    // UTC
+  });
+  
+  // Test de conexión inicial
+  try {
+    const connection = await pool.getConnection();
+    console.log('✅ [DB] Conexión a MySQL establecida correctamente');
+    connection.release();
+  } catch (error) {
+    console.error('❌ [DB] Error al conectar con MySQL:', error);
+    throw error;
+  }
+  
+  return pool;
+}
+
+/**
+ * Ejecuta una query SQL con parámetros
+ */
+async function query(sql, params = []) {
+  const poolInstance = await createPool();
+  const [rows] = await poolInstance.execute(sql, params);
+  return rows;
+}
+
+/**
+ * Ejecuta un stored procedure
+ * @param {string} spName - Nombre del SP
+ * @param {Array} params - Parámetros del SP
+ */
+async function callStoredProcedure(spName, params = []) {
+  const poolInstance = await createPool();
+  const placeholders = params.map(() => '?').join(', ');
+  const sql = `CALL ${spName}(${placeholders})`;
+  
+  console.log(`📞 [DB] Llamando SP: ${spName}`);
+  
+  const [results] = await poolInstance.execute(sql, params);
+  return results;
+}
+
+/**
+ * Cierra el connection pool (para testing/cleanup)
+ */
+async function closePool() {
+  if (pool) {
+    await pool.end();
+    pool = null;
+    console.log('🔌 [DB] Connection pool cerrado');
+  }
+}
+
+module.exports = {
+  createPool,
+  query,
+  callStoredProcedure,
+  closePool
+};
+```
+
+SUBTAREAS:
+
+[T005.1] Crear archivo database.js
+  ⏳ Crear App/Backend/Node/src/config/database.js
+  ⏳ Implementar getDBCredentials()
+  ⏳ Implementar createPool() con singleton
+  ⏳ Implementar query() wrapper
+  ⏳ Implementar callStoredProcedure() wrapper
+  ⏳ Implementar closePool()
+
+[T005.2] Configurar variables de entorno para DEV
+  ⏳ Crear .env.dev con credenciales localhost
+  ⏳ Documentar variables en README
+
+[T005.3] Test de conexión en DEV
+  ⏳ Crear script test-db-connection.js
+  ⏳ Ejecutar y verificar conexión exitosa
+  ⏳ Probar query simple: SELECT 1
+  ⏳ Verificar logging funciona
+
+[T005.4] Preparar configuración para QA (AWS Secrets Manager)
+  ⏳ Crear .env.qa.example con AWS_SECRET_NAME
+  ⏳ Documentar proceso de configuración de secrets
+  ⏳ Nota: Secrets se configurarán en Ticket #017
+
+CRITERIOS DE ACEPTACIÓN:
+□ Módulo database.js implementado
+□ Singleton pattern funcionando
+□ Connection pooling configurado (límite 5)
+□ Soporte para env vars (dev)
+□ Soporte para AWS Secrets Manager (qa/prod)
+□ Wrappers query() y callStoredProcedure() funcionan
+□ Test de conexión exitoso en DEV
+□ Logging estructurado
+
+ARCHIVOS A CREAR:
+- App/Backend/Node/src/config/database.js (NUEVO)
+- App/Backend/Node/scripts/test-db-connection.js (NUEVO)
+- App/Backend/Node/.env.dev (NUEVO)
+- App/Backend/Node/.env.qa.example (NUEVO)
+
+DEPENDENCIAS:
+- Requiere: Ticket #001 completado (estructura)
+- Requiere: Ticket #002 completado (DB schema)
+
+ESTIMACIÓN: 3 horas
+RESPONSABLE: Backend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #006 - BACKEND: MODELO CALCULO (REPOSITORY PATTERN)
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Crear modelo/repository para operaciones con tablas Calc_Maq y Calc_Maq_Items,
+encapsulando llamadas a stored procedures y queries.
+
+ARCHIVO: App/Backend/Node/src/models/calculo.model.js
+
+IMPLEMENTACIÓN:
+
+```javascript
+/**
+ * Modelo para operaciones con cálculos de honorarios
+ * Usa Repository Pattern para encapsular acceso a datos
+ */
+
+const db = require('../config/database');
+
+/**
+ * Graba un cálculo completo (master + items) en DB
+ * @param {Object} datosCompletos - Request completo del cálculo
+ * @param {Object} resultado - Response del cálculo
+ * @returns {Promise<Object>} Confirmación con calculoId
+ */
+async function grabarCalculo(datosCompletos, resultado) {
+  const {
+    tipoCalculo,
+    datosProyecto = {},
+    datosObra,
+    tareasProfesionales,
+    parametros = {}
+  } = datosCompletos;
+  
+  const {
+    calculoId,
+    fechaCalculo,
+    resultado: { detalleHonorarios, totalHonorarios, metadata }
+  } = resultado;
+  
+  // Preparar parámetros para el SP
+  const spParams = [
+    // Identificación
+    calculoId,
+    1,  // usuario_id hardcoded por ahora
+    tipoCalculo,
+    new Date(fechaCalculo),
+    
+    // Datos Proyecto
+    datosProyecto.nombre || null,
+    datosProyecto.ubicacion || null,
+    datosProyecto.cliente || null,
+    
+    // Datos Obra
+    datosObra.valorObra,
+    datosObra.superficie || null,
+    datosObra.tipologia || null,
+    datosObra.complejidad || null,
+    
+    // Tareas Profesionales (7 booleans)
+    tareasProfesionales.obraProyecto || false,
+    tareasProfesionales.obraDireccion || false,
+    tareasProfesionales.instalacionSanitaria || false,
+    tareasProfesionales.instalacionElectrica || false,
+    tareasProfesionales.instalacionContraIncendio || false,
+    tareasProfesionales.instalacionTermomecanica || false,
+    tareasProfesionales.proyectoEstructuras || false,
+    
+    // Parámetros
+    parametros.valorK || metadata.valorK,
+    
+    // Resultado
+    totalHonorarios,
+    metadata.rango,
+    metadata.valorK,
+    metadata.rangoCostoObra,
+    metadata.numeroItems || detalleHonorarios.length,
+    
+    // Items como JSON string
+    JSON.stringify(detalleHonorarios)
+  ];
+  
+  try {
+    const result = await db.callStoredProcedure('Calc_Maq_Grabar', spParams);
+    
+    console.log('✅ [Model] Cálculo grabado exitosamente:', calculoId);
+    
+    return {
+      success: true,
+      calculoId,
+      message: 'Cálculo guardado correctamente'
+    };
+  } catch (error) {
+    console.error('❌ [Model] Error al grabar cálculo:', error);
+    throw {
+      code: 'DB_ERROR',
+      message: 'Error al guardar el cálculo en la base de datos',
+      detail: error.message
+    };
+  }
+}
+
+/**
+ * Obtiene un cálculo completo por ID
+ * @param {string} calculoId - ID del cálculo
+ * @returns {Promise<Object>} Datos del cálculo
+ */
+async function obtenerCalculoPorId(calculoId) {
+  try {
+    const sql = 'SELECT * FROM Calc_Maq WHERE calculo_id = ?';
+    const rows = await db.query(sql, [calculoId]);
+    
+    if (rows.length === 0) {
+      return null;
+    }
+    
+    return rows[0];
+  } catch (error) {
+    console.error('❌ [Model] Error al obtener cálculo:', error);
+    throw {
+      code: 'DB_ERROR',
+      message: 'Error al consultar el cálculo',
+      detail: error.message
+    };
+  }
+}
+
+/**
+ * Lista los items de un cálculo específico
+ * @param {string} calculoId - ID del cálculo
+ * @returns {Promise<Array>} Items del cálculo con info del master
+ */
+async function listarItemsCalculo(calculoId) {
+  try {
+    const result = await db.callStoredProcedure(
+      'Calc_Maq_Listar_Calculo_Items',
+      [calculoId]
+    );
+    
+    // El SP retorna un array de resultsets, tomamos el primero
+    const items = result[0];
+    
+    console.log(`📋 [Model] Items recuperados: ${items.length}`);
+    
+    return items;
+  } catch (error) {
+    console.error('❌ [Model] Error al listar items:', error);
+    throw {
+      code: 'DB_ERROR',
+      message: 'Error al consultar los items del cálculo',
+      detail: error.message
+    };
+  }
+}
+
+module.exports = {
+  grabarCalculo,
+  obtenerCalculoPorId,
+  listarItemsCalculo
+};
+```
+
+SUBTAREAS:
+
+[T006.1] Crear archivo calculo.model.js
+  ⏳ Crear App/Backend/Node/src/models/calculo.model.js
+  ⏳ Implementar grabarCalculo()
+  ⏳ Implementar obtenerCalculoPorId()
+  ⏳ Implementar listarItemsCalculo()
+  ⏳ Agregar JSDoc completo
+
+[T006.2] Mapeo de datos request → SP params
+  ⏳ Mapear datosCompletos a parámetros del SP
+  ⏳ Convertir detalleHonorarios a JSON string
+  ⏳ Manejar campos opcionales (|| null)
+  ⏳ Validar formato de fecha
+
+[T006.3] Manejo de errores específico
+  ⏳ Try-catch en cada método
+  ⏳ Errores estructurados (code, message, detail)
+  ⏳ Logging de errores con contexto
+  ⏳ Re-throw con información útil
+
+[T006.4] Tests unitarios del modelo
+  ⏳ Crear __tests__/models/calculo.model.test.js
+  ⏳ Mock de db.callStoredProcedure
+  ⏳ Mock de db.query
+  ⏳ Test: grabarCalculo con datos válidos
+  ⏳ Test: grabarCalculo con error de DB
+  ⏳ Test: obtenerCalculoPorId existente
+  ⏳ Test: obtenerCalculoPorId inexistente
+  ⏳ Test: listarItemsCalculo
+
+CRITERIOS DE ACEPTACIÓN:
+□ Modelo creado con 3 métodos principales
+□ Mapeo correcto de datos request → SP params
+□ Conversión correcta de items a JSON
+□ Manejo de errores estructurado
+□ Logging apropiado en cada operación
+□ Tests unitarios con >80% cobertura
+
+ARCHIVOS A CREAR:
+- App/Backend/Node/src/models/calculo.model.js (NUEVO)
+- App/Backend/Node/__tests__/models/calculo.model.test.js (NUEVO)
+
+DEPENDENCIAS:
+- Requiere: Ticket #003 completado (SP Grabar)
+- Requiere: Ticket #004 completado (SP Listar)
+- Requiere: Ticket #005 completado (DB connection)
+
+ESTIMACIÓN: 2 horas
+RESPONSABLE: Backend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #007 - BACKEND: SERVICIO DE CÁLCULO CON PERSISTENCIA
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Crear servicio que ejecute el cálculo de honorarios Y persista automáticamente
+el resultado en la base de datos.
+
+ARCHIVO: App/Backend/Node/src/services/honorarios.service.js
+
+ESTRATEGIA:
+1. Recibir datosCompletos del request
+2. Ejecutar cálculo (reutilizar código de 02-Node/src/utils/calculos/)
+3. Persistir en DB vía modelo
+4. Retornar resultado con calculoId de DB
+
+IMPLEMENTACIÓN:
+
+```javascript
+/**
+ * Servicio de Cálculo de Honorarios con Persistencia
+ * Ejecuta cálculo Y guarda en base de datos automáticamente
+ */
+
+const {
+  calcularHonorariosBasico,
+  calcularTotalHonorarios,
+  obtenerMetadataCalculo
+} = require('../utils/calculos/honorariosBasico');
+const { VALOR_K_DEFAULT } = require('../utils/calculos/tablasCoeficientes');
+const calculoModel = require('../models/calculo.model');
+
+/**
+ * Calcula honorarios y persiste en DB
+ * @param {Object} datosCompletos - Datos completos del wizard
+ * @returns {Promise<Object>} Resultado del cálculo con estructura estándar
+ */
+async function calcularYGuardar(datosCompletos) {
+  const {
+    tipoCalculo,
+    datosProyecto,
+    datosObra,
+    tareasProfesionales,
+    parametros
+  } = datosCompletos;
+  
+  // PASO 1: Preparar datos para el cálculo
+  const formData = {
+    valorObra: datosObra.valorObra,
+    superficie: datosObra.superficie,
+    tipologia: datosObra.tipologia,
+    complejidad: datosObra.complejidad,
+    ...tareasProfesionales
+  };
+  
+  // Obtener valor K (usar el del request o default)
+  const valorK = parametros?.valorK || 
+                process.env.VALOR_K_DEFAULT || 
+                VALOR_K_DEFAULT;
+  
+  console.log('💰 [Service] Iniciando cálculo de honorarios...');
+  
+  // PASO 2: EJECUTAR CÁLCULO (server-side)
+  const detalleHonorarios = calcularHonorariosBasico(formData, valorK);
+  const totalHonorarios = calcularTotalHonorarios(detalleHonorarios);
+  const metadata = obtenerMetadataCalculo(formData, valorK);
+  
+  // PASO 3: Preparar estructura de respuesta
+  const calculoId = `calc_${Date.now()}`;
+  const fechaCalculo = new Date().toISOString();
+  
+  const resultado = {
+    calculoId,
+    tipoCalculo,
+    fechaCalculo,
+    resultado: {
+      detalleHonorarios,
+      totalHonorarios,
+      metadata: {
+        ...metadata,
+        numeroItems: detalleHonorarios.length
+      }
+    }
+  };
+  
+  // Agregar datos del proyecto si existen
+  if (datosProyecto) {
+    resultado.datosProyecto = {
+      nombre: datosProyecto.nombre,
+      ubicacion: datosProyecto.ubicacion,
+      cliente: datosProyecto.cliente
+    };
+  }
+  
+  // PASO 4: PERSISTIR EN BASE DE DATOS
+  try {
+    console.log('💾 [Service] Guardando cálculo en base de datos...');
+    await calculoModel.grabarCalculo(datosCompletos, resultado);
+    console.log('✅ [Service] Cálculo guardado exitosamente:', calculoId);
+  } catch (error) {
+    // Si falla el guardado, logueamos pero NO fallamos la request
+    // El usuario igual recibe su cálculo
+    console.error('⚠️ [Service] Error al guardar cálculo (continuando):', error);
+    
+    // Agregar flag de advertencia en respuesta
+    resultado.warning = 'Cálculo realizado pero no se pudo guardar en base de datos';
+  }
+  
+  // PASO 5: Log final
+  console.log('✅ [Service] Cálculo completado:', {
+    calculoId,
+    tipoCalculo,
+    valorObra: datosObra.valorObra,
+    totalHonorarios,
+    rango: metadata.rango,
+    numeroItems: detalleHonorarios.length
+  });
+  
+  return resultado;
+}
+
+/**
+ * Obtiene items de un cálculo por ID
+ * @param {string} calculoId - ID del cálculo
+ * @returns {Promise<Object>} Items con info del cálculo
+ */
+async function obtenerItemsPorCalculoId(calculoId) {
+  try {
+    console.log(`📋 [Service] Obteniendo items del cálculo: ${calculoId}`);
+    
+    const items = await calculoModel.listarItemsCalculo(calculoId);
+    
+    if (!items || items.length === 0) {
+      return {
+        success: false,
+        message: 'Cálculo no encontrado',
+        calculoId
+      };
+    }
+    
+    // Estructurar respuesta
+    const firstItem = items[0];
+    
+    return {
+      success: true,
+      calculoId,
+      fechaCalculo: firstItem.fecha_calculo,
+      totalHonorarios: firstItem.total_honorarios,
+      rango: firstItem.metadata_rango,
+      proyectoNombre: firstItem.proyecto_nombre,
+      proyectoUbicacion: firstItem.proyecto_ubicacion,
+      valorObra: firstItem.obra_valor_obra,
+      items: items.map(item => ({
+        itemNumero: item.item_numero,
+        tareaProfesional: item.tarea_profesional,
+        descripcion: item.descripcion,
+        importe: item.importe
+      }))
+    };
+  } catch (error) {
+    console.error('❌ [Service] Error al obtener items:', error);
+    throw error;
+  }
+}
+
+module.exports = {
+  calcularYGuardar,
+  obtenerItemsPorCalculoId
+};
+```
+
+SUBTAREAS:
+
+[T007.1] Copiar lógica de cálculo desde 02-Node
+  ⏳ Copiar App/Backend/02-Node/src/utils/calculos/ completo
+  ⏳ Pegar en App/Backend/Node/src/utils/calculos/
+  ⏳ Verificar imports funcionan
+
+[T007.2] Crear archivo honorarios.service.js
+  ⏳ Crear App/Backend/Node/src/services/honorarios.service.js
+  ⏳ Implementar calcularYGuardar()
+  ⏳ Implementar obtenerItemsPorCalculoId()
+  ⏳ Integrar con calculoModel
+
+[T007.3] Manejo de errores graceful
+  ⏳ Try-catch en persistencia
+  ⏳ Si falla DB, retornar cálculo con warning
+  ⏳ No fallar request por error de DB
+  ⏳ Logging apropiado
+
+[T007.4] Tests unitarios del servicio
+  ⏳ Crear __tests__/services/honorarios.service.test.js
+  ⏳ Mock de calculoModel
+  ⏳ Mock de funciones de cálculo
+  ⏳ Test: calcularYGuardar exitoso
+  ⏳ Test: calcularYGuardar con error de DB (graceful)
+  ⏳ Test: obtenerItemsPorCalculoId
+
+CRITERIOS DE ACEPTACIÓN:
+□ Servicio ejecuta cálculo correctamente
+□ Servicio persiste en DB automáticamente
+□ Si falla DB, retorna cálculo con warning
+□ obtenerItemsPorCalculoId funciona correctamente
+□ Tests unitarios con >80% cobertura
+□ Logging estructurado
+
+ARCHIVOS A CREAR:
+- App/Backend/Node/src/services/honorarios.service.js (NUEVO)
+- App/Backend/Node/src/utils/calculos/honorariosBasico.js (COPIADO)
+- App/Backend/Node/src/utils/calculos/tablasCoeficientes.js (COPIADO)
+- App/Backend/Node/__tests__/services/honorarios.service.test.js (NUEVO)
+
+DEPENDENCIAS:
+- Requiere: Ticket #006 completado (modelo)
+- Requiere: Código de cálculo de 02-Node
+
+ESTIMACIÓN: 4 horas
+RESPONSABLE: Backend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #008 - BACKEND: MIDDLEWARE DE VALIDACIÓN
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Crear middlewares para validación de requests y manejo global de errores.
+
+ARCHIVOS:
+- App/Backend/Node/src/middlewares/validator.js
+- App/Backend/Node/src/middlewares/errorHandler.js
+
+IMPLEMENTACIÓN - validator.js:
+
+```javascript
+/**
+ * Middleware de validación de requests
+ * Valida estructura y tipos según contrato de API
+ */
+
+/**
+ * Valida request de cálculo de honorarios
+ */
+function validarCalculoRequest(req, res, next) {
+  const { tipoCalculo, datosObra, tareasProfesionales } = req.body;
+  
+  const errors = [];
+  
+  // Validar tipoCalculo
+  if (!tipoCalculo) {
+    errors.push({
+      field: 'tipoCalculo',
+      message: 'Campo requerido',
+      code: 'MISSING_REQUIRED_FIELD'
+    });
+  } else if (tipoCalculo !== 'basico') {
+    errors.push({
+      field: 'tipoCalculo',
+      message: 'Tipo de cálculo no soportado',
+      value: tipoCalculo,
+      code: 'INVALID_TIPO_CALCULO'
+    });
+  }
+  
+  // Validar datosObra
+  if (!datosObra) {
+    errors.push({
+      field: 'datosObra',
+      message: 'Campo requerido',
+      code: 'MISSING_REQUIRED_FIELD'
+    });
+  } else {
+    // Validar valorObra
+    if (!datosObra.valorObra) {
+      errors.push({
+        field: 'datosObra.valorObra',
+        message: 'Campo requerido',
+        code: 'MISSING_REQUIRED_FIELD'
+      });
+    } else if (typeof datosObra.valorObra !== 'number') {
+      errors.push({
+        field: 'datosObra.valorObra',
+        message: 'Debe ser un número',
+        value: datosObra.valorObra,
+        code: 'INVALID_TYPE'
+      });
+    } else if (datosObra.valorObra <= 0) {
+      errors.push({
+        field: 'datosObra.valorObra',
+        message: 'Debe ser mayor a 0',
+        value: datosObra.valorObra,
+        code: 'INVALID_VALUE'
+      });
+    }
+  }
+  
+  // Validar tareasProfesionales
+  if (!tareasProfesionales) {
+    errors.push({
+      field: 'tareasProfesionales',
+      message: 'Campo requerido',
+      code: 'MISSING_REQUIRED_FIELD'
+    });
+  } else {
+    // Validar que al menos una tarea esté seleccionada
+    const tareasSeleccionadas = Object.values(tareasProfesionales).some(val => val === true);
+    
+    if (!tareasSeleccionadas) {
+      errors.push({
+        field: 'tareasProfesionales',
+        message: 'Debe seleccionar al menos una tarea profesional',
+        code: 'NO_TASKS_SELECTED'
+      });
+    }
+  }
+  
+  // Si hay errores, retornar 400
+  if (errors.length > 0) {
+    return res.status(400).json({
+      success: false,
+      error: 'Datos inválidos en el request',
+      details: errors,
+      version: '1.0'
+    });
+  }
+  
+  // Validación OK, continuar
+  next();
+}
+
+/**
+ * Valida parámetro calculoId en URL
+ */
+function validarCalculoId(req, res, next) {
+  const { calculoId } = req.params;
+  
+  if (!calculoId) {
+    return res.status(400).json({
+      success: false,
+      error: 'calculoId es requerido',
+      code: 'MISSING_REQUIRED_FIELD',
+      version: '1.0'
+    });
+  }
+  
+  // Validar formato (calc_timestamp)
+  if (!calculoId.startsWith('calc_')) {
+    return res.status(400).json({
+      success: false,
+      error: 'Formato de calculoId inválido',
+      code: 'INVALID_VALUE',
+      version: '1.0'
+    });
+  }
+  
+  next();
+}
+
+module.exports = {
+  validarCalculoRequest,
+  validarCalculoId
+};
+```
+
+IMPLEMENTACIÓN - errorHandler.js:
+
+```javascript
+/**
+ * Middleware global de manejo de errores
+ */
+
+/**
+ * Maneja errores no capturados en la aplicación
+ */
+function errorHandler(err, req, res, next) {
+  console.error('❌ [ErrorHandler] Error no manejado:', err);
+  
+  // Error de DB
+  if (err.code === 'DB_ERROR') {
+    return res.status(500).json({
+      success: false,
+      error: err.message || 'Error en base de datos',
+      code: err.code,
+      version: '1.0'
+    });
+  }
+  
+  // Error de validación
+  if (err.code === 'VALIDATION_ERROR') {
+    return res.status(400).json({
+      success: false,
+      error: err.message,
+      details: err.details,
+      code: err.code,
+      version: '1.0'
+    });
+  }
+  
+  // Error genérico
+  const statusCode = err.statusCode || 500;
+  const message = process.env.NODE_ENV === 'production'
+    ? 'Error interno del servidor'
+    : err.message;
+  
+  res.status(statusCode).json({
+    success: false,
+    error: message,
+    code: 'INTERNAL_ERROR',
+    version: '1.0'
+  });
+}
+
+/**
+ * Maneja rutas no encontradas (404)
+ */
+function notFoundHandler(req, res) {
+  res.status(404).json({
+    success: false,
+    error: 'Endpoint no encontrado',
+    path: req.path,
+    code: 'NOT_FOUND',
+    version: '1.0'
+  });
+}
+
+module.exports = {
+  errorHandler,
+  notFoundHandler
+};
+```
+
+SUBTAREAS:
+
+[T008.1] Crear validator.js
+  ⏳ Implementar validarCalculoRequest()
+  ⏳ Implementar validarCalculoId()
+  ⏳ Validaciones según contrato de API
+  ⏳ Mensajes de error claros
+
+[T008.2] Crear errorHandler.js
+  ⏳ Implementar errorHandler()
+  ⏳ Implementar notFoundHandler()
+  ⏳ Manejo específico por tipo de error
+  ⏳ Ocultar detalles en producción
+
+[T008.3] Tests de middlewares
+  ⏳ Crear __tests__/middlewares/validator.test.js
+  ⏳ Crear __tests__/middlewares/errorHandler.test.js
+  ⏳ Test: Validación exitosa
+  ⏳ Test: Cada tipo de error de validación
+  ⏳ Test: Error handling por tipo
+
+CRITERIOS DE ACEPTACIÓN:
+□ Validaciones según contrato de API
+□ Mensajes de error estructurados
+□ Error handling global funciona
+□ 404 handler implementado
+□ Tests con >80% cobertura
+
+ARCHIVOS A CREAR:
+- App/Backend/Node/src/middlewares/validator.js (NUEVO)
+- App/Backend/Node/src/middlewares/errorHandler.js (NUEVO)
+- App/Backend/Node/__tests__/middlewares/validator.test.js (NUEVO)
+- App/Backend/Node/__tests__/middlewares/errorHandler.test.js (NUEVO)
+
+DEPENDENCIAS:
+- Requiere: Contrato de API (07-ContratoAPI-Honorarios.md)
+
+ESTIMACIÓN: 2 horas
+RESPONSABLE: Backend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #009 - BACKEND: CONTROLLER DE HONORARIOS
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Crear controller con la lógica de manejo de requests HTTP y formateo de
+responses según el contrato de API.
+
+ARCHIVO: App/Backend/Node/src/controllers/honorarios.controller.js
+
+IMPLEMENTACIÓN:
+
+```javascript
+/**
+ * Controller de Honorarios
+ * Maneja requests HTTP y delega lógica al servicio
+ */
+
+const honorariosService = require('../services/honorarios.service');
+
+/**
+ * POST /api/v1/honorarios/calcular
+ * Calcula honorarios y guarda en DB
+ */
+async function calcular(req, res, next) {
+  try {
+    console.log('📥 [Controller] Request de cálculo recibido');
+    
+    const datosCompletos = req.body;
+    
+    // Ejecutar servicio (calcula + guarda)
+    const resultado = await honorariosService.calcularYGuardar(datosCompletos);
+    
+    // Respuesta exitosa según contrato de API
+    res.status(200).json({
+      success: true,
+      data: resultado,
+      version: '1.0'
+    });
+    
+  } catch (error) {
+    console.error('❌ [Controller] Error en cálculo:', error);
+    next(error);
+  }
+}
+
+/**
+ * GET /api/v1/honorarios/:calculoId/items
+ * Obtiene items de un cálculo específico
+ */
+async function obtenerItems(req, res, next) {
+  try {
+    const { calculoId } = req.params;
+    
+    console.log(`📥 [Controller] Request de items para: ${calculoId}`);
+    
+    const resultado = await honorariosService.obtenerItemsPorCalculoId(calculoId);
+    
+    if (!resultado.success) {
+      return res.status(404).json({
+        success: false,
+        error: resultado.message,
+        calculoId,
+        code: 'NOT_FOUND',
+        version: '1.0'
+      });
+    }
+    
+    // Respuesta exitosa
+    res.status(200).json({
+      success: true,
+      data: resultado,
+      version: '1.0'
+    });
+    
+  } catch (error) {
+    console.error('❌ [Controller] Error al obtener items:', error);
+    next(error);
+  }
+}
+
+/**
+ * GET /health
+ * Health check endpoint
+ */
+function healthCheck(req, res) {
+  res.status(200).json({
+    status: 'OK',
+    service: 'CH2026 Backend API',
+    version: '2.0',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+}
+
+module.exports = {
+  calcular,
+  obtenerItems,
+  healthCheck
+};
+```
+
+SUBTAREAS:
+
+[T009.1] Crear archivo honorarios.controller.js
+  ⏳ Implementar calcular()
+  ⏳ Implementar obtenerItems()
+  ⏳ Implementar healthCheck()
+  ⏳ Agregar JSDoc
+
+[T009.2] Formateo de responses según contrato
+  ⏳ Estructura success/data/version
+  ⏳ Estructura de error con code
+  ⏳ Status codes HTTP apropiados
+  ⏳ Logging de requests
+
+[T009.3] Manejo de errores con next()
+  ⏳ Try-catch en cada método
+  ⏳ Pasar errores a middleware con next(error)
+  ⏳ No enviar response si hay error (lo hace middleware)
+
+[T009.4] Tests del controller
+  ⏳ Crear __tests__/controllers/honorarios.controller.test.js
+  ⏳ Mock de honorariosService
+  ⏳ Test: calcular exitoso
+  ⏳ Test: calcular con error
+  ⏳ Test: obtenerItems exitoso
+  ⏳ Test: obtenerItems no encontrado
+  ⏳ Test: healthCheck
+
+CRITERIOS DE ACEPTACIÓN:
+□ Controller con 3 métodos implementados
+□ Responses según contrato de API
+□ Status codes HTTP correctos
+□ Logging apropiado
+□ Tests con >80% cobertura
+
+ARCHIVOS A CREAR:
+- App/Backend/Node/src/controllers/honorarios.controller.js (NUEVO)
+- App/Backend/Node/__tests__/controllers/honorarios.controller.test.js (NUEVO)
+
+DEPENDENCIAS:
+- Requiere: Ticket #007 completado (servicio)
+
+ESTIMACIÓN: 2 horas
+RESPONSABLE: Backend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #010 - BACKEND: RUTAS DE API
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Definir rutas de Express mapeando endpoints del contrato de API a controllers.
+
+ARCHIVO: App/Backend/Node/src/routes/honorarios.routes.js
+
+IMPLEMENTACIÓN:
+
+```javascript
+/**
+ * Rutas de API para Honorarios
+ */
+
+const express = require('express');
+const router = express.Router();
+const honorariosController = require('../controllers/honorarios.controller');
+const { validarCalculoRequest, validarCalculoId } = require('../middlewares/validator');
+
+/**
+ * POST /api/v1/honorarios/calcular
+ * Calcula honorarios y persiste en DB
+ */
+router.post(
+  '/calcular',
+  validarCalculoRequest,  // Middleware de validación
+  honorariosController.calcular
+);
+
+/**
+ * GET /api/v1/honorarios/:calculoId/items
+ * Obtiene items de un cálculo específico
+ */
+router.get(
+  '/:calculoId/items',
+  validarCalculoId,  // Middleware de validación
+  honorariosController.obtenerItems
+);
+
+module.exports = router;
+```
+
+SUBTAREAS:
+
+[T010.1] Crear archivo honorarios.routes.js
+  ⏳ Crear App/Backend/Node/src/routes/honorarios.routes.js
+  ⏳ Definir ruta POST /calcular
+  ⏳ Definir ruta GET /:calculoId/items
+  ⏳ Aplicar middlewares de validación
+
+[T010.2] Documentación inline de rutas
+  ⏳ JSDoc para cada ruta
+  ⏳ Comentarios explicativos
+  ⏳ Referencias al contrato de API
+
+[T010.3] Tests de integración de rutas
+  ⏳ Crear __tests__/routes/honorarios.routes.test.js
+  ⏳ Test: POST /calcular con datos válidos
+  ⏳ Test: POST /calcular con datos inválidos
+  ⏳ Test: GET /items exitoso
+  ⏳ Test: GET /items no encontrado
+
+CRITERIOS DE ACEPTACIÓN:
+□ Rutas mapeadas correctamente
+□ Middlewares aplicados en orden correcto
+□ Documentación inline completa
+□ Tests de integración funcionan
+
+ARCHIVOS A CREAR:
+- App/Backend/Node/src/routes/honorarios.routes.js (NUEVO)
+- App/Backend/Node/__tests__/routes/honorarios.routes.test.js (NUEVO)
+
+DEPENDENCIAS:
+- Requiere: Ticket #008 completado (middlewares)
+- Requiere: Ticket #009 completado (controller)
+
+ESTIMACIÓN: 1 hora
+RESPONSABLE: Backend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #011 - BACKEND: APP.JS PRINCIPAL
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Configurar Express app principal con todos los middlewares y rutas.
+
+ARCHIVO: App/Backend/Node/app.js
+
+IMPLEMENTACIÓN:
+
+```javascript
+/**
+ * Express Application Configuration
+ * Backend API para CH2026
+ */
+
+const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
+
+const honorariosRoutes = require('./src/routes/honorarios.routes');
+const honorariosController = require('./src/controllers/honorarios.controller');
+const { errorHandler, notFoundHandler } = require('./src/middlewares/errorHandler');
+
+const app = express();
+
+// ============================================================================
+// MIDDLEWARES GLOBALES
+// ============================================================================
+
+// Body parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// CORS
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Version'],
+  credentials: true
+};
+app.use(cors(corsOptions));
+
+// Request logging (solo en desarrollo)
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, res, next) => {
+    console.log(`📥 ${req.method} ${req.path}`);
+    next();
+  });
+}
+
+// ============================================================================
+// RUTAS
+// ============================================================================
+
+// Health check
+app.get('/health', honorariosController.healthCheck);
+
+// API v1 routes
+app.use('/api/v1/honorarios', honorariosRoutes);
+
+// ============================================================================
+// ERROR HANDLING
+// ============================================================================
+
+// 404 handler (debe estar antes de errorHandler)
+app.use(notFoundHandler);
+
+// Global error handler (debe estar al final)
+app.use(errorHandler);
+
+// ============================================================================
+// EXPORTS
+// ============================================================================
+
+module.exports = app;
+```
+
+SUBTAREAS:
+
+[T011.1] Crear archivo app.js
+  ⏳ Crear App/Backend/Node/app.js
+  ⏳ Configurar Express
+  ⏳ Configurar middlewares globales
+  ⏳ Montar rutas
+  ⏳ Configurar error handling
+
+[T011.2] Configurar CORS
+  ⏳ Leer CORS_ORIGIN de .env
+  ⏳ Configurar headers permitidos
+  ⏳ Configurar métodos permitidos
+  ⏳ Documentar configuración
+
+[T011.3] Request logging (desarrollo)
+  ⏳ Logging solo en modo desarrollo
+  ⏳ Formato consistente
+  ⏳ Incluir method y path
+
+[T011.4] Tests de integración de app
+  ⏳ Crear __tests__/app.test.js
+  ⏳ Test: Health check funciona
+  ⏳ Test: CORS headers presentes
+  ⏳ Test: 404 handler funciona
+  ⏳ Test: Error handler funciona
+
+CRITERIOS DE ACEPTACIÓN:
+□ Express configurado correctamente
+□ CORS funciona con frontend
+□ Request logging en desarrollo
+□ Health check funcional
+□ Error handlers al final
+□ Tests de integración pasan
+
+ARCHIVOS A CREAR:
+- App/Backend/Node/app.js (NUEVO)
+- App/Backend/Node/__tests__/app.test.js (NUEVO)
+
+DEPENDENCIAS:
+- Requiere: Ticket #008 completado (middlewares)
+- Requiere: Ticket #010 completado (rutas)
+
+ESTIMACIÓN: 2 horas
+RESPONSABLE: Backend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #012 - BACKEND: LAMBDA HANDLER Y LOCAL SERVER
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Crear wrappers para ejecutar la aplicación tanto en Lambda como localmente.
+
+ARCHIVOS:
+- App/Backend/Node/lambda.js (wrapper para AWS Lambda)
+- App/Backend/Node/index.js (servidor local)
+
+IMPLEMENTACIÓN - lambda.js:
+
+```javascript
+/**
+ * AWS Lambda Handler
+ * Wrapper de Express app para AWS Lambda usando serverless-http
+ */
+
+const serverless = require('serverless-http');
+const app = require('./app');
+
+// Wrapper que convierte Express app a handler de Lambda
+const handler = serverless(app, {
+  // Opciones de serverless-http
+  request(request, event, context) {
+    // Puedes agregar lógica adicional aquí si necesitas
+    // Ejemplo: agregar info del contexto de Lambda al request
+    request.context = context;
+    request.event = event;
+  }
+});
+
+module.exports.handler = handler;
+```
+
+IMPLEMENTACIÓN - index.js:
+
+```javascript
+/**
+ * Local Development Server
+ * Ejecuta Express app en modo standalone para desarrollo local
+ */
+
+const app = require('./app');
+const db = require('./src/config/database');
+
+const PORT = process.env.PORT || 3000;
+
+// Verificar conexión a DB al iniciar
+async function startServer() {
+  try {
+    // Test de conexión a DB
+    console.log('🔌 Verificando conexión a base de datos...');
+    await db.createPool();
+    console.log('✅ Conexión a base de datos OK');
+    
+    // Iniciar servidor
+    app.listen(PORT, () => {
+      console.log(`
+╔════════════════════════════════════════════════════════════╗
+║                                                            ║
+║   🚀 CH2026 Backend API - Running                         ║
+║                                                            ║
+║   📍 Port:        ${PORT}                                     ║
+║   🌍 Environment: ${process.env.NODE_ENV || 'development'}                           ║
+║   🗄️  Database:    ${process.env.DB_NAME}                        ║
+║                                                            ║
+║   📝 Health:      http://localhost:${PORT}/health            ║
+║   🧮 Calcular:    POST /api/v1/honorarios/calcular        ║
+║   📋 Items:       GET /api/v1/honorarios/:id/items        ║
+║                                                            ║
+╚════════════════════════════════════════════════════════════╝
+      `);
+    });
+  } catch (error) {
+    console.error('❌ Error al iniciar servidor:', error);
+    process.exit(1);
+  }
+}
+
+// Manejo de cierre graceful
+process.on('SIGINT', async () => {
+  console.log('\n🛑 Cerrando servidor...');
+  await db.closePool();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('\n🛑 Cerrando servidor...');
+  await db.closePool();
+  process.exit(0);
+});
+
+// Iniciar
+startServer();
+```
+
+SUBTAREAS:
+
+[T012.1] Crear lambda.js
+  ⏳ Crear App/Backend/Node/lambda.js
+  ⏳ Configurar serverless-http wrapper
+  ⏳ Exportar handler correctamente
+
+[T012.2] Crear index.js
+  ⏳ Crear App/Backend/Node/index.js
+  ⏳ Implementar startServer()
+  ⏳ Test de conexión DB al iniciar
+  ⏳ Logging bonito con info del servidor
+  ⏳ Manejo de SIGINT y SIGTERM
+
+[T012.3] Configurar scripts en package.json
+  ⏳ "dev": "nodemon index.js"
+  ⏳ "start": "node index.js"
+  ⏳ Documentar en README
+
+[T012.4] Test local
+  ⏳ Ejecutar npm run dev
+  ⏳ Verificar servidor inicia
+  ⏳ Verificar conexión a DB
+  ⏳ Test health check: GET /health
+  ⏳ Test cálculo: POST /api/v1/honorarios/calcular
+
+CRITERIOS DE ACEPTACIÓN:
+□ lambda.js wrapper funcional
+□ index.js servidor local funcional
+□ Connection pooling se mantiene entre requests
+□ Cierre graceful de conexiones
+□ Logging apropiado
+□ Tests locales exitosos
+
+ARCHIVOS A CREAR:
+- App/Backend/Node/lambda.js (NUEVO)
+- App/Backend/Node/index.js (NUEVO)
+
+DEPENDENCIAS:
+- Requiere: Ticket #011 completado (app.js)
+
+ESTIMACIÓN: 3 horas
+RESPONSABLE: Backend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #013 - TESTS: TESTS UNITARIOS - MODELS
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Implementar tests unitarios completos para el modelo Calculo con mocks de DB.
+
+ARCHIVO: App/Backend/Node/__tests__/models/calculo.model.test.js
+
+CRITERIOS DE ACEPTACIÓN:
+□ Cobertura >80% en models
+□ Mocks de db.callStoredProcedure
+□ Mocks de db.query
+□ Todos los tests pasan
+□ Tests aislados (no requieren DB real)
+
+TESTS A IMPLEMENTAR:
+- grabarCalculo con datos válidos
+- grabarCalculo con error de DB
+- grabarCalculo con campos opcionales null
+- obtenerCalculoPorId existente
+- obtenerCalculoPorId inexistente
+- listarItemsCalculo con items
+- listarItemsCalculo sin items
+- Manejo de errores estructurado
+
+ESTIMACIÓN: 3 horas
+RESPONSABLE: QA/Backend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #014 - TESTS: TESTS DE INTEGRACIÓN - API
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Tests de integración E2E contra base de datos real de test.
+
+ARCHIVO: App/Backend/Node/__tests__/integration/honorarios.test.js
+
+SETUP DE DB:
+- Crear schema cpau_ch_test en localhost
+- Setup/teardown automático de datos
+- Rollback después de cada test
+
+CRITERIOS DE ACEPTACIÓN:
+□ Tests E2E contra DB real
+□ Setup/teardown automático
+□ Todos los tests pasan
+□ Datos de test realistas
+
+TESTS A IMPLEMENTAR:
+- POST /api/v1/honorarios/calcular con datos válidos
+- POST con valorObra inválido
+- POST con tareasProfesionales vacío
+- POST sin datosObra (400)
+- GET /api/v1/honorarios/:id/items existente
+- GET /items inexistente (404)
+- GET /health
+
+ESTIMACIÓN: 4 horas
+RESPONSABLE: QA/Backend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #015 - AWS: CONFIGURACIÓN SERVERLESS FRAMEWORK
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Configurar Serverless Framework para deployment a AWS Lambda.
+
+ARCHIVO: App/Backend/Node/serverless.yml
+
+IMPLEMENTACIÓN:
+
+```yaml
+service: ch2026-api
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  
+  environment:
+    NODE_ENV: ${self:provider.stage}
+    VALOR_K_DEFAULT: ${env:VALOR_K_DEFAULT}
+    AWS_SECRET_NAME: CH2026/${self:provider.stage}/db-credentials
+    AWS_REGION: ${self:provider.region}
+  
+  # VPC Configuration (si RDS está en VPC privada)
+  vpc:
+    securityGroupIds:
+      - ${env:SECURITY_GROUP_ID}
+    subnetIds:
+      - ${env:SUBNET_ID_1}
+      - ${env:SUBNET_ID_2}
+  
+  # IAM Permissions
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetSecretValue
+      Resource:
+        - arn:aws:secretsmanager:${self:provider.region}:*:secret:CH2026/${self:provider.stage}/*
+    - Effect: Allow
+      Action:
+        - logs:CreateLogGroup
+        - logs:CreateLogStream
+        - logs:PutLogEvents
+      Resource:
+        - arn:aws:logs:${self:provider.region}:*:log-group:/aws/lambda/ch2026-api-*
+
+functions:
+  api:
+    handler: lambda.handler
+    timeout: 30
+    memorySize: 512
+    events:
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Api-Version
+              - Authorization
+    
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 3000
+```
+
+SUBTAREAS:
+
+[T015.1] Instalar Serverless Framework
+  ⏳ npm install -g serverless
+  ⏳ serverless --version
+  ⏳ Configurar AWS credentials
+
+[T015.2] Crear serverless.yml
+  ⏳ Crear App/Backend/Node/serverless.yml
+  ⏳ Configurar provider (AWS)
+  ⏳ Configurar function (api)
+  ⏳ Configurar IAM roles
+  ⏳ Configurar VPC (si aplica)
+
+[T015.3] Configurar variables de entorno
+  ⏳ Crear .env.dev con vars locales
+  ⏳ Crear .env.qa.example con vars de QA
+  ⏳ Documentar variables requeridas
+
+[T015.4] Test de deployment a DEV
+  ⏳ serverless deploy --stage dev
+  ⏳ Verificar Lambda creada
+  ⏳ Verificar API Gateway configurado
+  ⏳ Test health check
+
+[T015.5] Test de deployment a QA
+  ⏳ serverless deploy --stage qa
+  ⏳ Verificar deployment exitoso
+  ⏳ Verificar conexión a RDS QA
+  ⏳ Test E2E en QA
+
+CRITERIOS DE ACEPTACIÓN:
+□ serverless.yml configurado correctamente
+□ Deployment a dev exitoso
+□ Deployment a qa exitoso
+□ Variables de entorno configuradas
+□ VPC y Security Groups OK
+□ IAM roles con permisos correctos
+□ API Gateway funcional
+
+ARCHIVOS A CREAR:
+- App/Backend/Node/serverless.yml (NUEVO)
+
+COMANDOS:
+```bash
+# Deployment
+serverless deploy --stage dev
+serverless deploy --stage qa
+
+# Logs
+serverless logs -f api --tail --stage qa
+
+# Invoke local
+serverless invoke local -f api --path test-event.json
+
+# Remove
+serverless remove --stage dev
+```
+
+DEPENDENCIAS:
+- Requiere: Ticket #012 completado (lambda.js)
+- Requiere: AWS Account configurado
+- Requiere: VPC y Security Groups creados
+
+ESTIMACIÓN: 4 horas
+RESPONSABLE: DevOps/Backend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #016 - AWS: SCRIPTS DE DEPLOYMENT
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Crear scripts para facilitar deployment y operaciones comunes.
+
+ARCHIVOS:
+- App/Backend/Node/scripts/deploy-dev.sh
+- App/Backend/Node/scripts/deploy-qa.sh
+- App/Backend/Node/scripts/test-local.sh
+- App/Backend/Node/scripts/logs.sh
+
+SUBTAREAS:
+
+[T016.1] Script deploy-dev.sh
+  ⏳ Validar .env.dev existe
+  ⏳ Run serverless deploy --stage dev
+  ⏳ Mostrar URL del endpoint
+  ⏳ Test smoke test (health check)
+
+[T016.2] Script deploy-qa.sh
+  ⏳ Validar .env.qa existe
+  ⏳ Confirmación antes de deploy
+  ⏳ Run serverless deploy --stage qa
+  ⏳ Test smoke test
+
+[T016.3] Script test-local.sh
+  ⏳ Iniciar servidor local
+  ⏳ Ejecutar tests
+  ⏳ Cerrar servidor
+
+[T016.4] Script logs.sh
+  ⏳ Solicitar stage (dev/qa)
+  ⏳ serverless logs con tail
+  ⏳ Formateo legible
+
+[T016.5] Actualizar package.json scripts
+  ⏳ "deploy:dev"
+  ⏳ "deploy:qa"
+  ⏳ "logs:dev"
+  ⏳ "logs:qa"
+
+CRITERIOS DE ACEPTACIÓN:
+□ Scripts funcionan en Windows (PowerShell)
+□ Validaciones pre-deployment
+□ Mensajes claros y coloridos
+□ Documentación en README
+
+ESTIMACIÓN: 2 horas
+RESPONSABLE: DevOps
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #017 - AWS: CONFIGURACIÓN SECRETS MANAGER
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Configurar credenciales de base de datos en AWS Secrets Manager.
+
+SECRETS A CREAR:
+- CH2026/dev/db-credentials
+- CH2026/qa/db-credentials
+
+ESTRUCTURA DEL SECRET:
+```json
+{
+  "host": "cpau-ch-qa.xxxxxx.us-east-1.rds.amazonaws.com",
+  "port": 3306,
+  "user": "admin",
+  "password": "xxxxx",
+  "database": "cpau_ch_qa"
+}
+```
+
+SUBTAREAS:
+
+[T017.1] Crear secret para DEV
+  ⏳ AWS Console → Secrets Manager
+  ⏳ Create secret: CH2026/dev/db-credentials
+  ⏳ Ingresar credenciales de localhost
+  ⏳ Verificar secret creado
+
+[T017.2] Crear secret para QA
+  ⏳ Create secret: CH2026/qa/db-credentials
+  ⏳ Ingresar credenciales de RDS QA
+  ⏳ Verificar secret creado
+
+[T017.3] Configurar permisos IAM
+  ⏳ Verificar Lambda role tiene permiso secretsmanager:GetSecretValue
+  ⏳ Verificar resource ARN correcto
+  ⏳ Test de acceso desde Lambda
+
+[T017.4] Configurar rotación (opcional)
+  ⏳ Habilitar automatic rotation
+  ⏳ Configurar rotation period (90 días)
+  ⏳ Documentar proceso
+
+[T017.5] Documentar acceso a secrets
+  ⏳ Crear App/Backend/Node/docs/SECRETS.md
+  ⏳ Proceso de creación
+  ⏳ Proceso de actualización
+  ⏳ Troubleshooting
+
+CRITERIOS DE ACEPTACIÓN:
+□ Secrets creados en AWS
+□ Lambda tiene permisos para leerlos
+□ Rotación configurada (90 días)
+□ Documentación completa
+□ Tests de acceso exitosos
+
+DEPENDENCIAS:
+- Requiere: AWS Account configurado
+- Requiere: IAM roles creados
+
+ESTIMACIÓN: 2 horas
+RESPONSABLE: DevOps
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #018 - FRONTEND: ACTUALIZAR VITE_API_URL
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Actualizar variable de entorno en frontend para apuntar a nueva API Lambda.
+
+CAMBIO REQUERIDO:
+```bash
+# ANTES (Vercel Serverless)
+VITE_API_URL=https://ch2026-backend-maqueta.vercel.app/api
+
+# DESPUÉS (AWS Lambda)
+VITE_API_URL=https://xxxxxx.execute-api.us-east-1.amazonaws.com/qa/api
+```
+
+SUBTAREAS:
+
+[T018.1] Obtener URL de API Gateway
+  ⏳ Ejecutar serverless info --stage qa
+  ⏳ Copiar endpoint URL
+  ⏳ Verificar formato correcto
+
+[T018.2] Actualizar variable en Vercel (Frontend)
+  ⏳ Vercel Dashboard → ch2026-qa project
+  ⏳ Settings → Environment Variables
+  ⏳ Editar VITE_API_URL con nueva URL
+  ⏳ Redeploy frontend
+
+[T018.3] Verificar integración
+  ⏳ Abrir https://ch2026-qa.neosisweb.ar
+  ⏳ Completar wizard de cálculo
+  ⏳ Verificar request va a Lambda (DevTools Network)
+  ⏳ Verificar cálculo funciona
+  ⏳ Verificar datos se guardan en DB
+
+[T018.4] Actualizar documentación
+  ⏳ Actualizar README del frontend
+  ⏳ Documentar nueva URL de API
+  ⏳ Actualizar diagramas si es necesario
+
+CRITERIOS DE ACEPTACIÓN:
+□ Variable VITE_API_URL actualizada
+□ Frontend apunta a Lambda
+□ Request/response sin cambios
+□ Tests del frontend pasan
+□ Integración E2E funciona
+
+NOTA IMPORTANTE:
+El servicio `honorariosService.js` NO requiere cambios ya que usa la variable
+de entorno. Solo cambiar la variable en Vercel Dashboard.
+
+ARCHIVOS A MODIFICAR:
+- Ninguno (solo variable de entorno en Vercel)
+
+DEPENDENCIAS:
+- Requiere: Ticket #015 completado (Lambda deployed en QA)
+
+ESTIMACIÓN: 1 hora
+RESPONSABLE: Frontend Dev
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #019 - TESTING: INTEGRACIÓN FRONTEND-BACKEND E2E
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Tests E2E del flujo completo: Frontend → Lambda → MySQL.
+
+FLUJO A PROBAR:
+1. Usuario completa wizard
+2. Hace cálculo (POST /calcular)
+3. Ve resultado
+4. Cálculo se guarda en DB
+5. Consultar items guardados (GET /:id/items)
+
+SUBTAREAS:
+
+[T019.1] Preparar ambiente de testing
+  ⏳ Crear usuario de test en DB QA
+  ⏳ Limpiar datos de pruebas anteriores
+  ⏳ Verificar Lambda está deployed
+
+[T019.2] Test E2E: Flujo completo básico
+  ⏳ Abrir ch2026-qa.neosisweb.ar
+  ⏳ Completar wizard con datos válidos
+  ⏳ Ejecutar cálculo
+  ⏳ Verificar resultado mostrado en UI
+  ⏳ Verificar en DB que registro existe
+  ⏳ Verificar items guardados correctamente
+
+[T019.3] Test E2E: Consulta de items
+  ⏳ Obtener calculoId de test anterior
+  ⏳ Construir URL: GET /api/v1/honorarios/{id}/items
+  ⏳ Ejecutar request (Postman o curl)
+  ⏳ Verificar response contiene items
+  ⏳ Verificar estructura de response
+
+[T019.4] Test de performance
+  ⏳ Medir tiempo total del flujo (<3s)
+  ⏳ Medir tiempo de response API (<2s)
+  ⏳ Verificar cold start aceptable (<3s)
+  ⏳ Test con múltiples requests concurrentes
+
+[T019.5] Test de manejo de errores
+  ⏳ Test: valorObra inválido (debe mostrar error en UI)
+  ⏳ Test: Sin tareas seleccionadas
+  ⏳ Test: Error de conexión a DB (graceful degradation)
+
+CRITERIOS DE ACEPTACIÓN:
+□ Flujo completo funciona en QA
+□ Performance aceptable (<3s)
+□ Datos se persisten correctamente
+□ Manejo de errores visible en UI
+□ Tests documentados con capturas
+
+HERRAMIENTAS:
+- Chrome DevTools (Network tab)
+- MySQL Workbench (verificar datos)
+- Postman (test de API)
+- CloudWatch Logs (debugging)
+
+ESTIMACIÓN: 4 horas
+RESPONSABLE: QA
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #020 - DOCUMENTACIÓN: TÉCNICA Y OPERATIVA
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Documentar arquitectura, deployment, operación y troubleshooting.
+
+ARCHIVOS A CREAR:
+- App/Backend/Node/README.md (completo)
+- App/Backend/Node/docs/ARCHITECTURE.md
+- App/Backend/Node/docs/DEPLOYMENT.md
+- App/Backend/Node/docs/TROUBLESHOOTING.md
+- App/Backend/Node/docs/API_EXAMPLES.md
+
+CONTENIDO:
+
+README.md:
+- Descripción del proyecto
+- Stack tecnológico
+- Requisitos previos
+- Instalación local
+- Comandos disponibles
+- Variables de entorno
+- Estructura de carpetas
+- Contactos
+
+ARCHITECTURE.md:
+- Diagrama de arquitectura AWS
+- Diagrama de flujo de datos
+- Diagrama de base de datos (ER)
+- Decisiones técnicas
+- Patrones de diseño utilizados
+
+DEPLOYMENT.md:
+- Proceso de deployment a DEV
+- Proceso de deployment a QA
+- Rollback procedures
+- Checklist pre-deployment
+- Verificaciones post-deployment
+
+TROUBLESHOOTING.md:
+- Problemas comunes y soluciones
+- Logs: dónde encontrarlos
+- Debugging en Lambda
+- Conexión a DB desde Lambda
+- Errores de VPC
+- Cold start issues
+
+API_EXAMPLES.md:
+- Ejemplos de requests con curl
+- Ejemplos de requests con Postman
+- Ejemplos de responses
+- Casos de uso comunes
+
+SUBTAREAS:
+
+[T020.1] Crear README.md completo
+  ⏳ Descripción y contexto
+  ⏳ Setup local paso a paso
+  ⏳ Variables de entorno documentadas
+  ⏳ Comandos con ejemplos
+
+[T020.2] Crear ARCHITECTURE.md
+  ⏳ Diagramas de arquitectura
+  ⏳ Flujo de datos
+  ⏳ Decisiones técnicas
+  ⏳ Patrones utilizados
+
+[T020.3] Crear DEPLOYMENT.md
+  ⏳ Proceso de deployment detallado
+  ⏳ Checklists
+  ⏳ Rollback procedures
+  ⏳ Troubleshooting de deployment
+
+[T020.4] Crear TROUBLESHOOTING.md
+  ⏳ Problemas comunes
+  ⏳ Guía de debugging✅ 2h (completado 16/04/2026)
+  Ticket #002 - DB Schema                 : ⏳ 3h
+  Ticket #003 - SP Grabar                 : ⏳ 4h
+  Ticket #004 - SP Listar                 : ⏳ 2h
+  Ticket #005 - Conexión MySQL            : ⏳ 3h
+  TOTAL SPRINT 1: 14h (2h completado, 12h pendiente)
+
+SPRINT 2: API Layer (4 días)
+  Ticket #006 - Modelo Calculo            : ⏳ 2h
+  Ticket #007 - Servicio con Persistencia : ⏳ 4h
+  Ticket #008 - Middlewares               : ⏳ 2h
+  Ticket #009 - Controller                : ⏳ 2h
+  Ticket #010 - Rutas                     : ⏳ 1h
+  Ticket #011 - App.js                    : ⏳ 2h
+  Ticket #012 - Lambda Handler            : ⏳ 3h
+  TOTAL SPRINT 2: 16h
+
+SPRINT 3: Testing & AWS (3 días)
+  Ticket #013 - Tests Unitarios           : ⏳ 3h
+  Ticket #014 - Tests Integración         : ⏳ 4h
+  Ticket #015 - Serverless Config         : ⏳ 4h
+  Ticket #016 - Scripts Deployment        : ⏳ 2h
+  Ticket #017 - Secrets Manager           : ⏳ 2h
+  TOTAL SPRINT 3: 15h
+
+SPRINT 4: Integración & Docs (2 días)
+  Ticket #018 - Update Frontend URL       : ⏳ 1h
+  Ticket #019 - Testing E2E               : ⏳ 4h
+  Ticket #020 - Documentación             : ⏳ 3h
+  TOTAL SPRINT 4: 8h
+
+================================================================================
+TOTAL GENERAL: 53 horas (~3 semanas)
+================================================================================
+
+ESTADO ACTUAL: ⏳ 5% COMPLETADO (1/20 tickets)
+
+ÚLTIMA ACTUALIZACIÓN: 16/04/2026 16:45
+ÚLTIMO TICKET COMPLETADO: #001 - Setup Estructura
+  Ticket #001 - Setup Estructura          : ⏳ 2h
+  Ticket #002 - DB Schema                 : ⏳ 3h
+  Ticket #003 - SP Grabar                 : ⏳ 4h
+  Ticket #004 - SP Listar                 : ⏳ 2h
+  Ticket #005 - Conexión MySQL            : ⏳ 3h
+  TOTAL SPRINT 1: 14h
+
+SPRINT 2: API Layer (4 días)
+  Ticket #006 - Modelo Calculo            : ⏳ 2h
+  Ticket #007 - Servicio con Persistencia : ⏳ 4h
+  Ticket #008 - Middlewares               : ⏳ 2h
+  Ticket #009 - Controller                : ⏳ 2h
+  Ticket #010 - Rutas                     : ⏳ 1h
+  Ticket #011 - App.js                    : ⏳ 2h
+  Ticket #012 - Lambda Handler            : ⏳ 3h
+  TOTAL SPRINT 2: 16h
+
+SPRINT 3: Testing & AWS (3 días)
+  Ticket #013 - Tests Unitarios           : ⏳ 3h
+  Ticket #014 - Tests Integración         : ⏳ 4h
+  Ticket #015 - Serverless Config         : ⏳ 4h
+  Ticket #016 - Scripts Deployment        : ⏳ 2h
+  Ticket #017 - Secrets Manager           : ⏳ 2h
+  TOTAL SPRINT 3: 15h
+
+SPRINT 4: Integración & Docs (2 días)
+  Ticket #018 - Update Frontend URL       : ⏳ 1h
+  Ticket #019 - Testing E2E               : ⏳ 4h
+  Ticket #020 - Documentación             : ⏳ 3h
+  TOTAL SPRINT 4: 8h
+
+================================================================================
+TOTAL GENERAL: 53 horas (~3 semanas)
+================================================================================
+
+ESTADO ACTUAL: ⏳ 0% COMPLETADO (0/20 tickets)
+
+PRÓXIMOS PASOS:
+1. Aprobar plan ✋
+2. Asignar recursos (Backend Dev, QA, DevOps)
+3. Crear branch: feature/backend-lambda-mysql
+4. Sprint 1 - Día 1: Ticket #001 y #002
+5. Daily standups para tracking
+
+================================================================================
+CRITERIOS DE ÉXITO DEL PROYECTO
+================================================================================
+
+✅ Cálculo de honorarios funciona igual que antes
+✅ Datos se persisten en MySQL correctamente (Calc_Maq + Calc_Maq_Items)
+✅ API Lambda responde en <3 segundos
+✅ Frontend no requiere cambios (excepto env var)
+✅ Tests E2E pasan al 100%
+✅ Deployment automatizado funciona
+✅ Documentación completa
+✅ Stored procedures funcionan correctamente
+✅ Connection pooling optimizado para Lambda
+
+================================================================================
+RIESGOS Y MITIGACIONES
+================================================================================
+
+RIESGO 1: Cold start de Lambda demasiado lento
+IMPACTO: Alto
+PROBABILIDAD: Media
+MITIGACIÓN: 
+  - Optimizar bundle (< 10MB)
+  - Considerar Provisioned Concurrency para QA/PROD
+  - Keep-warm ping cada 5 minutos
+
+RIESGO 2: Límite de conexiones MySQL desde Lambda
+IMPACTO: Alto
+PROBABILIDAD: Media
+MITIGACIÓN:
+  - Connection pool límite bajo (5 conexiones)
+  - Considerar RDS Proxy para pooling centralizado
+  - Monitoring de conexiones en CloudWatch
+
+RIESGO 3: Complejidad de VPC con Lambda
+IMPACTO: Medio
+PROBABILIDAD: Media
+MITIGACIÓN:
+  - Documentar configuración de VPC
+  - Security Groups bien configurados
+  - Testing exhaustivo de conectividad
+
+RIESGO 4: Errores de mapeo JSON → SQL en Stored Procedure
+IMPACTO: Medio
+PROBABILIDAD: Baja
+MITIGACIÓN:
+  - Tests exhaustivos del SP con datos variados
+  - Validación de formato JSON antes de llamar SP
+  - Logging detallado de errores
+
+RIESGO 5: Costos de AWS mayores a lo esperado
+IMPACTO: Bajo
+PROBABILIDAD: Baja
+MITIGACIÓN:
+  - Monitoring de costos en CloudWatch
+  - Alertas configuradas
+  - Optimización de memoria/timeout de Lambda
+
+================================================================================
+DEPENDENCIAS EXTERNAS
+================================================================================
+
+□ Acceso a AWS Account (IAM permissions)
+□ RDS endpoint y credenciales (QA)
+□ VPC y Security Groups configurados
+□ Dominio para API Gateway (opcional)
+□ Aprobación del cliente para deployment
+
+================================================================================
+CONTACTOS Y RESPONSABLES
+================================================================================
+
+Product Owner: Carlos Sánchez
+Tech Lead: [A definir]
+Backend Dev: [A definir]
+DevOps: [A definir]
+QA: [A definir]
+
+================================================================================
+FIN DEL DOCUMENTO - LISTO PARA EJECUCIÓN
+================================================================================
+Fecha de creación: 16/04/2026
+Estado: PENDIENTE APROBACIÓN
+Próxima revisión: Al completar cada Sprint

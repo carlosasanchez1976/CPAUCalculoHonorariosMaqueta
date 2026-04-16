@@ -57,7 +57,7 @@
   -moz-appearance: none;
   width: 18px;
   height: 18px;
-  border: 2.5px solid var(--color-gray-200);
+  border: 2.5px solid var(--color-gris);
   border-radius: 4px;
   cursor: pointer;
   position: relative;
@@ -66,13 +66,13 @@
 }
 
 .checkbox:hover {
-  border-color: #5B2FE6;
+  border-color: var(--color-primary);
 }
 
 /* Estado checked - cuadrado azul/morado */
 .checkbox:checked {
-  background-color: #5B2FE6;
-  border-color: #5B2FE6;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 /* Checkmark (✓) blanco dentro del cuadrado azul */
@@ -94,7 +94,7 @@
 
 .checkboxLabel {
   font-size: var(--font-size-sm);
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
   cursor: pointer;
   user-select: none;
 }
@@ -126,7 +126,7 @@
 }
 
 .link:hover {
-  color: var(--color-secondary);
+  color: var(--color-celeste);
   text-decoration: underline;
 }
 

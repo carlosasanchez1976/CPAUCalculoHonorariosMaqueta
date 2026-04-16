@@ -843,14 +843,14 @@ Lista completa de tareas para implementar en desplegable:
   --color-info: #3B82F6;           /* Azul información */
   
   /* Grises */
-  --color-gray-50: #F9FAFB;
-  --color-gray-100: #F3F4F6;
-  --color-gray-200: #E5E7EB;
+  --color-gris: #F9FAFB;
+  --color-gris: #F3F4F6;
+  --color-gris: #E5E7EB;
   --color-gray-300: #D1D5DB;
   --color-gray-400: #9CA3AF;
-  --color-gray-500: #6B7280;
+  --color-gris: #6B7280;
   --color-gray-600: #4B5563;
-  --color-gray-700: #374151;
+  --color-celeste: #374151;
   --color-gray-800: #1F2937;
   --color-gray-900: #111827;
 }

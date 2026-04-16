@@ -24,9 +24,14 @@ const Input = ({
 }) => {
   const inputId = id || name || label.toLowerCase().replace(/\s/g, '-');
   const inputClasses = `${styles.input} ${error ? styles.hasError : ''}`;
+  const labelClasses = `${styles.label} ${error ? styles.labelError : ''}`;
 
   return (
     <div className={styles.inputWrapper}>
+      <label htmlFor={inputId} className={labelClasses}>
+        {label}
+        {required && <span className={styles.required}>*</span>}
+      </label>
       <input
         type={type}
         id={inputId}
@@ -40,10 +45,6 @@ const Input = ({
         required={required}
         {...props}
       />
-      <label htmlFor={inputId} className={styles.label}>
-        {label}
-        {required && <span className={styles.required}>*</span>}
-      </label>
       {error && (
         <span 
           id={`${inputId}-error`} 

@@ -50,7 +50,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 24px 24px 16px 24px;
-  border-bottom: 1px solid var(--color-gray-200);
+  border-bottom: 1px solid var(--color-gris);
 }
 
 .title {
@@ -63,7 +63,7 @@
 .closeButton {
   background: none;
   border: none;
-  color: var(--color-gray-500);
+  color: var(--color-gris);
   font-size: 1.25rem;
   cursor: pointer;
   padding: 8px;
@@ -75,21 +75,21 @@
 }
 
 .closeButton:hover {
-  background: var(--color-gray-100);
-  color: var(--color-gray-700);
+  background: var(--color-gris);
+  color: var(--color-celeste);
 }
 
 .content {
   padding: 24px;
   overflow-y: auto;
   flex: 1;
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
   line-height: 1.6;
 }
 
 .footer {
   padding: 16px 24px 24px 24px;
-  border-top: 1px solid var(--color-gray-200);
+  border-top: 1px solid var(--color-gris);
   display: flex;
   justify-content: flex-end;
   gap: 12px;

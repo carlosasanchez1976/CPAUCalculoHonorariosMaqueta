@@ -7,8 +7,8 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-1);
-  background-color: rgba(91, 47, 230, 0.1);
-  color: var(--color-gray-700);
+  background-color: var(--color-fondo);
+  color: var(--color-text-no-sel);
   padding: 8px 16px;
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -17,8 +17,8 @@
 }
 
 .userButton:hover {
-  background-color: rgba(91, 47, 230, 0.15);
-  border-color: var(--color-primary);
+  background-color: var(--color-gris);
+  border-color: var(--color-text-no-sel);
 }
 
 .userButton:focus-visible {
@@ -37,21 +37,21 @@
 
 .chevronIcon {
   font-size: 14px;
-  color: #8DD5D9; /* Celeste/Turquesa según diseño CPAU */
+  color: var(--color-text-no-sel); /* Celeste/Turquesa según diseño CPAU */
   transition: transform var(--transition);
 }
 
 .userButton.open .chevronIcon {
   transform: rotate(180deg);
-  color: #5B2FE6; /* Morado cuando está abierto */
-}
+
+} 
 
 /* Dropdown Menu */
 .dropdown {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  background-color: var(--color-gray-50);
+  background-color: var(--color-gris);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   min-width: 200px;
@@ -73,7 +73,7 @@
   align-items: center;
   gap: var(--spacing-2);
   padding: 12px 16px;
-  color: var(--color-gray-700);
+  color: var(--color-text-no-sel);
   cursor: pointer;
   transition: background-color var(--transition);
   border: none;
@@ -85,7 +85,7 @@
 }
 
 .menuItem:hover {
-  background-color: var(--color-gray-50);
+  background-color: var(--color-gris);
 }
 
 .menuItem:focus-visible {
@@ -99,7 +99,7 @@
 
 .divider {
   height: 1px;
-  background-color: var(--color-gray-200);
+  background-color: var(--color-gris);
   margin: 4px 0;
 }
 

@@ -142,13 +142,13 @@ CONFIGURACIÓN DE ESTILOS GLOBALES (variables.css):
 :root {
   /* Paleta de colores */
   --color-primary: #2D5016;        /* Verde */
-  --color-secondary: #D4A574;      /* Marrón claro */
-  --color-accent: #A8DADC;         /* Celeste claro */
+  --color-celeste: #D4A574;      /* Marrón claro */
+  --color-celeste: #A8DADC;         /* Celeste claro */
   --color-white: #FFFFFF;
-  --color-gray-50: #F8F9FA;
-  --color-gray-100: #E9ECEF;
-  --color-gray-200: #DEE2E6;
-  --color-gray-700: #495057;
+  --color-gris: #F8F9FA;
+  --color-gris: #E9ECEF;
+  --color-gris: #DEE2E6;
+  --color-celeste: #495057;
   --color-error: #DC3545;
   --color-success: #28A745;
   
@@ -225,7 +225,7 @@ COMPONENTE: UserMenu (dropdown)
 - Positioned absolute, alineado a la derecha
 
 COMPONENTE: Footer (layout)
-- Fondo: var(--color-gray-100)
+- Fondo: var(--color-gris)
 - Contenido centrado:
   * Iconos redes sociales: Instagram (FaInstagram), Facebook (FaFacebook)
   * Links a "#"
@@ -249,7 +249,7 @@ COMPONENTE: Button (common)
 Props: children, onClick, loading, disabled, variant (primary/secondary)
 - Estados visuales: default, hover, active, disabled, loading
 - Primary: fondo var(--color-primary), texto blanco
-- Secondary: fondo var(--color-secondary), texto oscuro
+- Secondary: fondo var(--color-celeste), texto oscuro
 - Loading: mostrar spinner, deshabilitar click
 - Transiciones smooth
 - Padding: 12px 24px

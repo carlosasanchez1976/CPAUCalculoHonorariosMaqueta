@@ -1,9 +1,9 @@
 /* Estilos para el componente Footer */
 .footer {
-  background-color: var(--color-gray-100);
+  background-color: var(--color-gris);
   padding: var(--spacing-1) 0;
   margin-top: auto;
-  border-top: 1px solid var(--color-gray-200);
+  border-top: 1px solid var(--color-gris);
 }
 
 .footerContainer {
@@ -22,7 +22,7 @@
 }
 
 .footerLogo {
-  height: 20px;
+  height: 25px;
   width: auto;
 }
 
@@ -30,9 +30,9 @@
 .copyright {
   flex: 1;
   text-align: right;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   line-height: 1.5;
-  color: var(--color-gray-700);
+  color: var(--color-text-no-sel);
   margin: 0;
   padding: 0 var(--spacing-2);
 }
@@ -52,7 +52,7 @@
   }
   
   .footerLogo {
-    height: 20px;
+    height: 25px;
   }
   
   .copyright {

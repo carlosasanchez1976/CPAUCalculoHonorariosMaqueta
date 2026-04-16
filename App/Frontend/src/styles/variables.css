@@ -1,33 +1,28 @@
 /* Variables CSS Globales - CH2026 */
 :root {
   /* Paleta de colores */
-  --color-primary: #5B2FE6;        /* Morado CPAU */
-  --color-secondary: #8DD5D9;      /* Turquesa */
-  --color-accent: #8DD5D9;         /* Turquesa */
+  --color-primary: #3400ff;        /* Azul CPAU  */
+  --color-primary-dark: #2800cc;   /* Azul oscuro para gradientes */
   --color-white: #FFFFFF;
-  --color-gray-50: #F5F5F5;
-  --color-gray-100: #F5F5F5;
-  --color-gray-200: #B0B0B0;
-  --color-gray-700: #1E1E6B;       /* Azul oscuro */
+  --color-gris: #e0dbd9;
+  --color-gris-disabled: #E0E0E0;  /* Gris para elementos deshabilitados */
+  --color-gris-medio: #9e9e9e;     /* Gris medio */
+  --color-gris-oscuro: #757575;    /* Gris oscuro */
+  --color-gris-text: #999999;      /* Gris para texto deshabilitado */
+  --color-celeste: #88e3ed;        /* Celeste CPAU */
   --color-error: #DC3545;
-  --color-success: #28A745;
-  
-  /* Variantes de colores primarios */
-  --color-purple-dark: #4A25B8;      /* Hover/Active del morado */
-  --color-turquoise-light: #B8E8EA;  /* Turquesa claro hover */
+
+  --color-fondo: var(--color-white); /* Fondo principal */
   
   /* Colores de texto específicos */
-  --color-text-primary: #1E1E6B;     /* Títulos principales */
-  --color-text-body: #333333;        /* Texto de cuerpo */
-  --color-text-secondary: #666666;   /* Texto secundario */
-  --color-text-muted: #B0B0B0;       /* Texto deshabilitado */
+  --color-text-primary: var(--color-primary);     /* Títulos principales */
+  --color-text-no-sel: #000000;        /* Texto no seleccionado */
   
-  /* Badges y estados */
-  --color-badge-gray: #B0B0B0;       /* Badges NO/EN CONSTRUCCIÓN */
-  --color-badge-disabled: #E0E0E0;   /* Fondo cards deshabilitadas */
+
+
   
   /* Tipografía */
-  --font-family: 'Avenir', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family: 'Avenir';
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
   --font-size-lg: 1.125rem;
@@ -65,7 +60,7 @@
 body {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
   background-color: var(--color-white);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -93,7 +88,7 @@ a {
 }
 
 a:hover {
-  color: var(--color-secondary);
+  color: var(--color-celeste);
 }
 
 button {
@@ -129,9 +124,9 @@ textarea {
 .stepTitle {
   font-size: 1.25rem;
   font-weight: 700;
-  background-color: var(--color-accent);
+  background-color: var(--color-celeste);
   border-radius: 25px;
-  color: var(--color-text-primary);
+  color: var(--color-text-no-sel);
   padding: 8px 12px;
   margin-bottom: 1rem;
   text-align: left;
@@ -150,7 +145,7 @@ textarea {
   font-size: 0.938rem;
   font-family: var(--font-family);
   line-height: 1.6;
-  border: 2px solid var(--color-gray-200);
+  border: 2px solid var(--color-gris);
   background-color: white;
   color: #333333;
   transition: all 0.2s ease;
@@ -159,18 +154,18 @@ textarea {
 }
 
 .textarea:hover {
-  border-color: #5B2FE6;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.1);
 }
 
 .textarea:focus {
   outline: none;
-  border-color: #5B2FE6;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2);
 }
 
 .textarea::placeholder {
-  color: var(--color-gray-200);
+  color: var(--color-gris);
   font-style: italic;
 }
 

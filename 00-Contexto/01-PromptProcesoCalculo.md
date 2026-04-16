@@ -476,15 +476,15 @@ const generateMockResults = () => ({
 ```css
 :root {
   --color-primary: #2D5016;      /* Verde oscuro - Básico */
-  --color-secondary: #D4A574;     /* Marrón - Arancel CPAU */
-  --color-accent: #A8DADC;        /* Celeste - Costo+Arancel */
+  --color-celeste: #D4A574;     /* Marrón - Arancel CPAU */
+  --color-celeste: #A8DADC;        /* Celeste - Costo+Arancel */
   --color-complementary: #457B9D; /* Azul - Personalizado */
   
   --color-success: #10B981;       /* Para estados completados */
-  --color-gray-100: #F3F4F6;
+  --color-gris: #F3F4F6;
   --color-gray-300: #D1D5DB;
-  --color-gray-500: #6B7280;
-  --color-gray-700: #374151;
+  --color-gris: #6B7280;
+  --color-celeste: #374151;
 }
 ```
 

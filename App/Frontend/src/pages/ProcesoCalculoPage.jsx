@@ -69,6 +69,7 @@ const ProcesoCalculoPage = () => {
     instalacionSanitaria: false,
     instalacionElectrica: false,
     instalacionContraIncendio: false,
+    instalacionTermomecanica: false,
     proyectoEstructuras: false,
     observacionesTareas: '',
     
@@ -172,6 +173,7 @@ const ProcesoCalculoPage = () => {
             obraDireccion: formData.obraDireccion,
             instalacionSanitaria: formData.instalacionSanitaria,
             instalacionElectrica: formData.instalacionElectrica,
+            instalacionTermomecanica: formData.instalacionTermomecanica,
             instalacionContraIncendio: formData.instalacionContraIncendio,
             proyectoEstructuras: formData.proyectoEstructuras
           },

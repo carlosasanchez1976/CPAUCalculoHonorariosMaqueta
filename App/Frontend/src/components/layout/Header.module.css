@@ -1,7 +1,7 @@
 /* Estilos para el componente Header */
 .header {
-  background-color: var(--color-accent);
-  color: var(--color-gray-700);
+  background-color: var(--color-celeste);
+  color: var(--color-celeste);
   padding: var(--spacing-2) 0;
   box-shadow: var(--shadow-md);
   position: sticky;
@@ -27,7 +27,7 @@
 }
 
 .logo {
-  height: 40px;
+  height: 80px;
   width: auto;
 }
 

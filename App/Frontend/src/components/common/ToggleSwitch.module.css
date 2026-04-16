@@ -24,7 +24,7 @@
 }
 
 .toggleInput:checked + .toggleLabel {
-  background-color: #5B2FE6;
+  background-color: var(--color-primary);
 }
 
 .toggleInput:disabled + .toggleLabel {
@@ -51,7 +51,7 @@
 .toggleText {
   font-size: 0.95rem;
   font-weight: 500;
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
   min-width: 32px;
 }
 

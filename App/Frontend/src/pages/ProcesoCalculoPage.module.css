@@ -6,17 +6,16 @@
 }
 
 .wizardHeader {
-  background: var(--color-white);
-  padding: 10px 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  text-align: center;
+
+  padding: 6px 4px;
+
 }
 
 .wizardTitle {
   font-size: 1.5rem;
   font-weight: 700;
-  text-align: left;
-  color: var(--color-primary);
+  text-align: center;
+  color: var(--color-text-no-sel);
 
 }
 
@@ -27,7 +26,7 @@
 }
 
 .content {
-  max-width: 800px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -58,14 +57,14 @@
   display: block;
   font-size: 0.938rem;
   font-weight: 600;
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
   margin-bottom: 8px;
 }
 
 .select {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid var(--color-gray-200);
+  border: 2px solid var(--color-gris);
   border-radius: 8px;
   font-size: 1rem;
   color: var(--color-gray-900);
@@ -74,20 +73,20 @@
 }
 
 .select:hover {
-  border-color: #5B2FE6;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.1);
 }
 
 .select:focus {
   outline: none;
-  border-color: #5B2FE6;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2);
 }
 
 /* Estilos para opciones del dropdown */
 .select option:hover {
   background-color: rgba(91, 47, 230, 0.1);
-  color: #5B2FE6;
+  color: var(--color-primary);
 }
 
 .checkboxWrapper {
@@ -100,7 +99,7 @@
   align-items: center;
   gap: 12px;
   font-size: 1rem;
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
   cursor: pointer;
 }
 
@@ -110,7 +109,7 @@
   -moz-appearance: none;
   width: 20px;
   height: 20px;
-  border: 2.5px solid var(--color-gray-200);
+  border: 2.5px solid var(--color-gris);
   border-radius: 4px;
   cursor: pointer;
   position: relative;
@@ -119,13 +118,13 @@
 }
 
 .checkbox:hover {
-  border-color: #5B2FE6;
+  border-color: var(--color-primary);
 }
 
 /* Estado checked - cuadrado azul/morado */
 .checkbox:checked {
-  background-color: #5B2FE6;
-  border-color: #5B2FE6;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 /* Checkmark (✓) blanco dentro del cuadrado azul */
@@ -153,7 +152,7 @@
 
 .reviewGroup {
   padding: 20px;
-  background: var(--color-gray-50);
+  background: var(--color-gris);
   border-radius: 8px;
   border-left: 4px solid var(--color-primary);
 }
@@ -170,7 +169,7 @@
   grid-template-columns: 200px 1fr;
   gap: 16px;
   padding: 8px 0;
-  border-bottom: 1px solid var(--color-gray-200);
+  border-bottom: 1px solid var(--color-gris);
 }
 
 .reviewItem:last-child {
@@ -183,7 +182,7 @@
 
 .reviewLabel {
   font-weight: 600;
-  color: var(--color-gray-700);
+  color: var(--color-celeste);
 }
 
 .reviewValue {
@@ -272,7 +271,7 @@
 }
 
 .detailTable {
-  background: var(--color-gray-50);
+  background: var(--color-gris);
   border-radius: 12px;
   padding: 24px;
 }
@@ -306,7 +305,7 @@
 }
 
 .table tbody tr {
-  border-bottom: 1px solid var(--color-gray-200);
+  border-bottom: 1px solid var(--color-gris);
 }
 
 .table tbody tr:last-child {
@@ -342,7 +341,7 @@
 
 .termsWrapper {
   padding: 20px;
-  background: var(--color-gray-50);
+  background: var(--color-gris);
   border-radius: 8px;
   border: 2px solid var(--color-primary);
 }
@@ -364,7 +363,7 @@
   width: 20px;
   height: 20px;
   margin-top: 2px;
-  border: 2.5px solid var(--color-gray-200);
+  border: 2.5px solid var(--color-gris);
   border-radius: 4px;
   cursor: pointer;
   flex-shrink: 0;
@@ -374,13 +373,13 @@
 }
 
 .termsCheckbox:hover {
-  border-color: #5B2FE6;
+  border-color: var(--color-primary);
 }
 
 /* Estado checked - cuadrado azul/morado */
 .termsCheckbox:checked {
-  background-color: #5B2FE6;
-  border-color: #5B2FE6;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 /* Checkmark (✓) blanco dentro del cuadrado azul */

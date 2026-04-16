@@ -56,183 +56,170 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
       <div ref={pdfRef}>
       {/* Header del Certificado */}
       <div className={styles.certificateHeader}>
-        <div className={styles.headerBorder}></div>
-        <div className={styles.headerContent}>
-          <h1 className={styles.organization}>CPAU</h1>
-          <h2 className={styles.organizationFull}>
-            CONSEJO PROFESIONAL DE<br />
-            ARQUITECTURA Y URBANISMO
-          </h2>
-          <div className={styles.divider}></div>
-          <h3 className={styles.title}>CÁLCULO DE HONORARIOS PROFESIONALES</h3>
+        <div className={styles.headerLeft}>
+          <div className={styles.logoPlaceholder}>CPAU</div>
+        </div>
+        <div className={styles.headerRight}>
+          <h3 className={styles.title}>Cálculo de honorarios profesionales</h3>
           <div className={styles.metadata}>
             <div className={styles.metadataItem}>
               <span className={styles.metadataLabel}>Tipo:</span>
-              <span className={styles.metadataValue}>Honorarios de Especialidades - Básico</span>
+              <span className={styles.metadataValue}>Proyecto y Dirección de obras de arquitectura</span>
             </div>
             <div className={styles.metadataItem}>
-              <span className={styles.metadataLabel}>Fecha:</span>
-              <span className={styles.metadataValue}>{currentDate}</span>
-            </div>
-            <div className={styles.metadataItem}>
-              <span className={styles.metadataLabel}>Nº de Cálculo:</span>
-              <span className={styles.metadataValue}>{calculationNumber}</span>
+              <span >Fecha:</span>
+              <span >{currentDate}</span>
             </div>
           </div>
         </div>
-        <div className={styles.headerBorder}></div>
       </div>
 
-      {/* Resumen del Proyecto */}
-      <div className={styles.proyectoResumen}>
-        <h4 className={styles.sectionTitle}>Resumen del Proyecto</h4>
-        <div className={styles.resumenGrid}>
-          <div className={styles.resumenItem}>
-            <span className={styles.resumenLabel}>Proyecto:</span>
-            <span className={styles.resumenValue}>{formData.nombreProyecto}</span>
-          </div>
-          <div className={styles.resumenItem}>
-            <span className={styles.resumenLabel}>Cliente:</span>
-            <span className={styles.resumenValue}>{formData.cliente}</span>
-          </div>
-          <div className={styles.resumenItem}>
-            <span className={styles.resumenLabel}>Tipo de Obra:</span>
-            <span className={styles.resumenValue}>{formData.tipoObra}</span>
-          </div>
-          <div className={styles.resumenItem}>
-            <span className={styles.resumenLabel}>Superficie:</span>
-            <span className={styles.resumenValue}>{formData.superficieTotal} m²</span>
-          </div>
-          {formData.complejidad && (
-            <div className={styles.resumenItem}>
-              <span className={styles.resumenLabel}>Complejidad:</span>
-              <span className={styles.resumenValue}>{formData.complejidad}</span>
+      {/* Layout de Dos Columnas */}
+      <div className={styles.twoColumnLayout}>
+        {/* COLUMNA IZQUIERDA */}
+        <div className={styles.leftColumn}>
+          {/* Resumen del Proyecto */}
+          <div className={styles.proyectoResumen}>
+            <h4 className={styles.sectionTitle}>Resumen del Proyecto</h4>
+            <div className={styles.resumenGrid}>
+              <div className={styles.resumenItem}>
+                <span className={styles.resumenLabel}>Nombre del Proyecto:</span>
+                <span className={styles.resumenValue}>{formData.nombreProyecto}</span>
+              </div>
+              <div className={styles.resumenItem}>
+                <span className={styles.resumenLabel}>Comitente:</span>
+                <span className={styles.resumenValue}>{formData.cliente}</span>
+              </div>
+              <div className={styles.resumenItem}>
+                <span className={styles.resumenLabel}>Tipo de obra:</span>
+                <span className={styles.resumenValue}>{formData.tipoObra}</span>
+              </div>
+              <div className={styles.resumenItem}>
+                <span className={styles.resumenLabel}>Destino/Uso:</span>
+                <span className={styles.resumenValue}>{formData.destinoUso}</span>
+              </div>
+              <div className={styles.resumenItem}>
+                <span className={styles.resumenLabel}>Superficie total:</span>
+                <span className={styles.resumenValue}>{formData.superficieTotal} m²</span>
+              </div>
+              <div className={styles.resumenItem}>
+                <span className={styles.resumenLabel}>Costo estimado de obra (ARS):</span>
+                <span className={styles.resumenValue}>{formatCurrencyARS(formData.valorObra)}</span>
+              </div>
             </div>
-          )}
-          <div className={styles.resumenItem}>
-            <span className={styles.resumenLabel}>Costo total de Obra:</span>
-            <span className={styles.resumenValue}>{formatCurrencyARS(formData.valorObra)}</span>
           </div>
 
-        </div>
-      </div>
-
-      {/* Disclaimer Legal */}
-      <div className={styles.disclaimer}>
-        <h4 className={styles.disclaimerTitle}>⚠️ IMPORTANTE</h4>
-        <p className={styles.disclaimerText}>
-          Este cálculo es una <strong>estimación de referencia</strong> basada en los datos proporcionados 
-          y factores estándar del mercado. Los valores finales pueden variar según condiciones particulares 
-          de cada proyecto. <strong>No constituye una cotización formal ni un compromiso contractual.</strong> Para 
-          un cálculo definitivo, consulte con un profesional matriculado del CPAU.
-        </p>
-        <div className={styles.disclaimerMeta}>
-          <span><strong>Vigencia de índices:</strong> Febrero 2026</span>
-          <span><strong>Base de cálculo:</strong> Arancel sugerido CPAU (versión 2025)</span>
-        </div>
-      </div>
-
-      {/* Tabla de Resultados */}
-      {formData.detalleHonorarios && formData.detalleHonorarios.length > 0 && (
-        <div className={styles.resultsSection}>
-          <h4 className={styles.sectionTitle}>Detalle de Honorarios</h4>
-          
-          <div className={styles.tableContainer}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Ítem</th>
-                  <th>Tarea Profesional</th>
-                  <th>Descripción</th>
-                  <th className={styles.rightAlign}>Importe</th>
-                </tr>
-              </thead>
-              <tbody>
-                {formData.detalleHonorarios.map((item) => (
-                  <tr key={item.item}>
-                    <td className={styles.centered}>{item.item}</td>
-                    <td>{item.tareaProfesional}</td>
-                    <td className={styles.descripcion}>{item.descripcion}</td>
-                    <td className={styles.rightAlign}>{formatCurrencyARS(item.importe)}</td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr className={styles.totalRow}>
-                  <td colSpan={3}><strong>TOTAL HONORARIOS PROFESIONALES</strong></td>
-                  <td className={styles.rightAlign}>
-                    <strong className={styles.totalAmount}>
-                      {formatCurrencyARS(
-                        formData.detalleHonorarios.reduce((sum, item) => sum + item.importe, 0)
-                      )}
-                    </strong>
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-          
-          <div className={styles.notaFinal}>
-            <p>
-              <strong>Nota:</strong> Este honorario corresponde únicamente a las tareas profesionales seleccionadas. 
-              No incluye IVA ni gastos administrativos que deberán agregarse según corresponda.
+          {/* Disclaimer Legal */}
+          <div className={styles.disclaimer}>
+            <h4 className={styles.disclaimerTitle}>IMPORTANTE</h4>
+            <p className={styles.disclaimerText}>
+              Este cálculo es una <strong>estimación de referencia</strong> basada en los datos proporcionados 
+              y factores estándar del mercado. Los valores finales pueden variar según condiciones particulares 
+              de cada proyecto. <strong>No constituye una cotización formal ni un compromiso contractual.</strong>
+              <br />
+              <span>Vigencia de índices: Febrero 2026</span>
+              <br />
+              <span>Base de cálculo: arancel sugerido CPAU (versión 2026)</span>
             </p>
           </div>
         </div>
-      )}
+
+        {/* COLUMNA DERECHA */}
+        <div className={styles.rightColumn}>
+          {/* Tabla de Resultados */}
+          {formData.detalleHonorarios && formData.detalleHonorarios.length > 0 && (
+            <div className={styles.resultsSection}>
+              <h4 className={styles.sectionTitle}>Detalle de honorarios</h4>
+              
+              <div className={styles.tableContainer}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Ítem</th>
+                      <th>Tarea Profesional</th>
+                      <th className={styles.rightAlign}>Importe</th>
+                      <th className={styles.centered}>%</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {formData.detalleHonorarios.map((item) => (
+                      <tr key={item.item}>
+                        <td className={styles.centered}>{item.item}</td>
+                        <td>{item.tareaProfesional}</td>
+                        <td className={styles.rightAlign}>{formatCurrencyARS(item.importe)}</td>
+                        <td className={styles.centered}>00%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className={styles.totalRow}>
+                      <td colSpan={2}><strong>Total honorarios profesionales</strong></td>
+                      <td className={styles.rightAlign}>
+                        <strong className={styles.totalAmount}>
+                          {formatCurrencyARS(
+                            formData.detalleHonorarios.reduce((sum, item) => sum + item.importe, 0)
+                          )}
+                        </strong>
+                      </td>
+                      <td className={styles.centered}><strong>00%</strong></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              
+            </div>
+            
+          )}
+
+          <div className={styles.notaFinal}>
+            <p>
+              Nota: Este honorario corresponde únicamente a las tareas profesionales seleccionadas. NO incluye IVA.
+            </p>
+          </div>
+
+          {/* Checkbox de Términos - Movido aquí */}
+          <div className={styles.termsCheckbox}>
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={termsAccepted}
+                onChange={(e) => onAcceptTerms(e.target.checked)}
+                className={styles.checkbox}
+              />
+              <span>He leído y acepto las condiciones del cálculo</span>
+            </label>
+          </div>
+
+              <div className={styles.tableContainer}>
+                <table className={styles.table}>
+                  <tfoot>
+                    <tr className={styles.table}>
+                      <td colSpan={2}><strong>Recomendamos leer las notas anexas al PDF descargable</strong></td>
+                      <td colSpan={2}>
+                        <Button
+                          
+                          disabled={!termsAccepted}
+                          onClick={handleDescargarPDF}
+                          icon={<FaDownload />}
+                        >
+                          Descargar PDF
+                        </Button>
+
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+
+
+
+        </div>
+      </div>
 
       </div>
       {/* Fin contenido para PDF */}
 
-      {/* Checkbox de Términos */}
-      <div className={styles.termsCheckbox}>
-        <label className={styles.checkboxLabel}>
-          <input
-            type="checkbox"
-            checked={termsAccepted}
-            onChange={(e) => onAcceptTerms(e.target.checked)}
-            className={styles.checkbox}
-          />
-          <span>He leído y acepto las condiciones del cálculo</span>
-        </label>
-      </div>
-
-      {/* Botones de Acción */}
-      <div className={styles.actions}>
-        <Button
-          variant="secondary"
-          onClick={handleNuevoCalculo}
-          icon={<FaCalculator />}
-        >
-          Nuevo Cálculo
-        </Button>
-
-        <Button
-          variant="secondary"
-          disabled={!termsAccepted}
-          onClick={handleDescargarPDF}
-          icon={<FaDownload />}
-        >
-          Descargar PDF
-        </Button>
-
-        <Button
-          variant="secondary"
-          disabled
-          icon={<FaSave />}
-          title="Próximamente"
-        >
-          Guardar Cálculo
-        </Button>
-
-        <Button
-          variant="primary"
-          onClick={handleVolverDashboard}
-          icon={<FaHome />}
-        >
-          Volver al Dashboard
-        </Button>
-      </div>
     </div>
   );
 };

@@ -48,6 +48,7 @@
   color: var(--color-text-no-sel);
   margin: 0;
   transition: color 0.2s ease;
+  
 }
 
 .titleBox {
@@ -65,6 +66,7 @@
   line-height: 1.5;
   margin: 0;
   transition: color 0.2s ease;
+  
 }
 
 /* Responsive */

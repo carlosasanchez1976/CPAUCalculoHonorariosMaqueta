@@ -97,8 +97,8 @@ const ProcesoCalculoPage = () => {
   ];
 
   const steps = [
-    'Datos Principales del Proyecto',
-    'Datos Específicos de la Obra',
+    'Datos principales del proyecto',
+    'Datos específicos de la obra',
     'Tareas profesionales a realizar',
     'Revisión de datos ingresados',
     'Cálculo'

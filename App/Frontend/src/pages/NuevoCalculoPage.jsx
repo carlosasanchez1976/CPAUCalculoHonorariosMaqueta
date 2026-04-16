@@ -13,7 +13,7 @@ const NuevoCalculoPage = () => {
 
   const calculationTypes = [
     {
-      title: 'Proyecto y Dirección de Obra',
+      title: 'Proyecto y Dirección de obras de arquitectura',
       shortDescription: 'Proyecto y dirección de obra de baja, mediana y alta complejidad',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de proyecto y dirección de obra de baja, mediana y alta complejidad. Incluye la opción de incorporar proyecto de instalaciones y cálculo de estructuras.',
       icon: <FaBuilding />,
@@ -22,7 +22,7 @@ const NuevoCalculoPage = () => {
       Vigente: 'Si'
     },
     {
-      title: 'Proyecto y Dirección de Demoliciones',
+      title: 'Demoliciones',
       shortDescription: 'Proyecto y dirección de obras de demolición',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de proyecto y dirección de obras de demolición.',
       icon: <FaHammer />,
@@ -31,7 +31,7 @@ const NuevoCalculoPage = () => {
       Vigente: 'No'
     },
     {
-      title: 'Gerencia de Proyectos y Construcciones',
+      title: 'Gerencia de proyectos y construcciones',
       shortDescription: 'Gerenciamiento de proyectos y dirección de obras',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de gerenciamiento de proyecto y de dirección de obras.',
       icon: <FaCog />,
@@ -49,7 +49,7 @@ const NuevoCalculoPage = () => {
       Vigente: 'No'
     },
     {
-      title: 'Conservación de Fachadas',
+      title: 'Conservación de fachadas',
       shortDescription: 'Conservación de fachadas de edificios',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de conservación de fachadas.',
       icon: <FaBuilding />,
@@ -58,7 +58,7 @@ const NuevoCalculoPage = () => {
       Vigente: 'No'
     },
     {
-      title: 'Consultas y Tareas por Tiempo',
+      title: 'Consultas y otras tareas por tiempo empleado',
       shortDescription: 'Honorarios en base al valor hora profesional',
       fullDescription: 'Cálculo de honorarios profesionales en base al valor hora profesional. Incluye Consultas, Estudios e Informe Técnico, Asesoramiento, y Liquidación de Medianería.',
       icon: <FaUserTie />,
@@ -67,7 +67,7 @@ const NuevoCalculoPage = () => {
       Vigente: 'No'
     },
     {
-      title: 'Medición y Ejecución de Planos',
+      title: 'Medición y ejecución de planos',
       shortDescription: 'Medición y ejecución de planos',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de medición y ejecución de planos.',
       icon: <FaRulerCombined />,
@@ -76,7 +76,7 @@ const NuevoCalculoPage = () => {
       Vigente: 'No'
     },
     {
-      title: 'Impacto Ambiental',
+      title: 'Impacto ambiental',
       shortDescription: 'Evaluación de impacto ambiental',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de impacto ambiental para todo tipo de uso.',
       icon: <FaLeaf />,
@@ -103,7 +103,7 @@ const NuevoCalculoPage = () => {
       Vigente: 'No'
     },
     {
-      title: 'Sistemas de Autoprotección',
+      title: 'Sistemas de autoprotección',
       shortDescription: 'Diseño e implementación de planes de emergencia',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de diseño, implementación y actualización de planes de emergencia en edificios y establecimientos.',
       icon: <FaFire />,
@@ -130,7 +130,7 @@ const NuevoCalculoPage = () => {
       Vigente: 'No'
     },
     {
-      title: 'Representación Técnica',
+      title: 'Representación técnica',
       shortDescription: 'Representación técnica en obra',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de Representación Técnica en Obra.',
       icon: <FaHardHat />,
@@ -148,7 +148,7 @@ const NuevoCalculoPage = () => {
       Vigente: 'No'
     },
     {
-      title: 'Diseño de Interiores',
+      title: 'Diseño de interiores',
       shortDescription: 'Diseño de interiores y equipamiento',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de diseño de interiores y equipamiento.',
       icon: <FaCouch />,
@@ -157,7 +157,7 @@ const NuevoCalculoPage = () => {
       Vigente: 'No'
     },
     {
-      title: 'Diseño de Paisaje',
+      title: 'Diseño de paisaje',
       shortDescription: 'Planificación y diseño del paisaje',
       fullDescription: 'Cálculo de honorarios profesionales para tareas de planificación y diseño del paisaje.',
       icon: <FaTree />,

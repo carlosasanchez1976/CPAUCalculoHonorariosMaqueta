@@ -45,7 +45,7 @@ const CalculationTypeCard = ({ title, shortDescription, fullDescription, icon, p
       </div>
       
       {fullDescription && (
-        <p className={styles.description}>{fullDescription}</p>
+        <h2 className={styles.description}>{fullDescription}</h2>
       )}
       
       <div className={styles.titleBox}>

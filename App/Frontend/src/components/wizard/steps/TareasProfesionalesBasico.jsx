@@ -93,12 +93,12 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
           <div className={styles.tareaGroup}>
             
             <RadioGroup
-              label="Proyecto de Obra"
+              label="Proyecto de obra"
               fieldName="obraProyecto"
               value={formData.obraProyecto}
             />
             <RadioGroup
-              label="Dirección de Obra"
+              label="Dirección de obra"
               fieldName="obraDireccion"
               value={formData.obraDireccion}
             />
@@ -117,7 +117,7 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
           <div className={styles.tareaGroup}>
             
             <RadioGroup
-              label="Proyecto de Estructuras"
+              label="Proyecto de estructuras"
               fieldName="proyectoEstructuras"
               value={formData.proyectoEstructuras}
             />
@@ -136,22 +136,22 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
           <div className={styles.tareaGroup}>
 
             <RadioGroup
-              label="Instalación Sanitaria"
+              label="Instalaciones sanitarias y gas"
               fieldName="instalacionSanitaria"
               value={formData.instalacionSanitaria}
             />
             <RadioGroup
-              label="Instalación Eléctrica"
+              label="Instalaciones eléctricas"
               fieldName="instalacionElectrica"
               value={formData.instalacionElectrica}
             />
             <RadioGroup
-              label="Instalación Contra Incendio"
+              label="Instalaciones contra incendio"
               fieldName="instalacionContraIncendio"
               value={formData.instalacionContraIncendio}
             />
             <RadioGroup
-              label="Instalación Termomecánica"
+              label="Instalaciones termomecánicas"
               fieldName="instalacionTermomecanica"
               value={formData.instalacionTermomecanica}
             />
@@ -169,7 +169,7 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
               value={formData.observacionesTareas}
               onChange={onChange}
               className={styles.textarea}
-              placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy nibh..."
+              placeholder="Ingrese aquí cualquier observación relevante sobre las tareas profesionales a realizar..."
               rows={12}
             />
           </div>

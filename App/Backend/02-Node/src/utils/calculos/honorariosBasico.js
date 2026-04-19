@@ -9,7 +9,9 @@
 
 import {
   COEFICIENTES_PROYECTO_DIRECCION,
-  COEFICIENTES_INSTALACIONES,
+  COEFICIENTES_SANITARIA_ELECTRICA,
+  COEFICIENTES_INCENDIO,
+  COEFICIENTES_TERMOMECANICA,
   COEFICIENTES_ESTRUCTURAS,
   PORCENTAJES_TAREA,
   NOMBRES_RANGO,
@@ -182,7 +184,7 @@ export function calcularHonorariosBasico(formData, valorK = VALOR_K_DEFAULT) {
     agregarItemsTarea(
       items,
       'Proyecto de instalación sanitaria',
-      COEFICIENTES_INSTALACIONES[rango],
+      COEFICIENTES_SANITARIA_ELECTRICA[rango],
       nombreRango,
       formData.valorObra,
       valorK,
@@ -195,7 +197,7 @@ export function calcularHonorariosBasico(formData, valorK = VALOR_K_DEFAULT) {
     agregarItemsTarea(
       items,
       'Proyecto de instalación eléctrica',
-      COEFICIENTES_INSTALACIONES[rango],
+      COEFICIENTES_SANITARIA_ELECTRICA[rango],
       nombreRango,
       formData.valorObra,
       valorK,
@@ -208,7 +210,7 @@ export function calcularHonorariosBasico(formData, valorK = VALOR_K_DEFAULT) {
     agregarItemsTarea(
       items,
       'Proyecto de instalación contra incendios',
-      COEFICIENTES_INSTALACIONES[rango],
+      COEFICIENTES_INCENDIO[rango],
       nombreRango,
       formData.valorObra,
       valorK,
@@ -221,7 +223,7 @@ export function calcularHonorariosBasico(formData, valorK = VALOR_K_DEFAULT) {
     agregarItemsTarea(
       items,
       'Proyecto de instalación termomecánica',
-      COEFICIENTES_INSTALACIONES[rango],
+      COEFICIENTES_TERMOMECANICA[rango],
       nombreRango,
       formData.valorObra,
       valorK,

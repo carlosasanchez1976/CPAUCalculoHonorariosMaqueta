@@ -17,15 +17,68 @@ export const COEFICIENTES_PROYECTO_DIRECCION = {
   rangoD: { obra: 0.04, k: 0.63 }
 };
 
+// ============================================================================
+// ❌ DEPRECADO - Mantener temporalmente para tests de regresión
+// ============================================================================
 /**
  * Coeficientes para Instalaciones (Sanitaria, Eléctrica, Contra Incendio, Termomecánica)
  * Porcentaje: 100%
+ * 
+ * @deprecated Usar COEFICIENTES_SANITARIA_ELECTRICA, COEFICIENTES_INCENDIO
+ *             o COEFICIENTES_TERMOMECANICA según corresponda
  */
 export const COEFICIENTES_INSTALACIONES = {
   rangoA: { obra: 0.0023, k: 0 },
   rangoB: { obra: 0.0012, k: 0 },
   rangoC: { obra: 0.0008, k: 0 },
   rangoD: { obra: 0.0004, k: 0 }
+};
+
+// ============================================================================
+// ✅ NUEVAS CONSTANTES (CPAU 2026)
+// ============================================================================
+
+/**
+ * Coeficientes para Instalación Sanitaria/Gas e Instalación Eléctrica
+ * NOTA: Ambas tareas comparten los mismos coeficientes según CPAU 2026
+ * Porcentaje: 100%
+ * 
+ * @constant
+ * @type {Object}
+ */
+export const COEFICIENTES_SANITARIA_ELECTRICA = {
+  rangoA: { obra: 0.0040, k: 0 },  // Hasta 0.5k
+  rangoB: { obra: 0.0014, k: 0 },  // 0.5k a 5k
+  rangoC: { obra: 0.0012, k: 0 },  // 5k a 25k
+  rangoD: { obra: 0.0005, k: 0 }   // Más de 25k
+};
+
+/**
+ * Coeficientes para Instalación Contra Incendio
+ * Porcentaje: 100%
+ * 
+ * @constant
+ * @type {Object}
+ */
+export const COEFICIENTES_INCENDIO = {
+  rangoA: { obra: 0.0010, k: 0 },  // Hasta 0.5k
+  rangoB: { obra: 0.0007, k: 0 },  // 0.5k a 5k
+  rangoC: { obra: 0.0006, k: 0 },  // 5k a 25k
+  rangoD: { obra: 0.00025, k: 0 }  // Más de 25k
+};
+
+/**
+ * Coeficientes para Instalación Termomecánica
+ * Porcentaje: 100%
+ * 
+ * @constant
+ * @type {Object}
+ */
+export const COEFICIENTES_TERMOMECANICA = {
+  rangoA: { obra: 0.0010, k: 0 },  // Hasta 0.5k
+  rangoB: { obra: 0.0007, k: 0 },  // 0.5k a 5k
+  rangoC: { obra: 0.0006, k: 0 },  // 5k a 25k
+  rangoD: { obra: 0.00025, k: 0 }  // Más de 25k
 };
 
 /**

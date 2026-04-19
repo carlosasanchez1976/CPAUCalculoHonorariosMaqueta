@@ -1,0 +1,933 @@
+================================================================================
+TICKETS - SPEC-CALC-001: COEFICIENTES DIFERENCIADOS POR INSTALACIÓN
+================================================================================
+Proyecto: CH2026 - Sistema de Gestión de Cálculo de Honorarios CPAU
+Fecha: 19/04/2026
+Versión: 1.0
+Spec Origen: SPEC-CALC-001-Coeficientes-Instalaciones-Diferenciados.md
+================================================================================
+
+OBJETIVO GENERAL:
+Implementar coeficientes diferenciados por tipo de instalación según nuevas
+tablas CPAU 2026. Cada tipo de instalación (Sanitaria, Eléctrica, Contra
+Incendio, Termomecánica) tendrá sus propios coeficientes en lugar de
+compartir un único conjunto.
+
+JUSTIFICACIÓN:
+El CPAU ha actualizado sus tablas de honorarios 2026 para reflejar mejor la
+complejidad técnica de cada especialidad:
+- Sanitaria/Eléctrica: Incrementos +17% a +74% (mayor complejidad)
+- Incendio/Termomecánica: Reducción -25% a -57% (menor complejidad)
+
+ESTRATEGIA DE IMPLEMENTACIÓN:
+- Metodología: Spec-Driven Development (SDD) + Test-Driven Development (TDD)
+- Principio: Tests primero, luego código
+- Garantía: API Contract permanece estable (frontend sin cambios)
+
+ALCANCE:
+✅ Modificar tablasCoeficientes.js (nuevas constantes)
+✅ Modificar honorariosBasico.js (lógica de asignación)
+✅ Tests unitarios completos (3 casos + regresión)
+❌ NO cambiar contrato de API
+❌ NO modificar frontend
+❌ NO tocar Proyecto/Dirección/Estructuras
+
+ARCHIVOS AFECTADOS:
+- App/Backend/02-Node/src/utils/calculos/tablasCoeficientes.js
+- App/Backend/02-Node/src/utils/calculos/honorariosBasico.js
+- App/Backend/02-Node/src/utils/calculos/__tests__/honorariosBasico.test.js
+
+ESTIMACIÓN TOTAL: 5 horas
+
+================================================================================
+TICKET #001 - DATOS: NUEVAS TABLAS DE COEFICIENTES
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Agregar tres nuevas constantes de coeficientes diferenciadas por tipo de
+instalación en tablasCoeficientes.js, reemplazando la constante única
+COEFICIENTES_INSTALACIONES.
+
+CONTEXTO:
+Actualmente existe una única tabla `COEFICIENTES_INSTALACIONES` que se usa
+para todas las instalaciones. Las nuevas tablas CPAU 2026 requieren
+coeficientes específicos para:
+- Sanitaria/Gas y Eléctrica (comparten coeficientes)
+- Contra Incendio (coeficientes propios)
+- Termomecánica (coeficientes propios)
+
+UBICACIÓN: App/Backend/02-Node/src/utils/calculos/tablasCoeficientes.js
+
+CAMBIOS A REALIZAR:
+
+```javascript
+// ============================================================================
+// ❌ DEPRECAR (mantener temporalmente para tests de regresión)
+// ============================================================================
+/**
+ * @deprecated Usar COEFICIENTES_SANITARIA_ELECTRICA, COEFICIENTES_INCENDIO
+ *             o COEFICIENTES_TERMOMECANICA según corresponda
+ */
+export const COEFICIENTES_INSTALACIONES = {
+  rangoA: { obra: 0.0023, k: 0 },
+  rangoB: { obra: 0.0012, k: 0 },
+  rangoC: { obra: 0.0008, k: 0 },
+  rangoD: { obra: 0.0004, k: 0 }
+};
+
+// ============================================================================
+// ✅ NUEVAS CONSTANTES (CPAU 2026)
+// ============================================================================
+
+/**
+ * Coeficientes para Instalación Sanitaria/Gas e Instalación Eléctrica
+ * NOTA: Ambas tareas comparten los mismos coeficientes según CPAU 2026
+ * Porcentaje: 100%
+ * 
+ * @constant
+ * @type {Object}
+ */
+export const COEFICIENTES_SANITARIA_ELECTRICA = {
+  rangoA: { obra: 0.0040, k: 0 },  // Hasta 0.5k
+  rangoB: { obra: 0.0014, k: 0 },  // 0.5k a 5k
+  rangoC: { obra: 0.0012, k: 0 },  // 5k a 25k
+  rangoD: { obra: 0.0005, k: 0 }   // Más de 25k
+};
+
+/**
+ * Coeficientes para Instalación Contra Incendio
+ * Porcentaje: 100%
+ * 
+ * @constant
+ * @type {Object}
+ */
+export const COEFICIENTES_INCENDIO = {
+  rangoA: { obra: 0.0010, k: 0 },  // Hasta 0.5k
+  rangoB: { obra: 0.0007, k: 0 },  // 0.5k a 5k
+  rangoC: { obra: 0.0006, k: 0 },  // 5k a 25k
+  rangoD: { obra: 0.00025, k: 0 }  // Más de 25k
+};
+
+/**
+ * Coeficientes para Instalación Termomecánica
+ * Porcentaje: 100%
+ * 
+ * @constant
+ * @type {Object}
+ */
+export const COEFICIENTES_TERMOMECANICA = {
+  rangoA: { obra: 0.0010, k: 0 },  // Hasta 0.5k
+  rangoB: { obra: 0.0007, k: 0 },  // 0.5k a 5k
+  rangoC: { obra: 0.0006, k: 0 },  // 5k a 25k
+  rangoD: { obra: 0.00025, k: 0 }  // Más de 25k
+};
+```
+
+SUBTAREAS:
+
+[T001.1] Agregar COEFICIENTES_SANITARIA_ELECTRICA
+  ⏳ Agregar constante después de COEFICIENTES_INSTALACIONES
+  ⏳ Incluir JSDoc completo con @constant y @type
+  ⏳ Comentarios de rangos (hasta 0.5k, 0.5k a 5k, etc.)
+  ⏳ Valores exactos según SPEC (0.0040, 0.0014, 0.0012, 0.0005)
+
+[T001.2] Agregar COEFICIENTES_INCENDIO
+  ⏳ Agregar constante después de COEFICIENTES_SANITARIA_ELECTRICA
+  ⏳ Incluir JSDoc completo
+  ⏳ Valores exactos según SPEC (0.0010, 0.0007, 0.0006, 0.00025)
+
+[T001.3] Agregar COEFICIENTES_TERMOMECANICA
+  ⏳ Agregar constante después de COEFICIENTES_INCENDIO
+  ⏳ Incluir JSDoc completo
+  ⏳ Valores exactos según SPEC (0.0010, 0.0007, 0.0006, 0.00025)
+
+[T001.4] Marcar COEFICIENTES_INSTALACIONES como @deprecated
+  ⏳ Agregar tag @deprecated en JSDoc
+  ⏳ Mensaje indicando qué constantes usar
+  ⏳ NO eliminar aún (se usa en tests de regresión)
+  ⏳ Agregar comentario visual separador
+
+[T001.5] Validar valores numéricos
+  ⏳ Verificar coeficientes contra SPEC (sección 3.2)
+  ⏳ Verificar precision decimal (4 decimales)
+  ⏳ Verificar que k = 0 en todos los casos
+  ⏳ Doble check: Sanitaria = Eléctrica
+  ⏳ Doble check: Incendio = Termomecánica
+
+CRITERIOS DE ACEPTACIÓN:
+□ Tres nuevas constantes agregadas correctamente
+□ JSDoc completo en cada constante
+□ Valores coinciden 100% con SPEC-CALC-001 sección 3.2
+□ COEFICIENTES_INSTALACIONES marcado como @deprecated
+□ Código formateado y sin errores de sintaxis
+□ Exports correctos (export const)
+□ Comentarios de rango en cada línea
+
+ARCHIVOS A CREAR/MODIFICAR:
+- App/Backend/02-Node/src/utils/calculos/tablasCoeficientes.js (MODIFICAR)
+
+VALIDACIÓN:
+```javascript
+// Verificar exports
+import { 
+  COEFICIENTES_SANITARIA_ELECTRICA,
+  COEFICIENTES_INCENDIO,
+  COEFICIENTES_TERMOMECANICA 
+} from './tablasCoeficientes.js';
+
+console.log(COEFICIENTES_SANITARIA_ELECTRICA.rangoA); // { obra: 0.0040, k: 0 }
+console.log(COEFICIENTES_INCENDIO.rangoB);             // { obra: 0.0007, k: 0 }
+console.log(COEFICIENTES_TERMOMECANICA.rangoD);        // { obra: 0.00025, k: 0 }
+```
+
+DEPENDENCIAS:
+- Ninguna (primer ticket)
+
+ESTIMACIÓN: 30 minutos
+RESPONSABLE: Backend Dev
+PRIORIDAD: 🔴 ALTA (bloquea otros tickets)
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #002 - TESTS: TEST-DRIVEN DEVELOPMENT (TDD)
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Escribir tests unitarios PRIMERO (antes de modificar honorariosBasico.js)
+según metodología TDD. Incluir 3 casos de prueba de la SPEC + tests de
+regresión para garantizar que Proyecto/Dirección/Estructuras no cambian.
+
+CONTEXTO:
+Según metodología SDD/TDD, los tests se escriben ANTES del código de
+producción. Estos tests fallarán inicialmente (RED) y pasarán después de
+implementar los cambios en honorariosBasico.js (GREEN).
+
+UBICACIÓN: App/Backend/02-Node/src/utils/calculos/__tests__/honorariosBasico.test.js
+
+CASOS DE PRUEBA A IMPLEMENTAR:
+
+**Test Suite: Coeficientes Diferenciados por Instalación (SPEC-CALC-001)**
+
+```javascript
+import { describe, test, expect } from '@jest/globals';
+import {
+  calcularHonorariosBasico,
+  calcularTotalHonorarios,
+  obtenerMetadataCalculo
+} from '../honorariosBasico.js';
+
+describe('SPEC-CALC-001: Coeficientes Diferenciados por Instalación', () => {
+  
+  const VALOR_K = 522181756.33;
+  
+  // ========================================================================
+  // CASO DE PRUEBA #1: Sanitaria + Eléctrica (Rango A)
+  // ========================================================================
+  describe('Caso #1: Sanitaria + Eléctrica - Rango A', () => {
+    test('debe usar COEFICIENTES_SANITARIA_ELECTRICA para ambas tareas', () => {
+      const formData = {
+        valorObra: 100000000,  // $100M → Rango A
+        instalacionSanitaria: true,
+        instalacionElectrica: true
+      };
+      
+      const resultado = calcularHonorariosBasico(formData, VALOR_K);
+      
+      // Validar número de items
+      expect(resultado).toHaveLength(2);
+      
+      // Validar Sanitaria
+      const itemSanitaria = resultado.find(
+        item => item.tareaProfesional === 'Proyecto de instalación sanitaria'
+      );
+      expect(itemSanitaria).toBeDefined();
+      expect(itemSanitaria.importe).toBe(400000); // 0.0040 * 100M
+      expect(itemSanitaria.descripcion).toContain('0.4%');
+      
+      // Validar Eléctrica
+      const itemElectrica = resultado.find(
+        item => item.tareaProfesional === 'Proyecto de instalación eléctrica'
+      );
+      expect(itemElectrica).toBeDefined();
+      expect(itemElectrica.importe).toBe(400000); // 0.0040 * 100M
+      expect(itemElectrica.descripcion).toContain('0.4%');
+      
+      // Validar que ambas usan el mismo coeficiente
+      expect(itemSanitaria.importe).toBe(itemElectrica.importe);
+      
+      // Validar total
+      const total = calcularTotalHonorarios(resultado);
+      expect(total).toBe(800000);
+    });
+  });
+  
+  // ========================================================================
+  // CASO DE PRUEBA #2: Todas las Instalaciones (Rango B)
+  // ========================================================================
+  describe('Caso #2: Todas las Instalaciones - Rango B', () => {
+    test('debe usar coeficientes diferenciados por tipo de instalación', () => {
+      const formData = {
+        valorObra: 2000000000,  // $2,000M → Rango B
+        instalacionSanitaria: true,
+        instalacionElectrica: true,
+        instalacionContraIncendio: true,
+        instalacionTermomecanica: true
+      };
+      
+      const resultado = calcularHonorariosBasico(formData, VALOR_K);
+      
+      // Validar número de items
+      expect(resultado).toHaveLength(4);
+      
+      // Validar Sanitaria (0.0014)
+      const itemSanitaria = resultado.find(
+        item => item.tareaProfesional === 'Proyecto de instalación sanitaria'
+      );
+      expect(itemSanitaria.importe).toBe(2800000);
+      expect(itemSanitaria.descripcion).toContain('0.14%');
+      
+      // Validar Eléctrica (0.0014)
+      const itemElectrica = resultado.find(
+        item => item.tareaProfesional === 'Proyecto de instalación eléctrica'
+      );
+      expect(itemElectrica.importe).toBe(2800000);
+      expect(itemElectrica.descripcion).toContain('0.14%');
+      
+      // Validar Incendio (0.0007)
+      const itemIncendio = resultado.find(
+        item => item.tareaProfesional === 'Proyecto de instalación contra incendios'
+      );
+      expect(itemIncendio.importe).toBe(1400000);
+      expect(itemIncendio.descripcion).toContain('0.07%');
+      
+      // Validar Termomecánica (0.0007)
+      const itemTermomecanica = resultado.find(
+        item => item.tareaProfesional === 'Proyecto de instalación termomecánica'
+      );
+      expect(itemTermomecanica.importe).toBe(1400000);
+      expect(itemTermomecanica.descripcion).toContain('0.07%');
+      
+      // Validar relaciones entre coeficientes
+      expect(itemSanitaria.importe).toBe(itemElectrica.importe);
+      expect(itemIncendio.importe).toBe(itemTermomecanica.importe);
+      expect(itemSanitaria.importe).toBeGreaterThan(itemIncendio.importe);
+      
+      // Validar total
+      const total = calcularTotalHonorarios(resultado);
+      expect(total).toBe(8400000);
+    });
+  });
+  
+  // ========================================================================
+  // CASO DE PRUEBA #3: Solo Incendio (Rango D)
+  // ========================================================================
+  describe('Caso #3: Solo Incendio - Rango D', () => {
+    test('debe usar COEFICIENTES_INCENDIO para rango D', () => {
+      const formData = {
+        valorObra: 20000000000,  // $20,000M → Rango D
+        instalacionContraIncendio: true
+      };
+      
+      const resultado = calcularHonorariosBasico(formData, VALOR_K);
+      
+      // Validar número de items
+      expect(resultado).toHaveLength(1);
+      
+      // Validar Incendio
+      const itemIncendio = resultado[0];
+      expect(itemIncendio.tareaProfesional).toBe('Proyecto de instalación contra incendios');
+      expect(itemIncendio.importe).toBe(5000000); // 0.00025 * 20,000M
+      expect(itemIncendio.descripcion).toContain('0.025%');
+      
+      // Validar metadata
+      const metadata = obtenerMetadataCalculo(formData, VALOR_K);
+      expect(metadata.rango).toBe('D');
+    });
+  });
+  
+  // ========================================================================
+  // TESTS DE REGRESIÓN: Proyecto/Dirección/Estructuras NO CAMBIAN
+  // ========================================================================
+  describe('Tests de Regresión: Otras tareas sin cambios', () => {
+    test('Proyecto y Dirección de Obra deben mantener coeficientes anteriores', () => {
+      const formData = {
+        valorObra: 100000000,
+        obraProyecto: true,
+        obraDireccion: true
+      };
+      
+      const resultado = calcularHonorariosBasico(formData, VALOR_K);
+      
+      // Validar que existen
+      const itemProyecto = resultado.find(
+        item => item.tareaProfesional === 'Proyecto de Obra'
+      );
+      const itemDireccion = resultado.find(
+        item => item.tareaProfesional === 'Dirección de Obra'
+      );
+      
+      expect(itemProyecto).toBeDefined();
+      expect(itemDireccion).toBeDefined();
+      
+      // Validar que usan COEFICIENTES_PROYECTO_DIRECCION (0.14 para Rango A)
+      // Proyecto = 60%, Dirección = 40%
+      expect(itemProyecto.importe).toBe(8400000);   // 0.14 * 100M * 0.6
+      expect(itemDireccion.importe).toBe(5600000);  // 0.14 * 100M * 0.4
+    });
+    
+    test('Proyecto de Estructuras debe mantener coeficientes anteriores', () => {
+      const formData = {
+        valorObra: 100000000,
+        proyectoEstructuras: true
+      };
+      
+      const resultado = calcularHonorariosBasico(formData, VALOR_K);
+      
+      const itemEstructuras = resultado.find(
+        item => item.tareaProfesional === 'Proyecto de estructuras'
+      );
+      
+      expect(itemEstructuras).toBeDefined();
+      // Estructuras Rango A: 0.0030
+      expect(itemEstructuras.importe).toBe(300000); // 0.0030 * 100M
+    });
+    
+    test('Cálculo mixto: Proyecto + Estructuras (sin instalaciones) debe ser idéntico', () => {
+      const formData = {
+        valorObra: 500000000,
+        obraProyecto: true,
+        proyectoEstructuras: true
+      };
+      
+      const resultado = calcularHonorariosBasico(formData, VALOR_K);
+      const total = calcularTotalHonorarios(resultado);
+      
+      // Este total debe ser EXACTAMENTE igual al cálculo con versión anterior
+      // Proyecto Rango A: 0.14 * 500M * 0.6 = 42M
+      // Estructuras Rango A: 0.0030 * 500M = 1.5M
+      // Total: 43.5M
+      expect(total).toBe(43500000);
+    });
+  });
+  
+  // ========================================================================
+  // TESTS DE VALIDACIÓN DE COEFICIENTES
+  // ========================================================================
+  describe('Validación de coeficientes por rango', () => {
+    test('Sanitaria/Eléctrica - Todos los rangos', () => {
+      const rangos = [
+        { valorObra: 100000000, rango: 'A', coef: 0.0040 },
+        { valorObra: 2000000000, rango: 'B', coef: 0.0014 },
+        { valorObra: 10000000000, rango: 'C', coef: 0.0012 },
+        { valorObra: 20000000000, rango: 'D', coef: 0.0005 }
+      ];
+      
+      rangos.forEach(({ valorObra, rango, coef }) => {
+        const formData = {
+          valorObra,
+          instalacionSanitaria: true
+        };
+        
+        const resultado = calcularHonorariosBasico(formData, VALOR_K);
+        const item = resultado[0];
+        const importeEsperado = coef * valorObra;
+        
+        expect(item.importe).toBe(importeEsperado);
+        
+        const metadata = obtenerMetadataCalculo(formData, VALOR_K);
+        expect(metadata.rango).toBe(rango);
+      });
+    });
+    
+    test('Incendio/Termomecánica - Todos los rangos', () => {
+      const rangos = [
+        { valorObra: 100000000, rango: 'A', coef: 0.0010 },
+        { valorObra: 2000000000, rango: 'B', coef: 0.0007 },
+        { valorObra: 10000000000, rango: 'C', coef: 0.0006 },
+        { valorObra: 20000000000, rango: 'D', coef: 0.00025 }
+      ];
+      
+      rangos.forEach(({ valorObra, rango, coef }) => {
+        const formData = {
+          valorObra,
+          instalacionContraIncendio: true
+        };
+        
+        const resultado = calcularHonorariosBasico(formData, VALOR_K);
+        const item = resultado[0];
+        const importeEsperado = coef * valorObra;
+        
+        expect(item.importe).toBe(importeEsperado);
+        
+        const metadata = obtenerMetadataCalculo(formData, VALOR_K);
+        expect(metadata.rango).toBe(rango);
+      });
+    });
+  });
+});
+```
+
+SUBTAREAS:
+
+[T002.1] Crear estructura de test suite
+  ⏳ Crear archivo honorariosBasico.test.js si no existe
+  ⏳ Configurar imports de Jest
+  ⏳ Configurar imports de funciones a testear
+  ⏳ Estructura describe() principal
+
+[T002.2] Implementar Caso de Prueba #1
+  ⏳ Test: Sanitaria + Eléctrica (Rango A)
+  ⏳ Validar número de items (2)
+  ⏳ Validar importes (400,000 cada uno)
+  ⏳ Validar descripciones (0.4%)
+  ⏳ Validar total (800,000)
+
+[T002.3] Implementar Caso de Prueba #2
+  ⏳ Test: Todas las instalaciones (Rango B)
+  ⏳ Validar número de items (4)
+  ⏳ Validar importes diferenciados
+  ⏳ Validar relaciones entre coeficientes
+  ⏳ Validar total (8,400,000)
+
+[T002.4] Implementar Caso de Prueba #3
+  ⏳ Test: Solo Incendio (Rango D)
+  ⏳ Validar importe (5,000,000)
+  ⏳ Validar metadata.rango = 'D'
+
+[T002.5] Implementar Tests de Regresión
+  ⏳ Test: Proyecto + Dirección sin cambios
+  ⏳ Test: Estructuras sin cambios
+  ⏳ Test: Cálculo mixto idéntico a versión anterior
+
+[T002.6] Implementar Tests de Validación por Rango
+  ⏳ Test: Sanitaria/Eléctrica 4 rangos
+  ⏳ Test: Incendio/Termomecánica 4 rangos
+
+[T002.7] Ejecutar tests (deben FALLAR - RED)
+  ⏳ npm test honorariosBasico.test.js
+  ⏳ Verificar que todos los tests nuevos fallan
+  ⏳ Tests de regresión deben PASAR
+
+CRITERIOS DE ACEPTACIÓN:
+□ Test suite completa con 3 casos + regresión
+□ Tests escritos según SPEC-CALC-001 sección 6
+□ Valores esperados coinciden con SPEC
+□ Tests de regresión incluidos
+□ Tests ejecutan correctamente
+□ Tests FALLAN (RED) antes de implementación
+□ Tests de regresión PASAN
+□ Cobertura de código >90% en código afectado
+
+ARCHIVOS A CREAR/MODIFICAR:
+- App/Backend/02-Node/src/utils/calculos/__tests__/honorariosBasico.test.js (CREAR/MODIFICAR)
+
+VALIDACIÓN:
+```bash
+# Ejecutar tests
+npm test honorariosBasico.test.js
+
+# Resultado esperado:
+# ❌ FAIL: Caso #1: Sanitaria + Eléctrica - Rango A
+# ❌ FAIL: Caso #2: Todas las Instalaciones - Rango B
+# ❌ FAIL: Caso #3: Solo Incendio - Rango D
+# ✅ PASS: Tests de regresión (Proyecto/Dirección/Estructuras)
+```
+
+DEPENDENCIAS:
+- Requiere: Ticket #001 completado (nuevas constantes disponibles)
+
+ESTIMACIÓN: 2 horas
+RESPONSABLE: Backend Dev / QA
+PRIORIDAD: 🔴 ALTA (TDD - tests antes que código)
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #003 - IMPLEMENTACIÓN: MODIFICAR LÓGICA DE CÁLCULO
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Modificar honorariosBasico.js para usar los coeficientes diferenciados por
+tipo de instalación. Actualizar imports y cambiar la asignación de
+coeficientes en cada bloque de instalación.
+
+CONTEXTO:
+Los tests del Ticket #002 están escritos y FALLAN (RED). Ahora implementamos
+el código para hacer que pasen (GREEN). La lógica cambia para que cada tipo
+de instalación use su tabla de coeficientes específica.
+
+UBICACIÓN: App/Backend/02-Node/src/utils/calculos/honorariosBasico.js
+
+CAMBIOS A REALIZAR:
+
+**Paso 1: Actualizar imports**
+
+```javascript
+// ANTES:
+import {
+  COEFICIENTES_PROYECTO_DIRECCION,
+  COEFICIENTES_INSTALACIONES,    // ← ELIMINAR
+  COEFICIENTES_ESTRUCTURAS,
+  PORCENTAJES_TAREA,
+  NOMBRES_RANGO,
+  VALOR_K_DEFAULT
+} from './tablasCoeficientes.js';
+
+// DESPUÉS:
+import {
+  COEFICIENTES_PROYECTO_DIRECCION,
+  COEFICIENTES_SANITARIA_ELECTRICA,  // ← NUEVO
+  COEFICIENTES_INCENDIO,              // ← NUEVO
+  COEFICIENTES_TERMOMECANICA,         // ← NUEVO
+  COEFICIENTES_ESTRUCTURAS,
+  PORCENTAJES_TAREA,
+  NOMBRES_RANGO,
+  VALOR_K_DEFAULT
+} from './tablasCoeficientes.js';
+```
+
+**Paso 2: Modificar bloque Instalación Sanitaria**
+
+```javascript
+// ANTES (líneas ~105-115):
+if (formData.instalacionSanitaria) {
+  agregarItemsTarea(
+    items,
+    'Proyecto de instalación sanitaria',
+    COEFICIENTES_INSTALACIONES,  // ← CAMBIAR
+    nombreRango,
+    formData.valorObra,
+    valorK,
+    PORCENTAJES_TAREA.instalaciones
+  );
+}
+
+// DESPUÉS:
+if (formData.instalacionSanitaria) {
+  agregarItemsTarea(
+    items,
+    'Proyecto de instalación sanitaria',
+    COEFICIENTES_SANITARIA_ELECTRICA,  // ← NUEVO
+    nombreRango,
+    formData.valorObra,
+    valorK,
+    PORCENTAJES_TAREA.instalaciones
+  );
+}
+```
+
+**Paso 3: Modificar bloque Instalación Eléctrica**
+
+```javascript
+// ANTES (líneas ~117-127):
+if (formData.instalacionElectrica) {
+  agregarItemsTarea(
+    items,
+    'Proyecto de instalación eléctrica',
+    COEFICIENTES_INSTALACIONES,  // ← CAMBIAR
+    nombreRango,
+    formData.valorObra,
+    valorK,
+    PORCENTAJES_TAREA.instalaciones
+  );
+}
+
+// DESPUÉS:
+if (formData.instalacionElectrica) {
+  agregarItemsTarea(
+    items,
+    'Proyecto de instalación eléctrica',
+    COEFICIENTES_SANITARIA_ELECTRICA,  // ← NUEVO (mismo que sanitaria)
+    nombreRango,
+    formData.valorObra,
+    valorK,
+    PORCENTAJES_TAREA.instalaciones
+  );
+}
+```
+
+**Paso 4: Modificar bloque Instalación Contra Incendio**
+
+```javascript
+// ANTES (líneas ~129-139):
+if (formData.instalacionContraIncendio) {
+  agregarItemsTarea(
+    items,
+    'Proyecto de instalación contra incendios',
+    COEFICIENTES_INSTALACIONES,  // ← CAMBIAR
+    nombreRango,
+    formData.valorObra,
+    valorK,
+    PORCENTAJES_TAREA.instalaciones
+  );
+}
+
+// DESPUÉS:
+if (formData.instalacionContraIncendio) {
+  agregarItemsTarea(
+    items,
+    'Proyecto de instalación contra incendios',
+    COEFICIENTES_INCENDIO,  // ← NUEVO
+    nombreRango,
+    formData.valorObra,
+    valorK,
+    PORCENTAJES_TAREA.instalaciones
+  );
+}
+```
+
+**Paso 5: Modificar bloque Instalación Termomecánica**
+
+```javascript
+// ANTES (líneas ~141-151):
+if (formData.instalacionTermomecanica) {
+  agregarItemsTarea(
+    items,
+    'Proyecto de instalación termomecánica',
+    COEFICIENTES_INSTALACIONES,  // ← CAMBIAR
+    nombreRango,
+    formData.valorObra,
+    valorK,
+    PORCENTAJES_TAREA.instalaciones
+  );
+}
+
+// DESPUÉS:
+if (formData.instalacionTermomecanica) {
+  agregarItemsTarea(
+    items,
+    'Proyecto de instalación termomecánica',
+    COEFICIENTES_TERMOMECANICA,  // ← NUEVO
+    nombreRango,
+    formData.valorObra,
+    valorK,
+    PORCENTAJES_TAREA.instalaciones
+  );
+}
+```
+
+SUBTAREAS:
+
+[T003.1] Actualizar imports
+  ⏳ Modificar import de tablasCoeficientes.js
+  ⏳ Agregar COEFICIENTES_SANITARIA_ELECTRICA
+  ⏳ Agregar COEFICIENTES_INCENDIO
+  ⏳ Agregar COEFICIENTES_TERMOMECANICA
+  ⏳ Eliminar COEFICIENTES_INSTALACIONES del import
+
+[T003.2] Modificar bloque instalacionSanitaria
+  ⏳ Localizar bloque if (formData.instalacionSanitaria)
+  ⏳ Cambiar COEFICIENTES_INSTALACIONES por COEFICIENTES_SANITARIA_ELECTRICA
+  ⏳ Verificar indentación y formato
+
+[T003.3] Modificar bloque instalacionElectrica
+  ⏳ Localizar bloque if (formData.instalacionElectrica)
+  ⏳ Cambiar COEFICIENTES_INSTALACIONES por COEFICIENTES_SANITARIA_ELECTRICA
+  ⏳ Verificar indentación y formato
+
+[T003.4] Modificar bloque instalacionContraIncendio
+  ⏳ Localizar bloque if (formData.instalacionContraIncendio)
+  ⏳ Cambiar COEFICIENTES_INSTALACIONES por COEFICIENTES_INCENDIO
+  ⏳ Verificar indentación y formato
+
+[T003.5] Modificar bloque instalacionTermomecanica
+  ⏳ Localizar bloque if (formData.instalacionTermomecanica)
+  ⏳ Cambiar COEFICIENTES_INSTALACIONES por COEFICIENTES_TERMOMECANICA
+  ⏳ Verificar indentación y formato
+
+[T003.6] Ejecutar tests (deben PASAR - GREEN)
+  ⏳ npm test honorariosBasico.test.js
+  ⏳ Verificar que TODOS los tests pasan
+  ⏳ Verificar tests de regresión siguen pasando
+  ⏳ Cobertura de código >90%
+
+[T003.7] Verificar NO hay referencias a COEFICIENTES_INSTALACIONES
+  ⏳ Buscar "COEFICIENTES_INSTALACIONES" en honorariosBasico.js
+  ⏳ No debe haber usos (excepto en comentarios si aplica)
+  ⏳ Confirmar que solo se usa en tablasCoeficientes.js (deprecado)
+
+CRITERIOS DE ACEPTACIÓN:
+□ Imports actualizados correctamente
+□ 4 bloques de instalaciones modificados
+□ Cada instalación usa su coeficiente específico
+□ Sanitaria y Eléctrica usan COEFICIENTES_SANITARIA_ELECTRICA
+□ Incendio usa COEFICIENTES_INCENDIO
+□ Termomecánica usa COEFICIENTES_TERMOMECANICA
+□ TODOS los tests pasan (GREEN)
+□ Tests de regresión pasan
+□ No hay referencias a COEFICIENTES_INSTALACIONES en código activo
+□ Código formateado y sin errores de sintaxis
+
+ARCHIVOS A MODIFICAR:
+- App/Backend/02-Node/src/utils/calculos/honorariosBasico.js (MODIFICAR)
+
+VALIDACIÓN:
+```bash
+# Ejecutar tests
+npm test honorariosBasico.test.js
+
+# Resultado esperado:
+# ✅ PASS: Caso #1: Sanitaria + Eléctrica - Rango A
+# ✅ PASS: Caso #2: Todas las Instalaciones - Rango B
+# ✅ PASS: Caso #3: Solo Incendio - Rango D
+# ✅ PASS: Tests de regresión
+
+# Todos los tests en VERDE ✅
+```
+
+DEPENDENCIAS:
+- Requiere: Ticket #001 completado (nuevas constantes)
+- Requiere: Ticket #002 completado (tests escritos)
+
+ESTIMACIÓN: 1 hora
+RESPONSABLE: Backend Dev
+PRIORIDAD: 🔴 ALTA
+
+--------------------------------------------------------------------------------
+
+================================================================================
+TICKET #004 - VALIDACIÓN Y CLEANUP
+================================================================================
+ESTADO: ⏳ PENDIENTE
+
+DESCRIPCIÓN:
+Validar implementación completa, eliminar código deprecado, actualizar
+documentación y preparar para deployment.
+
+CONTEXTO:
+Los tests pasan (GREEN), el código funciona. Ahora limpiamos código deprecado,
+actualizamos documentación y validamos contra los criterios de aceptación de
+la SPEC.
+
+SUBTAREAS:
+
+[T004.1] Eliminar código deprecado
+  ⏳ Eliminar COEFICIENTES_INSTALACIONES de tablasCoeficientes.js
+  ⏳ Verificar que ningún código lo referencia
+  ⏳ Ejecutar tests para confirmar que todo sigue funcionando
+
+[T004.2] Actualizar JSDoc
+  ⏳ Revisar JSDoc en calcularHonorariosBasico()
+  ⏳ Agregar nota sobre cambio de coeficientes
+  ⏳ Actualizar @version si aplica
+  ⏳ Agregar referencia a SPEC-CALC-001
+
+[T004.3] Validación manual con datos del CPAU
+  ⏳ Ejecutar cálculo con caso conocido del CPAU
+  ⏳ Comparar resultado con cálculo manual
+  ⏳ Validar decimales y redondeo
+  ⏳ Documentar resultado de validación
+
+[T004.4] Verificar criterios de aceptación SPEC
+  ⏳ Revisar todos los CA de SPEC-CALC-001 sección 8
+  ⏳ Marcar cada criterio como cumplido
+  ⏳ Documentar cualquier desviación (no debería haber)
+
+[T004.5] Actualizar documentación
+  ⏳ Agregar nota de cambio en README.md
+  ⏳ Actualizar CHANGELOG si existe
+  ⏳ Documentar diferencia de resultados (ejemplo antes/después)
+
+[T004.6] Ejecutar tests completos
+  ⏳ npm test (todos los tests del proyecto)
+  ⏳ Verificar cobertura de código
+  ⏳ Verificar que no hay regresiones
+
+[T004.7] Preparar commit
+  ⏳ git add archivos modificados
+  ⏳ Commit con mensaje según SPEC:
+      "feat(calc): diferenciar coeficientes por tipo de instalación - SPEC-CALC-001"
+  ⏳ Push a rama feature/spec-calc-001
+
+CRITERIOS DE ACEPTACIÓN:
+□ COEFICIENTES_INSTALACIONES eliminado
+□ JSDoc actualizado con referencias a SPEC
+□ Validación manual exitosa
+□ Todos los CA de SPEC cumplidos
+□ Documentación actualizada
+□ Todos los tests pasan
+□ Cobertura de código >90%
+□ Commit preparado con mensaje apropiado
+□ README actualizado con nota de cambio
+
+ARCHIVOS A MODIFICAR:
+- App/Backend/02-Node/src/utils/calculos/tablasCoeficientes.js (LIMPIAR)
+- App/Backend/02-Node/src/utils/calculos/honorariosBasico.js (JSDOC)
+- App/Backend/02-Node/README.md (DOCUMENTAR)
+- App/Backend/02-Node/CHANGELOG.md (si existe)
+
+EJEMPLO DE NOTA EN README:
+
+```markdown
+## Cambios Recientes
+
+### [2026-04-19] Coeficientes Diferenciados por Instalación (SPEC-CALC-001)
+
+**Cambio:** Se implementaron coeficientes diferenciados por tipo de instalación
+según nuevas tablas CPAU 2026.
+
+**Antes:**
+- Todas las instalaciones usaban los mismos coeficientes
+
+**Después:**
+- Sanitaria/Eléctrica: Coeficientes propios (incremento +17% a +74%)
+- Incendio: Coeficientes propios (reducción -25% a -57%)
+- Termomecánica: Coeficientes propios (reducción -25% a -57%)
+
+**Impacto:**
+- ✅ Frontend: Sin cambios (API compatible)
+- ✅ Backend: Solo cálculo interno modificado
+- ✅ Precisión: Mayor exactitud según complejidad técnica
+
+**Referencia:** `01-Docs/00-Specs/SPEC-CALC-001-Coeficientes-Instalaciones-Diferenciados.md`
+```
+
+DEPENDENCIAS:
+- Requiere: Ticket #001 completado
+- Requiere: Ticket #002 completado
+- Requiere: Ticket #003 completado
+
+ESTIMACIÓN: 1.5 horas
+RESPONSABLE: Backend Dev + QA
+PRIORIDAD: 🟡 MEDIA
+
+--------------------------------------------------------------------------------
+
+================================================================================
+RESUMEN DE IMPLEMENTACIÓN
+================================================================================
+
+ORDEN DE EJECUCIÓN:
+1. ✅ Ticket #001 - Agregar nuevas tablas de coeficientes
+2. ✅ Ticket #002 - Escribir tests (TDD - RED)
+3. ✅ Ticket #003 - Implementar cambios (TDD - GREEN)
+4. ✅ Ticket #004 - Validación y cleanup
+
+ESTIMACIÓN TOTAL: 5 horas
+├─ Ticket #001: 30 min
+├─ Ticket #002: 2 horas
+├─ Ticket #003: 1 hora
+└─ Ticket #004: 1.5 horas
+
+CRITERIOS DE ÉXITO:
+□ Todos los tests pasan ✅
+□ Cobertura >90% ✅
+□ API compatible (sin breaking changes) ✅
+□ Validación manual exitosa ✅
+□ Documentación actualizada ✅
+□ Código deprecado eliminado ✅
+
+ARCHIVOS AFECTADOS:
+├─ tablasCoeficientes.js (3 nuevas constantes, 1 eliminada)
+├─ honorariosBasico.js (imports + 4 bloques modificados)
+├─ honorariosBasico.test.js (3 casos + regresión)
+└─ README.md (documentación de cambio)
+
+SIGUIENTE PASO:
+Comenzar con Ticket #001 siguiendo metodología TDD/SDD.
+
+================================================================================

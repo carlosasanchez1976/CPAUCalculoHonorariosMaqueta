@@ -33,7 +33,7 @@ const PARAMETROS_INICIALES = [
     id: 2,
     nombre: 'valorK',
     tipo: 'number',
-    valor: 522181756.33,
+    valor: 574813607.00,
     descripcion: 'Valor índice de referencia cálculo de Honorarios CPAU'
   },
   {

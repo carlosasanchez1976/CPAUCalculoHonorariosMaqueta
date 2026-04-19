@@ -142,6 +142,7 @@ const LoginPage = () => {
             error={errors.password}
             required
             autoComplete="current-password"
+            showPasswordToggle
           />
 
           {/* Checkbox Recordarme */}

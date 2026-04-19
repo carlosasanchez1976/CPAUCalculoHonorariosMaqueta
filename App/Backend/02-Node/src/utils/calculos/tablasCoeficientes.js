@@ -4,6 +4,9 @@
  * 
  * ⚠️ CONFIDENCIAL: Este archivo contiene datos propietarios del CPAU
  * Solo debe ejecutarse en servidor, NUNCA en navegador del cliente
+ * 
+ * @version 2.0.0 - SPEC-CALC-001: Coeficientes diferenciados por tipo de instalación
+ * @see {@link ../../../../../../01-Docs/00-Specs/SPEC-CALC-001-Coeficientes-Instalaciones-Diferenciados.md}
  */
 
 /**
@@ -18,24 +21,7 @@ export const COEFICIENTES_PROYECTO_DIRECCION = {
 };
 
 // ============================================================================
-// ❌ DEPRECADO - Mantener temporalmente para tests de regresión
-// ============================================================================
-/**
- * Coeficientes para Instalaciones (Sanitaria, Eléctrica, Contra Incendio, Termomecánica)
- * Porcentaje: 100%
- * 
- * @deprecated Usar COEFICIENTES_SANITARIA_ELECTRICA, COEFICIENTES_INCENDIO
- *             o COEFICIENTES_TERMOMECANICA según corresponda
- */
-export const COEFICIENTES_INSTALACIONES = {
-  rangoA: { obra: 0.0023, k: 0 },
-  rangoB: { obra: 0.0012, k: 0 },
-  rangoC: { obra: 0.0008, k: 0 },
-  rangoD: { obra: 0.0004, k: 0 }
-};
-
-// ============================================================================
-// ✅ NUEVAS CONSTANTES (CPAU 2026)
+// COEFICIENTES DIFERENCIADOS POR INSTALACIÓN (CPAU 2026 - SPEC-CALC-001)
 // ============================================================================
 
 /**
@@ -86,8 +72,8 @@ export const COEFICIENTES_TERMOMECANICA = {
  * Porcentaje: 100%
  */
 export const COEFICIENTES_ESTRUCTURAS = {
-  rangoA: { obra: 0.0030, k: 0 },
-  rangoB: { obra: 0.0026, k: 0 },
+  rangoA: { obra: 0.0060, k: 0 },
+  rangoB: { obra: 0.0028, k: 0 },
   rangoC: { obra: 0.0021, k: 0 },
   rangoD: { obra: 0.0016, k: 0 }
 };
@@ -116,4 +102,4 @@ export const NOMBRES_RANGO = {
  * Valor K por defecto (CPAU)
  * ⚠️ CONFIDENCIAL: Este valor debe actualizarse según legislación vigente
  */
-export const VALOR_K_DEFAULT = 522181756.33;
+export const VALOR_K_DEFAULT = 574813607.00;

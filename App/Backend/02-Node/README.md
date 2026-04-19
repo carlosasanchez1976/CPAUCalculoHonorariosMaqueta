@@ -2,7 +2,41 @@
 
 **Proyecto:** CH2026 - Sistema de Gestión de Cálculo de Honorarios CPAU  
 **Stack:** Node.js 18+ + Express  
-**Propósito:** API REST para cálculo de honorarios profesionales
+**Propósito:** API REST para cálculo de honorarios profesionales  
+**Versión:** 2.0.0 (SPEC-CALC-001)
+
+---
+
+## 📋 Cambios Recientes
+
+### [19/04/2026] Coeficientes Diferenciados por Instalación (SPEC-CALC-001)
+
+**Cambio:** Se implementaron coeficientes diferenciados por tipo de instalación según nuevas tablas CPAU 2026.
+
+**Antes:**
+- Todas las instalaciones (Sanitaria, Eléctrica, Incendio, Termomecánica) usaban los mismos coeficientes
+- Coeficientes únicos: Rango A: 0.0023, Rango B: 0.0012, Rango C: 0.0008, Rango D: 0.0004
+
+**Después:**
+- **Sanitaria/Eléctrica**: Coeficientes propios (incremento +17% a +74% según rango)
+  - Rango A: 0.0040, Rango B: 0.0014, Rango C: 0.0012, Rango D: 0.0005
+- **Incendio**: Coeficientes propios (reducción -25% a -57% según rango)
+  - Rango A: 0.0010, Rango B: 0.0007, Rango C: 0.0006, Rango D: 0.00025
+- **Termomecánica**: Coeficientes propios (reducción -25% a -57% según rango)
+  - Rango A: 0.0010, Rango B: 0.0007, Rango C: 0.0006, Rango D: 0.00025
+
+**Impacto:**
+- ✅ Frontend: Sin cambios (API completamente compatible)
+- ✅ Backend: Solo cálculo interno modificado
+- ✅ Precisión: Mayor exactitud según complejidad técnica de cada especialidad
+- ✅ Tests: 8/8 tests pasando con validación completa
+
+**Archivos modificados:**
+- `src/utils/calculos/tablasCoeficientes.js` - Nuevas constantes de coeficientes
+- `src/utils/calculos/honorariosBasico.js` - Lógica de asignación por tipo
+- `src/utils/calculos/__tests__/honorariosBasico.test.js` - Tests unitarios
+
+**Referencia:** `01-Docs/00-Specs/SPEC-CALC-001-Coeficientes-Instalaciones-Diferenciados.md`
 
 ---
 

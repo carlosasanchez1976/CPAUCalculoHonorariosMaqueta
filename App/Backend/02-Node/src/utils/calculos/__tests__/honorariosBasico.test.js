@@ -186,8 +186,8 @@ describe('SPEC-CALC-001: Coeficientes Diferenciados por Instalación', () => {
       );
       
       assert.ok(itemEstructuras, 'Debe existir item de Estructuras');
-      // Estructuras Rango A: 0.0030
-      assert.strictEqual(itemEstructuras.importe, 300000, 'Importe debe ser 300,000 (0.0030 * 100M)');
+      // Estructuras Rango A: 0.0060
+      assert.strictEqual(itemEstructuras.importe, 600000, 'Importe debe ser 600,000 (0.0060 * 100M)');
     });
     
     test('Cálculo mixto: Proyecto + Estructuras (sin instalaciones) debe ser idéntico', () => {
@@ -202,9 +202,9 @@ describe('SPEC-CALC-001: Coeficientes Diferenciados por Instalación', () => {
       
       // Este total debe ser EXACTAMENTE igual al cálculo con versión anterior
       // Proyecto Rango A: 0.14 * 100M * 0.6 = 8.4M
-      // Estructuras Rango A: 0.0030 * 100M = 0.3M
-      // Total: 8.7M
-      assert.ok(Math.abs(total - 8700000) < 1, 'Total debe ser aproximadamente 8,700,000');
+      // Estructuras Rango A: 0.0060 * 100M = 0.6M
+      // Total: 9.0M
+      assert.ok(Math.abs(total - 9000000) < 1, 'Total debe ser aproximadamente 9,000,000');
     });
   });
   

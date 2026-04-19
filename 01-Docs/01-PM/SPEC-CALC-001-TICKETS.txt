@@ -42,7 +42,7 @@ ESTIMACIÓN TOTAL: 5 horas
 ================================================================================
 TICKET #001 - DATOS: NUEVAS TABLAS DE COEFICIENTES
 ================================================================================
-ESTADO: ⏳ PENDIENTE
+ESTADO: ✅ COMPLETADO
 
 DESCRIPCIÓN:
 Agregar tres nuevas constantes de coeficientes diferenciadas por tipo de
@@ -127,42 +127,42 @@ export const COEFICIENTES_TERMOMECANICA = {
 SUBTAREAS:
 
 [T001.1] Agregar COEFICIENTES_SANITARIA_ELECTRICA
-  ⏳ Agregar constante después de COEFICIENTES_INSTALACIONES
-  ⏳ Incluir JSDoc completo con @constant y @type
-  ⏳ Comentarios de rangos (hasta 0.5k, 0.5k a 5k, etc.)
-  ⏳ Valores exactos según SPEC (0.0040, 0.0014, 0.0012, 0.0005)
+  ✅ Agregar constante después de COEFICIENTES_INSTALACIONES
+  ✅ Incluir JSDoc completo con @constant y @type
+  ✅ Comentarios de rangos (hasta 0.5k, 0.5k a 5k, etc.)
+  ✅ Valores exactos según SPEC (0.0040, 0.0014, 0.0012, 0.0005)
 
 [T001.2] Agregar COEFICIENTES_INCENDIO
-  ⏳ Agregar constante después de COEFICIENTES_SANITARIA_ELECTRICA
-  ⏳ Incluir JSDoc completo
-  ⏳ Valores exactos según SPEC (0.0010, 0.0007, 0.0006, 0.00025)
+  ✅ Agregar constante después de COEFICIENTES_SANITARIA_ELECTRICA
+  ✅ Incluir JSDoc completo
+  ✅ Valores exactos según SPEC (0.0010, 0.0007, 0.0006, 0.00025)
 
 [T001.3] Agregar COEFICIENTES_TERMOMECANICA
-  ⏳ Agregar constante después de COEFICIENTES_INCENDIO
-  ⏳ Incluir JSDoc completo
-  ⏳ Valores exactos según SPEC (0.0010, 0.0007, 0.0006, 0.00025)
+  ✅ Agregar constante después de COEFICIENTES_INCENDIO
+  ✅ Incluir JSDoc completo
+  ✅ Valores exactos según SPEC (0.0010, 0.0007, 0.0006, 0.00025)
 
 [T001.4] Marcar COEFICIENTES_INSTALACIONES como @deprecated
-  ⏳ Agregar tag @deprecated en JSDoc
-  ⏳ Mensaje indicando qué constantes usar
-  ⏳ NO eliminar aún (se usa en tests de regresión)
-  ⏳ Agregar comentario visual separador
+  ✅ Agregar tag @deprecated en JSDoc
+  ✅ Mensaje indicando qué constantes usar
+  ✅ NO eliminar aún (se usa en tests de regresión)
+  ✅ Agregar comentario visual separador
 
 [T001.5] Validar valores numéricos
-  ⏳ Verificar coeficientes contra SPEC (sección 3.2)
-  ⏳ Verificar precision decimal (4 decimales)
-  ⏳ Verificar que k = 0 en todos los casos
-  ⏳ Doble check: Sanitaria = Eléctrica
-  ⏳ Doble check: Incendio = Termomecánica
+  ✅ Verificar coeficientes contra SPEC (sección 3.2)
+  ✅ Verificar precision decimal (4 decimales)
+  ✅ Verificar que k = 0 en todos los casos
+  ✅ Doble check: Sanitaria = Eléctrica
+  ✅ Doble check: Incendio = Termomecánica
 
 CRITERIOS DE ACEPTACIÓN:
-□ Tres nuevas constantes agregadas correctamente
-□ JSDoc completo en cada constante
-□ Valores coinciden 100% con SPEC-CALC-001 sección 3.2
-□ COEFICIENTES_INSTALACIONES marcado como @deprecated
-□ Código formateado y sin errores de sintaxis
-□ Exports correctos (export const)
-□ Comentarios de rango en cada línea
+✅ Tres nuevas constantes agregadas correctamente
+✅ JSDoc completo en cada constante
+✅ Valores coinciden 100% con SPEC-CALC-001 sección 3.2
+✅ COEFICIENTES_INSTALACIONES marcado como @deprecated
+✅ Código formateado y sin errores de sintaxis
+✅ Exports correctos (export const)
+✅ Comentarios de rango en cada línea
 
 ARCHIVOS A CREAR/MODIFICAR:
 - App/Backend/02-Node/src/utils/calculos/tablasCoeficientes.js (MODIFICAR)
@@ -193,7 +193,7 @@ PRIORIDAD: 🔴 ALTA (bloquea otros tickets)
 ================================================================================
 TICKET #002 - TESTS: TEST-DRIVEN DEVELOPMENT (TDD)
 ================================================================================
-ESTADO: ⏳ PENDIENTE
+ESTADO: ✅ COMPLETADO
 
 DESCRIPCIÓN:
 Escribir tests unitarios PRIMERO (antes de modificar honorariosBasico.js)
@@ -473,53 +473,53 @@ describe('SPEC-CALC-001: Coeficientes Diferenciados por Instalación', () => {
 SUBTAREAS:
 
 [T002.1] Crear estructura de test suite
-  ⏳ Crear archivo honorariosBasico.test.js si no existe
-  ⏳ Configurar imports de Jest
-  ⏳ Configurar imports de funciones a testear
-  ⏳ Estructura describe() principal
+  ✅ Crear archivo honorariosBasico.test.js si no existe
+  ✅ Configurar imports de Jest
+  ✅ Configurar imports de funciones a testear
+  ✅ Estructura describe() principal
 
 [T002.2] Implementar Caso de Prueba #1
-  ⏳ Test: Sanitaria + Eléctrica (Rango A)
-  ⏳ Validar número de items (2)
-  ⏳ Validar importes (400,000 cada uno)
-  ⏳ Validar descripciones (0.4%)
-  ⏳ Validar total (800,000)
+  ✅ Test: Sanitaria + Eléctrica (Rango A)
+  ✅ Validar número de items (2)
+  ✅ Validar importes (400,000 cada uno)
+  ✅ Validar descripciones (0.4%)
+  ✅ Validar total (800,000)
 
 [T002.3] Implementar Caso de Prueba #2
-  ⏳ Test: Todas las instalaciones (Rango B)
-  ⏳ Validar número de items (4)
-  ⏳ Validar importes diferenciados
-  ⏳ Validar relaciones entre coeficientes
-  ⏳ Validar total (8,400,000)
+  ✅ Test: Todas las instalaciones (Rango B)
+  ✅ Validar número de items (4)
+  ✅ Validar importes diferenciados
+  ✅ Validar relaciones entre coeficientes
+  ✅ Validar total (8,400,000)
 
 [T002.4] Implementar Caso de Prueba #3
-  ⏳ Test: Solo Incendio (Rango D)
-  ⏳ Validar importe (5,000,000)
-  ⏳ Validar metadata.rango = 'D'
+  ✅ Test: Solo Incendio (Rango D)
+  ✅ Validar importe (5,000,000)
+  ✅ Validar metadata.rango = 'D'
 
 [T002.5] Implementar Tests de Regresión
-  ⏳ Test: Proyecto + Dirección sin cambios
-  ⏳ Test: Estructuras sin cambios
-  ⏳ Test: Cálculo mixto idéntico a versión anterior
+  ✅ Test: Proyecto + Dirección sin cambios
+  ✅ Test: Estructuras sin cambios
+  ✅ Test: Cálculo mixto idéntico a versión anterior
 
 [T002.6] Implementar Tests de Validación por Rango
-  ⏳ Test: Sanitaria/Eléctrica 4 rangos
-  ⏳ Test: Incendio/Termomecánica 4 rangos
+  ✅ Test: Sanitaria/Eléctrica 4 rangos
+  ✅ Test: Incendio/Termomecánica 4 rangos
 
 [T002.7] Ejecutar tests (deben FALLAR - RED)
-  ⏳ npm test honorariosBasico.test.js
-  ⏳ Verificar que todos los tests nuevos fallan
-  ⏳ Tests de regresión deben PASAR
+  ✅ npm test honorariosBasico.test.js
+  ✅ Verificar que todos los tests nuevos fallan
+  ✅ Tests de regresión deben PASAR
 
 CRITERIOS DE ACEPTACIÓN:
-□ Test suite completa con 3 casos + regresión
-□ Tests escritos según SPEC-CALC-001 sección 6
-□ Valores esperados coinciden con SPEC
-□ Tests de regresión incluidos
-□ Tests ejecutan correctamente
-□ Tests FALLAN (RED) antes de implementación
-□ Tests de regresión PASAN
-□ Cobertura de código >90% en código afectado
+✅ Test suite completa con 3 casos + regresión
+✅ Tests escritos según SPEC-CALC-001 sección 6
+✅ Valores esperados coinciden con SPEC
+✅ Tests de regresión incluidos
+✅ Tests ejecutan correctamente
+✅ Tests FALLAN (RED) antes de implementación
+✅ Tests de regresión PASAN
+✅ Cobertura de código >90% en código afectado
 
 ARCHIVOS A CREAR/MODIFICAR:
 - App/Backend/02-Node/src/utils/calculos/__tests__/honorariosBasico.test.js (CREAR/MODIFICAR)
@@ -548,7 +548,7 @@ PRIORIDAD: 🔴 ALTA (TDD - tests antes que código)
 ================================================================================
 TICKET #003 - IMPLEMENTACIÓN: MODIFICAR LÓGICA DE CÁLCULO
 ================================================================================
-ESTADO: ⏳ PENDIENTE
+ESTADO: ✅ COMPLETADO
 
 DESCRIPCIÓN:
 Modificar honorariosBasico.js para usar los coeficientes diferenciados por
@@ -713,54 +713,54 @@ if (formData.instalacionTermomecanica) {
 SUBTAREAS:
 
 [T003.1] Actualizar imports
-  ⏳ Modificar import de tablasCoeficientes.js
-  ⏳ Agregar COEFICIENTES_SANITARIA_ELECTRICA
-  ⏳ Agregar COEFICIENTES_INCENDIO
-  ⏳ Agregar COEFICIENTES_TERMOMECANICA
-  ⏳ Eliminar COEFICIENTES_INSTALACIONES del import
+  ✅ Modificar import de tablasCoeficientes.js
+  ✅ Agregar COEFICIENTES_SANITARIA_ELECTRICA
+  ✅ Agregar COEFICIENTES_INCENDIO
+  ✅ Agregar COEFICIENTES_TERMOMECANICA
+  ✅ Eliminar COEFICIENTES_INSTALACIONES del import
 
 [T003.2] Modificar bloque instalacionSanitaria
-  ⏳ Localizar bloque if (formData.instalacionSanitaria)
-  ⏳ Cambiar COEFICIENTES_INSTALACIONES por COEFICIENTES_SANITARIA_ELECTRICA
-  ⏳ Verificar indentación y formato
+  ✅ Localizar bloque if (formData.instalacionSanitaria)
+  ✅ Cambiar COEFICIENTES_INSTALACIONES por COEFICIENTES_SANITARIA_ELECTRICA
+  ✅ Verificar indentación y formato
 
 [T003.3] Modificar bloque instalacionElectrica
-  ⏳ Localizar bloque if (formData.instalacionElectrica)
-  ⏳ Cambiar COEFICIENTES_INSTALACIONES por COEFICIENTES_SANITARIA_ELECTRICA
-  ⏳ Verificar indentación y formato
+  ✅ Localizar bloque if (formData.instalacionElectrica)
+  ✅ Cambiar COEFICIENTES_INSTALACIONES por COEFICIENTES_SANITARIA_ELECTRICA
+  ✅ Verificar indentación y formato
 
 [T003.4] Modificar bloque instalacionContraIncendio
-  ⏳ Localizar bloque if (formData.instalacionContraIncendio)
-  ⏳ Cambiar COEFICIENTES_INSTALACIONES por COEFICIENTES_INCENDIO
-  ⏳ Verificar indentación y formato
+  ✅ Localizar bloque if (formData.instalacionContraIncendio)
+  ✅ Cambiar COEFICIENTES_INSTALACIONES por COEFICIENTES_INCENDIO
+  ✅ Verificar indentación y formato
 
 [T003.5] Modificar bloque instalacionTermomecanica
-  ⏳ Localizar bloque if (formData.instalacionTermomecanica)
-  ⏳ Cambiar COEFICIENTES_INSTALACIONES por COEFICIENTES_TERMOMECANICA
-  ⏳ Verificar indentación y formato
+  ✅ Localizar bloque if (formData.instalacionTermomecanica)
+  ✅ Cambiar COEFICIENTES_INSTALACIONES por COEFICIENTES_TERMOMECANICA
+  ✅ Verificar indentación y formato
 
 [T003.6] Ejecutar tests (deben PASAR - GREEN)
-  ⏳ npm test honorariosBasico.test.js
-  ⏳ Verificar que TODOS los tests pasan
-  ⏳ Verificar tests de regresión siguen pasando
-  ⏳ Cobertura de código >90%
+  ✅ npm test honorariosBasico.test.js
+  ✅ Verificar que TODOS los tests pasan
+  ✅ Verificar tests de regresión siguen pasando
+  ✅ Cobertura de código >90%
 
 [T003.7] Verificar NO hay referencias a COEFICIENTES_INSTALACIONES
-  ⏳ Buscar "COEFICIENTES_INSTALACIONES" en honorariosBasico.js
-  ⏳ No debe haber usos (excepto en comentarios si aplica)
-  ⏳ Confirmar que solo se usa en tablasCoeficientes.js (deprecado)
+  ✅ Buscar "COEFICIENTES_INSTALACIONES" en honorariosBasico.js
+  ✅ No debe haber usos (excepto en comentarios si aplica)
+  ✅ Confirmar que solo se usa en tablasCoeficientes.js (deprecado)
 
 CRITERIOS DE ACEPTACIÓN:
-□ Imports actualizados correctamente
-□ 4 bloques de instalaciones modificados
-□ Cada instalación usa su coeficiente específico
-□ Sanitaria y Eléctrica usan COEFICIENTES_SANITARIA_ELECTRICA
-□ Incendio usa COEFICIENTES_INCENDIO
-□ Termomecánica usa COEFICIENTES_TERMOMECANICA
-□ TODOS los tests pasan (GREEN)
-□ Tests de regresión pasan
-□ No hay referencias a COEFICIENTES_INSTALACIONES en código activo
-□ Código formateado y sin errores de sintaxis
+✅ Imports actualizados correctamente
+✅ 4 bloques de instalaciones modificados
+✅ Cada instalación usa su coeficiente específico
+✅ Sanitaria y Eléctrica usan COEFICIENTES_SANITARIA_ELECTRICA
+✅ Incendio usa COEFICIENTES_INCENDIO
+✅ Termomecánica usa COEFICIENTES_TERMOMECANICA
+✅ TODOS los tests pasan (GREEN)
+✅ Tests de regresión pasan
+✅ No hay referencias a COEFICIENTES_INSTALACIONES en código activo
+✅ Código formateado y sin errores de sintaxis
 
 ARCHIVOS A MODIFICAR:
 - App/Backend/02-Node/src/utils/calculos/honorariosBasico.js (MODIFICAR)
@@ -792,7 +792,7 @@ PRIORIDAD: 🔴 ALTA
 ================================================================================
 TICKET #004 - VALIDACIÓN Y CLEANUP
 ================================================================================
-ESTADO: ⏳ PENDIENTE
+ESTADO: ✅ COMPLETADO
 
 DESCRIPCIÓN:
 Validar implementación completa, eliminar código deprecado, actualizar
@@ -806,53 +806,53 @@ la SPEC.
 SUBTAREAS:
 
 [T004.1] Eliminar código deprecado
-  ⏳ Eliminar COEFICIENTES_INSTALACIONES de tablasCoeficientes.js
-  ⏳ Verificar que ningún código lo referencia
-  ⏳ Ejecutar tests para confirmar que todo sigue funcionando
+  ✅ Eliminar COEFICIENTES_INSTALACIONES de tablasCoeficientes.js
+  ✅ Verificar que ningún código lo referencia
+  ✅ Ejecutar tests para confirmar que todo sigue funcionando
 
 [T004.2] Actualizar JSDoc
-  ⏳ Revisar JSDoc en calcularHonorariosBasico()
-  ⏳ Agregar nota sobre cambio de coeficientes
-  ⏳ Actualizar @version si aplica
-  ⏳ Agregar referencia a SPEC-CALC-001
+  ✅ Revisar JSDoc en calcularHonorariosBasico()
+  ✅ Agregar nota sobre cambio de coeficientes
+  ✅ Actualizar @version si aplica
+  ✅ Agregar referencia a SPEC-CALC-001
 
 [T004.3] Validación manual con datos del CPAU
-  ⏳ Ejecutar cálculo con caso conocido del CPAU
-  ⏳ Comparar resultado con cálculo manual
-  ⏳ Validar decimales y redondeo
-  ⏳ Documentar resultado de validación
+  ✅ Ejecutar cálculo con caso conocido del CPAU
+  ✅ Comparar resultado con cálculo manual
+  ✅ Validar decimales y redondeo
+  ✅ Documentar resultado de validación
 
 [T004.4] Verificar criterios de aceptación SPEC
-  ⏳ Revisar todos los CA de SPEC-CALC-001 sección 8
-  ⏳ Marcar cada criterio como cumplido
-  ⏳ Documentar cualquier desviación (no debería haber)
+  ✅ Revisar todos los CA de SPEC-CALC-001 sección 8
+  ✅ Marcar cada criterio como cumplido
+  ✅ Documentar cualquier desviación (no debería haber)
 
 [T004.5] Actualizar documentación
-  ⏳ Agregar nota de cambio en README.md
-  ⏳ Actualizar CHANGELOG si existe
-  ⏳ Documentar diferencia de resultados (ejemplo antes/después)
+  ✅ Agregar nota de cambio en README.md
+  ✅ Actualizar CHANGELOG si existe
+  ✅ Documentar diferencia de resultados (ejemplo antes/después)
 
 [T004.6] Ejecutar tests completos
-  ⏳ npm test (todos los tests del proyecto)
-  ⏳ Verificar cobertura de código
-  ⏳ Verificar que no hay regresiones
+  ✅ npm test (todos los tests del proyecto)
+  ✅ Verificar cobertura de código
+  ✅ Verificar que no hay regresiones
 
 [T004.7] Preparar commit
-  ⏳ git add archivos modificados
-  ⏳ Commit con mensaje según SPEC:
+  ✅ git add archivos modificados
+  ✅ Commit con mensaje según SPEC:
       "feat(calc): diferenciar coeficientes por tipo de instalación - SPEC-CALC-001"
-  ⏳ Push a rama feature/spec-calc-001
+  ✅ Push a rama feature/spec-calc-001
 
 CRITERIOS DE ACEPTACIÓN:
-□ COEFICIENTES_INSTALACIONES eliminado
-□ JSDoc actualizado con referencias a SPEC
-□ Validación manual exitosa
-□ Todos los CA de SPEC cumplidos
-□ Documentación actualizada
-□ Todos los tests pasan
-□ Cobertura de código >90%
-□ Commit preparado con mensaje apropiado
-□ README actualizado con nota de cambio
+✅ COEFICIENTES_INSTALACIONES eliminado
+✅ JSDoc actualizado con referencias a SPEC
+✅ Validación manual exitosa
+✅ Todos los CA de SPEC cumplidos
+✅ Documentación actualizada
+✅ Todos los tests pasan
+✅ Cobertura de código >90%
+✅ Commit preparado con mensaje apropiado
+✅ README actualizado con nota de cambio
 
 ARCHIVOS A MODIFICAR:
 - App/Backend/02-Node/src/utils/calculos/tablasCoeficientes.js (LIMPIAR)
@@ -914,12 +914,12 @@ ESTIMACIÓN TOTAL: 5 horas
 └─ Ticket #004: 1.5 horas
 
 CRITERIOS DE ÉXITO:
-□ Todos los tests pasan ✅
-□ Cobertura >90% ✅
-□ API compatible (sin breaking changes) ✅
-□ Validación manual exitosa ✅
-□ Documentación actualizada ✅
-□ Código deprecado eliminado ✅
+✅ Todos los tests pasan (8/8)
+✅ Cobertura >90%
+✅ API compatible (sin breaking changes)
+✅ Validación manual exitosa
+✅ Documentación actualizada
+✅ Código deprecado eliminado
 
 ARCHIVOS AFECTADOS:
 ├─ tablasCoeficientes.js (3 nuevas constantes, 1 eliminada)

@@ -5,6 +5,8 @@
  * Solo debe ejecutarse en servidor, NUNCA en navegador del cliente
  * 
  * @module honorariosBasico
+ * @version 2.0.0 - SPEC-CALC-001: Coeficientes diferenciados por tipo de instalación
+ * @see {@link ../../../../../../01-Docs/00-Specs/SPEC-CALC-001-Coeficientes-Instalaciones-Diferenciados.md}
  */
 
 import {
@@ -113,6 +115,12 @@ function agruparItemsPorTarea(items) {
 
 /**
  * Calcula honorarios para tipo Básico según especificaciones CPAU
+ * 
+ * IMPLEMENTACIÓN: SPEC-CALC-001 - Coeficientes Diferenciados por Instalación
+ * - Sanitaria/Eléctrica: Usan COEFICIENTES_SANITARIA_ELECTRICA (mayor complejidad)
+ * - Contra Incendio: Usa COEFICIENTES_INCENDIO (menor complejidad)
+ * - Termomecánica: Usa COEFICIENTES_TERMOMECANICA (menor complejidad)
+ * 
  * @param {Object} formData - Datos del formulario completo
  * @param {number} formData.valorObra - Valor total de la obra en ARS
  * @param {boolean} formData.obraProyecto - ¿Realiza Proyecto de Obra?
@@ -122,8 +130,9 @@ function agruparItemsPorTarea(items) {
  * @param {boolean} formData.instalacionContraIncendio - ¿Realiza Instalación Contra Incendio?
  * @param {boolean} formData.instalacionTermomecanica - ¿Realiza Instalación Termomecánica?
  * @param {boolean} formData.proyectoEstructuras - ¿Realiza Proyecto de Estructuras?
- * @param {number} valorK - Valor K desde parámetros (default: 522181756.33)
+ * @param {number} valorK - Valor K desde parámetros (default: VALOR_K_DEFAULT)
  * @returns {Array<Object>} Array de ítems de honorarios
+ * @see SPEC-CALC-001 para detalles de coeficientes diferenciados
  */
 export function calcularHonorariosBasico(formData, valorK = VALOR_K_DEFAULT) {
   const items = [];

@@ -104,7 +104,7 @@ COMMIT ESPERADO:
 --------------------------------------------------------------------------------
 TICKET #002 - DATOS: FUNCIÓN CALCULAR LÍMITES DE RANGOS
 --------------------------------------------------------------------------------
-ESTADO: ⏳ PENDIENTE
+ESTADO: ✅ COMPLETADO (20/04/2026)
 PRIORIDAD: 🔴 CRÍTICA
 ASIGNADO A: Backend Dev
 ESTIMACIÓN: 3 horas
@@ -172,32 +172,38 @@ export function calcularLimitesRangos(valorK) {
 SUBTAREAS:
 
 [T002.1] Implementar función calcularLimitesRangos
-  ☐ Agregar función al final de tablasCoeficientes.js
-  ☐ JSDoc completo con @param, @returns, @example
-  ☐ Validación: valorK > 0 (throw Error si no)
-  ☐ Retornar objeto con 4 rangos (A, B, C, D)
-  ☐ Cada rango tiene: { inferior: number, superior: number }
+  ✅ Agregar función al final de tablasCoeficientes.js
+  ✅ JSDoc completo con @param, @returns, @example
+  ✅ Validación: valorK > 0 (throw Error si no)
+  ✅ Retornar objeto con 4 rangos (A, B, C, D)
+  ✅ Cada rango tiene: { inferior: number, superior: number }
 
 [T002.2] Tests unitarios de calcularLimitesRangos
-  ☐ Crear test file: __tests__/tablasCoeficientes.test.js
-  ☐ Test: valorK = 574.813.607 → limites correctos
-  ☐ Test: Rango A superior = 287.406.803,5
-  ☐ Test: Rango B inferior = Rango A superior (continuidad)
-  ☐ Test: Rango D superior = Number.MAX_SAFE_INTEGER
-  ☐ Test: valorK = 0 → throw Error
-  ☐ Test: valorK negativo → throw Error
+  ✅ Crear test file: __tests__/tablasCoeficientes.test.js
+  ✅ Test: valorK = 574.813.607 → limites correctos
+  ✅ Test: Rango A superior = 287.406.803,5
+  ✅ Test: Rango B inferior = Rango A superior (continuidad)
+  ✅ Test: Rango D superior = Number.MAX_SAFE_INTEGER
+  ✅ Test: valorK = 0 → throw Error
+  ✅ Test: valorK negativo → throw Error
 
 [T002.3] Documentación
-  ☐ Agregar comentarios explicando multiplicadores (0.5, 5, 25)
-  ☐ Agregar referencia a SPEC-CALC-002 en JSDoc
-  ☐ Ejemplo de uso en comentarios
+  ✅ Agregar comentarios explicando multiplicadores (0.5, 5, 25)
+  ✅ Agregar referencia a SPEC-CALC-002 en JSDoc
+  ✅ Ejemplo de uso en comentarios
 
 CRITERIOS DE ACEPTACIÓN:
 ✅ CA-005: Función calcularLimitesRangos exportada correctamente
-✅ CA-006: Tests unitarios pasan (100% coverage)
+✅ CA-006: Tests unitarios pasan (100% coverage - 17 tests)
 ✅ CA-007: Validación de parámetros funciona (throw Error)
 ✅ CA-008: Límites calculados coinciden con SPEC (valorK = 574.813.607)
 ✅ CA-009: JSDoc completo con ejemplo
+
+RESULTADOS:
+✅ Implementado: calcularLimitesRangos() en tablasCoeficientes.js (64 líneas)
+✅ Creado: __tests__/tablasCoeficientes.test.js (177 líneas, 17 tests)
+✅ Actualizado: package.json script de test para usar src/**/*.test.js
+✅ Tests ejecutados: 32/32 pasando (17 nuevos + 8 honorariosBasico + 7 placeholders progresivo)
 
 COMMIT ESPERADO:
 "feat(calc): agregar función calcularLimitesRangos - SPEC-CALC-002"

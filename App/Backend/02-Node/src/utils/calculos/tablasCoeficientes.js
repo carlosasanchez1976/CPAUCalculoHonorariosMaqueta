@@ -103,3 +103,65 @@ export const NOMBRES_RANGO = {
  * ⚠️ CONFIDENCIAL: Este valor debe actualizarse según legislación vigente
  */
 export const VALOR_K_DEFAULT = 574813607.00;
+// ============================================================================
+// FUNCIONES AUXILIARES (SPEC-CALC-002)
+// ============================================================================
+
+/**
+ * Calcula los límites en pesos de cada rango según el valor K vigente
+ * 
+ * Los rangos están definidos por el coeficiente K (valorObra / valorK):
+ * - Rango A: coefK < 0.5  → límites: [0, 0.5 × valorK)
+ * - Rango B: 0.5 ≤ coefK < 5  → límites: [0.5 × valorK, 5 × valorK)
+ * - Rango C: 5 ≤ coefK < 25  → límites: [5 × valorK, 25 × valorK)
+ * - Rango D: coefK ≥ 25  → límites: [25 × valorK, ∞)
+ * 
+ * @param {number} valorK - Índice CPAU actualizado (ej: 574.813.607)
+ * @returns {Object} Objeto con límites inferior/superior por rango en pesos (ARS)
+ * @throws {Error} Si valorK no es un número positivo mayor a 0
+ * 
+ * @example
+ * const limites = calcularLimitesRangos(574813607);
+ * // {
+ * //   rangoA: { inferior: 0, superior: 287406803.5 },
+ * //   rangoB: { inferior: 287406803.5, superior: 2874068035 },
+ * //   rangoC: { inferior: 2874068035, superior: 14370340175 },
+ * //   rangoD: { inferior: 14370340175, superior: 9007199254740991 }
+ * // }
+ * 
+ * @see {@link ../../../../../../01-Docs/00-Specs/SPEC-CALC-002-Arrastre-Coeficientes-Progresivo.md}
+ */
+export function calcularLimitesRangos(valorK) {
+  // Validación de parámetro
+  if (!valorK || typeof valorK !== 'number' || valorK <= 0) {
+    throw new Error('valorK debe ser un número positivo mayor a 0');
+  }
+  
+  // Multiplicadores según normativa CPAU
+  // Rango A: hasta 0.5k (obras pequeñas)
+  // Rango B: entre 0.5k y 5k (obras medianas)
+  // Rango C: entre 5k y 25k (obras grandes)
+  // Rango D: más de 25k (obras muy grandes)
+  const limiteA = 0.5 * valorK;   // 0.5 × K
+  const limiteB = 5 * valorK;     // 5 × K
+  const limiteC = 25 * valorK;    // 25 × K
+  
+  return {
+    rangoA: {
+      inferior: 0,
+      superior: limiteA
+    },
+    rangoB: {
+      inferior: limiteA,
+      superior: limiteB
+    },
+    rangoC: {
+      inferior: limiteB,
+      superior: limiteC
+    },
+    rangoD: {
+      inferior: limiteC,
+      superior: Number.MAX_SAFE_INTEGER  // Infinity práctica (9.007.199.254.740.991)
+    }
+  };
+}

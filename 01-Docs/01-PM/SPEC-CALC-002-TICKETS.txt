@@ -37,11 +37,11 @@ ALCANCE:
 ❌ NO modificar coeficientes (se usan los de SPEC-CALC-001)
 
 ARCHIVOS AFECTADOS:
-- App/Backend/03-Vercel/lib/utils/calculos/tablasCoeficientes.js
-- App/Backend/03-Vercel/lib/utils/calculos/honorariosProgresivo.js (NUEVO)
-- App/Backend/03-Vercel/lib/utils/calculos/__tests__/honorariosProgresivo.test.js (NUEVO)
-- App/Backend/03-Vercel/api/v1/honorarios/calcular.js
-- App/Backend/03-Vercel/lib/utils/calculos/honorariosBasico.js (DEPRECAR)
+- App/Backend/02-Node/src/utils/calculos/tablasCoeficientes.js ← FUENTE DE VERDAD
+- App/Backend/02-Node/src/utils/calculos/honorariosProgresivo.js (NUEVO) ← FUENTE DE VERDAD
+- App/Backend/02-Node/src/utils/calculos/__tests__/honorariosProgresivo.test.js (NUEVO)
+- App/Backend/02-Node/src/utils/calculos/honorariosBasico.js (DEPRECAR)
+- App/Backend/03-Vercel/* (sincronizar después del desarrollo en 02-Node)
 
 ESTIMACIÓN TOTAL: 50 horas (~7 días laborables)
 
@@ -57,7 +57,7 @@ FASE 1: PREPARACIÓN - FUNDAMENTOS
 --------------------------------------------------------------------------------
 TICKET #001 - SETUP: RAMA Y ESTRUCTURA INICIAL
 --------------------------------------------------------------------------------
-ESTADO: ⏳ PENDIENTE
+ESTADO: ✅ COMPLETADO (20/04/2026)
 PRIORIDAD: 🔴 CRÍTICA
 ASIGNADO A: Backend Dev
 ESTIMACIÓN: 1 hora
@@ -70,33 +70,36 @@ archivos base.
 
 UBICACIÓN: 
 - Raíz del proyecto (Git)
-- App/Backend/03-Vercel/lib/utils/calculos/
+- App/Backend/02-Node/src/utils/calculos/ ← DESARROLLO AQUÍ
 
 TAREAS:
 
 [T001.1] Crear rama feature
-  ☐ Crear rama: feature/SPEC-CALC-002-arrastre-progresivo
-  ☐ Verificar que parte de main actualizado
-  ☐ Push de rama vacía a origin
+  ✅ OMITIDO - Trabajando en rama dev (decisión de arquitectura)
 
 [T001.2] Crear archivos stub
-  ☐ Crear: lib/utils/calculos/honorariosProgresivo.js (vacío con JSDoc)
-  ☐ Crear: lib/utils/calculos/__tests__/honorariosProgresivo.test.js (stub)
-  ☐ Verificar estructura de carpetas
+  ✅ Crear: src/utils/calculos/honorariosProgresivo.js (vacío con JSDoc)
+  ✅ Crear: src/utils/calculos/__tests__/honorariosProgresivo.test.js (stub)
+  ✅ Verificar estructura de carpetas
 
 [T001.3] Documentación inicial
-  ☐ Crear README.md en carpeta calculos/ con nota de SPEC-CALC-002
-  ☐ Agregar comentarios de archivo en stubs
-  ☐ Marcar como ⚠️ CONFIDENCIAL
+  ✅ Actualizar README.md de 02-Node con nota de SPEC-CALC-002
+  ✅ Agregar comentarios de archivo en stubs
+  ✅ Marcar como ⚠️ CONFIDENCIAL
 
 CRITERIOS DE ACEPTACIÓN:
-✅ CA-001: Rama feature existe en repositorio
-✅ CA-002: Archivos stub creados con JSDoc básico
+✅ CA-001: ~~Rama feature existe~~ (trabajando en dev)
+✅ CA-002: Archivos stub creados con JSDoc básico en 02-Node
 ✅ CA-003: Estructura de carpetas correcta
 ✅ CA-004: Sin errores de lint/formato
 
+RESULTADOS:
+✅ Creado: App/Backend/02-Node/src/utils/calculos/honorariosProgresivo.js
+✅ Creado: App/Backend/02-Node/src/utils/calculos/__tests__/honorariosProgresivo.test.js
+✅ Actualizado: App/Backend/02-Node/README.md (sección cambios recientes)
+
 COMMIT ESPERADO:
-"chore(calc): setup proyecto SPEC-CALC-002 - arrastre progresivo"
+"chore(calc): setup SPEC-CALC-002 - estructura inicial sistema progresivo"
 
 --------------------------------------------------------------------------------
 TICKET #002 - DATOS: FUNCIÓN CALCULAR LÍMITES DE RANGOS
@@ -121,7 +124,7 @@ Los rangos están definidos por coeficiente K (valorObra / valorK):
 
 Los límites en pesos se calculan como: Límite_Coef_K × Valor_K
 
-UBICACIÓN: App/Backend/03-Vercel/lib/utils/calculos/tablasCoeficientes.js
+UBICACIÓN: App/Backend/02-Node/src/utils/calculos/tablasCoeficientes.js
 
 IMPLEMENTACIÓN:
 
@@ -233,7 +236,7 @@ Implementar 5 casos de prueba definidos en SPEC-CALC-002 Sección 6:
 5. Múltiples tareas (validación completa)
 
 UBICACIÓN: 
-App/Backend/03-Vercel/lib/utils/calculos/__tests__/honorariosProgresivo.test.js
+App/Backend/02-Node/src/utils/calculos/__tests__/honorariosProgresivo.test.js
 
 ESTRUCTURA BASE:
 
@@ -363,7 +366,7 @@ El sistema progresivo debe:
 6. Aplicar coeficiente K solo en el rango final
 
 UBICACIÓN: 
-App/Backend/03-Vercel/lib/utils/calculos/honorariosProgresivo.js
+App/Backend/02-Node/src/utils/calculos/honorariosProgresivo.js
 
 ARQUITECTURA DEL MÓDULO:
 
@@ -588,7 +591,8 @@ honorariosProgresivo.js (sistema escalonado). La metadata de response se
 expande con información adicional de trazabilidad.
 
 UBICACIÓN: 
-App/Backend/03-Vercel/api/v1/honorarios/calcular.js
+App/Backend/02-Node/src/handlers/honorarios.handler.js
+(Nota: En 03-Vercel será api/v1/honorarios/calcular.js - sincronizar después)
 
 CAMBIOS:
 

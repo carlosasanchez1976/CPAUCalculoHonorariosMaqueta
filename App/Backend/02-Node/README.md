@@ -3,11 +3,30 @@
 **Proyecto:** CH2026 - Sistema de Gestión de Cálculo de Honorarios CPAU  
 **Stack:** Node.js 18+ + Express  
 **Propósito:** API REST para cálculo de honorarios profesionales  
-**Versión:** 2.0.0 (SPEC-CALC-001)
+**Versión:** 2.1.0 (SPEC-CALC-002 en desarrollo)
 
 ---
 
 ## 📋 Cambios Recientes
+
+### [20/04/2026] Sistema Progresivo de Honorarios (SPEC-CALC-002) 🚧 EN DESARROLLO
+
+**Estado:** ⏳ Ticket #001 completado - Setup inicial
+
+**Cambio:** Implementación de sistema de cálculo progresivo escalonado donde cada tramo del valor de obra aplica los coeficientes de su rango correspondiente (similar al sistema impositivo por escalas).
+
+**Archivos creados:**
+- ✅ `src/utils/calculos/honorariosProgresivo.js` - Módulo nuevo (stub)
+- ✅ `src/utils/calculos/__tests__/honorariosProgresivo.test.js` - Suite de tests
+
+**Próximos pasos:**
+- ⏳ Ticket #002: Implementar función `calcularLimitesRangos()` en tablasCoeficientes.js
+- ⏳ Ticket #003: Escribir tests completos (TDD - RED phase)
+- ⏳ Ticket #004: Implementar algoritmo progresivo (TDD - GREEN phase)
+
+**Referencia:** `01-Docs/00-Specs/SPEC-CALC-002-Arrastre-Coeficientes-Progresivo.md`
+
+---
 
 ### [19/04/2026] Coeficientes Diferenciados por Instalación (SPEC-CALC-001)
 

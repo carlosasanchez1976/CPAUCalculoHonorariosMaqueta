@@ -82,12 +82,18 @@ El CPAU establece que los honorarios deben calcularse de forma **progresiva esca
 
 ### 2.1 Archivos Afectados
 
+**Desarrollo (Fuente de Verdad - 02-Node):**
+
 | Archivo | Tipo de Cambio | Complejidad |
 |---------|---------------|-------------|
-| `tablasCoeficientes.js` | **NUEVA CONSTANTE** (límites de rangos) | 🟢 Baja |
-| `honorariosBasico.js` | **REESCRITURA COMPLETA** de algoritmo | 🔴 Alta |
-| `honorariosBasico.test.js` | **TESTS NUEVOS** + actualizar existentes | 🟡 Media |
+| `tablasCoeficientes.js` | **NUEVA FUNCIÓN** calcularLimitesRangos() | 🟢 Baja |
+| `honorariosProgresivo.js` | **ARCHIVO NUEVO** con algoritmo progresivo | 🔴 Alta |
+| `honorariosProgresivo.test.js` | **TESTS NUEVOS** 5 casos de prueba | 🟡 Media |
+| `honorariosBasico.js` | **DEPRECAR** (mantener para rollback) | 🟢 Baja |
 | **Contrato API** | **BREAKING CHANGE** en response | 🔴 Alta |
+
+**Deploy (03-Vercel):**
+- Los archivos se sincronizan de 02-Node a 03-Vercel antes del deploy
 | **Frontend** | Adaptar visualización de resultados | 🟡 Media |
 
 ### 2.2 Backward Compatibility
@@ -1127,14 +1133,16 @@ describe('SPEC-CALC-002: Sistema Progresivo de Honorarios', () => {
 });
 ```
 
-#### Archivo 4: `/api/v1/honorarios/calcular.js` (MODIFICAR)
+#### Archivo 4: `src/handlers/honorarios.handler.js` (MODIFICAR - en 02-Node)
+
+**Nota:** La lógica se desarrolla en 02-Node y luego se sincroniza a 03-Vercel para deploy serverless.
 
 ```javascript
 // ❌ DEPRECADO
-// import { calcularHonorariosBasico } from '../../../lib/utils/calculos/honorariosBasico.js';
+// import { calcularHonorariosBasico } from '../utils/calculos/honorariosBasico.js';
 
-// ✅ NUEVO
-import { calcularHonorariosProgresivo } from '../../../lib/utils/calculos/honorariosProgresivo.js';
+// ✅ NUEVO - Desarrollo en 02-Node/src/
+import { calcularHonorariosProgresivo } from '../utils/calculos/honorariosProgresivo.js';
 
 export default async function handler(req, res) {
   // ... validaciones ...

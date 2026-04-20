@@ -525,7 +525,7 @@ Con los tests en GREEN, ahora es seguro refactorizar el código para:
 - Mejorar documentación
 
 UBICACIÓN: 
-App/Backend/03-Vercel/lib/utils/calculos/honorariosProgresivo.js
+App/Backend/02-Node/src/utils/calculos/honorariosProgresivo.js (FUENTE DE VERDAD)
 
 SUBTAREAS:
 
@@ -598,10 +598,10 @@ CAMBIOS:
 
 ```javascript
 // ❌ ANTES (sistema plano)
-import { calcularHonorariosBasico } from '../../../lib/utils/calculos/honorariosBasico.js';
+import { calcularHonorariosBasico } from '../utils/calculos/honorariosBasico.js';
 
-// ✅ DESPUÉS (sistema progresivo)
-import { calcularHonorariosProgresivo } from '../../../lib/utils/calculos/honorariosProgresivo.js';
+// ✅ DESPUÉS (sistema progresivo) - Desarrollo en 02-Node
+import { calcularHonorariosProgresivo } from '../utils/calculos/honorariosProgresivo.js';
 
 export default async function handler(req, res) {
   // ... validaciones ...
@@ -843,7 +843,8 @@ el sistema progresivo. Debe marcarse como deprecado pero NO eliminarse aún
 para permitir rollback de emergencia.
 
 UBICACIÓN: 
-App/Backend/03-Vercel/lib/utils/calculos/honorariosBasico.js
+App/Backend/02-Node/src/utils/calculos/honorariosBasico.js (FUENTE DE VERDAD)
+(Sincronizar luego a: App/Backend/03-Vercel/lib/utils/calculos/honorariosBasico.js)
 
 SUBTAREAS:
 
@@ -921,6 +922,11 @@ CONTEXTO:
 Dado que cambia la estructura de response de la API, el deploy debe ser
 atómico o coordinado estrictamente entre frontend y backend para evitar
 errores en producción.
+
+NOTA ARQUITECTURA:
+- Desarrollo en: App/Backend/02-Node/src/ (fuente de verdad)
+- Deploy en: App/Backend/03-Vercel/api/ (serverless function)
+- El código se sincroniza de 02-Node a 03-Vercel antes del deploy
 
 ESTRATEGIAS DE DEPLOY:
 
@@ -1058,10 +1064,11 @@ Actualizar toda la documentación técnica del proyecto para reflejar el cambio
 a sistema progresivo. Incluye README, API docs, guías de desarrollo.
 
 UBICACIÓN: 
-- App/Backend/03-Vercel/README.md
-- App/Backend/03-Vercel/lib/utils/calculos/README.md
+- App/Backend/02-Node/README.md (FUENTE DE VERDAD)
+- App/Backend/02-Node/src/utils/calculos/README.md
 - 01-Docs/06-ArquitecturaBackendAPI.md
 - 01-Docs/07-ContratoAPI-Honorarios.md
+(Nota: sincronizar luego a 03-Vercel para deploy)
 
 SUBTAREAS:
 

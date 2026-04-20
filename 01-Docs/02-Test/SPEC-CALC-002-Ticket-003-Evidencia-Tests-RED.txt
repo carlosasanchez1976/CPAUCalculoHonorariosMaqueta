@@ -1,0 +1,648 @@
+﻿
+> ch2026-backend-node@1.0.0 test
+> node --test src/**/*.test.js
+
+TAP version 13
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 100000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '0.1915',
+#   rango: 'A'
+# }
+# Total de ├¡tems generados (antes de agrupar): 2
+# Total de ├¡tems agrupados: 2
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 2000000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '3.8301',
+#   rango: 'B'
+# }
+# Total de ├¡tems generados (antes de agrupar): 4
+# Total de ├¡tems agrupados: 4
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 20000000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '38.3008',
+#   rango: 'D'
+# }
+# Total de ├¡tems generados (antes de agrupar): 1
+# Total de ├¡tems agrupados: 1
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 100000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '0.1915',
+#   rango: 'A'
+# }
+# Total de ├¡tems generados (antes de agrupar): 2
+# Total de ├¡tems agrupados: 2
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 100000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '0.1915',
+#   rango: 'A'
+# }
+# Total de ├¡tems generados (antes de agrupar): 1
+# Total de ├¡tems agrupados: 1
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 100000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '0.1915',
+#   rango: 'A'
+# }
+# Total de ├¡tems generados (antes de agrupar): 2
+# Total de ├¡tems agrupados: 2
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 100000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '0.1915',
+#   rango: 'A'
+# }
+# Total de ├¡tems generados (antes de agrupar): 1
+# Total de ├¡tems agrupados: 1
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 2000000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '3.8301',
+#   rango: 'B'
+# }
+# Total de ├¡tems generados (antes de agrupar): 1
+# Total de ├¡tems agrupados: 1
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 10000000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '19.1504',
+#   rango: 'C'
+# }
+# Total de ├¡tems generados (antes de agrupar): 1
+# Total de ├¡tems agrupados: 1
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 20000000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '38.3008',
+#   rango: 'D'
+# }
+# Total de ├¡tems generados (antes de agrupar): 1
+# Total de ├¡tems agrupados: 1
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 100000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '0.1915',
+#   rango: 'A'
+# }
+# Total de ├¡tems generados (antes de agrupar): 1
+# Total de ├¡tems agrupados: 1
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 2000000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '3.8301',
+#   rango: 'B'
+# }
+# Total de ├¡tems generados (antes de agrupar): 1
+# Total de ├¡tems agrupados: 1
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 10000000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '19.1504',
+#   rango: 'C'
+# }
+# Total de ├¡tems generados (antes de agrupar): 1
+# Total de ├¡tems agrupados: 1
+# C├ílculo de Honorarios B├ísico: {
+#   valorObra: 20000000000,
+#   valorK: 522181756.33,
+#   rangoCostoDeObra: '38.3008',
+#   rango: 'D'
+# }
+# Total de ├¡tems generados (antes de agrupar): 1
+# Total de ├¡tems agrupados: 1
+# Subtest: SPEC-CALC-001: Coeficientes Diferenciados por Instalaci├│n
+    # Subtest: Caso \#1: Sanitaria + El├®ctrica - Rango A
+        # Subtest: debe usar COEFICIENTES_SANITARIA_ELECTRICA para ambas tareas
+        ok 1 - debe usar COEFICIENTES_SANITARIA_ELECTRICA para ambas tareas
+          ---
+          duration_ms: 2.9696
+          type: 'test'
+          ...
+        1..1
+    ok 1 - Caso \#1: Sanitaria + El├®ctrica - Rango A
+      ---
+      duration_ms: 4.2631
+      type: 'suite'
+      ...
+    # Subtest: Caso \#2: Todas las Instalaciones - Rango B
+        # Subtest: debe usar coeficientes diferenciados por tipo de instalaci├│n
+        ok 1 - debe usar coeficientes diferenciados por tipo de instalaci├│n
+          ---
+          duration_ms: 0.8975
+          type: 'test'
+          ...
+        1..1
+    ok 2 - Caso \#2: Todas las Instalaciones - Rango B
+      ---
+      duration_ms: 1.0761
+      type: 'suite'
+      ...
+    # Subtest: Caso \#3: Solo Incendio - Rango D
+        # Subtest: debe usar COEFICIENTES_INCENDIO para rango D
+        ok 1 - debe usar COEFICIENTES_INCENDIO para rango D
+          ---
+          duration_ms: 1.0774
+          type: 'test'
+          ...
+        1..1
+    ok 3 - Caso \#3: Solo Incendio - Rango D
+      ---
+      duration_ms: 1.3954
+      type: 'suite'
+      ...
+    # Subtest: Tests de Regresi├│n: Otras tareas sin cambios
+        # Subtest: Proyecto y Direcci├│n de Obra deben mantener coeficientes anteriores
+        ok 1 - Proyecto y Direcci├│n de Obra deben mantener coeficientes anteriores
+          ---
+          duration_ms: 0.7979
+          type: 'test'
+          ...
+        # Subtest: Proyecto de Estructuras debe mantener coeficientes anteriores
+        ok 2 - Proyecto de Estructuras debe mantener coeficientes anteriores
+          ---
+          duration_ms: 0.5246
+          type: 'test'
+          ...
+        # Subtest: C├ílculo mixto: Proyecto + Estructuras (sin instalaciones) debe ser id├®ntico
+        ok 3 - C├ílculo mixto: Proyecto + Estructuras (sin instalaciones) debe ser id├®ntico
+          ---
+          duration_ms: 0.7492
+          type: 'test'
+          ...
+        1..3
+    ok 4 - Tests de Regresi├│n: Otras tareas sin cambios
+      ---
+      duration_ms: 2.6775
+      type: 'suite'
+      ...
+    # Subtest: Validaci├│n de coeficientes por rango
+        # Subtest: Sanitaria/El├®ctrica - Todos los rangos
+        ok 1 - Sanitaria/El├®ctrica - Todos los rangos
+          ---
+          duration_ms: 3.2425
+          type: 'test'
+          ...
+        # Subtest: Incendio/Termomec├ínica - Todos los rangos
+        ok 2 - Incendio/Termomec├ínica - Todos los rangos
+          ---
+          duration_ms: 1.3642
+          type: 'test'
+          ...
+        1..2
+    ok 5 - Validaci├│n de coeficientes por rango
+      ---
+      duration_ms: 4.9671
+      type: 'suite'
+      ...
+    1..5
+ok 1 - SPEC-CALC-001: Coeficientes Diferenciados por Instalaci├│n
+  ---
+  duration_ms: 15.3844
+  type: 'suite'
+  ...
+# ÔÜá´©Å calcularHonorariosProgresivo no implementado a├║n - Ticket \#004
+# ÔÜá´©Å calcularHonorariosProgresivo no implementado a├║n - Ticket \#004
+# ÔÜá´©Å calcularHonorariosProgresivo no implementado a├║n - Ticket \#004
+# ÔÜá´©Å calcularHonorariosProgresivo no implementado a├║n - Ticket \#004
+# ÔÜá´©Å calcularHonorariosProgresivo no implementado a├║n - Ticket \#004
+# ÔÜá´©Å calcularHonorariosProgresivo no implementado a├║n - Ticket \#004
+# ÔÜá´©Å calcularHonorariosProgresivo no implementado a├║n - Ticket \#004
+# ÔÜá´©Å calcularHonorariosProgresivo no implementado a├║n - Ticket \#004
+# ÔÜá´©Å calcularHonorariosProgresivo no implementado a├║n - Ticket \#004
+# ÔÜá´©Å calcularHonorariosProgresivo no implementado a├║n - Ticket \#004
+# Subtest: SPEC-CALC-002: Sistema Progresivo de Honorarios
+    # Subtest: Caso \#1: Modelo 1 (Solo Rango A)
+        # Subtest: debe calcular honorarios para obra de $253.800.000 (solo Rango A)
+        not ok 1 - debe calcular honorarios para obra de $253.800.000 (solo Rango A)
+          ---
+          duration_ms: 4.49
+          type: 'test'
+          location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:27:5'
+          failureType: 'testCodeFailure'
+          error: |-
+            Debe haber 1 ├¡tem (solo Rango A)
+            
+            0 !== 1
+            
+          code: 'ERR_ASSERTION'
+          name: 'AssertionError'
+          expected: 1
+          actual: 0
+          operator: 'strictEqual'
+          stack: |-
+            TestContext.<anonymous> (file:///C:/Users/Carlos%20Sanchez/Documents/Charly/neosis/CPAU/DesarrolloCalculoHonorarios/CH2026/App/Backend/02-Node/src/utils/calculos/__tests__/honorariosProgresivo.test.js:39:14)
+            Test.runInAsyncScope (node:async_hooks:214:14)
+            Test.run (node:internal/test_runner/test:1047:25)
+            Test.start (node:internal/test_runner/test:944:17)
+            node:internal/test_runner/test:1440:71
+            node:internal/per_context/primordials:483:82
+            new Promise (<anonymous>)
+            new SafePromise (node:internal/per_context/primordials:451:29)
+            node:internal/per_context/primordials:483:9
+            Array.map (<anonymous>)
+          ...
+        1..1
+    not ok 1 - Caso \#1: Modelo 1 (Solo Rango A)
+      ---
+      duration_ms: 6.1261
+      type: 'suite'
+      location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:25:3'
+      failureType: 'subtestsFailed'
+      error: '1 subtest failed'
+      code: 'ERR_TEST_FAILURE'
+      stack: |-
+        async Promise.all (index 0)
+      ...
+    # Subtest: Caso \#2: Modelo X (Rangos A+B)
+        # Subtest: debe calcular honorarios para obra de $1.692.000.000 (Rangos A+B)
+        not ok 1 - debe calcular honorarios para obra de $1.692.000.000 (Rangos A+B)
+          ---
+          duration_ms: 1.0404
+          type: 'test'
+          location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:59:5'
+          failureType: 'testCodeFailure'
+          error: |-
+            Debe haber 3 ├¡tems (Rango A + Rango B obra + Rango B K)
+            
+            0 !== 3
+            
+          code: 'ERR_ASSERTION'
+          name: 'AssertionError'
+          expected: 3
+          actual: 0
+          operator: 'strictEqual'
+          stack: |-
+            TestContext.<anonymous> (file:///C:/Users/Carlos%20Sanchez/Documents/Charly/neosis/CPAU/DesarrolloCalculoHonorarios/CH2026/App/Backend/02-Node/src/utils/calculos/__tests__/honorariosProgresivo.test.js:71:14)
+            Test.runInAsyncScope (node:async_hooks:214:14)
+            Test.run (node:internal/test_runner/test:1047:25)
+            Test.start (node:internal/test_runner/test:944:17)
+            node:internal/test_runner/test:1440:71
+            node:internal/per_context/primordials:483:82
+            new Promise (<anonymous>)
+            new SafePromise (node:internal/per_context/primordials:451:29)
+            node:internal/per_context/primordials:483:9
+            Array.map (<anonymous>)
+          ...
+        1..1
+    not ok 2 - Caso \#2: Modelo X (Rangos A+B)
+      ---
+      duration_ms: 1.334
+      type: 'suite'
+      location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:57:3'
+      failureType: 'subtestsFailed'
+      error: '1 subtest failed'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: Caso \#3: Modelo 2 (Rangos A+B+C)
+        # Subtest: debe calcular honorarios para obra de $4.230.000.000 (Rangos A+B+C)
+        not ok 1 - debe calcular honorarios para obra de $4.230.000.000 (Rangos A+B+C)
+          ---
+          duration_ms: 0.7501
+          type: 'test'
+          location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:103:5'
+          failureType: 'testCodeFailure'
+          error: |-
+            Debe haber 4 ├¡tems (A + B + C obra + C K)
+            
+            0 !== 4
+            
+          code: 'ERR_ASSERTION'
+          name: 'AssertionError'
+          expected: 4
+          actual: 0
+          operator: 'strictEqual'
+          stack: |-
+            TestContext.<anonymous> (file:///C:/Users/Carlos%20Sanchez/Documents/Charly/neosis/CPAU/DesarrolloCalculoHonorarios/CH2026/App/Backend/02-Node/src/utils/calculos/__tests__/honorariosProgresivo.test.js:115:14)
+            Test.runInAsyncScope (node:async_hooks:214:14)
+            Test.run (node:internal/test_runner/test:1047:25)
+            Test.start (node:internal/test_runner/test:944:17)
+            node:internal/test_runner/test:1440:71
+            node:internal/per_context/primordials:483:82
+            new Promise (<anonymous>)
+            new SafePromise (node:internal/per_context/primordials:451:29)
+            node:internal/per_context/primordials:483:9
+            Array.map (<anonymous>)
+          ...
+        1..1
+    not ok 3 - Caso \#3: Modelo 2 (Rangos A+B+C)
+      ---
+      duration_ms: 1.1187
+      type: 'suite'
+      location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:101:3'
+      failureType: 'subtestsFailed'
+      error: '1 subtest failed'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: Caso \#4: Modelo 3 (Rangos A+B+C+D)
+        # Subtest: debe calcular honorarios para obra de $21.150.000.000 (Rangos A+B+C+D)
+        not ok 1 - debe calcular honorarios para obra de $21.150.000.000 (Rangos A+B+C+D)
+          ---
+          duration_ms: 1.056
+          type: 'test'
+          location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:153:5'
+          failureType: 'testCodeFailure'
+          error: |-
+            Debe haber 5 ├¡tems (A + B + C + D obra + D K)
+            
+            0 !== 5
+            
+          code: 'ERR_ASSERTION'
+          name: 'AssertionError'
+          expected: 5
+          actual: 0
+          operator: 'strictEqual'
+          stack: |-
+            TestContext.<anonymous> (file:///C:/Users/Carlos%20Sanchez/Documents/Charly/neosis/CPAU/DesarrolloCalculoHonorarios/CH2026/App/Backend/02-Node/src/utils/calculos/__tests__/honorariosProgresivo.test.js:165:14)
+            Test.runInAsyncScope (node:async_hooks:214:14)
+            Test.run (node:internal/test_runner/test:1047:25)
+            Test.start (node:internal/test_runner/test:944:17)
+            node:internal/test_runner/test:1440:71
+            node:internal/per_context/primordials:483:82
+            new Promise (<anonymous>)
+            new SafePromise (node:internal/per_context/primordials:451:29)
+            node:internal/per_context/primordials:483:9
+            Array.map (<anonymous>)
+          ...
+        1..1
+    not ok 4 - Caso \#4: Modelo 3 (Rangos A+B+C+D)
+      ---
+      duration_ms: 1.3355
+      type: 'suite'
+      location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:151:3'
+      failureType: 'subtestsFailed'
+      error: '1 subtest failed'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: Caso \#5: M├║ltiples Tareas
+        # Subtest: debe generar ├¡tems para m├║ltiples tareas profesionales
+        not ok 1 - debe generar ├¡tems para m├║ltiples tareas profesionales
+          ---
+          duration_ms: 0.818
+          type: 'test'
+          location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:209:5'
+          failureType: 'testCodeFailure'
+          error: 'Debe haber al menos 8 ├¡tems para 3 tareas'
+          code: 'ERR_ASSERTION'
+          name: 'AssertionError'
+          expected: true
+          actual: false
+          operator: '=='
+          stack: |-
+            TestContext.<anonymous> (file:///C:/Users/Carlos%20Sanchez/Documents/Charly/neosis/CPAU/DesarrolloCalculoHonorarios/CH2026/App/Backend/02-Node/src/utils/calculos/__tests__/honorariosProgresivo.test.js:229:14)
+            Test.runInAsyncScope (node:async_hooks:214:14)
+            Test.run (node:internal/test_runner/test:1047:25)
+            Test.start (node:internal/test_runner/test:944:17)
+            node:internal/test_runner/test:1440:71
+            node:internal/per_context/primordials:483:82
+            new Promise (<anonymous>)
+            new SafePromise (node:internal/per_context/primordials:451:29)
+            node:internal/per_context/primordials:483:9
+            Array.map (<anonymous>)
+          ...
+        # Subtest: debe calcular correctamente con porcentajes de tarea aplicados
+        not ok 2 - debe calcular correctamente con porcentajes de tarea aplicados
+          ---
+          duration_ms: 0.694
+          type: 'test'
+          location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:238:5'
+          failureType: 'testCodeFailure'
+          error: 'Total debe ser mayor a 0'
+          code: 'ERR_ASSERTION'
+          name: 'AssertionError'
+          expected: true
+          actual: false
+          operator: '=='
+          stack: |-
+            TestContext.<anonymous> (file:///C:/Users/Carlos%20Sanchez/Documents/Charly/neosis/CPAU/DesarrolloCalculoHonorarios/CH2026/App/Backend/02-Node/src/utils/calculos/__tests__/honorariosProgresivo.test.js:254:14)
+            Test.runInAsyncScope (node:async_hooks:214:14)
+            Test.run (node:internal/test_runner/test:1047:25)
+            Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+            Test.postRun (node:internal/test_runner/test:1173:19)
+            Test.run (node:internal/test_runner/test:1101:12)
+            async Promise.all (index 0)
+            async Suite.run (node:internal/test_runner/test:1442:7)
+            async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+          ...
+        1..2
+    not ok 5 - Caso \#5: M├║ltiples Tareas
+      ---
+      duration_ms: 2.0649
+      type: 'suite'
+      location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:207:3'
+      failureType: 'subtestsFailed'
+      error: '2 subtests failed'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: Validaciones
+        # Subtest: debe retornar array vac├¡o si valorObra = 0
+        ok 1 - debe retornar array vac├¡o si valorObra = 0
+          ---
+          duration_ms: 1.6128
+          type: 'test'
+          ...
+        # Subtest: debe retornar array vac├¡o si valorObra es negativo
+        ok 2 - debe retornar array vac├¡o si valorObra es negativo
+          ---
+          duration_ms: 0.2761
+          type: 'test'
+          ...
+        # Subtest: debe retornar array vac├¡o si no hay tareas seleccionadas
+        ok 3 - debe retornar array vac├¡o si no hay tareas seleccionadas
+          ---
+          duration_ms: 0.6192
+          type: 'test'
+          ...
+        # Subtest: debe usar VALOR_K_DEFAULT si no se proporciona valorK
+        not ok 4 - debe usar VALOR_K_DEFAULT si no se proporciona valorK
+          ---
+          duration_ms: 0.6405
+          type: 'test'
+          location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:305:5'
+          failureType: 'testCodeFailure'
+          error: 'Debe calcular con VALOR_K_DEFAULT'
+          code: 'ERR_ASSERTION'
+          name: 'AssertionError'
+          expected: true
+          actual: false
+          operator: '=='
+          stack: |-
+            TestContext.<anonymous> (file:///C:/Users/Carlos%20Sanchez/Documents/Charly/neosis/CPAU/DesarrolloCalculoHonorarios/CH2026/App/Backend/02-Node/src/utils/calculos/__tests__/honorariosProgresivo.test.js:317:14)
+            Test.runInAsyncScope (node:async_hooks:214:14)
+            Test.run (node:internal/test_runner/test:1047:25)
+            Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+            Test.postRun (node:internal/test_runner/test:1173:19)
+            Test.run (node:internal/test_runner/test:1101:12)
+            async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+          ...
+        1..4
+    not ok 6 - Validaciones
+      ---
+      duration_ms: 3.5144
+      type: 'suite'
+      location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:263:3'
+      failureType: 'subtestsFailed'
+      error: '1 subtest failed'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    1..6
+not ok 2 - SPEC-CALC-002: Sistema Progresivo de Honorarios
+  ---
+  duration_ms: 17.958
+  type: 'suite'
+  location: 'C:\\Users\\Carlos Sanchez\\Documents\\Charly\\neosis\\CPAU\\DesarrolloCalculoHonorarios\\CH2026\\App\\Backend\\02-Node\\src\\utils\\calculos\\__tests__\\honorariosProgresivo.test.js:18:1'
+  failureType: 'subtestsFailed'
+  error: '6 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: calcularLimitesRangos()
+    # Subtest: C├ílculos con valorK v├ílido
+        # Subtest: debe calcular l├¡mites correctos con valorK = 574.813.607
+        ok 1 - debe calcular l├¡mites correctos con valorK = 574.813.607
+          ---
+          duration_ms: 2.027
+          type: 'test'
+          ...
+        # Subtest: debe calcular Rango A superior = 287.406.803,5 (0.5 ├ù K)
+        ok 2 - debe calcular Rango A superior = 287.406.803,5 (0.5 ├ù K)
+          ---
+          duration_ms: 0.2545
+          type: 'test'
+          ...
+        # Subtest: debe calcular Rango B l├¡mites correctos (0.5K a 5K)
+        ok 3 - debe calcular Rango B l├¡mites correctos (0.5K a 5K)
+          ---
+          duration_ms: 0.1782
+          type: 'test'
+          ...
+        # Subtest: debe calcular Rango C l├¡mites correctos (5K a 25K)
+        ok 4 - debe calcular Rango C l├¡mites correctos (5K a 25K)
+          ---
+          duration_ms: 0.1797
+          type: 'test'
+          ...
+        # Subtest: debe calcular Rango D l├¡mites correctos (25K a infinito)
+        ok 5 - debe calcular Rango D l├¡mites correctos (25K a infinito)
+          ---
+          duration_ms: 0.1677
+          type: 'test'
+          ...
+        1..5
+    ok 1 - C├ílculos con valorK v├ílido
+      ---
+      duration_ms: 4.4155
+      type: 'suite'
+      ...
+    # Subtest: Continuidad entre rangos
+        # Subtest: debe tener continuidad: Rango B inferior = Rango A superior
+        ok 1 - debe tener continuidad: Rango B inferior = Rango A superior
+          ---
+          duration_ms: 0.3883
+          type: 'test'
+          ...
+        # Subtest: debe tener continuidad: Rango C inferior = Rango B superior
+        ok 2 - debe tener continuidad: Rango C inferior = Rango B superior
+          ---
+          duration_ms: 0.1703
+          type: 'test'
+          ...
+        # Subtest: debe tener continuidad: Rango D inferior = Rango C superior
+        ok 3 - debe tener continuidad: Rango D inferior = Rango C superior
+          ---
+          duration_ms: 0.3829
+          type: 'test'
+          ...
+        1..3
+    ok 2 - Continuidad entre rangos
+      ---
+      duration_ms: 1.2817
+      type: 'suite'
+      ...
+    # Subtest: Validaci├│n de par├ímetros
+        # Subtest: debe lanzar Error si valorK = 0
+        ok 1 - debe lanzar Error si valorK = 0
+          ---
+          duration_ms: 1.213
+          type: 'test'
+          ...
+        # Subtest: debe lanzar Error si valorK es negativo
+        ok 2 - debe lanzar Error si valorK es negativo
+          ---
+          duration_ms: 1.3111
+          type: 'test'
+          ...
+        # Subtest: debe lanzar Error si valorK es null
+        ok 3 - debe lanzar Error si valorK es null
+          ---
+          duration_ms: 0.202
+          type: 'test'
+          ...
+        # Subtest: debe lanzar Error si valorK es undefined
+        ok 4 - debe lanzar Error si valorK es undefined
+          ---
+          duration_ms: 0.1838
+          type: 'test'
+          ...
+        # Subtest: debe lanzar Error si valorK es string
+        ok 5 - debe lanzar Error si valorK es string
+          ---
+          duration_ms: 0.1397
+          type: 'test'
+          ...
+        # Subtest: debe lanzar Error si valorK es NaN
+        ok 6 - debe lanzar Error si valorK es NaN
+          ---
+          duration_ms: 0.14
+          type: 'test'
+          ...
+        1..6
+    ok 3 - Validaci├│n de par├ímetros
+      ---
+      duration_ms: 3.4909
+      type: 'suite'
+      ...
+    # Subtest: Integraci├│n con VALOR_K_DEFAULT
+        # Subtest: debe funcionar correctamente con VALOR_K_DEFAULT exportado
+        ok 1 - debe funcionar correctamente con VALOR_K_DEFAULT exportado
+          ---
+          duration_ms: 0.1578
+          type: 'test'
+          ...
+        1..1
+    ok 4 - Integraci├│n con VALOR_K_DEFAULT
+      ---
+      duration_ms: 0.3308
+      type: 'suite'
+      ...
+    # Subtest: Validaci├│n vs valores SPEC-CALC-002
+        # Subtest: debe coincidir exactamente con valores de la especificaci├│n
+        ok 1 - debe coincidir exactamente con valores de la especificaci├│n
+          ---
+          duration_ms: 0.1936
+          type: 'test'
+          ...
+        1..1
+    ok 5 - Validaci├│n vs valores SPEC-CALC-002
+      ---
+      duration_ms: 0.2784
+      type: 'suite'
+      ...
+    1..5
+ok 3 - calcularLimitesRangos()
+  ---
+  duration_ms: 11.2655
+  type: 'suite'
+  ...
+1..3
+# tests 34
+# suites 19
+# pass 27
+# fail 7
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 215.8054

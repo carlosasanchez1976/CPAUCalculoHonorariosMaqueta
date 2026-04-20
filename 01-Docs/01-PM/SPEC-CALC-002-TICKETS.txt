@@ -1,0 +1,1194 @@
+================================================================================
+TICKETS - SPEC-CALC-002: ARRASTRE PROGRESIVO DE COEFICIENTES ENTRE RANGOS
+================================================================================
+Proyecto: CH2026 - Sistema de Gestión de Cálculo de Honorarios CPAU
+Fecha: 20/04/2026
+Versión: 1.0
+Spec Origen: SPEC-CALC-002-Arrastre-Coeficientes-Progresivo.md
+Dependencias: SPEC-CALC-001 (debe estar implementada y en producción)
+================================================================================
+
+OBJETIVO GENERAL:
+Implementar sistema de cálculo progresivo escalonado donde cada tramo del
+valor de obra aplique los coeficientes de su rango correspondiente, similar
+al sistema impositivo por tramos. Reemplaza el sistema plano actual.
+
+JUSTIFICACIÓN:
+El CPAU establece que los honorarios deben calcularse de forma progresiva:
+- Cada porción del valor de obra debe tributar al coeficiente de su rango
+- Obras que atraviesan múltiples rangos deben "arrastrar" los cálculos
+- Sistema más justo que refleja la progresividad de costos profesionales
+- Incrementos: +12% a +21% en obras grandes, 0% en obras pequeñas
+
+ESTRATEGIA DE IMPLEMENTACIÓN:
+- Metodología: Spec-Driven Development (SDD) + Test-Driven Development (TDD)
+- Principio: Tests PRIMERO (RED), luego código (GREEN), luego refactor
+- ⚠️ BREAKING CHANGE: API response cambia (requiere coordinación frontend)
+- Deploy: Atómico frontend+backend con feature flag
+
+ALCANCE:
+✅ Nueva función calcularLimitesRangos() en tablasCoeficientes.js
+✅ Nuevo módulo honorariosProgresivo.js completo
+✅ Tests unitarios (5 casos + regresión)
+✅ Actualizar endpoint /api/v1/honorarios/calcular.js
+✅ Actualizar contrato de response (metadata ampliada)
+✅ Deprecar honorariosBasico.js
+❌ NO hay backward compatibility (reemplazo total)
+❌ NO modificar coeficientes (se usan los de SPEC-CALC-001)
+
+ARCHIVOS AFECTADOS:
+- App/Backend/03-Vercel/lib/utils/calculos/tablasCoeficientes.js
+- App/Backend/03-Vercel/lib/utils/calculos/honorariosProgresivo.js (NUEVO)
+- App/Backend/03-Vercel/lib/utils/calculos/__tests__/honorariosProgresivo.test.js (NUEVO)
+- App/Backend/03-Vercel/api/v1/honorarios/calcular.js
+- App/Backend/03-Vercel/lib/utils/calculos/honorariosBasico.js (DEPRECAR)
+
+ESTIMACIÓN TOTAL: 50 horas (~7 días laborables)
+
+SPRINT PLANNING:
+- Sprint 1 (Días 1-3): Preparación + Tests (Tickets 001-003)
+- Sprint 2 (Días 4-5): Implementación Core (Tickets 004-005)
+- Sprint 3 (Días 6-7): Integración + Deploy (Tickets 006-008)
+
+================================================================================
+FASE 1: PREPARACIÓN - FUNDAMENTOS
+================================================================================
+
+--------------------------------------------------------------------------------
+TICKET #001 - SETUP: RAMA Y ESTRUCTURA INICIAL
+--------------------------------------------------------------------------------
+ESTADO: ⏳ PENDIENTE
+PRIORIDAD: 🔴 CRÍTICA
+ASIGNADO A: Backend Dev
+ESTIMACIÓN: 1 hora
+DEPENDENCIAS: Ninguna
+
+DESCRIPCIÓN:
+Preparar el entorno de desarrollo y la estructura base para implementar el
+sistema progresivo. Crear rama feature con nomenclatura correcta y configurar
+archivos base.
+
+UBICACIÓN: 
+- Raíz del proyecto (Git)
+- App/Backend/03-Vercel/lib/utils/calculos/
+
+TAREAS:
+
+[T001.1] Crear rama feature
+  ☐ Crear rama: feature/SPEC-CALC-002-arrastre-progresivo
+  ☐ Verificar que parte de main actualizado
+  ☐ Push de rama vacía a origin
+
+[T001.2] Crear archivos stub
+  ☐ Crear: lib/utils/calculos/honorariosProgresivo.js (vacío con JSDoc)
+  ☐ Crear: lib/utils/calculos/__tests__/honorariosProgresivo.test.js (stub)
+  ☐ Verificar estructura de carpetas
+
+[T001.3] Documentación inicial
+  ☐ Crear README.md en carpeta calculos/ con nota de SPEC-CALC-002
+  ☐ Agregar comentarios de archivo en stubs
+  ☐ Marcar como ⚠️ CONFIDENCIAL
+
+CRITERIOS DE ACEPTACIÓN:
+✅ CA-001: Rama feature existe en repositorio
+✅ CA-002: Archivos stub creados con JSDoc básico
+✅ CA-003: Estructura de carpetas correcta
+✅ CA-004: Sin errores de lint/formato
+
+COMMIT ESPERADO:
+"chore(calc): setup proyecto SPEC-CALC-002 - arrastre progresivo"
+
+--------------------------------------------------------------------------------
+TICKET #002 - DATOS: FUNCIÓN CALCULAR LÍMITES DE RANGOS
+--------------------------------------------------------------------------------
+ESTADO: ⏳ PENDIENTE
+PRIORIDAD: 🔴 CRÍTICA
+ASIGNADO A: Backend Dev
+ESTIMACIÓN: 3 horas
+DEPENDENCIAS: TICKET #001
+
+DESCRIPCIÓN:
+Implementar función calcularLimitesRangos() en tablasCoeficientes.js que
+calcula los límites en pesos de cada rango (A, B, C, D) según el Valor K
+vigente. Esta función es fundamental para el sistema progresivo.
+
+CONTEXTO:
+Los rangos están definidos por coeficiente K (valorObra / valorK):
+- Rango A: coefK < 0.5
+- Rango B: 0.5 ≤ coefK < 5
+- Rango C: 5 ≤ coefK < 25
+- Rango D: coefK ≥ 25
+
+Los límites en pesos se calculan como: Límite_Coef_K × Valor_K
+
+UBICACIÓN: App/Backend/03-Vercel/lib/utils/calculos/tablasCoeficientes.js
+
+IMPLEMENTACIÓN:
+
+```javascript
+/**
+ * Calcula los límites en pesos de cada rango según el valor K vigente
+ * 
+ * @param {number} valorK - Índice CPAU actualizado (ej: 574.813.607)
+ * @returns {Object} Objeto con límites inferior/superior por rango
+ * 
+ * @example
+ * const limites = calcularLimitesRangos(574813607);
+ * // {
+ * //   rangoA: { inferior: 0, superior: 287406803.5 },
+ * //   rangoB: { inferior: 287406803.5, superior: 2874068035 },
+ * //   ...
+ * // }
+ */
+export function calcularLimitesRangos(valorK) {
+  if (!valorK || valorK <= 0) {
+    throw new Error('valorK debe ser un número positivo mayor a 0');
+  }
+  
+  return {
+    rangoA: {
+      inferior: 0,
+      superior: 0.5 * valorK
+    },
+    rangoB: {
+      inferior: 0.5 * valorK,
+      superior: 5 * valorK
+    },
+    rangoC: {
+      inferior: 5 * valorK,
+      superior: 25 * valorK
+    },
+    rangoD: {
+      inferior: 25 * valorK,
+      superior: Number.MAX_SAFE_INTEGER  // Infinity práctica
+    }
+  };
+}
+```
+
+SUBTAREAS:
+
+[T002.1] Implementar función calcularLimitesRangos
+  ☐ Agregar función al final de tablasCoeficientes.js
+  ☐ JSDoc completo con @param, @returns, @example
+  ☐ Validación: valorK > 0 (throw Error si no)
+  ☐ Retornar objeto con 4 rangos (A, B, C, D)
+  ☐ Cada rango tiene: { inferior: number, superior: number }
+
+[T002.2] Tests unitarios de calcularLimitesRangos
+  ☐ Crear test file: __tests__/tablasCoeficientes.test.js
+  ☐ Test: valorK = 574.813.607 → limites correctos
+  ☐ Test: Rango A superior = 287.406.803,5
+  ☐ Test: Rango B inferior = Rango A superior (continuidad)
+  ☐ Test: Rango D superior = Number.MAX_SAFE_INTEGER
+  ☐ Test: valorK = 0 → throw Error
+  ☐ Test: valorK negativo → throw Error
+
+[T002.3] Documentación
+  ☐ Agregar comentarios explicando multiplicadores (0.5, 5, 25)
+  ☐ Agregar referencia a SPEC-CALC-002 en JSDoc
+  ☐ Ejemplo de uso en comentarios
+
+CRITERIOS DE ACEPTACIÓN:
+✅ CA-005: Función calcularLimitesRangos exportada correctamente
+✅ CA-006: Tests unitarios pasan (100% coverage)
+✅ CA-007: Validación de parámetros funciona (throw Error)
+✅ CA-008: Límites calculados coinciden con SPEC (valorK = 574.813.607)
+✅ CA-009: JSDoc completo con ejemplo
+
+COMMIT ESPERADO:
+"feat(calc): agregar función calcularLimitesRangos - SPEC-CALC-002"
+
+VALIDACIÓN:
+Con valorK = 574.813.607:
+- Rango A: 0 → 287.406.803,5
+- Rango B: 287.406.803,5 → 2.874.068.035
+- Rango C: 2.874.068.035 → 14.370.340.175
+- Rango D: 14.370.340.175 → 9.007.199.254.740.991
+
+================================================================================
+FASE 2: TESTS (TDD - RED PHASE)
+================================================================================
+
+--------------------------------------------------------------------------------
+TICKET #003 - TESTS: CASOS DE PRUEBA COMPLETOS (RED)
+--------------------------------------------------------------------------------
+ESTADO: ⏳ PENDIENTE
+PRIORIDAD: 🔴 CRÍTICA
+ASIGNADO A: Backend Dev + QA
+ESTIMACIÓN: 8 horas
+DEPENDENCIAS: TICKET #002
+
+DESCRIPCIÓN:
+Escribir TODOS los tests unitarios ANTES de implementar la lógica de cálculo
+progresivo. Los tests deben fallar (RED) porque la función aún no existe.
+Esto garantiza que los tests sean válidos.
+
+CONTEXTO:
+Implementar 5 casos de prueba definidos en SPEC-CALC-002 Sección 6:
+1. Modelo 1: $253.800.000 (Solo Rango A)
+2. Modelo X: $1.692.000.000 (Rangos A+B)
+3. Modelo 2: $4.230.000.000 (Rangos A+B+C)
+4. Modelo 3: $21.150.000.000 (Rangos A+B+C+D)
+5. Múltiples tareas (validación completa)
+
+UBICACIÓN: 
+App/Backend/03-Vercel/lib/utils/calculos/__tests__/honorariosProgresivo.test.js
+
+ESTRUCTURA BASE:
+
+```javascript
+import { describe, it, expect, beforeAll } from 'vitest';
+import { calcularHonorariosProgresivo } from '../honorariosProgresivo.js';
+import { calcularLimitesRangos } from '../tablasCoeficientes.js';
+
+describe('SPEC-CALC-002: Sistema Progresivo de Honorarios', () => {
+  
+  const VALOR_K = 574813607;
+  let limites;
+  
+  beforeAll(() => {
+    limites = calcularLimitesRangos(VALOR_K);
+  });
+  
+  describe('Caso #1: Modelo 1 (Solo Rango A)', () => {
+    // Tests del caso 1...
+  });
+  
+  describe('Caso #2: Modelo X (Rangos A+B)', () => {
+    // Tests del caso 2...
+  });
+  
+  // ... más casos
+});
+```
+
+SUBTAREAS:
+
+[T003.1] Test Caso #1: Modelo 1 - Solo Rango A
+  ☐ Input: valorObra = 253.800.000, obraProyecto = true
+  ☐ Verificar: 1 ítem generado
+  ☐ Verificar: importe = 21.319.200
+  ☐ Verificar: descripcion contiene "Rango A"
+  ☐ Verificar: totalHonorarios = 21.319.200
+  ☐ Verificar: metadata.rangoFinal = "A"
+  ☐ Verificar: metadata.rangosAfectados = ["A"]
+
+[T003.2] Test Caso #2: Modelo X - Rangos A+B
+  ☐ Input: valorObra = 1.692.000.000, obraProyecto = true
+  ☐ Verificar: 3 ítems generados (A coef obra, B coef obra, B coef K)
+  ☐ Verificar: item 1 importe = 24.142.171
+  ☐ Verificar: item 2 importe = 67.420.473
+  ☐ Verificar: item 3 importe = 10.346.645
+  ☐ Verificar: totalHonorarios = 101.909.289
+  ☐ Verificar: metadata.rangosAfectados = ["A", "B"]
+
+[T003.3] Test Caso #3: Modelo 2 - Rangos A+B+C
+  ☐ Input: valorObra = 4.230.000.000, obraProyecto = true
+  ☐ Verificar: 4 ítems generados
+  ☐ Verificar: importes según SPEC (24.142.171, 124.159.739, ...)
+  ☐ Verificar: totalHonorarios = 241.860.022
+  ☐ Verificar: metadata.rangoFinal = "C"
+
+[T003.4] Test Caso #4: Modelo 3 - Rangos A+B+C+D
+  ☐ Input: valorObra = 21.150.000.000, obraProyecto = true
+  ☐ Verificar: 5 ítems generados
+  ☐ Verificar: totalHonorarios = 942.375.899
+  ☐ Verificar: metadata.rangoFinal = "D"
+  ☐ Verificar: todos los rangos afectados
+
+[T003.5] Test Caso #5: Múltiples tareas
+  ☐ Input: valorObra = 1.692.000.000
+  ☐ Tareas: obraProyecto + obraDireccion + instalacionSanitaria
+  ☐ Verificar: 8 ítems totales (3 + 3 + 2)
+  ☐ Verificar: proyecto (60%) y dirección (40%) calculan correcto
+  ☐ Verificar: sanitaria usa COEFICIENTES_SANITARIA_ELECTRICA
+
+[T003.6] Tests de validación
+  ☐ Test: valorObra = 0 → retorna []
+  ☐ Test: valorObra negativo → retorna []
+  ☐ Test: valorK = 0 → throw Error
+  ☐ Test: sin tareas seleccionadas → retorna []
+
+[T003.7] Tests de metadata
+  ☐ Verificar: metadata.coeficienteK calculado correctamente
+  ☐ Verificar: metadata.limitesRangos presente
+  ☐ Verificar: metadata.numeroItems correcto
+
+[T003.8] Ejecutar tests (deben FALLAR - RED)
+  ☐ npm test -- honorariosProgresivo
+  ☐ Verificar que TODOS los tests fallan con error esperado
+  ☐ Capturar output de tests RED para documentación
+
+CRITERIOS DE ACEPTACIÓN:
+✅ CA-010: 5 casos de prueba completos implementados
+✅ CA-011: Tests adicionales de validación (valores negativos, etc.)
+✅ CA-012: Todos los tests FALLAN (función no existe) - RED Phase
+✅ CA-013: Descripciones de tests claras y específicas
+✅ CA-014: Valores esperados coinciden con SPEC-CALC-002
+✅ CA-015: Coverage setup configurado
+
+COMMIT ESPERADO:
+"test(calc): agregar tests SPEC-CALC-002 sistema progresivo (RED phase)"
+
+NOTAS:
+⚠️ IMPORTANTE: Los tests DEBEN fallar en este punto. Si algún test pasa,
+revisar porque significa que la función ya existe o hay un problema en el test.
+
+================================================================================
+FASE 3: IMPLEMENTACIÓN CORE (TDD - GREEN PHASE)
+================================================================================
+
+--------------------------------------------------------------------------------
+TICKET #004 - CORE: IMPLEMENTAR MÓDULO HONORARIOS PROGRESIVO
+--------------------------------------------------------------------------------
+ESTADO: ⏳ PENDIENTE
+PRIORIDAD: 🔴 CRÍTICA
+ASIGNADO A: Backend Dev Senior
+ESTIMACIÓN: 12 horas
+DEPENDENCIAS: TICKET #003
+
+DESCRIPCIÓN:
+Implementar el módulo completo honorariosProgresivo.js con todas las funciones
+necesarias para el cálculo progresivo escalonado. El objetivo es hacer que
+TODOS los tests del Ticket #003 pasen (GREEN phase).
+
+CONTEXTO:
+El sistema progresivo debe:
+1. Calcular límites de rangos en base a Valor K
+2. Determinar el rango final donde cae la obra
+3. Iterar por cada rango afectado (A → rango final)
+4. Para cada rango, calcular el monto afectado y aplicar coeficientes
+5. Generar múltiples ítems por tarea (uno por rango)
+6. Aplicar coeficiente K solo en el rango final
+
+UBICACIÓN: 
+App/Backend/03-Vercel/lib/utils/calculos/honorariosProgresivo.js
+
+ARQUITECTURA DEL MÓDULO:
+
+```javascript
+/**
+ * Algoritmo de cálculo de honorarios CPAU - Sistema Progresivo
+ * SPEC-CALC-002: Arrastre de coeficientes entre rangos
+ * 
+ * ⚠️ CONFIDENCIAL: Este archivo contiene lógica propietaria del CPAU
+ * Solo debe ejecutarse en servidor, NUNCA en navegador del cliente
+ * 
+ * @module honorariosProgresivo
+ */
+
+// ============================================================================
+// IMPORTS
+// ============================================================================
+import {
+  COEFICIENTES_PROYECTO_DIRECCION,
+  COEFICIENTES_SANITARIA_ELECTRICA,
+  COEFICIENTES_INCENDIO,
+  COEFICIENTES_TERMOMECANICA,
+  COEFICIENTES_ESTRUCTURAS,
+  PORCENTAJES_TAREA,
+  NOMBRES_RANGO,
+  VALOR_K_DEFAULT,
+  calcularLimitesRangos
+} from './tablasCoeficientes.js';
+
+// ============================================================================
+// FUNCIONES AUXILIARES PRIVADAS
+// ============================================================================
+
+/**
+ * Determina el rango de costo de obra según la relación valorObra/valorK
+ * @private
+ */
+function determinarRango(coeficienteK) { ... }
+
+/**
+ * Formatea el porcentaje para descripción
+ * @private
+ */
+function formatearPorcentaje(coeficiente) { ... }
+
+/**
+ * Procesa una tarea profesional de forma progresiva por rangos
+ * @private
+ */
+function procesarTareaProgresiva(
+  items,
+  nombreTarea,
+  coeficientes,
+  limites,
+  valorObra,
+  valorK,
+  porcentajeTarea,
+  rangoFinal
+) { ... }
+
+// ============================================================================
+// FUNCIÓN PRINCIPAL EXPORTADA
+// ============================================================================
+
+/**
+ * Calcula honorarios con sistema progresivo escalonado
+ * @public
+ */
+export function calcularHonorariosProgresivo(formData, valorK) { ... }
+```
+
+SUBTAREAS:
+
+[T004.1] Implementar funciones auxiliares
+  ☐ determinarRango(coeficienteK) → 'rangoA' | 'rangoB' | 'rangoC' | 'rangoD'
+  ☐ formatearPorcentaje(coef) → "14%" | "8%" | etc.
+  ☐ Tests unitarios de funciones auxiliares
+
+[T004.2] Implementar procesarTareaProgresiva()
+  ☐ Iterar rangos desde A hasta rangoFinal
+  ☐ Para cada rango: calcular limSuperiorEfectivo
+  ☐ Si valorObra > limSuperior → usar limSuperior
+  ☐ Si valorObra <= limSuperior → usar valorObra y BREAK
+  ☐ Calcular montoAfectado = limSupEfectivo - limInferior
+  ☐ Aplicar coeficiente obra si > 0
+  ☐ Aplicar coeficiente K solo si es rangoFinal y coef.k > 0
+  ☐ Agregar ítems al array con numeración secuencial
+
+[T004.3] Implementar calcularHonorariosProgresivo()
+  ☐ Validar inputs (valorObra > 0, valorK > 0)
+  ☐ Calcular límites de rangos
+  ☐ Calcular coeficienteK y rangoFinal
+  ☐ Inicializar array de ítems
+  ☐ Procesar cada tarea seleccionada:
+    - obraProyecto → COEFICIENTES_PROYECTO_DIRECCION (60%)
+    - obraDireccion → COEFICIENTES_PROYECTO_DIRECCION (40%)
+    - instalacionSanitaria → COEFICIENTES_SANITARIA_ELECTRICA (100%)
+    - instalacionElectrica → COEFICIENTES_SANITARIA_ELECTRICA (100%)
+    - instalacionContraIncendio → COEFICIENTES_INCENDIO (100%)
+    - instalacionTermomecanica → COEFICIENTES_TERMOMECANICA (100%)
+    - proyectoEstructuras → COEFICIENTES_ESTRUCTURAS (100%)
+  ☐ Retornar array de ítems
+
+[T004.4] Ejecutar tests (deben PASAR - GREEN)
+  ☐ npm test -- honorariosProgresivo
+  ☐ Verificar que TODOS los tests pasan
+  ☐ Debuggear y corregir si algún test falla
+  ☐ Iterar hasta 100% tests GREEN
+
+[T004.5] Logs y debugging
+  ☐ Agregar console.log útiles (coefK, rangos afectados, montos)
+  ☐ Logs solo en modo development
+  ☐ Trazabilidad de cálculos para auditoría
+
+CRITERIOS DE ACEPTACIÓN:
+✅ CA-016: Todos los tests del Ticket #003 pasan (GREEN)
+✅ CA-017: Caso #1 calcula $21.319.200 exacto
+✅ CA-018: Caso #2 calcula $101.909.289 exacto
+✅ CA-019: Caso #3 calcula $241.860.022 exacto
+✅ CA-020: Caso #4 calcula $942.375.899 exacto
+✅ CA-021: Caso #5 genera 8 ítems correctos
+✅ CA-022: Coverage >95% en honorariosProgresivo.js
+✅ CA-023: Sin errores de lint
+✅ CA-024: JSDoc completo en todas las funciones públicas
+
+COMMIT ESPERADO:
+"feat(calc): implementar sistema progresivo SPEC-CALC-002 (GREEN phase)"
+
+VALIDACIÓN MANUAL:
+Ejecutar cálculo manual para Modelo X:
+- Rango A: (287.406.804 - 0) × 0.14 × 0.6 = 24.142.171 ✅
+- Rango B: (1.692.000.000 - 287.406.804) × 0.08 × 0.6 = 67.420.473 ✅
+- Rango B K: 574.813.607 × 0.03 × 0.6 = 10.346.645 ✅
+- Total: 101.909.289 ✅
+
+--------------------------------------------------------------------------------
+TICKET #005 - REFACTOR: OPTIMIZACIÓN Y LIMPIEZA
+--------------------------------------------------------------------------------
+ESTADO: ⏳ PENDIENTE
+PRIORIDAD: 🟡 MEDIA
+ASIGNADO A: Backend Dev
+ESTIMACIÓN: 4 horas
+DEPENDENCIAS: TICKET #004
+
+DESCRIPCIÓN:
+Refactorizar el código del módulo honorariosProgresivo.js para mejorar
+legibilidad, performance y mantenibilidad. Todos los tests deben seguir
+pasando después del refactor (TDD - REFACTOR phase).
+
+CONTEXTO:
+Con los tests en GREEN, ahora es seguro refactorizar el código para:
+- Eliminar duplicación
+- Mejorar nombres de variables
+- Optimizar cálculos
+- Agregar validaciones adicionales
+- Mejorar documentación
+
+UBICACIÓN: 
+App/Backend/03-Vercel/lib/utils/calculos/honorariosProgresivo.js
+
+SUBTAREAS:
+
+[T005.1] Revisar código duplicado
+  ☐ Identificar patrones repetidos
+  ☐ Extraer funciones auxiliares si es necesario
+  ☐ DRY (Don't Repeat Yourself)
+
+[T005.2] Mejorar nombres y legibilidad
+  ☐ Variables descriptivas (evitar x, y, z)
+  ☐ Funciones pequeñas (<50 líneas)
+  ☐ Comentarios solo donde agregan valor
+
+[T005.3] Optimizaciones
+  ☐ Evitar cálculos redundantes
+  ☐ Caché de valores si es aplicable
+  ☐ Validaciones early return
+
+[T005.4] Documentación JSDoc
+  ☐ @param con tipos completos
+  ☐ @returns con estructura detallada
+  ☐ @example en función principal
+  ☐ @throws si aplica
+
+[T005.5] Tests después de refactor
+  ☐ npm test (todos deben seguir pasando)
+  ☐ Verificar coverage no bajó
+  ☐ Performance tests (si aplica)
+
+CRITERIOS DE ACEPTACIÓN:
+✅ CA-025: Todos los tests siguen pasando después de refactor
+✅ CA-026: Funciones <50 líneas (excepto casos justificados)
+✅ CA-027: Sin código duplicado
+✅ CA-028: JSDoc completo y actualizado
+✅ CA-029: Lint score perfecto
+
+COMMIT ESPERADO:
+"refactor(calc): optimizar honorariosProgresivo - SPEC-CALC-002"
+
+================================================================================
+FASE 4: INTEGRACIÓN API
+================================================================================
+
+--------------------------------------------------------------------------------
+TICKET #006 - API: INTEGRAR SISTEMA PROGRESIVO EN ENDPOINT
+--------------------------------------------------------------------------------
+ESTADO: ⏳ PENDIENTE
+PRIORIDAD: 🔴 CRÍTICA
+ASIGNADO A: Backend Dev + API Dev
+ESTIMACIÓN: 4 horas
+DEPENDENCIAS: TICKET #005
+
+DESCRIPCIÓN:
+Actualizar el endpoint /api/v1/honorarios/calcular.js para usar el nuevo
+sistema progresivo. Deprecar el sistema plano anterior. Actualizar el contrato
+de response para incluir la nueva metadata.
+
+⚠️ BREAKING CHANGE: La estructura de response cambia significativamente.
+
+CONTEXTO:
+El endpoint actual usa honorariosBasico.js (sistema plano). Debe cambiarse a
+honorariosProgresivo.js (sistema escalonado). La metadata de response se
+expande con información adicional de trazabilidad.
+
+UBICACIÓN: 
+App/Backend/03-Vercel/api/v1/honorarios/calcular.js
+
+CAMBIOS:
+
+```javascript
+// ❌ ANTES (sistema plano)
+import { calcularHonorariosBasico } from '../../../lib/utils/calculos/honorariosBasico.js';
+
+// ✅ DESPUÉS (sistema progresivo)
+import { calcularHonorariosProgresivo } from '../../../lib/utils/calculos/honorariosProgresivo.js';
+
+export default async function handler(req, res) {
+  // ... validaciones ...
+  
+  try {
+    // Calcular honorarios con sistema progresivo
+    const detalleHonorarios = calcularHonorariosProgresivo(
+      req.body.datosObra,
+      valorK
+    );
+    
+    // Calcular total
+    const totalHonorarios = detalleHonorarios.reduce(
+      (sum, item) => sum + item.importe, 
+      0
+    );
+    
+    // Calcular metadata ampliada
+    const coeficienteK = req.body.datosObra.valorObra / valorK;
+    const rangoFinal = determinarRango(coeficienteK);
+    const rangosAfectados = calcularRangosAfectados(detalleHonorarios);
+    const limitesRangos = calcularLimitesRangos(valorK);
+    
+    // Response con nueva estructura
+    return res.status(200).json({
+      success: true,
+      data: {
+        calculoId: generarId(),
+        tipoCalculo: 'basico',
+        fechaCalculo: new Date().toISOString(),
+        resultado: {
+          detalleHonorarios,
+          totalHonorarios,
+          metadata: {
+            valorK,
+            coeficienteK,           // ← NUEVO
+            rangoFinal,             // ← NUEVO
+            rangosAfectados,        // ← NUEVO
+            numeroItems: detalleHonorarios.length,
+            limitesRangos          // ← NUEVO
+          }
+        }
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error en cálculo progresivo:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Error procesando cálculo de honorarios'
+    });
+  }
+}
+```
+
+SUBTAREAS:
+
+[T006.1] Modificar imports
+  ☐ Comentar/eliminar import de honorariosBasico
+  ☐ Agregar import de honorariosProgresivo
+  ☐ Agregar import de funciones auxiliares necesarias
+
+[T006.2] Actualizar lógica de cálculo
+  ☐ Reemplazar llamada a calcularHonorariosBasico
+  ☐ Usar calcularHonorariosProgresivo
+  ☐ Mantener misma validación de inputs
+
+[T006.3] Ampliar metadata de response
+  ☐ Calcular coeficienteK = valorObra / valorK
+  ☐ Determinar rangoFinal
+  ☐ Extraer rangosAfectados de detalleHonorarios
+  ☐ Incluir limitesRangos completo
+
+[T006.4] Actualizar manejo de errores
+  ☐ Logs específicos para debugging
+  ☐ Error messages descriptivos
+  ☐ Status codes correctos
+
+[T006.5] Tests de integración
+  ☐ Test: request válido → response 200 con nueva estructura
+  ☐ Test: validar metadata completa (coeficienteK, rangoFinal, etc.)
+  ☐ Test: detalleHonorarios con múltiples ítems por tarea
+  ☐ Test: request inválido → error 400
+  ☐ Test: comparar con resultados SPEC (Modelo X)
+
+[T006.6] Documentación API
+  ☐ Actualizar JSDoc del endpoint
+  ☐ Ejemplos de request/response
+  ☐ Marcar breaking changes
+
+CRITERIOS DE ACEPTACIÓN:
+✅ CA-030: Endpoint usa sistema progresivo
+✅ CA-031: Response incluye todos los campos de metadata
+✅ CA-032: Tests de integración pasan
+✅ CA-033: Sin errores 500 en tests
+✅ CA-034: Logs informativos para debugging
+✅ CA-035: JSDoc actualizado con nueva estructura
+
+COMMIT ESPERADO:
+"feat(api): integrar sistema progresivo en endpoint calcular - SPEC-CALC-002"
+
+EJEMPLO DE RESPONSE (Modelo X):
+```json
+{
+  "success": true,
+  "data": {
+    "calculoId": "calc_20260420_123456",
+    "tipoCalculo": "basico",
+    "fechaCalculo": "2026-04-20T10:30:00.000Z",
+    "resultado": {
+      "detalleHonorarios": [
+        {
+          "item": 1,
+          "tareaProfesional": "Proyecto de obra de arquitectura",
+          "descripcion": "Rango A (coef 14%)",
+          "importe": 24142171
+        },
+        {
+          "item": 2,
+          "tareaProfesional": "Proyecto de obra de arquitectura",
+          "descripcion": "Rango B (coef 8%)",
+          "importe": 67420473
+        },
+        {
+          "item": 3,
+          "tareaProfesional": "Proyecto de obra de arquitectura",
+          "descripcion": "Rango B (coef K 3%)",
+          "importe": 10346645
+        }
+      ],
+      "totalHonorarios": 101909289,
+      "metadata": {
+        "valorK": 574813607,
+        "coeficienteK": 2.94,
+        "rangoFinal": "B",
+        "rangosAfectados": ["A", "B"],
+        "numeroItems": 3,
+        "limitesRangos": {
+          "rangoA": { "inferior": 0, "superior": 287406804 },
+          "rangoB": { "inferior": 287406804, "superior": 2874068035 },
+          "rangoC": { "inferior": 2874068035, "superior": 14370340175 },
+          "rangoD": { "inferior": 14370340175, "superior": 9007199254740991 }
+        }
+      }
+    }
+  }
+}
+```
+
+================================================================================
+FASE 5: VALIDACIÓN Y DEPRECACIÓN
+================================================================================
+
+--------------------------------------------------------------------------------
+TICKET #007 - VALIDACIÓN: COMPARAR CON CÁLCULOS CPAU MANUALES
+--------------------------------------------------------------------------------
+ESTADO: ⏳ PENDIENTE
+PRIORIDAD: 🔴 CRÍTICA
+ASIGNADO A: QA + Backend Dev
+ESTIMACIÓN: 6 horas
+DEPENDENCIAS: TICKET #006
+
+DESCRIPCIÓN:
+Validar que los cálculos del sistema progresivo coincidan exactamente con
+cálculos manuales del CPAU para los 4 modelos de obra. Diferencias menores
+a $1 son aceptables por redondeo.
+
+CONTEXTO:
+El CPAU debe validar que el algoritmo implementado refleje correctamente
+las normativas 2026. Esta validación es crítica para aprobación final.
+
+UBICACIÓN: 
+- Planilla Excel con cálculos CPAU (a proveer por cliente)
+- Tests de validación en __tests__/
+
+SUBTAREAS:
+
+[T007.1] Preparar casos de validación
+  ☐ Solicitar planilla Excel oficial CPAU
+  ☐ Exportar valores esperados para 4 modelos
+  ☐ Documentar fórmulas usadas por CPAU
+
+[T007.2] Tests de validación vs CPAU
+  ☐ Test: Modelo 1 vs cálculo CPAU (tolerancia ±$1)
+  ☐ Test: Modelo X vs cálculo CPAU (tolerancia ±$1)
+  ☐ Test: Modelo 2 vs cálculo CPAU (tolerancia ±$1)
+  ☐ Test: Modelo 3 vs cálculo CPAU (tolerancia ±$1)
+  ☐ Test: desglose por rango coincide
+
+[T007.3] Validación de redondeos
+  ☐ Verificar redondeo de decimales
+  ☐ Comparar con criterio CPAU (redondear arriba/abajo)
+  ☐ Ajustar si es necesario
+
+[T007.4] Casos edge
+  ☐ Obra exactamente en límite de rango
+  ☐ Obra muy pequeña (<$1.000.000)
+  ☐ Obra muy grande (>$100.000.000.000)
+  ☐ Todas las tareas seleccionadas
+
+[T007.5] Documentación de validación
+  ☐ Crear archivo VALIDACION-CPAU.md
+  ☐ Tabla comparativa: Sistema vs CPAU
+  ☐ Capturas de Excel CPAU
+  ☐ Firmas de aprobación CPAU
+
+CRITERIOS DE ACEPTACIÓN:
+✅ CA-036: Modelo 1 diferencia <$1 vs CPAU
+✅ CA-037: Modelo X diferencia <$1 vs CPAU
+✅ CA-038: Modelo 2 diferencia <$1 vs CPAU
+✅ CA-039: Modelo 3 diferencia <$1 vs CPAU
+✅ CA-040: CPAU firma aprobación de cálculos
+✅ CA-041: Documentación de validación completa
+
+COMMIT ESPERADO:
+"test(calc): validación vs cálculos manuales CPAU - SPEC-CALC-002"
+
+EVIDENCIA REQUERIDA:
+- ✅ Screenshot de Excel CPAU con resultados
+- ✅ Tests automatizados pasando
+- ✅ Email/documento de aprobación CPAU
+
+--------------------------------------------------------------------------------
+TICKET #008 - DEPRECACIÓN: MARCAR SISTEMA PLANO OBSOLETO
+--------------------------------------------------------------------------------
+ESTADO: ⏳ PENDIENTE
+PRIORIDAD: 🟡 MEDIA
+ASIGNADO A: Backend Dev
+ESTIMACIÓN: 2 horas
+DEPENDENCIAS: TICKET #007
+
+DESCRIPCIÓN:
+Marcar el archivo honorariosBasico.js como @deprecated y agregar warnings
+si se intenta usar el sistema plano. Preparar para eliminación futura.
+
+CONTEXTO:
+El sistema plano (honorariosBasico.js) será reemplazado completamente por
+el sistema progresivo. Debe marcarse como deprecado pero NO eliminarse aún
+para permitir rollback de emergencia.
+
+UBICACIÓN: 
+App/Backend/03-Vercel/lib/utils/calculos/honorariosBasico.js
+
+SUBTAREAS:
+
+[T008.1] Marcar archivo como deprecado
+  ☐ Agregar banner de advertencia al inicio del archivo
+  ☐ JSDoc @deprecated en todas las funciones exportadas
+  ☐ Comentario con fecha de deprecación
+
+[T008.2] Agregar warnings en runtime
+  ☐ console.warn si se ejecuta calcularHonorariosBasico
+  ☐ Mensaje: "⚠️ Sistema plano deprecado. Usar honorariosProgresivo"
+  ☐ Incluir referencia a SPEC-CALC-002
+
+[T008.3] Documentación
+  ☐ Actualizar README.md de carpeta calculos/
+  ☐ Marcar honorariosBasico como LEGACY
+  ☐ Guía de migración a sistema progresivo
+
+[T008.4] Plan de eliminación
+  ☐ Documentar fecha tentativa de eliminación (ej: 3 meses)
+  ☐ Condiciones para eliminación (sin uso en 30 días)
+  ☐ Procedimiento de rollback si es necesario
+
+CRITERIOS DE ACEPTACIÓN:
+✅ CA-042: Archivo marcado como @deprecated
+✅ CA-043: Warnings aparecen si se usa (console.warn)
+✅ CA-044: Documentación actualizada
+✅ CA-045: Plan de eliminación documentado
+
+COMMIT ESPERADO:
+"chore(calc): deprecar sistema plano honorariosBasico - SPEC-CALC-002"
+
+EJEMPLO DE BANNER:
+
+```javascript
+/**
+ * ⚠️⚠️⚠️ DEPRECADO - NO USAR ⚠️⚠️⚠️
+ * 
+ * Este archivo contiene el sistema PLANO de cálculo de honorarios
+ * que fue reemplazado por el sistema PROGRESIVO escalonado.
+ * 
+ * @deprecated desde 20/04/2026
+ * @see honorariosProgresivo.js - Sistema nuevo (SPEC-CALC-002)
+ * @removal fecha tentativa: 20/07/2026 (3 meses)
+ * 
+ * Razón de deprecación:
+ * - Sistema plano no refleja progresividad de honorarios CPAU
+ * - Cálculos incorrectos en obras de gran escala
+ * - Reemplazado por SPEC-CALC-002
+ * 
+ * Solo se mantiene para rollback de emergencia.
+ */
+```
+
+================================================================================
+FASE 6: DEPLOY Y MONITOREO
+================================================================================
+
+--------------------------------------------------------------------------------
+TICKET #009 - DEPLOY: QA Y PRODUCCIÓN
+--------------------------------------------------------------------------------
+ESTADO: ⏳ PENDIENTE
+PRIORIDAD: 🔴 CRÍTICA
+ASIGNADO A: DevOps + Backend Lead
+ESTIMACIÓN: 6 horas
+DEPENDENCIAS: TICKET #008
+
+DESCRIPCIÓN:
+Desplegar el sistema progresivo a ambientes QA y Producción con estrategia
+de deploy coordinado frontend+backend. Requiere ventana de mantenimiento.
+
+⚠️ BREAKING CHANGE: Frontend debe estar actualizado ANTES del deploy de backend.
+
+CONTEXTO:
+Dado que cambia la estructura de response de la API, el deploy debe ser
+atómico o coordinado estrictamente entre frontend y backend para evitar
+errores en producción.
+
+ESTRATEGIAS DE DEPLOY:
+
+**Opción A - Feature Flag (RECOMENDADO)**
+```javascript
+// Backend con feature flag
+const usarSistemaProgresivo = process.env.FEATURE_PROGRESIVO === 'true';
+
+if (usarSistemaProgresivo) {
+  resultado = calcularHonorariosProgresivo(datos, valorK);
+} else {
+  resultado = calcularHonorariosBasico(datos, valorK);
+}
+```
+
+**Opción B - Deploy Atómico (Más riesgoso)**
+- Deploy backend nuevo
+- Inmediatamente deploy frontend nuevo
+- Ventana de 2-5 minutos con incompatibilidad
+
+SUBTAREAS:
+
+[T009.1] Preparar rama para deploy
+  ☐ Merge feature/SPEC-CALC-002 → develop
+  ☐ Resolver conflictos si existen
+  ☐ Verificar CI/CD pasa (tests, lint, build)
+
+[T009.2] Deploy a QA
+  ☐ Deploy backend a vercel-qa
+  ☐ Verificar endpoint responde correctamente
+  ☐ Ejecutar tests de integración en QA
+  ☐ Notificar a frontend para actualizar QA
+
+[T009.3] Testing en QA
+  ☐ Probar 4 modelos de obra manualmente
+  ☐ Verificar response con nueva metadata
+  ☐ Frontend puede agrupar ítems por tarea
+  ☐ Sin errores 500 en logs
+  ☐ Performance acceptable (<500ms por cálculo)
+
+[T009.4] Aprobación para producción
+  ☐ Sign-off de QA
+  ☐ Sign-off de Product Owner (CPAU)
+  ☐ Sign-off de Tech Lead
+  ☐ Coordinar ventana de mantenimiento
+
+[T009.5] Deploy a Producción
+  ☐ Comunicar mantenimiento programado (email/slack)
+  ☐ Merge develop → main
+  ☐ Tag de release: v2.0.0-sistema-progresivo
+  ☐ Deploy backend a producción
+  ☐ Verificar health check OK
+  ☐ Deploy frontend a producción (coordinado)
+  ☐ Smoke tests en producción
+
+[T009.6] Monitoreo post-deploy (48 horas)
+  ☐ Monitorear logs de errores
+  ☐ Verificar tasa de errores <0.1%
+  ☐ Verificar response time <500ms p95
+  ☐ Verificar cálculos correctos (spot check)
+  ☐ Atención a issues de usuarios
+
+[T009.7] Rollback plan (si es necesario)
+  ☐ Documentar procedimiento de rollback
+  ☐ Backup de código anterior
+  ☐ Feature flag para deshabilitar rápido
+  ☐ Comunicación de rollback
+
+CRITERIOS DE ACEPTACIÓN:
+✅ CA-046: Deploy a QA exitoso
+✅ CA-047: Tests en QA pasan (manual + automatizados)
+✅ CA-048: Frontend QA funciona con nueva API
+✅ CA-049: Aprobaciones obtenidas
+✅ CA-050: Deploy a producción sin errores
+✅ CA-051: Monitoreo 48h sin incidentes críticos
+✅ CA-052: Rollback plan documentado y probado
+
+COMMITS ESPERADOS:
+1. "chore(release): merge SPEC-CALC-002 a develop"
+2. "chore(release): v2.0.0 - sistema progresivo de honorarios"
+
+CHECKLIST DE DEPLOY:
+
+Pre-deploy:
+- [ ] Todos los tests pasan (unit + integration)
+- [ ] Lint score perfecto
+- [ ] Code review aprobado
+- [ ] Documentación actualizada
+- [ ] SPEC-CALC-002 firmada por CPAU
+- [ ] Frontend actualizado en QA
+
+Deploy QA:
+- [ ] Backend desplegado
+- [ ] Smoke tests OK
+- [ ] Frontend desplegado
+- [ ] Tests manuales OK
+- [ ] Sign-off QA obtenido
+
+Deploy Producción:
+- [ ] Ventana de mantenimiento comunicada
+- [ ] Backend desplegado
+- [ ] Health check OK
+- [ ] Frontend desplegado
+- [ ] Smoke tests producción OK
+- [ ] Monitoreo activado
+
+Post-deploy:
+- [ ] Sin errores 500 (24h)
+- [ ] Response time normal
+- [ ] Usuarios sin reportes de problemas
+- [ ] Documentación publicada
+
+CONTINGENCIA:
+Si se detectan problemas críticos en las primeras 2 horas:
+1. Evaluar severidad (bloqueante vs no bloqueante)
+2. Si bloqueante: ejecutar rollback inmediato
+3. Si no bloqueante: ticket de fix urgente
+4. Comunicar a stakeholders
+
+================================================================================
+FASE 7: DOCUMENTACIÓN Y CIERRE
+================================================================================
+
+--------------------------------------------------------------------------------
+TICKET #010 - DOCS: ACTUALIZAR DOCUMENTACIÓN TÉCNICA
+--------------------------------------------------------------------------------
+ESTADO: ⏳ PENDIENTE
+PRIORIDAD: 🟡 MEDIA
+ASIGNADO A: Tech Writer + Backend Dev
+ESTIMACIÓN: 4 horas
+DEPENDENCIAS: TICKET #009
+
+DESCRIPCIÓN:
+Actualizar toda la documentación técnica del proyecto para reflejar el cambio
+a sistema progresivo. Incluye README, API docs, guías de desarrollo.
+
+UBICACIÓN: 
+- App/Backend/03-Vercel/README.md
+- App/Backend/03-Vercel/lib/utils/calculos/README.md
+- 01-Docs/06-ArquitecturaBackendAPI.md
+- 01-Docs/07-ContratoAPI-Honorarios.md
+
+SUBTAREAS:
+
+[T010.1] Actualizar README principal
+  ☐ Sección "Cálculo de Honorarios" actualizada
+  ☐ Explicar sistema progresivo vs plano
+  ☐ Diagrama de flujo actualizado
+
+[T010.2] Actualizar documentación de API
+  ☐ Contrato de response con nueva metadata
+  ☐ Ejemplos de request/response actualizados
+  ☐ Marcar breaking changes
+
+[T010.3] Guía de desarrollo
+  ☐ Cómo agregar nuevas tareas profesionales
+  ☐ Cómo modificar coeficientes
+  ☐ Cómo debuggear cálculos
+
+[T010.4] CHANGELOG
+  ☐ Agregar entrada v2.0.0 con SPEC-CALC-002
+  ☐ Listar breaking changes
+  ☐ Guía de migración para consumidores de API
+
+CRITERIOS DE ACEPTACIÓN:
+✅ CA-053: README actualizado con sistema progresivo
+✅ CA-054: API docs reflejan nueva estructura
+✅ CA-055: CHANGELOG completo con breaking changes
+✅ CA-056: Guías de desarrollo actualizadas
+
+COMMIT ESPERADO:
+"docs: actualizar documentación sistema progresivo - SPEC-CALC-002"
+
+--------------------------------------------------------------------------------
+TICKET #011 - CIERRE: RETROSPECTIVA Y LECCIONES APRENDIDAS
+--------------------------------------------------------------------------------
+ESTADO: ⏳ PENDIENTE
+PRIORIDAD: 🟢 BAJA
+ASIGNADO A: Tech Lead + Equipo
+ESTIMACIÓN: 2 horas
+DEPENDENCIAS: TICKET #010
+
+DESCRIPCIÓN:
+Reunión de retrospectiva del equipo para documentar lecciones aprendidas,
+métricas del proyecto y mejoras para próximas implementaciones.
+
+AGENDA:
+
+1. **Métricas del Proyecto**
+   - Estimación vs Real (horas)
+   - Tests escritos vs fallidos
+   - Bugs encontrados en QA
+   - Issues post-deploy
+
+2. **Qué funcionó bien**
+   - TDD: Tests primero funcionó?
+   - Spec-Driven: Especificación fue útil?
+   - Coordinación frontend/backend?
+
+3. **Qué mejorar**
+   - Estimaciones fueron precisas?
+   - Comunicación efectiva?
+   - Herramientas/proceso a mejorar?
+
+4. **Lecciones aprendidas**
+   - Breaking changes: cómo manejar mejor?
+   - Deploy coordinado: estrategia a futuro?
+   - Tests: suficiente cobertura?
+
+5. **Próximos pasos**
+   - Refactors pendientes
+   - Features relacionadas
+   - Deuda técnica identificada
+
+DELIVERABLES:
+- [ ] Documento de retrospectiva (01-Docs/01-PM/RETRO-SPEC-CALC-002.md)
+- [ ] Métricas actualizadas
+- [ ] Action items para próximo sprint
+
+CRITERIOS DE ACEPTACIÓN:
+✅ CA-057: Retrospectiva realizada con equipo completo
+✅ CA-058: Documento de lecciones aprendidas
+✅ CA-059: Action items documentados y asignados
+
+================================================================================
+RESUMEN EJECUTIVO
+================================================================================
+
+TOTAL DE TICKETS: 11
+ESTIMACIÓN TOTAL: 50 horas (~7 días laborables)
+
+SPRINT 1 (Días 1-3): Fundamentos y Tests
+  Ticket #001: Setup rama y estructura (1h)
+  Ticket #002: Función límites rangos (3h)
+  Ticket #003: Tests completos RED (8h)
+  TOTAL: 12 horas
+
+SPRINT 2 (Días 4-5): Implementación Core
+  Ticket #004: Módulo progresivo GREEN (12h)
+  Ticket #005: Refactor y optimización (4h)
+  TOTAL: 16 horas
+
+SPRINT 3 (Días 6-7): Integración y Deploy
+  Ticket #006: Integración API (4h)
+  Ticket #007: Validación CPAU (6h)
+  Ticket #008: Deprecación sistema plano (2h)
+  Ticket #009: Deploy QA + Producción (6h)
+  Ticket #010: Documentación (4h)
+  Ticket #011: Retrospectiva (2h)
+  TOTAL: 24 horas
+
+DEPENDENCIAS CRÍTICAS:
+- SPEC-CALC-001 debe estar en producción
+- Frontend debe actualizarse ANTES o AL MISMO TIEMPO que backend
+- CPAU debe validar cálculos antes de deploy a producción
+
+RIESGOS PRINCIPALES:
+🔴 ALTO: Breaking change en API → requiere coordinación estricta
+🟡 MEDIO: Complejidad algoritmo progresivo → TDD mitiga
+🟡 MEDIO: Performance con múltiples ítems → monitorear en QA
+🟢 BAJO: Rollback disponible con sistema deprecado
+
+APROBACIONES REQUERIDAS:
+- [ ] Tech Lead (antes de comenzar implementación)
+- [ ] CPAU (validación de cálculos - Ticket #007)
+- [ ] QA (antes de deploy a producción)
+- [ ] Product Owner (deploy a producción)
+
+================================================================================
+FIN DE TICKETS SPEC-CALC-002
+================================================================================
+Generado: 20/04/2026
+Autor: Project Manager - Equipo CH2026
+Próxima revisión: Al completar Sprint 1
+================================================================================

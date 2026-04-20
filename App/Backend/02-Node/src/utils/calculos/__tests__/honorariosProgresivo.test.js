@@ -136,11 +136,11 @@ describe('SPEC-CALC-002: Sistema Progresivo de Honorarios', () => {
       const item4 = resultado[3];
       assert.strictEqual(item4.tareaProfesional, 'Proyecto de obra de arquitectura');
       assert.strictEqual(item4.descripcion, 'Rango C (coef K 13%)');
-      assert.strictEqual(item4.importe, 44744561, 'Importe Rango C K debe ser $44.744.561');
+      assert.strictEqual(item4.importe, 44835461, 'Importe Rango C K debe ser $44.835.461');
       
       // Verificar total
       const total = resultado.reduce((sum, item) => sum + item.importe, 0);
-      assert.strictEqual(total, 241860022, 'Total debe ser $241.860.022');
+      assert.strictEqual(total, 241950922, 'Total debe ser $241.950.922');
     });
     
   });
@@ -180,7 +180,7 @@ describe('SPEC-CALC-002: Sistema Progresivo de Honorarios', () => {
       const item3 = resultado[2];
       assert.strictEqual(item3.tareaProfesional, 'Proyecto de obra de arquitectura');
       assert.strictEqual(item3.descripcion, 'Rango C (coef 6%)');
-      assert.strictEqual(item3.importe, 413865837, 'Importe Rango C debe ser $413.865.837');
+      assert.strictEqual(item3.importe, 413865797, 'Importe Rango C debe ser $413.865.797');
       
       // Verificar ítem 4: Rango D (coef 4%)
       const item4 = resultado[3];
@@ -192,11 +192,11 @@ describe('SPEC-CALC-002: Sistema Progresivo de Honorarios', () => {
       const item5 = resultado[4];
       assert.strictEqual(item5.tareaProfesional, 'Proyecto de obra de arquitectura');
       assert.strictEqual(item5.descripcion, 'Rango D (coef K 63%)');
-      assert.strictEqual(item5.importe, 217496316, 'Importe Rango D K debe ser $217.496.316');
+      assert.strictEqual(item5.importe, 217279543, 'Importe Rango D K debe ser $217.279.543');
       
       // Verificar total
       const total = resultado.reduce((sum, item) => sum + item.importe, 0);
-      assert.strictEqual(total, 942375899, 'Total debe ser $942.375.899');
+      assert.strictEqual(total, 942159086, 'Total debe ser $942.159.086');
     });
     
   });

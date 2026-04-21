@@ -272,11 +272,10 @@ function agruparItemsPorTarea(items) {
 // ============================================================================
 
 module.exports = async function handler(req, res) {
-  // CORS Headers - Siempre permitir todos los origins
+  // CORS Headers - Permitir todos los origins (sin credentials)
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS, GET');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Version');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   // OPTIONS (Preflight)
   if (req.method === 'OPTIONS') {

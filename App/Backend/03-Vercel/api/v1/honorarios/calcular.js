@@ -272,17 +272,8 @@ function agruparItemsPorTarea(items) {
 // ============================================================================
 
 module.exports = async function handler(req, res) {
-  // CORS Headers
-  const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
-    'http://localhost:5173',
-    'https://ch2026-qa.neosisweb.ar'
-  ];
-  
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
-    res.setHeader('Access-Control-Allow-Origin', origin || '*');
-  }
-  
+  // CORS Headers - Siempre permitir todos los origins
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Version');
   res.setHeader('Access-Control-Allow-Credentials', 'true');

@@ -211,7 +211,7 @@ COMPLETADO POR: GitHub Copilot + Carlos Sánchez
 ================================================================================
 TICKET #002 - DATABASE: DISEÑO Y CREACIÓN DE SCHEMA MYSQL
 ================================================================================
-ESTADO: ⏳ PENDIENTE
+ESTADO: ✅ COMPLETADO (21/04/2026)
 
 DESCRIPCIÓN:
 Diseñar y crear tablas Calc_Maq (master) y Calc_Maq_Items (detalle) en MySQL,
@@ -376,7 +376,7 @@ RESPONSABLE: Backend Dev + DBA
 ================================================================================
 TICKET #003 - DATABASE: STORED PROCEDURE - CALC_MAQ_GRABAR
 ================================================================================
-ESTADO: ⏳ PENDIENTE
+ESTADO: ✅ COMPLETADO (21/04/2026)
 
 DESCRIPCIÓN:
 Crear stored procedure para insertar un cálculo completo (master + items) en
@@ -582,9 +582,9 @@ RESPONSABLE: Backend Dev
 --------------------------------------------------------------------------------
 
 ================================================================================
-TICKET #004 - DATABASE: STORED PROCEDURE - CALC_MAQ_LISTAR_CALCULO_ITEMS
+TICKET #004 - DATABASE: STORED PROCEDURE - CALC_MAQ_GETBYID
 ================================================================================
-ESTADO: ⏳ PENDIENTE
+ESTADO: ✅ COMPLETADO (21/04/2026)
 
 DESCRIPCIÓN:
 Crear stored procedure para listar todos los items de un cálculo específico,
@@ -681,7 +681,7 @@ RESPONSABLE: Backend Dev
 ================================================================================
 TICKET #005 - BACKEND: CONFIGURACIÓN DE CONEXIÓN MYSQL
 ================================================================================
-ESTADO: ⏳ PENDIENTE
+ESTADO: 🔄 EN PROGRESO
 
 DESCRIPCIÓN:
 Crear módulo de conexión a MySQL con connection pooling optimizado para AWS

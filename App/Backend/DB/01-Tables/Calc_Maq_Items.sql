@@ -10,7 +10,7 @@ CREATE TABLE Calc_Maq_Items (
   -- Datos del Item
   tarea_profesional VARCHAR(200) NOT NULL,
   descripcion TEXT NOT NULL,
-  importe DECIMAL(15,2) NOT NULL,
+  importe DECIMAL(15,2) NOT NULL DEFAULT 0.00,
   
   -- Auditoría
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -1,6 +1,8 @@
 -- ============================================================================
 -- TABLA PRINCIPAL: CÁLCULOS DE HONORARIOS (MASTER)
 -- ============================================================================
+DROP TABLE IF EXISTS Calc_Maq;
+
 CREATE TABLE Calc_Maq (
   -- Identificación
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -30,16 +32,16 @@ CREATE TABLE Calc_Maq (
   tarea_proyecto_estructuras BOOLEAN DEFAULT FALSE,
   
   -- Parámetros de Cálculo
-  parametro_valor_k DECIMAL(15,2),
+  parametro_valor_k DECIMAL(15,2) DEFAULT 0.00,
   
   -- Resultado Total
-  total_honorarios DECIMAL(15,2) NOT NULL,
+  total_honorarios DECIMAL(15,2) NOT NULL DEFAULT 0.00,
   
   -- Metadata del Resultado
   metadata_rango VARCHAR(10),
-  metadata_valor_k DECIMAL(15,2),
-  metadata_rango_costo_obra DECIMAL(10,4),
-  metadata_numero_items INT,
+  metadata_valor_k DECIMAL(15,2) DEFAULT 0.00,
+  metadata_rango_costo_obra DECIMAL(10,4) DEFAULT 0.00,
+  metadata_numero_items INT DEFAULT 0,
   
   -- Auditoría
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

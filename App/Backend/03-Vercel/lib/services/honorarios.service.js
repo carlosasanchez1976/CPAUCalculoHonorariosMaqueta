@@ -1,14 +1,51 @@
 /**
  * Servicio de Cálculo de Honorarios
  * Contiene la lógica de negocio para procesar cálculos
+ * 
+ * SPEC-CALC-002: Sistema Progresivo de Honorarios
+ * @version 2.0.0 - Actualizado para usar sistema progresivo
  */
 
-import {
-  calcularHonorariosBasico,
-  calcularTotalHonorarios,
-  obtenerMetadataCalculo
-} from '../utils/calculos/honorariosBasico.js';
-import { VALOR_K_DEFAULT } from '../utils/calculos/tablasCoeficientes.js';
+import { calcularHonorariosProgresivo } from '../utils/calculos/honorariosProgresivo.js';
+import { VALOR_K_DEFAULT, calcularLimitesRangos } from '../utils/calculos/tablasCoeficientes.js';
+
+// ============================================================================
+// FUNCIONES AUXILIARES
+// ============================================================================
+
+/**
+ * Determina el rango de costo de obra según la relación valorObra/valorK
+ * @private
+ * @param {number} coeficienteK - Relación valorObra / valorK
+ * @returns {string} 'A' | 'B' | 'C' | 'D'
+ */
+function determinarRango(coeficienteK) {
+  if (coeficienteK < 0.5) return 'A';
+  if (coeficienteK < 5) return 'B';
+  if (coeficienteK < 25) return 'C';
+  return 'D';
+}
+
+/**
+ * Extrae los rangos afectados del detalle de honorarios
+ * @private
+ * @param {Array<Object>} detalleHonorarios - Ítems de honorarios
+ * @returns {Array<string>} Rangos únicos presentes (ej: ['A', 'B'])
+ */
+function extraerRangosAfectados(detalleHonorarios) {
+  const rangos = new Set();
+  
+  for (const item of detalleHonorarios) {
+    // Extraer rango de la descripción (formato: "Rango X (coef ...)")
+    const match = item.descripcion.match(/Rango ([A-D])/);
+    if (match) {
+      rangos.add(match[1]);
+    }
+  }
+  
+  // Retornar ordenado alfabéticamente
+  return Array.from(rangos).sort();
+}
 
 /**
  * Servicio principal de cálculo de honorarios
@@ -24,13 +61,13 @@ export async function calcularHonorariosService(datosCompletos) {
     parametros
   } = datosCompletos;
 
-  // Preparar datos para el cálculo
+  // Preparar datos para el cálculo progresivo
   const formData = {
     valorObra: datosObra.valorObra,
     superficie: datosObra.superficie,
     tipologia: datosObra.tipologia,
     complejidad: datosObra.complejidad,
-    ...tareasProfesionales
+    tareas: tareasProfesionales  // Sistema progresivo usa objeto 'tareas'
   };
 
   // Obtener valor K (usar el del request o default)
@@ -39,12 +76,23 @@ export async function calcularHonorariosService(datosCompletos) {
                 VALOR_K_DEFAULT;
 
   // ========================================================================
-  // EJECUTAR CÁLCULO (SERVER-SIDE - NO VISIBLE EN NAVEGADOR)
+  // EJECUTAR CÁLCULO PROGRESIVO (SERVER-SIDE - NO VISIBLE EN NAVEGADOR)
   // ========================================================================
 
-  const detalleHonorarios = calcularHonorariosBasico(formData, valorK);
-  const totalHonorarios = calcularTotalHonorarios(detalleHonorarios);
-  const metadata = obtenerMetadataCalculo(formData, valorK);
+  // Calcular honorarios con sistema progresivo (SPEC-CALC-002)
+  const detalleHonorarios = calcularHonorariosProgresivo(formData, valorK);
+  
+  // Calcular total
+  const totalHonorarios = detalleHonorarios.reduce(
+    (sum, item) => sum + item.importe, 
+    0
+  );
+  
+  // Calcular metadata ampliada
+  const coeficienteK = datosObra.valorObra / valorK;
+  const rangoFinal = determinarRango(coeficienteK);
+  const rangosAfectados = extraerRangosAfectados(detalleHonorarios);
+  const limitesRangos = calcularLimitesRangos(valorK);
 
   // ========================================================================
   // PREPARAR RESPONSE
@@ -62,8 +110,29 @@ export async function calcularHonorariosService(datosCompletos) {
       detalleHonorarios,
       totalHonorarios,
       metadata: {
-        ...metadata,
-        numeroItems: detalleHonorarios.length
+        valorK,
+        coeficienteK: parseFloat(coeficienteK.toFixed(4)),  // Redondear para legibilidad
+        rangoFinal,
+        rangosAfectados,
+        numeroItems: detalleHonorarios.length,
+        limitesRangos: {
+          rangoA: {
+            inferior: limitesRangos.rangoA.inferior,
+            superior: Math.round(limitesRangos.rangoA.superior)
+          },
+          rangoB: {
+            inferior: Math.round(limitesRangos.rangoB.inferior),
+            superior: Math.round(limitesRangos.rangoB.superior)
+          },
+          rangoC: {
+            inferior: Math.round(limitesRangos.rangoC.inferior),
+            superior: Math.round(limitesRangos.rangoC.superior)
+          },
+          rangoD: {
+            inferior: Math.round(limitesRangos.rangoD.inferior),
+            superior: limitesRangos.rangoD.superior  // MAX_SAFE_INTEGER, no redondear
+          }
+        }
       }
     }
   };
@@ -77,13 +146,15 @@ export async function calcularHonorariosService(datosCompletos) {
     };
   }
 
-  // Log para desarrollo
-  console.log('✅ Cálculo completado:', {
+  // Log para desarrollo (sistema progresivo)
+  console.log('✅ Cálculo progresivo completado:', {
     calculoId,
     tipoCalculo,
     valorObra: datosObra.valorObra,
     totalHonorarios,
-    rango: metadata.rango,
+    coeficienteK: coeficienteK.toFixed(4),
+    rangoFinal,
+    rangosAfectados: rangosAfectados.join('+'),
     numeroItems: detalleHonorarios.length
   });
 

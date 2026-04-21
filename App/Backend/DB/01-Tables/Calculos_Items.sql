@@ -1,10 +1,10 @@
 -- ============================================================================
 -- TABLA DE DETALLE: ITEMS DE CADA CÁLCULO (DETALLE)
 -- ============================================================================
-CREATE TABLE Calc_Maq_Items (
+CREATE TABLE Calculos_Items (
   -- Identificación
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  calculo_id VARCHAR(50) NOT NULL,
+  calculo_item_id INT AUTO_INCREMENT PRIMARY KEY,
+  calculo_id INT NOT NULL,
   item_numero INT NOT NULL,
   
   -- Datos del Item
@@ -16,9 +16,8 @@ CREATE TABLE Calc_Maq_Items (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   
   -- Foreign Key
-  FOREIGN KEY (calculo_id) REFERENCES Calc_Maq(calculo_id) ON DELETE CASCADE,
+  FOREIGN KEY (calculo_id) REFERENCES Calculos(calculo_id) ON DELETE CASCADE,
   
   -- Índices
-  INDEX idx_calculo (calculo_id),
-  INDEX idx_item (item_numero)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  INDEX idx_calculo (calculo_id)
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

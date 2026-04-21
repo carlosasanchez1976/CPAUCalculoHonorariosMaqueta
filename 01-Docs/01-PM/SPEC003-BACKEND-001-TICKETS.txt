@@ -1,15 +1,15 @@
 ================================================================================
 TICKETS DERIVADOS DE SPEC-BACKEND-001
 ================================================================================
-SPEC: Migración Lógica de Cálculo de Maqueta a Backend Lambda
+SPEC: Implementación Backend Definitivo - Cálculo de Honorarios
 Fecha: 21/04/2026
+Versión: 1.1
 Estado: 🚧 EN IMPLEMENTACIÓN
 ================================================================================
 
 CONTEXTO:
-Esta lista de tickets reemplaza los tickets 007 en adelante del archivo
-260416-ImplementarBackendAWS.txt. Trabajaremos desde esta SPEC para tener
-una visión más clara y estructurada de la migración.
+Implementación directa de backend definitivo (eliminado enfoque de backend
+para maqueta). Tablas definitivas desde el inicio: Calculos y Calculo_Items.
 
 OBJETIVO:
 Migrar completamente la lógica de cálculo desde JavaScript (maqueta) a 
@@ -37,53 +37,52 @@ AJUSTES PENDIENTES (Ticket #011):
 ⏳ Procesar resultset del SP correctamente
 
 ================================================================================
-TICKET #007 ⏳ PENDIENTE
+TICKET #007 ✅ COMPLETADO (21/04/2026)
 ================================================================================
-TÍTULO: Modificar Schema de Base de Datos (calculo_id → INT)
+TÍTULO: Crear Schema de Base de Datos Definitivo
 
 PRIORIDAD: 🔴 ALTA (Bloqueante para resto)
 
 DESCRIPCIÓN:
-Modificar esquema de tablas Calc_Maq y Calc_Maq_Items para usar id INT 
-AUTO_INCREMENT como PK en lugar de calculo_id VARCHAR.
+Crear tablas definitivas Calculos y Calculo_Items con estructura completa.
+Eliminar cualquier referencia a tablas de maqueta (Calc_Maq, Calc_Maq_Items).
 
 SUBTAREAS:
 
-[T007.1] Modificar script Calc_Maq.sql
-  ⏳ Editar App/Backend/DB/01-Tables/Calc_Maq.sql
-  ⏳ Cambiar PK a id INT AUTO_INCREMENT
-  ⏳ Eliminar campo calculo_id VARCHAR
-  ⏳ Mantener resto de campos igual
-  ⏳ Verificar índices (usuario_fecha, tipo_calculo)
+[T007.1] Crear script Calculos.sql
+  ✅ Crear App/Backend/DB/01-Tables/Calculos.sql
+  ✅ PK: id INT AUTO_INCREMENT
+  ✅ Campos completos según SPEC
+  ✅ Índices optimizados (usuario_fecha, tipo_calculo)
 
-[T007.2] Modificar script Calc_Maq_Items.sql
-  ⏳ Editar App/Backend/DB/01-Tables/Calc_Maq_Items.sql
-  ⏳ Cambiar calculo_id de VARCHAR(50) a INT
-  ⏳ FK a Calc_Maq(id) ON DELETE CASCADE
-  ⏳ Mantener resto igual
+[T007.2] Crear script Calculo_Items.sql
+  ✅ Crear App/Backend/DB/01-Tables/Calculo_Items.sql
+  ✅ calculo_id INT FK a Calculos(id)
+  ✅ ON DELETE CASCADE
+  ✅ Índices apropiados
 
 [T007.3] Ejecutar en DEV (localhost)
-  ⏳ Backup de datos existentes (si hay)
-  ⏳ DROP y recrear tablas
-  ⏳ Verificar: SHOW CREATE TABLE Calc_Maq
-  ⏳ Verificar: SHOW CREATE TABLE Calc_Maq_Items
-  ⏳ Test de inserción manual
+  ✅ DROP tablas antiguas (Calc_Maq*) si existen
+  ✅ CREATE tablas nuevas (Calculos, Calculo_Items)
+  ✅ Verificar: SHOW CREATE TABLE Calculos
+  ✅ Verificar: SHOW CREATE TABLE Calculo_Items
+  ✅ Test de inserción manual
 
 [T007.4] Ejecutar en QA (AWS RDS)
-  ⏳ Conectar a RDS cpau_ch_qa
-  ⏳ Ejecutar scripts
-  ⏳ Verificar creación correcta
+  ✅ Conectar a RDS cpau_ch_qa
+  ✅ Ejecutar scripts
+  ✅ Verificar creación correcta
 
-ARCHIVOS AFECTADOS:
-- App/Backend/DB/01-Tables/Calc_Maq.sql
-- App/Backend/DB/01-Tables/Calc_Maq_Items.sql
+ARCHIVOS CREADOS:
+- App/Backend/DB/01-Tables/Calculos.sql
+- App/Backend/DB/01-Tables/Calculo_Items.sql
 
 CRITERIOS DE ACEPTACIÓN:
-□ Tabla Calc_Maq con id INT PK AUTO_INCREMENT
-□ Tabla Calc_Maq_Items con calculo_id INT FK
-□ FK funcionando correctamente
-□ Ejecutado en DEV y QA
-□ Tests de inserción manual OK
+✅ Tabla Calculos con id INT PK AUTO_INCREMENT
+✅ Tabla Calculo_Items con calculo_id INT FK
+✅ FK funcionando correctamente
+✅ Ejecutado en DEV y QA
+✅ Tests de inserción manual OK
 
 ESTIMACIÓN: 1 hora
 RESPONSABLE: Backend Dev
@@ -109,7 +108,7 @@ SUBTAREAS:
   ⏳ Declarar variables locales necesarias
 
 [T008.2] Implementar determinación de rango
-  ⏳ Leer v_valor_obra desde Calc_Maq
+  ⏳ Leer v_valor_obra desde Calculos
   ⏳ Calcular v_ratio = valor_obra / valor_k
   ⏳ Determinar rango A/B/C/D según ratio
   ⏳ Guardar en variable v_rango
@@ -119,7 +118,7 @@ SUBTAREAS:
   ⏳ Obtener coeficientes según rango
   ⏳ Calcular importe = valor_obra * coef_obra + valor_k * coef_k
   ⏳ Generar descripción con detalles
-  ⏳ INSERT item en Calc_Maq_Items
+  ⏳ INSERT item en Calculo_Items
   ⏳ Acumular en v_total
 
 [T008.4] Implementar cálculo Dirección de Obra
@@ -159,7 +158,7 @@ SUBTAREAS:
   ⏳ Acumular total
 
 [T008.10] Actualizar metadata en master
-  ⏳ UPDATE Calc_Maq SET:
+  ⏳ UPDATE Calculos SET:
     - total_honorarios = v_total
     - metadata_rango = v_rango
     - metadata_valor_k = v_valor_k
@@ -216,7 +215,7 @@ SUBTAREAS:
 
 [T009.2] Implementar lectura de tipo
   ⏳ SELECT tipo_calculo INTO v_tipo_calculo
-  ⏳ FROM Calc_Maq WHERE id = p_calculo_id
+  ⏳ FROM Calculos WHERE id = p_calculo_id
 
 [T009.3] Implementar switch de tipos
   ⏳ IF v_tipo_calculo = 'basico' THEN
@@ -251,23 +250,23 @@ RESPONSABLE: Backend Dev
 ================================================================================
 TICKET #010 ⏳ PENDIENTE
 ================================================================================
-TÍTULO: SP Nivel 1 - Calc_Maq_Grabar (Modificación Completa)
+TÍTULO: SP Nivel 1 - Calculo_Grabar (Implementación Completa)
 
 PRIORIDAD: 🔴 ALTA
 
 DESCRIPCIÓN:
-Modificar SP existente para implementar arquitectura de 3 niveles.
+Crear SP de entrada que implementa arquitectura de 3 niveles.
 Este es el entry point desde Node.js backend.
 
 SUBTAREAS:
 
-[T010.1] Modificar firma del SP
-  ⏳ Editar App/Backend/DB/03-Sps/Calc_Maq_Grabar.sql
-  ⏳ ELIMINAR parámetro IN p_calculo_id (ahora auto-generado)
-  ⏳ Mantener resto de parámetros (18 total)
+[T010.1] Crear archivo del SP
+  ⏳ Crear App/Backend/DB/03-Sps/Calculo_Grabar.sql
+  ⏳ Firma: 18 parámetros (NO incluir calculo_id)
+  ⏳ Fecha se genera automáticamente (NOW())
 
 [T010.2] Implementar inserción y obtener ID
-  ⏳ INSERT INTO Calc_Maq (...) VALUES (...)
+  ⏳ INSERT INTO Calculos (...) VALUES (...)
   ⏳ DECLARE v_calculo_id INT
   ⏳ SET v_calculo_id = LAST_INSERT_ID()
 
@@ -279,8 +278,8 @@ SUBTAREAS:
   ⏳   i.item_numero, i.tarea_profesional, 
   ⏳   i.descripcion, i.importe,
   ⏳   c.total_honorarios, c.metadata_rango
-  ⏳ FROM Calc_Maq_Items i
-  ⏳ INNER JOIN Calc_Maq c ON i.calculo_id = c.id
+  ⏳ FROM Calculo_Items i
+  ⏳ INNER JOIN Calculos c ON i.calculo_id = c.id
   ⏳ WHERE i.calculo_id = v_calculo_id
   ⏳ ORDER BY i.item_numero
 
@@ -296,8 +295,8 @@ SUBTAREAS:
   ⏳ Test: Verificar items retornados correctos
   ⏳ Test: Rollback funciona ante error
 
-ARCHIVOS A MODIFICAR:
-- App/Backend/DB/03-Sps/Calc_Maq_Grabar.sql
+ARCHIVOS A CREAR:
+- App/Backend/DB/03-Sps/Calculo_Grabar.sql
 
 DEPENDENCIAS:
 - Requiere: Ticket #009 completado (Orquestador funcional)
@@ -569,8 +568,8 @@ SUBTAREAS:
   ⏳ Verificar response 200
   ⏳ Verificar calculoId retornado (INT)
   ⏳ Verificar estructura de response
-  ⏳ Verificar registro en Calc_Maq (DB)
-  ⏳ Verificar items en Calc_Maq_Items (DB)
+  ⏳ Verificar registro en Calculos (DB)
+  ⏳ Verificar items en Calculo_Items (DB)
   ⏳ Verificar cálculos coinciden con maqueta
 
 [T015.3] Test: Obtener items de cálculo
@@ -615,14 +614,14 @@ RESPONSABLE: Backend Dev + QA
 RESUMEN DEL PLAN
 ================================================================================
 
-TICKETS COMPLETADOS: 1/10 (10%)
+TICKETS COMPLETADOS: 2/10 (20%)
 - ✅ #006: Modelo calculo.js
+- ✅ #007: Schema BD (Calculos, Calculo_Items)
 
-TICKETS PENDIENTES: 9/10 (90%)
-- ⏳ #007: Schema BD (calculo_id INT) - BLOQUEANTE
+TICKETS PENDIENTES: 8/10 (80%)
 - ⏳ #008: SP Nivel 3 (Lógica cálculo)
 - ⏳ #009: SP Nivel 2 (Orquestador)
-- ⏳ #010: SP Nivel 1 (Entry point)
+- ⏳ #010: SP Nivel 1 (Entry point - Calculo_Grabar)
 - ⏳ #011: Actualizar Modelo
 - ⏳ #012: Servicio
 - ⏳ #013: Controller
@@ -630,8 +629,8 @@ TICKETS PENDIENTES: 9/10 (90%)
 - ⏳ #015: Tests E2E
 
 ESTIMACIÓN TOTAL: 24-30 horas
-PRIORIDAD: Tickets #007, #008, #010 (críticos)
+PRIORIDAD: Tickets #008, #010 (críticos)
 
 ================================================================================
-PRÓXIMO PASO: TICKET #007 - Modificar Schema BD
+PRÓXIMO PASO: TICKET #008 - SP Nivel 3 (Lógica de Cálculo)
 ================================================================================

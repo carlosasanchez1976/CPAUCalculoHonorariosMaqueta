@@ -1,14 +1,13 @@
--- ============================================================================
+-- =========================10000Calculos===================================================
 -- TABLA PRINCIPAL: CÁLCULOS DE HONORARIOS (MASTER)
 -- ============================================================================
-DROP TABLE IF EXISTS Calc_Maq;
+DROP TABLE IF EXISTS Calculos;
 
-CREATE TABLE Calc_Maq (
+CREATE TABLE Calculos (
   -- Identificación
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  calculo_id VARCHAR(50) NOT NULL UNIQUE,
+  calculo_id INT AUTO_INCREMENT PRIMARY KEY,
   usuario_id INT NOT NULL,
-  tipo_calculo VARCHAR(50) NOT NULL,
+  tarea_id INT NOT NULL,
   fecha_calculo DATETIME NOT NULL,
   
   -- Datos del Proyecto
@@ -50,5 +49,8 @@ CREATE TABLE Calc_Maq (
   -- Índices
   INDEX idx_usuario (usuario_id),
   INDEX idx_fecha (fecha_calculo),
-  INDEX idx_calculo_id (calculo_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+  FOREIGN KEY (usuario_id) REFERENCES Usuarios(user_id) ,
+  FOREIGN KEY (tarea_id) REFERENCES Tareas_Profesionales(tarea_id) 
+
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

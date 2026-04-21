@@ -1,10 +1,15 @@
-# SPEC-BACKEND-001: Migración Lógica de Cálculo de Maqueta a Backend Lambda
+# SPEC-BACKEND-001: Implementación Backend Definitivo - Cálculo de Honorarios
 
 **Fecha:** 21/04/2026  
-**Versión:** 1.0  
+**Versión:** 1.1  
 **Estado:** 🚧 EN IMPLEMENTACIÓN  
 **Autor:** Charly - Equipo Backend  
 **Stack:** AWS Lambda + Node.js 18.x + MySQL 8.0 (AWS RDS)
+
+**CAMBIO ESTRATÉGICO v1.1:**  
+❌ Eliminado enfoque de "backend para maqueta" seguido de "backend definitivo"  
+✅ **Implementación directa de backend definitivo**  
+✅ Tablas definitivas: `Calculos` y `Calculo_Items` (antes: Calc_Maq, Calc_Maq_Items)
 
 ---
 
@@ -23,30 +28,35 @@
 
 ## 1. CONTEXTO Y OBJETIVO
 
-### 1.1 Contexto Actual (Fase 1 - Maqueta)
+### 1.1 Contexto Actual
 
-**Estado:**
+**Estado Maqueta (Referencia):**
 ```
 Frontend (React) → Vercel Serverless Function → Cálculo en JavaScript
 ```
 
-- ✅ Lógica de cálculo oculta en backend serverless
-- ✅ Maqueta funcional aprobada por cliente
+- ✅ Maqueta funcional aprobada por cliente (solo frontend)
+- ✅ Lógica de cálculo validada en JavaScript
+- ⚠️ **Sin backend real** (solo simulación en Vercel)
 - ⚠️ **Sin persistencia** en base de datos
 - ⚠️ **Sin autenticación** real
-- ⚠️ Lógica de cálculo en JavaScript (puede migrarse a otros lenguajes fácilmente)
 
-**Archivos de Lógica en Maqueta:**
+**Archivos de Lógica en Maqueta (Referencia para migración):**
 ```
 App/Backend/03-Vercel/api/v1/honorarios/calcular.js
 App/Backend/03-Vercel/lib/utils/calculos/
-├── honorariosBasico.js        ← Algoritmo de cálculo
-└── tablasCoeficientes.js      ← Coeficientes por rango
+├── honorariosBasico.js        ← Algoritmo de cálculo (migrar a SPs)
+└── tablasCoeficientes.js      ← Coeficientes por rango (migrar a SPs)
 ```
 
-### 1.2 Estado Objetivo (Fase 2 - Backend Real)
+**DECISIÓN ESTRATÉGICA:**
+- ❌ NO implementar backend intermedio para maqueta
+- ✅ Implementar **backend definitivo directamente**
+- ✅ Tablas definitivas desde inicio: `Calculos`, `Calculo_Items`
 
-**Stack Aprobado:**
+### 1.2 Estado Objetivo (Backend Definitivo)
+
+**Stack Definitivo:**
 ```
 Frontend (React) → AWS Lambda (Node.js) → Stored Procedures → AWS RDS MySQL
 ```
@@ -148,63 +158,102 @@ La lógica de cálculo actualmente en JavaScript debe migrar a **Stored Procedur
 
 ### 3.1 Cambio Principal: calculo_id
 
-**ANTES (Maqueta - Plan Original):**
-```sql
-CREATE TABLE Calc_Maq (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  calculo_id VARCHAR(50) NOT NULL UNIQUE,  -- ❌ String timestamp
-  -- ...
-);
-```
+**CAMBIO ESTRATÉGICO:**
 
-**AHORA (Backend Real - NUEVO):**
+❌ **ELIMINADO:** Enfoque de tablas temporales para maqueta (Calc_Maq, Calc_Maq_Items)  
+✅ **IMPLEMENTADO:** Tablas definitivas desde el inicio
+
+**TABLAS DEFINITIVAS:**
+
+**Tabla Master:**
 ```sql
-CREATE TABLE Calc_Maq (
-  id INT AUTO_INCREMENT PRIMARY KEY,  -- ✅ PK numérica
+CREATE TABLE Calculos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
   usuario_id INT NOT NULL,
   tipo_calculo VARCHAR(50) NOT NULL,
   fecha_calculo DATETIME NOT NULL,
-  -- ... resto de campos igual
+  
+  -- Datos Proyecto (opcionales)
+  proyecto_nombre VARCHAR(200),
+  proyecto_ubicacion VARCHAR(200),
+  proyecto_cliente VARCHAR(200),
+  
+  -- Datos Obra
+  obra_valor_obra DECIMAL(15,2) NOT NULL,
+  obra_superficie DECIMAL(10,2),
+  obra_tipologia VARCHAR(100),
+  obra_complejidad VARCHAR(50),
+  
+  -- Tareas Profesionales
+  tarea_obra_proyecto BOOLEAN DEFAULT FALSE,
+  tarea_obra_direccion BOOLEAN DEFAULT FALSE,
+  tarea_instalacion_sanitaria BOOLEAN DEFAULT FALSE,
+  tarea_instalacion_electrica BOOLEAN DEFAULT FALSE,
+  tarea_instalacion_contra_incendio BOOLEAN DEFAULT FALSE,
+  tarea_instalacion_termomecanica BOOLEAN DEFAULT FALSE,
+  tarea_proyecto_estructuras BOOLEAN DEFAULT FALSE,
+  
+  -- Resultados
+  total_honorarios DECIMAL(15,2),
+  
+  -- Metadata
+  metadata_rango VARCHAR(1),
+  metadata_valor_k DECIMAL(15,2),
+  metadata_rango_costo_obra DECIMAL(10,4),
+  metadata_numero_items INT,
+  
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   
   INDEX idx_usuario_fecha (usuario_id, fecha_calculo),
   INDEX idx_tipo_calculo (tipo_calculo)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
-**TABLA DETALLE (sin cambios):**
+**Tabla Detalle:**
 ```sql
-CREATE TABLE Calc_Maq_Items (
+CREATE TABLE Calculo_Items (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  calculo_id INT NOT NULL,  -- ✅ FK a Calc_Maq.id
+  calculo_id INT NOT NULL,
   item_numero INT NOT NULL,
   tarea_profesional VARCHAR(200) NOT NULL,
   descripcion TEXT NOT NULL,
   importe DECIMAL(15,2) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   
-  FOREIGN KEY (calculo_id) REFERENCES Calc_Maq(id) ON DELETE CASCADE,
+  FOREIGN KEY (calculo_id) REFERENCES Calculos(id) ON DELETE CASCADE,
   INDEX idx_calculo (calculo_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
-### 3.2 Script de Migración
+### 3.2 Script de Creación (Ambiente Limpio)
 
-**Si ya existen datos (DEV):**
+**Creación en DEV/QA:**
 ```sql
--- Paso 1: Backup
-CREATE TABLE Calc_Maq_Backup AS SELECT * FROM Calc_Maq;
-CREATE TABLE Calc_Maq_Items_Backup AS SELECT * FROM Calc_Maq_Items;
-
--- Paso 2: Drop y recrear (solo si es ambiente DEV limpio)
+-- Eliminar tablas anteriores de maqueta (si existieran)
 DROP TABLE IF EXISTS Calc_Maq_Items;
 DROP TABLE IF EXISTS Calc_Maq;
 
--- Paso 3: Crear tablas con nueva estructura (ver arriba)
--- ... (ejecutar CREATEs nuevos)
+-- Crear tablas definitivas
+DROP TABLE IF EXISTS Calculo_Items;
+DROP TABLE IF EXISTS Calculos;
 
--- Paso 4: Verificar
-SHOW CREATE TABLE Calc_Maq;
-SHOW CREATE TABLE Calc_Maq_Items;
+-- Ejecutar CREATEs de tablas definitivas (ver sección 3.1)
+-- ...
+
+-- Verificar estructura
+SHOW CREATE TABLE Calculos;
+SHOW CREATE TABLE Calculo_Items;
+
+-- Verificar integridad referencial
+SELECT 
+  TABLE_NAME,
+  CONSTRAINT_NAME,
+  REFERENCED_TABLE_NAME
+FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE TABLE_SCHEMA = 'cpau_ch_dev'
+  AND TABLE_NAME = 'Calculo_Items'
+  AND REFERENCED_TABLE_NAME IS NOT NULL;
 ```
 
 ### 3.3 Datos de Semilla (Seeds)
@@ -223,34 +272,34 @@ SHOW CREATE TABLE Calc_Maq_Items;
 
 ```
 NIVEL 1: Entry Point
-├─ Calc_Maq_Grabar(18 params)
-│  ├─ Graba master en Calc_Maq
+├─ Calculo_Grabar(18 params)
+│  ├─ Graba master en Calculos
 │  ├─ Llama NIVEL 2 →
 │  └─ Retorna items calculados
 
 NIVEL 2: Orquestador
 ├─ Calcular_Honorario(calculo_id)
-│  ├─ Lee tipo_calculo desde Calc_Maq
+│  ├─ Lee tipo_calculo desde Calculos
 │  ├─ IF tipo = 'basico' → Llama NIVEL 3 (PYDO)
 │  ├─ IF tipo = 'avanzado' → Llama NIVEL 3 (Avanzado)
 │  └─ ... extensible para futuros tipos
 
 NIVEL 3: Lógica Específica
 ├─ Calcular_Honorario_PYDO(calculo_id)
-│  ├─ Lee datos de Calc_Maq
+│  ├─ Lee datos de Calculos
 │  ├─ EJECUTA LÓGICA DE CÁLCULO
 │  │  • Determinar rango (A, B, C, D)
 │  │  • Calcular cada tarea (Proyecto, Dirección, Instalaciones, etc)
 │  │  • Aplicar coeficientes
-│  ├─ INSERT items en Calc_Maq_Items
-│  └─ UPDATE metadata en Calc_Maq
+│  ├─ INSERT items en Calculo_Items
+│  └─ UPDATE metadata en Calculos
 ```
 
 ### 4.2 Responsabilidades por Nivel
 
 | Nivel | SP | Responsabilidad Única |
 |-------|----|-----------------------|
-| **1** | `Calc_Maq_Grabar` | Entry point, grabar master, coordinar, retornar |
+| **1** | `Calculo_Grabar` | Entry point, grabar master, coordinar, retornar |
 | **2** | `Calcular_Honorario` | Orquestar según tipo_calculo |
 | **3** | `Calcular_Honorario_PYDO` | Lógica pura de cálculo para tipo "basico" |
 
@@ -259,26 +308,26 @@ NIVEL 3: Lógica Específica
 ```
 Backend Node.js
   │
-  └─ CALL Calc_Maq_Grabar(18 params)
+  └─ CALL Calculo_Grabar(18 params)
       │
-      ├─ INSERT INTO Calc_Maq → genera id (ej: 123)
+      ├─ INSERT INTO Calculos → genera id (ej: 123)
       │
       ├─ CALL Calcular_Honorario(123)
       │   │
-      │   ├─ SELECT tipo_calculo FROM Calc_Maq WHERE id = 123
+      │   ├─ SELECT tipo_calculo FROM Calculos WHERE id = 123
       │   │
       │   └─ IF tipo = 'basico'
       │       │
       │       └─ CALL Calcular_Honorario_PYDO(123)
       │           │
-      │           ├─ SELECT * FROM Calc_Maq WHERE id = 123
+      │           ├─ SELECT * FROM Calculos WHERE id = 123
       │           ├─ CALCULAR rango, coeficientes, items
-      │           ├─ INSERT INTO Calc_Maq_Items (123, item 1)
-      │           ├─ INSERT INTO Calc_Maq_Items (123, item 2)
-      │           ├─ INSERT INTO Calc_Maq_Items (123, item 3)
-      │           └─ UPDATE Calc_Maq SET metadata WHERE id = 123
+      │           ├─ INSERT INTO Calculo_Items (123, item 1)
+      │           ├─ INSERT INTO Calculo_Items (123, item 2)
+      │           ├─ INSERT INTO Calculo_Items (123, item 3)
+      │           └─ UPDATE Calculos SET metadata WHERE id = 123
       │
-      └─ SELECT items FROM Calc_Maq_Items WHERE calculo_id = 123
+      └─ SELECT items FROM Calculo_Items WHERE calculo_id = 123
           │
           └─ RETURN resultset al backend
 ```
@@ -287,11 +336,11 @@ Backend Node.js
 
 ## 5. ESPECIFICACIÓN DE IMPLEMENTACIÓN
 
-### 5.1 SP Nivel 1: Calc_Maq_Grabar
+### 5.1 SP Nivel 1: Calculo_Grabar
 
 **Firma:**
 ```sql
-CREATE PROCEDURE Calc_Maq_Grabar(
+CREATE PROCEDURE Calculo_Grabar(
   -- Identificación (4 params)
   IN p_usuario_id INT,
   IN p_tipo_calculo VARCHAR(50),
@@ -332,7 +381,7 @@ BEGIN
   START TRANSACTION;
   
   -- 1. Insertar master
-  INSERT INTO Calc_Maq (...) VALUES (...);
+  INSERT INTO Calculos (...) VALUES (...);
   SET v_calculo_id = LAST_INSERT_ID();
   
   -- 2. Llamar orquestador
@@ -347,8 +396,8 @@ BEGIN
     i.importe,
     c.total_honorarios,
     c.metadata_rango
-  FROM Calc_Maq_Items i
-  INNER JOIN Calc_Maq c ON i.calculo_id = c.id
+  FROM Calculo_Items i
+  INNER JOIN Calculos c ON i.calculo_id = c.id
   WHERE i.calculo_id = v_calculo_id
   ORDER BY i.item_numero;
   
@@ -372,7 +421,7 @@ BEGIN
   
   -- Leer tipo de cálculo
   SELECT tipo_calculo INTO v_tipo_calculo
-  FROM Calc_Maq
+  FROM Calculos
   WHERE id = p_calculo_id;
   
   -- Ejecutar SP específico según tipo
@@ -412,7 +461,7 @@ BEGIN
   
   -- 1. Leer datos del cálculo
   SELECT obra_valor_obra INTO v_valor_obra
-  FROM Calc_Maq WHERE id = p_calculo_id;
+  FROM Calculos WHERE id = p_calculo_id;
   
   -- 2. Determinar rango
   SET v_ratio = v_valor_obra / v_valor_k;
@@ -430,10 +479,10 @@ BEGIN
   -- 3. Calcular cada tarea (si está seleccionada)
   
   -- 3.1 Proyecto de Obra
-  IF (SELECT tarea_obra_proyecto FROM Calc_Maq WHERE id = p_calculo_id) THEN
+  IF (SELECT tarea_obra_proyecto FROM Calculos WHERE id = p_calculo_id) THEN
     SET v_item_num = v_item_num + 1;
     -- Lógica de cálculo según rango y coeficientes
-    -- INSERT INTO Calc_Maq_Items (calculo_id, item_numero, tarea_profesional, descripcion, importe)
+    -- INSERT INTO Calculo_Items (calculo_id, item_numero, tarea_profesional, descripcion, importe)
     -- ...
   END IF;
   
@@ -444,7 +493,7 @@ BEGIN
   -- ... (similar)
   
   -- 4. Actualizar metadata en master
-  UPDATE Calc_Maq SET
+  UPDATE Calculos SET
     total_honorarios = v_total,
     metadata_rango = v_rango,
     metadata_valor_k = v_valor_k,
@@ -814,9 +863,9 @@ Tests end-to-end completos del flujo.
 ### 9.1 Completados
 
 - ✅ Ticket #001: Estructura de proyecto
-- ✅ Ticket #002: Schema de tablas (se modificará)
-- ✅ Ticket #003: SP Calc_Maq_Grabar (se modificará)
-- ✅ Ticket #004: SP Calc_Maq_Listar_Calculo_Items
+- ✅ Ticket #002: Schema de tablas definitivas (Calculos, Calculo_Items)
+- ✅ Ticket #003: SP Calculo_Grabar (se implementará)
+- ✅ Ticket #004: SP Calculo_Listar_Items
 - ✅ Ticket #005: Módulo de conexión db.js
 - ✅ Ticket #006: Modelo calculo.js (se modificará)
 

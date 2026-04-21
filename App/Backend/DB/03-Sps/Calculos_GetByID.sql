@@ -1,13 +1,15 @@
 DELIMITER $$
 
-DROP PROCEDURE IF EXISTS Calc_Maq_GetByID$$
+DROP PROCEDURE IF EXISTS Calculos_GetByID$$
 
-CREATE PROCEDURE Calc_Maq_GetByID(
-  IN p_calculo_id VARCHAR(50)
+CREATE PROCEDURE Calculos_GetByID(
+  IN p_calculo_id INT
 )
 BEGIN
   SELECT 
-    i.id,
+    c.calculo_id,
+    c.usuario_id,
+    i.calculo_item_id,
     i.item_numero,
     i.tarea_profesional,
     i.descripcion,
@@ -19,9 +21,9 @@ BEGIN
     c.proyecto_nombre,
     c.proyecto_ubicacion,
     c.obra_valor_obra
-  FROM Calc_Maq_Items i
-  INNER JOIN Calc_Maq c ON i.calculo_id = c.calculo_id
-  WHERE i.calculo_id = p_calculo_id
+  FROM Calculos c
+  INNER JOIN Calculos_Items i ON i.calculo_id = c.calculo_id
+  WHERE c.calculo_id = p_calculo_id
   ORDER BY i.item_numero;
 END$$
 

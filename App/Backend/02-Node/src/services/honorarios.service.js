@@ -48,6 +48,42 @@ function extraerRangosAfectados(detalleHonorarios) {
 }
 
 /**
+ * Agrupa ítems por tarea profesional, sumando importes y concatenando descripciones
+ * @private
+ * @param {Array<Object>} items - Array de ítems sin agrupar
+ * @returns {Array<Object>} Array de ítems agrupados por tarea profesional
+ */
+function agruparItemsPorTarea(items) {
+  if (!Array.isArray(items) || items.length === 0) return items;
+  
+  const gruposPorTarea = {};
+  
+  items.forEach(item => {
+    const tarea = item.tareaProfesional;
+    
+    if (!gruposPorTarea[tarea]) {
+      gruposPorTarea[tarea] = {
+        tareaProfesional: tarea,
+        descripciones: [],
+        importeTotal: 0
+      };
+    }
+    
+    gruposPorTarea[tarea].descripciones.push(item.descripcion);
+    gruposPorTarea[tarea].importeTotal += item.importe;
+  });
+  
+  const itemsAgrupados = Object.values(gruposPorTarea).map((grupo, index) => ({
+    item: index + 1,
+    tareaProfesional: grupo.tareaProfesional,
+    descripcion: grupo.descripciones.join(' // '),
+    importe: grupo.importeTotal
+  }));
+  
+  return itemsAgrupados;
+}
+
+/**
  * Servicio principal de cálculo de honorarios
  * @param {Object} datosCompletos - Datos completos del wizard
  * @returns {Promise<Object>} Resultado del cálculo con estructura estándar
@@ -80,7 +116,10 @@ export async function calcularHonorariosService(datosCompletos) {
   // ========================================================================
 
   // Calcular honorarios con sistema progresivo (SPEC-CALC-002)
-  const detalleHonorarios = calcularHonorariosProgresivo(formData, valorK);
+  const itemsSinAgrupar = calcularHonorariosProgresivo(formData, valorK);
+  
+  // Agrupar items por tarea profesional (una línea por tarea)
+  const detalleHonorarios = agruparItemsPorTarea(itemsSinAgrupar);
   
   // Calcular total
   const totalHonorarios = detalleHonorarios.reduce(
@@ -88,10 +127,10 @@ export async function calcularHonorariosService(datosCompletos) {
     0
   );
   
-  // Calcular metadata ampliada
+  // Calcular metadata ampliada (extraer rangos ANTES de agrupar)
   const coeficienteK = datosObra.valorObra / valorK;
   const rangoFinal = determinarRango(coeficienteK);
-  const rangosAfectados = extraerRangosAfectados(detalleHonorarios);
+  const rangosAfectados = extraerRangosAfectados(itemsSinAgrupar);
   const limitesRangos = calcularLimitesRangos(valorK);
 
   // ========================================================================

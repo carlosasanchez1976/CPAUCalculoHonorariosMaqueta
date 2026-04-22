@@ -100,9 +100,6 @@ Content-Type: application/json
     "instalacionElectrica": boolean,   // REQUERIDO
     "instalacionContraIncendio": boolean, // REQUERIDO
     "proyectoEstructuras": boolean     // REQUERIDO
-  },
-  "parametros": {
-    "valorK": number            // opcional, si null usa valor por defecto
   }
 }
 ```
@@ -120,7 +117,6 @@ Content-Type: application/json
 | `datosObra.tipologia` | string | No | Max 100 chars | Tipo de obra |
 | `datosObra.complejidad` | string | No | "baja"\|"media"\|"alta" | Complejidad de la obra |
 | `tareasProfesionales.*` | boolean | Sí | true/false | Tareas incluidas en el cálculo |
-| `parametros.valorK` | number | No | > 0 | Valor K para cálculo (si null, usa default) |
 
 #### Response - Éxito (HTTP 200)
 
@@ -612,9 +608,6 @@ curl -X POST https://ch2026-qa.vercel.app/api/honorarios/calcular \
       "instalacionElectrica": true,
       "instalacionContraIncendio": true,
       "proyectoEstructuras": true
-    },
-    "parametros": {
-      "valorK": 522181756.33
     }
   }'
 ```

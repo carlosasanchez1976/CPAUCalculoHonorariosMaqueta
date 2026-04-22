@@ -22,7 +22,7 @@ const Usuario = {
     return rows[0];
   },
   async Grabar(data) {
-    const { user_id, user_mail, user_nombre, user_apellido, password, asesor_codi , rol } = data;
+    const { user_id, user_mail, user_nombre, user_apellido, password, rol } = data;
     
     let hashedPassword;
     
@@ -42,7 +42,6 @@ const Usuario = {
       user_nombre,
       user_apellido,
       hashedPassword,
-      asesor_codi,
       rol,
       user_id || 1 // modi_user_id
     ]);

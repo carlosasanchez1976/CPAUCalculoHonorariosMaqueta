@@ -8,6 +8,7 @@ const rateLimit = require('express-rate-limit');
 
 // Rutas privadas
 const usuariosRoutes = require('./src/routes/usuarios.js');
+const calculosRoutes = require('./src/routes/calculos.js');
 
 require('dotenv').config();
 
@@ -123,6 +124,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Rutas
 app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/calculos', calculosRoutes);
 
 
 

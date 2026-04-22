@@ -1,0 +1,183 @@
+const calculoModel = require('../models/calculo');
+
+function esNumeroPositivo(valor) {
+    return typeof valor === 'number' && Number.isFinite(valor) && valor > 0;
+}
+
+function esEnteroPositivo(valor) {
+    return Number.isInteger(valor) && valor > 0;
+}
+
+function hayAlMenosUnaTareaSeleccionada(tareasProfesionales) {
+    if (!tareasProfesionales || typeof tareasProfesionales !== 'object') {
+        return false;
+    }
+
+    return Object.values(tareasProfesionales).some((valor) => valor === true);
+}
+
+function normalizarCalculoId(valor) {
+    const calculoId = Number(valor);
+
+    if (!esEnteroPositivo(calculoId)) {
+        return null;
+    }
+
+    return calculoId;
+}
+
+function obtenerMensajeError(error, fallback) {
+    if (!error) {
+        return fallback;
+    }
+
+    if (typeof error === 'string') {
+        return error;
+    }
+
+    if (error.message) {
+        return error.message;
+    }
+
+    return fallback;
+}
+
+exports.calcular = async (req, res) => {
+    try {
+        const { tareaId, datosObra, tareasProfesionales } = req.body || {};
+
+        const tareaIdInt = Number(tareaId);
+        if (!esEnteroPositivo(tareaIdInt)) {
+            return res.status(400).json({
+                success: false,
+                error: 'tareaId es requerido y debe ser un número entero positivo',
+                version: '1.0'
+            });
+        }
+
+        const tareaExiste = await calculoModel.existeTareaProfesional(tareaIdInt);
+        if (!tareaExiste) {
+            return res.status(400).json({
+                success: false,
+                error: 'tareaId no existe en Tareas_Profesionales',
+                version: '1.0'
+            });
+        }
+
+        if (!datosObra || typeof datosObra !== 'object' || !esNumeroPositivo(datosObra.valorObra)) {
+            return res.status(400).json({
+                success: false,
+                error: 'datosObra.valorObra es requerido y debe ser un número mayor a 0',
+                version: '1.0'
+            });
+        }
+
+        if (!hayAlMenosUnaTareaSeleccionada(tareasProfesionales)) {
+            return res.status(400).json({
+                success: false,
+                error: 'tareasProfesionales debe incluir al menos una tarea en true',
+                version: '1.0'
+            });
+        }
+
+        const payload = {
+            ...req.body,
+            tareaId: tareaIdInt,
+            usuarioId: req.usuario?.id || req.body?.usuarioId || 1
+        };
+
+        const resultado = await calculoModel.grabarCalculo(payload);
+        const calculo = await calculoModel.obtenerCalculoPorId(resultado.calculoId);
+
+        if (!calculo) {
+            return res.status(500).json({
+                success: false,
+                error: 'El cálculo fue grabado pero no se pudo recuperar el detalle',
+                version: '1.0'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                calculoId: resultado.calculoId,
+                status: resultado.status,
+                totalHonorarios: Number(calculo.total_honorarios),
+                metadata: {
+                    rango: calculo.metadata_rango,
+                    numeroItems: calculo.metadata_numero_items,
+                    fechaCalculo: calculo.fecha_calculo,
+                    proyectoNombre: calculo.proyecto_nombre,
+                    proyectoUbicacion: calculo.proyecto_ubicacion,
+                    valorObra: calculo.obra_valor_obra
+                },
+                detalleHonorarios: calculo.detalleHonorarios
+            },
+            version: '1.0'
+        });
+    } catch (error) {
+        const statusCode = error?.code === 'DB_ERROR' ? 500 : 500;
+        const mensaje = obtenerMensajeError(error, 'Error interno al calcular honorarios');
+
+        console.error('Error en honorariosController.calcular:', error?.detail || error?.message || error);
+
+        return res.status(statusCode).json({
+            success: false,
+            error: mensaje,
+            version: '1.0'
+        });
+    }
+};
+
+exports.obtenerItems = async (req, res) => {
+    try {
+        const calculoId = normalizarCalculoId(req.params?.calculoId);
+
+        if (!calculoId) {
+            return res.status(400).json({
+                success: false,
+                error: 'calculoId debe ser un número entero positivo',
+                version: '1.0'
+            });
+        }
+
+        const calculo = await calculoModel.obtenerCalculoPorId(calculoId);
+
+        if (!calculo) {
+            return res.status(404).json({
+                success: false,
+                error: 'Cálculo no encontrado',
+                version: '1.0'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                calculoId: calculo.calculo_id,
+                totalHonorarios: Number(calculo.total_honorarios),
+                metadata: {
+                    rango: calculo.metadata_rango,
+                    numeroItems: calculo.metadata_numero_items,
+                    fechaCalculo: calculo.fecha_calculo,
+                    proyectoNombre: calculo.proyecto_nombre,
+                    proyectoUbicacion: calculo.proyecto_ubicacion,
+                    valorObra: calculo.obra_valor_obra
+                },
+                detalleHonorarios: calculo.detalleHonorarios
+            },
+            version: '1.0'
+        });
+    } catch (error) {
+        const statusCode = error?.code === 'DB_ERROR' ? 500 : 500;
+        const mensaje = obtenerMensajeError(error, 'Error interno al obtener el cálculo');
+
+        console.error('Error en honorariosController.obtenerItems:', error?.detail || error?.message || error);
+
+        return res.status(statusCode).json({
+            success: false,
+            error: mensaje,
+            version: '1.0'
+        });
+    }
+};

@@ -287,9 +287,6 @@ interface RequestCalculoHonorarios {
     instalacionTermomecanica?: boolean;  // ← Sin cambios
     proyectoEstructuras?: boolean;
   };
-  parametros?: {
-    valorK?: number;
-  };
 }
 ```
 

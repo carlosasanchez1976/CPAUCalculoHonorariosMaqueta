@@ -504,9 +504,6 @@ interface RequestCalculoHonorarios {
     instalacionTermomecanica?: boolean;
     proyectoEstructuras?: boolean;
   };
-  parametros?: {
-    valorK?: number;
-  };
 }
 ```
 

@@ -47,9 +47,6 @@ Calcula honorarios profesionales según tipo de cálculo y tareas seleccionadas.
     "instalacionElectrica": boolean,
     "instalacionContraIncendio": boolean,
     "proyectoEstructuras": boolean
-  },
-  "parametros": {
-    "valorK": number
   }
 }
 ```

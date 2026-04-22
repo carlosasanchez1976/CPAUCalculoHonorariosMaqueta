@@ -165,9 +165,6 @@ Content-Type: application/json
     "instalacionContraIncendio": false,
     "instalacionTermomecanica": false,
     "proyectoEstructuras": false
-  },
-  "parametros": {
-    "valorK": 522181756.33
   }
 }
 ```

@@ -100,8 +100,7 @@ Invoke-RestMethod -Uri http://localhost:3001/api/v1/honorarios/calcular `
     "tipoCalculo": "basico",
     "datosProyecto": { "nombre": "Test", "ubicacion": "CABA" },
     "datosObra": { "valorObra": 10000000, "superficie": 100, "tipologia": "Vivienda" },
-    "tareasProfesionales": { "obraProyecto": true },
-    "parametros": { "valorK": 522181756.33 }
+    "tareasProfesionales": { "obraProyecto": true }
   }'
 ```
 
@@ -162,9 +161,6 @@ Calcula honorarios profesionales basados en los datos del proyecto.
     "instalacionSanitaria": true,
     "instalacionElectrica": true,
     "proyectoEstructuras": true
-  },
-  "parametros": {
-    "valorK": 522181756.33
   }
 }
 ```

@@ -88,7 +88,7 @@ ESTIMACIÓN: 1 hora
 RESPONSABLE: Backend Dev
 
 ================================================================================
-TICKET #008 ⏳ PENDIENTE
+TICKET #008 ✅ COMPLETADO (22/04/2026)
 ================================================================================
 TÍTULO: SP Nivel 3 - Calcular_Honorario_PYDO (Lógica Pura de Cálculo)
 
@@ -103,100 +103,99 @@ Este SP contiene TODA la lógica de negocio migrada desde JavaScript.
 SUBTAREAS:
 
 [T008.1] Crear archivo SQL del SP
-  ⏳ Crear App/Backend/DB/03-Sps/Calcular_Honorario_PYDO.sql
-  ⏳ Firma: IN p_calculo_id INT
-  ⏳ Declarar variables locales necesarias
+  ✅ Crear App/Backend/DB/03-Sps/Calcular_Honorario_PYDO.sql
+  ✅ Firma: IN p_calculo_id INT
+  ✅ Declarar variables locales necesarias
 
 [T008.2] Implementar determinación de rango
-  ⏳ Leer v_valor_obra desde Calculos
-  ⏳ Calcular v_ratio = valor_obra / valor_k
-  ⏳ Determinar rango A/B/C/D según ratio
-  ⏳ Guardar en variable v_rango
+  ✅ Leer v_valor_obra desde Calculos
+  ✅ Calcular v_ratio = valor_obra / valor_k
+  ✅ Determinar rango A/B/C/D según ratio
+  ✅ Guardar en variable v_rango
 
 [T008.3] Implementar cálculo Proyecto de Obra
-  ⏳ IF tarea_obra_proyecto = TRUE
-  ⏳ Obtener coeficientes según rango
-  ⏳ Calcular importe = valor_obra * coef_obra + valor_k * coef_k
-  ⏳ Generar descripción con detalles
-  ⏳ INSERT item en Calculo_Items
-  ⏳ Acumular en v_total
+  ✅ IF tarea_obra_proyecto = TRUE
+  ✅ Obtener coeficientes según rango
+  ✅ Calcular importe = valor_obra * coef_obra + valor_k * coef_k
+  ✅ Generar descripción con detalles
+  ✅ INSERT item en Calculo_Items
+  ✅ Acumular en v_total
 
 [T008.4] Implementar cálculo Dirección de Obra
-  ⏳ IF tarea_obra_direccion = TRUE
-  ⏳ Aplicar coeficientes de dirección (66.67% de proyecto)
-  ⏳ INSERT item
-  ⏳ Acumular total
+  ✅ IF tarea_obra_direccion = TRUE
+  ✅ Aplicar coeficientes de dirección (66.67% de proyecto)
+  ✅ INSERT item
+  ✅ Acumular total
 
 [T008.5] Implementar cálculo Instalación Sanitaria
-  ⏳ IF tarea_instalacion_sanitaria = TRUE
-  ⏳ Usar COEFICIENTES_SANITARIA_ELECTRICA
-  ⏳ INSERT item
-  ⏳ Acumular total
+  ✅ IF tarea_instalacion_sanitaria = TRUE
+  ✅ Usar COEFICIENTES_SANITARIA_ELECTRICA
+  ✅ INSERT item
+  ✅ Acumular total
 
 [T008.6] Implementar cálculo Instalación Eléctrica
-  ⏳ IF tarea_instalacion_electrica = TRUE
-  ⏳ Usar COEFICIENTES_SANITARIA_ELECTRICA
-  ⏳ INSERT item
-  ⏳ Acumular total
+  ✅ IF tarea_instalacion_electrica = TRUE
+  ✅ Usar COEFICIENTES_SANITARIA_ELECTRICA
+  ✅ INSERT item
+  ✅ Acumular total
 
 [T008.7] Implementar cálculo Instalación Contra Incendio
-  ⏳ IF tarea_instalacion_contra_incendio = TRUE
-  ⏳ Usar COEFICIENTES_INCENDIO
-  ⏳ INSERT item
-  ⏳ Acumular total
+  ✅ IF tarea_instalacion_contra_incendio = TRUE
+  ✅ Usar COEFICIENTES_INCENDIO
+  ✅ INSERT item
+  ✅ Acumular total
 
 [T008.8] Implementar cálculo Instalación Termomecánica
-  ⏳ IF tarea_instalacion_termomecanica = TRUE
-  ⏳ Usar COEFICIENTES_TERMOMECANICA
-  ⏳ INSERT item
-  ⏳ Acumular total
+  ✅ IF tarea_instalacion_termomecanica = TRUE
+  ✅ Usar COEFICIENTES_TERMOMECANICA
+  ✅ INSERT item
+  ✅ Acumular total
 
 [T008.9] Implementar cálculo Proyecto de Estructuras
-  ⏳ IF tarea_proyecto_estructuras = TRUE
-  ⏳ Usar coeficientes de estructuras
-  ⏳ INSERT item
-  ⏳ Acumular total
+  ✅ IF tarea_proyecto_estructuras = TRUE
+  ✅ Usar coeficientes de estructuras
+  ✅ INSERT item
+  ✅ Acumular total
 
 [T008.10] Actualizar metadata en master
-  ⏳ UPDATE Calculos SET:
+  ✅ UPDATE Calculos SET:
     - total_honorarios = v_total
     - metadata_rango = v_rango
     - metadata_valor_k = v_valor_k
     - metadata_rango_costo_obra = v_ratio
     - metadata_numero_items = v_item_num
-  ⏳ WHERE id = p_calculo_id
+  ✅ WHERE id = p_calculo_id
 
 [T008.11] Documentar coeficientes en comentarios
-  ⏳ Agregar comentarios con tablas de coeficientes
-  ⏳ Documentar origen (CPAU 2026)
-  ⏳ Explicar lógica de cada cálculo
+  ✅ Agregar comentarios con tablas de coeficientes
+  ✅ Documentar origen (CPAU 2026)
+  ✅ Explicar lógica de cada cálculo
 
 [T008.12] Tests manuales
-  ⏳ Test: Proyecto + Dirección, Rango B (50M)
-  ⏳ Test: Todas las tareas, Rango A (10M)
-  ⏳ Test: Solo instalaciones, Rango D (500M)
-  ⏳ Comparar con resultados de maqueta
-  ⏳ Diferencia debe ser < 0.01%
+  ✅ Test: Proyecto + Dirección, Rango B (50M)
+  ✅ Test: Todas las tareas, Rango A (10M)
+  ✅ Test: Solo instalaciones, Rango D (500M)
+  ✅ Comparar con resultados de maqueta
+  ✅ Diferencia < 0.01%
 
-ARCHIVOS A CREAR:
+ARCHIVOS CREADOS:
 - App/Backend/DB/03-Sps/Calcular_Honorario_PYDO.sql
 
 DEPENDENCIAS:
-- Requiere: Ticket #007 completado (tablas con nueva estructura)
+- ✅ Ticket #007 completado (tablas con nueva estructura)
 
 CRITERIOS DE ACEPTACIÓN:
-□ SP crea items correctos para cada tarea
-□ Cálculos coinciden con maqueta (diferencia < 0.01%)
-□ Metadata actualizada correctamente
-□ Manejo de errores implementado
-□ Tests manuales todos exitosos
-□ Documentación completa en comentarios
-
+✅ SP crea items correctos para cada tarea
+✅ Cálculos coinciden con maqueta (diferencia < 0.01%)
+✅ Metadata actualizada correctamente
+✅ Manejo de errores implementado
+✅ Tests manuales todos exitosos
+✅ Documentación completa en comentarios
 ESTIMACIÓN: 6-8 horas
 RESPONSABLE: Backend Dev
 
 ================================================================================
-TICKET #009 ⏳ PENDIENTE
+TICKET #009 ✅ COMPLETADO (22/04/2026)
 ================================================================================
 TÍTULO: SP Nivel 2 - Calcular_Honorario (Orquestador)
 
@@ -209,46 +208,46 @@ Este SP permite extensibilidad para futuros tipos (avanzado, etc).
 SUBTAREAS:
 
 [T009.1] Crear archivo SQL del SP
-  ⏳ Crear App/Backend/DB/03-Sps/Calcular_Honorario.sql
-  ⏳ Firma: IN p_calculo_id INT
-  ⏳ DECLARE v_tipo_calculo VARCHAR(50)
+  ✅ Crear App/Backend/DB/03-Sps/Calcular_Honorario.sql
+  ✅ Firma: IN p_calculo_id INT
+  ✅ DECLARE v_tipo_calculo VARCHAR(50)
 
 [T009.2] Implementar lectura de tipo
-  ⏳ SELECT tipo_calculo INTO v_tipo_calculo
-  ⏳ FROM Calculos WHERE id = p_calculo_id
+  ✅ SELECT tipo_calculo INTO v_tipo_calculo
+  ✅ FROM Calculos WHERE id = p_calculo_id
 
 [T009.3] Implementar switch de tipos
-  ⏳ IF v_tipo_calculo = 'basico' THEN
-  ⏳   CALL Calcular_Honorario_PYDO(p_calculo_id);
-  ⏳ ELSEIF v_tipo_calculo = 'avanzado' THEN
-  ⏳   -- Futuro: CALL Calcular_Honorario_Avanzado(p_calculo_id);
-  ⏳   SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo no implementado';
-  ⏳ ELSE
-  ⏳   SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo inválido';
-  ⏳ END IF;
+  ✅ IF v_tipo_calculo = 'basico' THEN
+  ✅   CALL Calcular_Honorario_PYDO(p_calculo_id);
+  ✅ ELSEIF v_tipo_calculo = 'avanzado' THEN
+  ✅   SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo no implementado';
+  ✅ ELSE
+  ✅   SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo inválido';
+  ✅ END IF;
 
 [T009.4] Tests manuales
-  ⏳ Test: Llamar con tipo 'basico' (debe funcionar)
-  ⏳ Test: Llamar con tipo 'avanzado' (debe error)
-  ⏳ Test: Llamar con tipo inválido (debe error)
+  ✅ Test: Llamar con tipo 'basico' (debe funcionar)
+  ✅ Test: Llamar con tipo 'avanzado' (debe error)
+  ✅ Test: Llamar con tipo inválido (debe error)
 
-ARCHIVOS A CREAR:
+ARCHIVOS CREADOS:
 - App/Backend/DB/03-Sps/Calcular_Honorario.sql
 
 DEPENDENCIAS:
-- Requiere: Ticket #008 completado (SP PYDO funcional)
+- ✅ Ticket #008 completado (SP PYDO funcional)
 
 CRITERIOS DE ACEPTACIÓN:
-□ Orquestador llama correctamente a SP de nivel 3
-□ Error controlado para tipos no soportados
-□ Extensible para agregar nuevos tipos
-□ Tests exitosos
+✅ Orquestador llama correctamente a SP de nivel 3
+✅ Error controlado para tipos no soportados
+✅ Extensible para agregar nuevos tipos
+✅ Tests exitosos
+
 
 ESTIMACIÓN: 1-2 horas
 RESPONSABLE: Backend Dev
 
 ================================================================================
-TICKET #010 ⏳ PENDIENTE
+TICKET #010 ✅ COMPLETADO (22/04/2026)
 ================================================================================
 TÍTULO: SP Nivel 1 - Calculo_Grabar (Implementación Completa)
 
@@ -261,59 +260,58 @@ Este es el entry point desde Node.js backend.
 SUBTAREAS:
 
 [T010.1] Crear archivo del SP
-  ⏳ Crear App/Backend/DB/03-Sps/Calculo_Grabar.sql
-  ⏳ Firma: 18 parámetros (NO incluir calculo_id)
-  ⏳ Fecha se genera automáticamente (NOW())
+  ✅ Crear App/Backend/DB/03-Sps/Calculo_Grabar.sql
+  ✅ Firma: 18 parámetros (NO incluir calculo_id)
+  ✅ Fecha se genera automáticamente (NOW())
 
 [T010.2] Implementar inserción y obtener ID
-  ⏳ INSERT INTO Calculos (...) VALUES (...)
-  ⏳ DECLARE v_calculo_id INT
-  ⏳ SET v_calculo_id = LAST_INSERT_ID()
+  ✅ INSERT INTO Calculos (...) VALUES (...)
+  ✅ DECLARE v_calculo_id INT
+  ✅ SET v_calculo_id = LAST_INSERT_ID()
 
 [T010.3] Llamar a orquestador
-  ⏳ CALL Calcular_Honorario(v_calculo_id)
+  ✅ CALL Calcular_Honorario(v_calculo_id)
 
 [T010.4] Retornar resultset con items
-  ⏳ SELECT v_calculo_id as calculo_id,
-  ⏳   i.item_numero, i.tarea_profesional, 
-  ⏳   i.descripcion, i.importe,
-  ⏳   c.total_honorarios, c.metadata_rango
-  ⏳ FROM Calculo_Items i
-  ⏳ INNER JOIN Calculos c ON i.calculo_id = c.id
-  ⏳ WHERE i.calculo_id = v_calculo_id
-  ⏳ ORDER BY i.item_numero
+  ✅ SELECT v_calculo_id as calculo_id,
+  ✅   i.item_numero, i.tarea_profesional, 
+  ✅   i.descripcion, i.importe,
+  ✅   c.total_honorarios, c.metadata_rango
+  ✅ FROM Calculo_Items i
+  ✅ INNER JOIN Calculos c ON i.calculo_id = c.id
+  ✅ WHERE i.calculo_id = v_calculo_id
+  ✅ ORDER BY i.item_numero
 
 [T010.5] Implementar transacción completa
-  ⏳ START TRANSACTION
-  ⏳ DECLARE EXIT HANDLER FOR SQLEXCEPTION
-  ⏳ ROLLBACK en caso de error
-  ⏳ COMMIT si todo OK
+  ✅ START TRANSACTION
+  ✅ DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  ✅ ROLLBACK en caso de error
+  ✅ COMMIT si todo OK
 
 [T010.6] Tests completos
-  ⏳ Test: Datos completos válidos
-  ⏳ Test: Verificar calculo_id retornado es INT
-  ⏳ Test: Verificar items retornados correctos
-  ⏳ Test: Rollback funciona ante error
+  ✅ Test: Datos completos válidos
+  ✅ Test: Verificar calculo_id retornado es INT
+  ✅ Test: Verificar items retornados correctos
+  ✅ Test: Rollback funciona ante error
 
-ARCHIVOS A CREAR:
+ARCHIVOS CREADOS:
 - App/Backend/DB/03-Sps/Calculo_Grabar.sql
 
 DEPENDENCIAS:
-- Requiere: Ticket #009 completado (Orquestador funcional)
+- ✅ Ticket #009 completado (Orquestador funcional)
 
 CRITERIOS DE ACEPTACIÓN:
-□ SP graba master correctamente
-□ SP genera id INT AUTO_INCREMENT
-□ SP llama a orquestador
-□ SP retorna items calculados
-□ Transacción funciona con rollback en errores
-□ Tests exitosos
-
+✅ SP graba master correctamente
+✅ SP genera id INT AUTO_INCREMENT
+✅ SP llama a orquestador
+✅ SP retorna items calculados
+✅ Transacción funciona con rollback en errores
+✅ Tests exitosos
 ESTIMACIÓN: 3-4 horas
 RESPONSABLE: Backend Dev
 
 ================================================================================
-TICKET #011 ⏳ PENDIENTE
+TICKET #011 ✅ COMPLETADO (22/04/2026)
 ================================================================================
 TÍTULO: Actualizar Modelo calculo.js para calculo_id INT
 
@@ -325,27 +323,27 @@ Adaptar modelo a nueva estructura (calculo_id INT en lugar de string).
 SUBTAREAS:
 
 [T011.1] Modificar grabarCalculo()
-  ⏳ ELIMINAR generación de calculoId string
-  ⏳ Eliminar parámetro calculoId de spParams
-  ⏳ Eliminar parámetro fechaCalculo (SP genera con NOW())
-  ⏳ Reducir spParams de 25 a 18 parámetros
-  ⏳ Procesar resultset del SP correctamente
-  ⏳ Extraer calculo_id del resultado (es INT)
+  ✅ ELIMINAR generación de calculoId string
+  ✅ Adaptar parámetro calculoId para alta/update (nullable)
+  ✅ Reducir spParams a firma mandatoria del SP
+  ✅ Procesar resultset del SP correctamente
+  ✅ Extraer calculo_id del resultado (es INT)
 
 [T011.2] Modificar obtenerCalculoPorId()
-  ⏳ Recibir calculoId como número (no string)
-  ⏳ Validar que sea INT válido
-  ⏳ Query: WHERE id = ? (en lugar de calculo_id = ?)
+  ✅ Recibir calculoId como número (no string)
+  ✅ Validar que sea INT válido
+  ✅ Consulta mediante SP Calculos_GetByID
 
-[T011.3] Modificar listarItemsCalculo()
-  ⏳ Recibir calculoId como número
-  ⏳ Pasar INT al SP
+[T011.3] Consolidar lectura en obtenerCalculoPorId()
+  ✅ Eliminar función listarItemsCalculo() del modelo
+  ✅ Centralizar lectura de detalle en obtenerCalculoPorId()
+  ✅ Evitar doble invocación al mismo SP Calculos_GetByID
 
 [T011.4] Actualizar tests
-  ⏳ Modificar scripts/test-calculo-model.js
-  ⏳ No generar calculoId manualmente
-  ⏳ Esperar INT en respuesta
-  ⏳ Actualizar asserts
+  ✅ Modificar scripts/test-calculo-model.js
+  ✅ No generar calculoId manualmente
+  ✅ Esperar INT en respuesta
+  ✅ Actualizar asserts
 
 ARCHIVOS A MODIFICAR:
 - App/Backend/Node/src/models/calculo.js
@@ -355,86 +353,50 @@ DEPENDENCIAS:
 - Requiere: Ticket #010 completado (SP retorna INT)
 
 CRITERIOS DE ACEPTACIÓN:
-□ Modelo funciona con calculo_id INT
-□ grabarCalculo() envía 18 params (no 25)
-□ Response procesado correctamente
-□ Tests actualizados pasan
-□ Sin generación manual de IDs
+✅ Modelo funciona con calculo_id INT
+✅ grabarCalculo() envía firma mandatoria de SP
+✅ Response procesado correctamente
+✅ Tests actualizados pasan
+✅ Sin generación manual de IDs
+✅ Lectura consolidada en obtenerCalculoPorId() (sin listarItemsCalculo)
 
 ESTIMACIÓN: 2 horas
 RESPONSABLE: Backend Dev
 
 ================================================================================
-TICKET #012 ⏳ PENDIENTE
+TICKET #012 🚫 DESCARTADO (22/04/2026)
 ================================================================================
 TÍTULO: Servicio honorarios.service.js (Capa Delgada)
 
 PRIORIDAD: 🟡 MEDIA
 
 DESCRIPCIÓN:
-Crear servicio que actúa como capa delgada entre controller y modelo.
-NO contiene lógica de cálculo (está en SPs).
+Se descarta para simplificar arquitectura.
+Decisión: usar únicamente Models + Controllers + Routes.
+El controller invocará directamente al modelo.
 
-SUBTAREAS:
+MOTIVO:
+- Evitar complejidad innecesaria en fase actual
+- Mantener trazabilidad directa controller → model → SP
 
-[T012.1] Crear archivo del servicio
-  ⏳ Crear App/Backend/Node/src/services/honorarios.service.js
-  ⏳ Import calculoModel
+IMPACTO EN ARQUITECTURA:
+- Se elimina capa service
+- Ticket #013 pasa a invocar modelo directamente
 
-[T012.2] Implementar calcularYGuardar()
-  ⏳ Recibir datosCompletos del request
-  ⏳ Llamar a calculoModel.grabarCalculo(datosCompletos)
-  ⏳ Procesar resultset del SP
-  ⏳ Estructurar response según contrato API:
-    {
-      calculoId: INT,
-      tipoCalculo: string,
-      fechaCalculo: ISO string,
-      resultado: {
-        detalleHonorarios: [...],
-        totalHonorarios: number,
-        metadata: {...}
-      }
-    }
-  ⏳ Manejo de errores con try/catch
-  ⏳ Logging apropiado
-
-[T012.3] Implementar obtenerItemsPorCalculoId()
-  ⏳ Recibir calculoId (INT)
-  ⏳ Llamar a calculoModel.listarItemsCalculo(calculoId)
-  ⏳ Formatear response
-  ⏳ Manejo de caso: cálculo no encontrado
-
-[T012.4] Tests unitarios
-  ⏳ Crear __tests__/services/honorarios.service.test.js
-  ⏳ Mock de calculoModel.grabarCalculo
-  ⏳ Mock de calculoModel.listarItemsCalculo
-  ⏳ Test: calcularYGuardar exitoso
-  ⏳ Test: calcularYGuardar con error de DB
-  ⏳ Test: obtenerItemsPorCalculoId exitoso
-  ⏳ Test: obtenerItemsPorCalculoId - no encontrado
-
-ARCHIVOS A CREAR:
-- App/Backend/Node/src/services/honorarios.service.js
-- App/Backend/Node/__tests__/services/honorarios.service.test.js
-
-DEPENDENCIAS:
-- Requiere: Ticket #011 completado (Modelo actualizado)
+ESTADO DE CIERRE:
+✅ Ticket cancelado por decisión de arquitectura
 
 CRITERIOS DE ACEPTACIÓN:
-□ Servicio actúa como capa delgada
-□ No contiene lógica de cálculo
-□ Errores manejados correctamente
-□ Logging estructurado
-□ Tests con >80% cobertura
+✅ Arquitectura simplificada aprobada (Models + Controllers + Routes)
+✅ Sin impacto funcional para próximos tickets
 
-ESTIMACIÓN: 3-4 horas
+ESTIMACIÓN: 0 horas (descartado)
 RESPONSABLE: Backend Dev
 
 ================================================================================
 TICKET #013 ⏳ PENDIENTE
 ================================================================================
-TÍTULO: Controller honorarios.controller.js
+TÍTULO: Controller honorariosController.js
 
 PRIORIDAD: 🟡 MEDIA
 
@@ -444,16 +406,16 @@ Crear controller para manejar HTTP requests/responses.
 SUBTAREAS:
 
 [T013.1] Crear archivo del controller
-  ⏳ Crear App/Backend/Node/src/controllers/honorarios.controller.js
-  ⏳ Import honorariosService
+  ⏳ Crear App/Backend/Node/src/controllers/honorariosController.js
+  ⏳ Import calculoModel
 
 [T013.2] Implementar calcular() - POST handler
   ⏳ Extraer body del request
   ⏳ Validar campos requeridos:
-    - tipoCalculo (string, requerido)
+    - tareaId (number, requerido)
     - datosObra.valorObra (number, > 0)
     - tareasProfesionales (object, al menos una true)
-  ⏳ Llamar a honorariosService.calcularYGuardar()
+  ⏳ Llamar a calculoModel.grabarCalculo()
   ⏳ Response 200 con estructura:
     {
       success: true,
@@ -467,13 +429,13 @@ SUBTAREAS:
 [T013.3] Implementar obtenerItems() - GET handler
   ⏳ Extraer calculoId de req.params
   ⏳ Validar que sea número válido
-  ⏳ Llamar a honorariosService.obtenerItemsPorCalculoId()
+  ⏳ Llamar a calculoModel.obtenerCalculoPorId()
   ⏳ Response 200 con items
   ⏳ Response 404 si no existe
 
 [T013.4] Tests de integración
   ⏳ Crear __tests__/controllers/honorarios.controller.test.js
-  ⏳ Mock de honorariosService
+  ⏳ Mock de calculoModel
   ⏳ Tests con supertest
   ⏳ Test: POST con datos válidos → 200
   ⏳ Test: POST sin valorObra → 400
@@ -482,11 +444,11 @@ SUBTAREAS:
   ⏳ Test: GET con id inválido → 404
 
 ARCHIVOS A CREAR:
-- App/Backend/Node/src/controllers/honorarios.controller.js
+- App/Backend/Node/src/controllers/honorariosController.js
 - App/Backend/Node/__tests__/controllers/honorarios.controller.test.js
 
 DEPENDENCIAS:
-- Requiere: Ticket #012 completado (Servicio funcional)
+- Requiere: Ticket #011 completado (Modelo funcional)
 
 CRITERIOS DE ACEPTACIÓN:
 □ Controllers siguen convenciones Express
@@ -546,7 +508,7 @@ ESTIMACIÓN: 1 hora
 RESPONSABLE: Backend Dev
 
 ================================================================================
-TICKET #015 ⏳ PENDIENTE (FINAL)
+TICKET #015 ⏳ PENDIENTE
 ================================================================================
 TÍTULO: Tests End-to-End (E2E) Completos
 
@@ -611,26 +573,132 @@ ESTIMACIÓN: 4-6 horas
 RESPONSABLE: Backend Dev + QA
 
 ================================================================================
+TICKET #016 ⏳ PENDIENTE
+================================================================================
+TÍTULO: Endpoint Técnico para Ejecutar SP y Validar Response en POSTMAN
+
+PRIORIDAD: 🔴 ALTA
+
+DESCRIPCIÓN:
+Crear endpoint técnico mínimo para invocar el SP de entrada y validar rápidamente
+request/response desde POSTMAN antes de avanzar con refactor del modelo (Ticket #011).
+
+SUBTAREAS:
+
+[T016.1] Crear endpoint técnico de prueba
+  ⏳ Crear endpoint POST /api/v1/honorarios/sp-test
+  ⏳ Endpoint invoca SP de entrada de honorarios (Calculos_Grabar o definitivo)
+  ⏳ Sin lógica de negocio adicional en Node
+
+[T016.2] Definir contrato de request sin clave parametros
+  ⏳ Request incluye: tareaId, datosProyecto, datosObra, tareasProfesionales
+  ⏳ NO incluir clave parametros (valorK se resuelve en SP)
+  ⏳ Validar mínimos: tareaId, datosObra.valorObra, al menos una tarea = true
+
+[T016.3] Estandarizar response para diagnóstico
+  ⏳ Retornar success, calculoId (INT), totalHonorarios, metadata y detalleHonorarios
+  ⏳ Incluir mensaje de error claro en caso de fallo de SP
+  ⏳ Status code: 200/400/500
+
+[T016.4] Evidencia en POSTMAN
+  ⏳ Crear colección de prueba con endpoint sp-test
+  ⏳ Ejecutar caso OK (Proyecto + Dirección, 50M)
+  ⏳ Ejecutar caso validación (sin valorObra)
+  ⏳ Guardar evidencia de response en 01-Docs/02-Test/
+
+ARCHIVOS A CREAR/MODIFICAR:
+- App/Backend/Node/src/routes/honorarios.routes.js
+- App/Backend/Node/src/controllers/honorariosController.js
+- 01-Docs/02-Test/SPEC-BACKEND-001-Ticket-016-Evidencia-Postman.md
+
+DEPENDENCIAS:
+- Requiere: Ticket #010 completado (SP de entrada operativo)
+
+CRITERIOS DE ACEPTACIÓN:
+□ Endpoint accesible desde POSTMAN
+□ Request funciona sin clave parametros
+□ SP se ejecuta y retorna calculoId INT
+□ Response contiene detalle y total de honorarios
+□ Evidencia documentada en 01-Docs/02-Test/
+
+ESTIMACIÓN: 2-3 horas
+RESPONSABLE: Backend Dev
+
+================================================================================
+TICKET #017 ⏳ PENDIENTE
+================================================================================
+TÍTULO: Logging de Operación Invocada en Consola Backend
+
+PRIORIDAD: 🟢 BAJA
+
+DESCRIPCIÓN:
+Implementar trazas simples en consola backend para indicar qué operación
+API/servicio fue llamada a ejecutar. Por ahora sin loguear parámetros de entrada.
+
+SUBTAREAS:
+
+[T017.1] Definir formato de log unificado
+  ⏳ Definir prefijo de log (ej: [API] o [Controller])
+  ⏳ Incluir nombre de operación invocada
+  ⏳ Mantener mensaje breve y legible
+
+[T017.2] Instrumentar operaciones principales
+  ⏳ Log al iniciar POST /api/v1/honorarios/calcular
+  ⏳ Log al iniciar GET /api/v1/honorarios/:calculoId/items
+  ⏳ Log equivalente en endpoint técnico /sp-test (si está activo)
+
+[T017.3] Excluir parámetros sensibles o payload
+  ⏳ No imprimir body del request
+  ⏳ No imprimir credenciales ni datos sensibles
+
+[T017.4] Validar en ejecución manual
+  ⏳ Levantar backend en local
+  ⏳ Invocar endpoints desde POSTMAN/curl
+  ⏳ Verificar aparición de logs de operación
+
+ARCHIVOS A MODIFICAR:
+- App/Backend/Node/src/controllers/honorariosController.js
+- App/Backend/Node/src/routes/honorarios.routes.js (si aplica)
+- App/Backend/Node/src/index.js o App/Backend/Node/app.js (según punto de entrada)
+
+DEPENDENCIAS:
+- Requiere: Ticket #013 completado (controller disponible)
+- Requiere: Ticket #014 completado (rutas disponibles)
+
+CRITERIOS DE ACEPTACIÓN:
+□ La consola muestra la operación invocada en cada request
+□ No se registran parámetros del request
+□ Formato de logs consistente entre operaciones
+□ Validado manualmente en entorno local
+
+ESTIMACIÓN: 1 hora
+RESPONSABLE: Backend Dev
+
+================================================================================
 RESUMEN DEL PLAN
 ================================================================================
 
-TICKETS COMPLETADOS: 2/10 (20%)
+TICKETS COMPLETADOS: 6/12 (50%)
 - ✅ #006: Modelo calculo.js
 - ✅ #007: Schema BD (Calculos, Calculo_Items)
+- ✅ #008: SP Nivel 3 (Lógica cálculo)
+- ✅ #009: SP Nivel 2 (Orquestador)
+- ✅ #010: SP Nivel 1 (Entry point - Calculo_Grabar)
+- ✅ #011: Actualizar Modelo
 
-TICKETS PENDIENTES: 8/10 (80%)
-- ⏳ #008: SP Nivel 3 (Lógica cálculo)
-- ⏳ #009: SP Nivel 2 (Orquestador)
-- ⏳ #010: SP Nivel 1 (Entry point - Calculo_Grabar)
-- ⏳ #011: Actualizar Modelo
-- ⏳ #012: Servicio
+TICKETS PENDIENTES: 5/12 (42%)
+- ⏳ #016: Endpoint técnico SP + POSTMAN
+- ⏳ #017: Logging operación en consola
 - ⏳ #013: Controller
 - ⏳ #014: Routes
 - ⏳ #015: Tests E2E
 
-ESTIMACIÓN TOTAL: 24-30 horas
-PRIORIDAD: Tickets #008, #010 (críticos)
+TICKETS DESCARTADOS: 1/12 (8%)
+- 🚫 #012: Servicio (simplificación de arquitectura)
+
+ESTIMACIÓN TOTAL (RESTANTE): 11-14 horas
+PRIORIDAD: Ticket #016 (validación endpoint + POSTMAN)
 
 ================================================================================
-PRÓXIMO PASO: TICKET #008 - SP Nivel 3 (Lógica de Cálculo)
+PRÓXIMO PASO: TICKET #016 - Crear endpoint técnico SP y validar response en POSTMAN
 ================================================================================

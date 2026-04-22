@@ -430,9 +430,6 @@ Documentation: Swagger (Swashbuckle)
     "instalacionElectrica": true,
     "instalacionContraIncendio": false,
     "proyectoEstructuras": true
-  },
-  "parametros": {
-    "valorK": 522181756.33
   }
 }
 ```

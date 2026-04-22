@@ -15,7 +15,6 @@ BEGIN
 		`usuarios`.`fec_ult_act`,
 		`usuarios`.`baja_fecha`,
         `usuarios`.`user_mail`,
-		usuarios.asesor_codi,
         usuarios.rol,
 		`usuarios`.`password`,
 		`usuarios`.`modi_user_id`

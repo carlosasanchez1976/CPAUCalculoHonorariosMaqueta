@@ -9,7 +9,6 @@ BEGIN
         user_mail,
         user_nombre,
         user_apellido,
-        asesor_codi,
         rol,
         baja_fecha,
         modi_user_id,

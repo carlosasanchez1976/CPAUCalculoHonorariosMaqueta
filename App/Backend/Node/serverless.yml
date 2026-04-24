@@ -1,0 +1,136 @@
+# serverless.yml
+# Configuración de AWS Lambda + API Gateway para CH2026 Backend
+
+service: ch2026-backend-api
+
+# Framework version constraint
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  memorySize: 512
+  timeout: 30
+  
+  # Variables de entorno para la función Lambda
+  environment:
+    NODE_ENV: ${self:provider.stage}
+    # Las credenciales de DB se obtienen desde AWS Secrets Manager
+    # No poner credenciales hardcodeadas aquí
+    SECRET_NAME: cpau-ch-${self:provider.stage}-db-credentials
+    
+  # Permisos IAM para la función Lambda
+  iam:
+    role:
+      statements:
+        # Permitir acceso a Secrets Manager
+        - Effect: Allow
+          Action:
+            - secretsmanager:GetSecretValue
+          Resource:
+            - arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:cpau-ch-*
+        
+        # Permitir logs de CloudWatch
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource:
+            - arn:aws:logs:${aws:region}:${aws:accountId}:log-group:/aws/lambda/*
+
+  # CORS y headers por defecto
+  httpApi:
+    cors:
+      allowedOrigins:
+        - http://localhost:5173
+        - https://*.vercel.app
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+        - X-Requested-With
+        - X-API-Version
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      maxAge: 86400
+
+functions:
+  api:
+    handler: lambda.handler
+    name: ch2026-backend-api-${self:provider.stage}
+    description: Backend API para Cálculo de Honorarios CPAU
+    
+    # Eventos HTTP que disparan la función
+    events:
+      - httpApi:
+          path: /api/{proxy+}
+          method: ANY
+      - httpApi:
+          path: /api
+          method: ANY
+    
+    # VPC Configuration (necesario para conectar a RDS)
+    # ⚠️ DESCOMENTAR cuando tengas RDS en VPC privada
+    # vpc:
+    #   securityGroupIds:
+    #     - sg-xxxxxxxxx  # Security Group que permite conexión a RDS
+    #   subnetIds:
+    #     - subnet-xxxxxxxxx  # Subnet privada 1
+    #     - subnet-xxxxxxxxx  # Subnet privada 2
+
+# Paquete de deployment - qué incluir/excluir
+package:
+  individually: false
+  patterns:
+    # Incluir
+    - lambda.js
+    - app.js
+    - src/**
+    - node_modules/**
+    - package.json
+    
+    # Excluir
+    - '!.env*'
+    - '!.git/**'
+    - '!test-*.js'
+    - '!*.md'
+    - '!README.md'
+    - '!scripts/**'
+    - '!coverage/**'
+    - '!*.log'
+    - '!node_modules/aws-sdk/**'  # Ya está en Lambda
+    - '!node_modules/nodemon/**'
+    - '!node_modules/serverless-offline/**'
+
+# Plugins necesarios
+plugins:
+  - serverless-offline  # Para testing local
+
+# Custom variables
+custom:
+  # Configuración de serverless-offline
+  serverless-offline:
+    httpPort: 3000
+    lambdaPort: 3002
+    
+  # Stages configuration
+  stages:
+    dev:
+      memorySize: 512
+      timeout: 30
+    qa:
+      memorySize: 1024
+      timeout: 30
+    prod:
+      memorySize: 2048
+      timeout: 30
+
+# Recursos adicionales de AWS (opcional)
+resources:
+  Description: Backend API para CH2026 - Sistema de Cálculo de Honorarios CPAU

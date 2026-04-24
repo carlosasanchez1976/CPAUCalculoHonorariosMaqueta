@@ -161,9 +161,9 @@ const ProcesoCalculoPage = () => {
           // ⚠️ PARÁMETROS HARCODEADOS TEMPORALMENTE
           // Estos valores se obtendrán de contexto/props en futuras SPECs:
           // - usuarioId: del contexto de autenticación (login)
-          // - tareaId: del tipo de cálculo seleccionado (básico=18, intermedio, avanzado)
-          usuarioId: 2,  // Usuario temporal para testing
-          tareaId: 18,   // Tarea "Cálculo Básico" (ID fijo)
+          // - tareaId: del tipo de cálculo seleccionado (básico=1, intermedio, avanzado)
+          usuarioId: 1,  // Usuario temporal para testing (ID válido en DB)
+          tareaId: 1,    // Tarea "Cálculo Básico" (ID válido en DB)
           
           datosProyecto: {
             nombre: formData.nombreProyecto,

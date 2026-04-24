@@ -1,16 +1,16 @@
 /**
  * Servicio de Honorarios - Capa de abstracción para llamadas a API
  * 
- * IMPORTANTE: Este es el ÚNICO lugar que debe cambiar al migrar al backend real
+ * FASE 2: Backend Node.js + Express + MySQL RDS (AWS)
  * 
  * Proyecto: CH2026 - Sistema de Gestión de Cálculo de Honorarios CPAU
- * Versión: 1.0
- * Fecha: 16/03/2026
+ * Versión: 2.0 - Backend Real con Persistencia
+ * Fecha: 24/04/2026
  */
 
-// Configuración de API
-// HOY: serverless en mismo dominio (/api)
-// FUTURO: backend real (cambiar solo esta variable en .env)
+// Configuración de API - Backend Node.js
+// DESA: http://localhost:3000/api
+// QA: https://api-ch2026-qa.neosisweb.ar/api
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 const API_VERSION = '1.0';
 
@@ -29,7 +29,7 @@ const API_VERSION = '1.0';
  */
 export async function calcularHonorarios(datosCompletos) {
   try {
-    const response = await fetch(`${API_BASE_URL}/v1/honorarios/calcular`, {
+    const response = await fetch(`${API_BASE_URL}/calculos/calcular`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -76,114 +76,6 @@ export async function calcularHonorarios(datosCompletos) {
   }
 }
 
-/**
- * FUTURO: Guarda un cálculo en la base de datos
- * HOY: Función stub que no hace nada (maqueta)
- * 
- * @param {string} calculoId - ID del cálculo a guardar
- * @param {Object} datosAdicionales - Datos adicionales (notas, etiquetas, etc.)
- * @returns {Promise<Object>} Confirmación del guardado
- */
-export async function guardarCalculo(calculoId, datosAdicionales = {}) {
-  // HOY: No hace nada (maqueta sin persistencia)
-  console.info('guardarCalculo - Función disponible en backend real (Fase 2)');
-  console.debug('Parámetros recibidos:', { calculoId, datosAdicionales });
-  
-  // Simular respuesta exitosa
-  return {
-    success: true,
-    message: 'Función disponible en backend real con base de datos',
-    calculoId
-  };
-
-  // FUTURO: Implementación real
-  // const response = await fetch(`${API_BASE_URL}/honorarios/guardar`, {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     'Authorization': `Bearer ${getAuthToken()}`
-  //   },
-  //   body: JSON.stringify({ calculoId, datosAdicionales })
-  // });
-  // return await response.json();
-}
-
-/**
- * FUTURO: Obtiene el histórico de cálculos realizados por el usuario
- * HOY: Función stub que retorna array vacío (maqueta)
- * 
- * @param {Object} filtros - Filtros de búsqueda (fechaDesde, fechaHasta, tipoCalculo, etc.)
- * @returns {Promise<Object>} Lista de cálculos históricos
- */
-export async function obtenerHistoricoCalculos(filtros = {}) {
-  // HOY: No hace nada (maqueta sin persistencia)
-  console.info('obtenerHistoricoCalculos - Función disponible en backend real (Fase 2)');
-  console.debug('Filtros recibidos:', filtros);
-  
-  // Simular respuesta vacía
-  return {
-    success: true,
-    data: {
-      calculos: [],
-      pagination: {
-        total: 0,
-        limit: 20,
-        offset: 0,
-        hasNext: false,
-        hasPrev: false
-      }
-    },
-    message: 'Función disponible en backend real con base de datos'
-  };
-
-  // FUTURO: Implementación real
-  // const queryParams = new URLSearchParams(filtros).toString();
-  // const response = await fetch(`${API_BASE_URL}/honorarios/historial?${queryParams}`, {
-  //   headers: {
-  //     'Authorization': `Bearer ${getAuthToken()}`
-  //   }
-  // });
-  // return await response.json();
-}
-
-/**
- * FUTURO: Obtiene un cálculo específico por su ID
- * HOY: Función stub que retorna null (maqueta)
- * 
- * @param {string} calculoId - ID del cálculo a recuperar
- * @returns {Promise<Object>} Datos completos del cálculo
- */
-export async function obtenerCalculoPorId(calculoId) {
-  // HOY: No hace nada (maqueta sin persistencia)
-  console.info('obtenerCalculoPorId - Función disponible en backend real (Fase 2)');
-  console.debug('CalculoID solicitado:', calculoId);
-  
-  // Simular respuesta vacía
-  return {
-    success: false,
-    error: 'Función disponible en backend real con base de datos',
-    calculoId
-  };
-
-  // FUTURO: Implementación real
-  // const response = await fetch(`${API_BASE_URL}/honorarios/calculos/${calculoId}`, {
-  //   headers: {
-  //     'Authorization': `Bearer ${getAuthToken()}`
-  //   }
-  // });
-  // return await response.json();
-}
-
-/**
- * Helper: Obtener token de autenticación (para Fase 2)
- * 
- * @returns {string|null} JWT token o null si no está autenticado
- */
-function getAuthToken() {
-  // HOY: No implementado (AuthContext es mock)
-  // FUTURO: Obtener de localStorage o context
-  return null;
-}
 
 /**
  * Helper: Formatear errores de API para mostrar al usuario

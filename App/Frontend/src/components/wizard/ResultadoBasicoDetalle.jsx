@@ -50,6 +50,37 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
     });
   };
 
+  // Agrupar y totalizar honorarios por tarea profesional
+  const agruparHonorariosPorTarea = (detalleHonorarios) => {
+    if (!detalleHonorarios || detalleHonorarios.length === 0) return [];
+
+    const agrupado = [];
+    const mapaIndices = {};
+    
+    detalleHonorarios.forEach((item) => {
+      const tarea = item.tareaProfesional;
+      
+      if (!(tarea in mapaIndices)) {
+        // Primera vez que aparece esta tarea, agregarla al array
+        mapaIndices[tarea] = agrupado.length;
+        agrupado.push({
+          tareaProfesional: tarea,
+          importe: 0,
+          items: []
+        });
+      }
+      
+      const indice = mapaIndices[tarea];
+      agrupado[indice].importe += item.importe;
+      agrupado[indice].items.push(item);
+    });
+
+    // Retornar array en orden original (sin ordenar)
+    return agrupado;
+  };
+
+  const honorariosAgrupados = agruparHonorariosPorTarea(formData.detalleHonorarios);
+
   return (
     <div className={styles.container}>
       {/* Contenido para PDF */}
@@ -142,12 +173,12 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                     </tr>
                   </thead>
                   <tbody>
-                    {formData.detalleHonorarios.map((item) => (
-                      <tr key={item.item}>
-                        <td className={styles.centered}>{item.item}</td>
-                        <td>{item.tareaProfesional}</td>
-                        <td className={styles.rightAlign}>{formatCurrencyARS(item.importe)}</td>
-                        <td className={styles.centered}>00%</td>
+                    {honorariosAgrupados.map((grupo, index) => (
+                      <tr key={grupo.tareaProfesional}>
+                        <td className={styles.centered}>{index + 1}</td>
+                        <td>{grupo.tareaProfesional}</td>
+                        <td className={styles.rightAlign}>{formatCurrencyARS(grupo.importe)}</td>
+                        <td className={styles.centered}>{((grupo.importe / formData.valorObra) * 100).toFixed(2)}%</td>
                       </tr>
                     ))}
                   </tbody>
@@ -157,11 +188,15 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                       <td className={styles.rightAlign}>
                         <strong className={styles.totalAmount}>
                           {formatCurrencyARS(
-                            formData.detalleHonorarios.reduce((sum, item) => sum + item.importe, 0)
+                            honorariosAgrupados.reduce((sum, grupo) => sum + grupo.importe, 0)
                           )}
                         </strong>
                       </td>
-                      <td className={styles.centered}><strong>00%</strong></td>
+                      <td className={styles.centered}>
+                        <strong>
+                          {((honorariosAgrupados.reduce((sum, grupo) => sum + grupo.importe, 0) / formData.valorObra) * 100).toFixed(2)}%
+                        </strong>
+                      </td>
                     </tr>
                   </tfoot>
                 </table>

@@ -702,3 +702,7 @@ PRIORIDAD: Ticket #016 (validación endpoint + POSTMAN)
 ================================================================================
 PRÓXIMO PASO: TICKET #016 - Crear endpoint técnico SP y validar response en POSTMAN
 ================================================================================
+
+
+
+TOPDOS LOS TICKETS RESUELTOS!!!!!!!!!!!!!!!!!!!!

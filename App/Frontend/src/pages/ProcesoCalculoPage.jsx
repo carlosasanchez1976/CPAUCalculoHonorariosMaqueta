@@ -28,6 +28,9 @@ const ProcesoCalculoPage = () => {
   const [calculationResult, setCalculationResult] = useState(null);
   const [formData, setFormData] = useState({
     // Datos del tipo de cálculo
+    calculoId: null,
+    usuarioId: null,
+    tareaId: null,
     tipoCalculo: location.state?.tipo || 'Básico',
     tipoNombre: location.state?.tipoNombre || 'Honorarios de Especialidades – Básico',
     descripcionTipo: location.state?.descripcion || '',
@@ -150,21 +153,30 @@ const ProcesoCalculoPage = () => {
     try {
       let result;
       
-      if (formData.tipoCalculo === 'Básico') {
-        // CÁLCULO REAL para tipo Básico - Llamada a API
-        const valorK = getParametro('valorK') || 522181756.33;
         
         // Preparar datos para API según contrato
         const datosAPI = {
-          tipoCalculo: 'basico',
+          calculoId: null, // Se asignará en backend al guardar el cálculo
+          
+          // ⚠️ PARÁMETROS HARCODEADOS TEMPORALMENTE
+          // Estos valores se obtendrán de contexto/props en futuras SPECs:
+          // - usuarioId: del contexto de autenticación (login)
+          // - tareaId: del tipo de cálculo seleccionado (básico=18, intermedio, avanzado)
+          usuarioId: 2,  // Usuario temporal para testing
+          tareaId: 18,   // Tarea "Cálculo Básico" (ID fijo)
+          
           datosProyecto: {
             nombre: formData.nombreProyecto,
             ubicacion: formData.ubicacion,
-            cliente: formData.cliente
+            cliente: formData.cliente,
+            tipoObra: formData.tipoObra,
+            destinoUso: formData.destinoUso,
+            observaciones: formData.observaciones
           },
           datosObra: {
-            valorObra: formData.valorObra,
-            superficie: formData.superficieTotal,
+            valorObra: parseFloat(formData.valorObra) || 0,
+            superficie: parseFloat(formData.superficieTotal) || 0,
+            valorMetro2: parseFloat(formData.valorMetro2) || 0,
             tipologia: formData.tipoObra,
             complejidad: formData.complejidad
           },
@@ -176,37 +188,31 @@ const ProcesoCalculoPage = () => {
             instalacionTermomecanica: formData.instalacionTermomecanica,
             instalacionContraIncendio: formData.instalacionContraIncendio,
             proyectoEstructuras: formData.proyectoEstructuras
-          },
-          parametros: {
-            valorK: valorK
           }
         };
         
-        // Llamada a API serverless
+        // Llamada a API backend Node.js
         const apiResult = await calcularHonorarios(datosAPI);
         
-        // Extraer datos de la respuesta
-        const detalleHonorarios = apiResult.resultado.detalleHonorarios;
+        // Extraer datos de la respuesta (el service ya retorna 'data' directamente)
+        const detalleHonorarios = apiResult.detalleHonorarios;
         
         // Guardar detalle en formData para uso en ResultadoBasicoDetalle
         setFormData(prev => ({ 
           ...prev, 
           detalleHonorarios,
           calculoId: apiResult.calculoId,
-          fechaCalculo: apiResult.fechaCalculo,
-          metadataCalculo: apiResult.resultado.metadata
+          fechaCalculo: apiResult.metadata.fechaCalculo,
+          metadataCalculo: apiResult.metadata
         }));
         
         result = {
           detalleHonorarios,
           tipoCalculo: 'Básico',
           calculoId: apiResult.calculoId,
-          metadata: apiResult.resultado.metadata
+          metadata: apiResult.metadata
         };
-      } else {
-        // Mock para otros tipos de cálculo (temporal)
-        result = 1;
-      }
+      
       
       setCalculationResult(result);
       setIsCalculating(false);

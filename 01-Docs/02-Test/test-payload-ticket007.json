@@ -1,0 +1,28 @@
+{
+  "calculoId": null,
+  "usuarioId": 2,
+  "tareaId": 18,
+  "datosProyecto": {
+    "nombre": "Edificio Comercial - Centro",
+    "ubicacion": "CABA - Microcentro",
+    "cliente": "Inmobiliaria ABC SA",
+    "tipoObra": "Edificio comercial",
+    "destinoUso": "Oficinas",
+    "observaciones": ""
+  },
+  "datosObra": {
+    "superficie": 2500,
+    "valorMetro2": 200000,
+    "valorObra": 500000000,
+    "complejidad": "alta"
+  },
+  "tareasProfesionales": {
+    "obraProyecto": true,
+    "obraDireccion": true,
+    "instalacionSanitaria": true,
+    "instalacionElectrica": true,
+    "instalacionContraIncendio": true,
+    "instalacionTermomecanica": true,
+    "proyectoEstructuras": true
+  }
+}

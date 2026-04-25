@@ -1,8 +1,0 @@
-{
-    "chat.tools.terminal.autoApprove": {
-        "/^cd \"c:\\\\Users\\\\Carlos Sanchez\\\\Documents\\\\Charly\\\\neosis\\\\CPAU\\\\DesarrolloCalculoHonorarios\\\\CH2026\\\\App\\\\Backend\\\\Node\"; node scripts/test-calculo-model\\.js$/": {
-            "approve": true,
-            "matchCommandLine": true
-        }
-    }
-}

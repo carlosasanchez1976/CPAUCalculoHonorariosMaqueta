@@ -1,0 +1,216 @@
+================================================================================
+TICKETS DERIVADOS DE SPEC-INFRA-001
+================================================================================
+SPEC: Configuración Dominio Personalizado API Lambda
+Fecha: 24/04/2026
+Versión: 1.0
+Estado: 🚧 EN PROGRESO
+================================================================================
+
+CONTEXTO:
+Backend Lambda desplegado exitosamente y funcionando en:
+https://73n8fqftl5.execute-api.us-east-1.amazonaws.com/api
+
+Frontend QA en Vercel funcionando correctamente en:
+https://ch2026-qa.neosisweb.ar
+
+OBJETIVO:
+Configurar dominio personalizado para que la API Lambda sea accesible mediante:
+https://cpau-ch2026-api-qa.neosisweb.ar/api
+
+BENEFICIOS:
+- URL más profesional y fácil de recordar
+- Consistencia con otras APIs del proyecto (*.neosisweb.ar)
+- Independencia de la URL de AWS (puede cambiar en el futuro)
+
+================================================================================
+TICKET #001 ✅ COMPLETADO
+================================================================================
+TÍTULO: Configurar API Mapping en API Gateway
+
+PRIORIDAD: 🟡 MEDIA
+
+DESCRIPCIÓN:
+Asociar el dominio personalizado creado con la API Gateway existente.
+
+ESTADO ACTUAL:
+✅ Dominio personalizado creado: cpau-ch2026-api-qa.neosisweb.ar
+✅ Estado: Disponible
+✅ Endpoint generado: d-d5f8jyxiaa.execute-api.us-east-1.amazonaws.com
+✅ API Mapping: COMPLETADO - Fecha: 25/04/2026
+
+PASOS:
+1. API Gateway → Nombres de dominio personalizados
+2. Click en: cpau-ch2026-api-qa.neosisweb.ar
+3. Buscar sección: "Configuraciones de la API" o "API mappings"
+4. Click en: "Agregar asignación" o "Add API mapping"
+5. Completar:
+   - API: cpau-ch2026-api-qa
+   - Stage: $default
+   - Path: (dejar vacío)
+6. Guardar
+
+RESULTADO ESPERADO:
+✅ Dominio asociado a la API
+✅ Requests a cpau-ch2026-api-qa.neosisweb.ar se rutean a Lambda
+
+DEPENDENCIAS:
+- Ninguna (dominio ya creado)
+
+TIEMPO ESTIMADO: 5 minutos
+
+================================================================================
+TICKET #002 ✅ COMPLETADO
+================================================================================
+TÍTULO: Configurar Registro DNS en Route 53
+
+PRIORIDAD: 🟡 MEDIA
+
+DESCRIPCIÓN:
+Crear registro DNS que apunte el subdominio a API Gateway.
+
+ESTADO ACTUAL:
+✅ Registro DNS: CREADO - Fecha: 25/04/2026 20:16 UTC
+✅ ID de cambio: /change/C02388923MC8GF7LIZOX
+✅ Estado: INSYNC
+
+PASOS:
+1. Route 53 → Hosted zones
+2. Seleccionar zona: neosisweb.ar
+3. Click en: "Create record"
+4. Completar:
+   - Record name: cpau-ch2026-api-qa
+   - Record type: A - Alias
+   - Route traffic to: Alias to API Gateway API
+   - Region: us-east-1
+   - API Gateway endpoint: d-d5f6ipviaa.execute-api.us-east-1.amazonaws.com
+   - TTL: 300 (default)
+5. Click en: "Create records"
+
+RESULTADO ESPERADO:
+✅ DNS resuelve cpau-ch2026-api-qa.neosisweb.ar
+✅ Apunta al endpoint de API Gateway
+✅ HTTPS funciona con certificado SSL (ya configurado)
+
+DEPENDENCIAS:
+- Ticket #001 (API Mapping debe estar configurado)
+
+TIEMPO ESTIMADO: 5 minutos
+TIEMPO DE PROPAGACIÓN DNS: 5-30 minutos
+
+VALIDACIÓN:
+```powershell
+# Test DNS resolution
+nslookup cpau-ch2026-api-qa.neosisweb.ar
+
+# Test API endpoint
+Invoke-RestMethod -Uri "https://cpau-ch2026-api-qa.neosisweb.ar/api/calculos/calcular" `
+  -Method POST `
+  -Body (ConvertTo-Json @{
+    usuarioId = 1
+    tareaId = 1
+    datosProyecto = @{...}
+    datosObra = @{...}
+    tareasProfesionales = @{...}
+  } -Depth 10) `
+  -ContentType "application/json"
+```
+
+================================================================================
+TICKET #003 ⏳ PENDIENTE
+================================================================================
+TÍTULO: Actualizar Variable VITE_API_URL en Vercel
+
+PRIORIDAD: 🟡 MEDIA
+
+DESCRIPCIÓN:
+Una vez que el dominio personalizado esté funcionando, actualizar la variable
+de entorno en Vercel para usar la URL amigable.
+
+ESTADO ACTUAL:
+✅ Variable actual: https://73n8fqftl5.execute-api.us-east-1.amazonaws.com/api
+⏳ Variable objetivo: https://cpau-ch2026-api-qa.neosisweb.ar/api
+
+PASOS:
+1. Vercel Dashboard → Proyecto ch2026
+2. Settings → Environment Variables
+3. Buscar: VITE_API_URL
+4. Click en: "Edit"
+5. Cambiar valor a: https://cpau-ch2026-api-qa.neosisweb.ar/api
+6. Environments: Mantener los mismos (Preview/Production según corresponda)
+7. Save
+8. Deployments → Redeploy última versión
+
+RESULTADO ESPERADO:
+✅ Frontend usa URL amigable
+✅ Todas las llamadas API funcionan correctamente
+✅ CORS configurado para ambas URLs (actual y nueva)
+
+DEPENDENCIAS:
+- Ticket #001 (API Mapping)
+- Ticket #002 (Route 53 DNS)
+- Validación exitosa del endpoint
+
+TIEMPO ESTIMADO: 5 minutos + 2-3 min redeploy
+
+VALIDACIÓN:
+1. Abrir DevTools en: https://ch2026-qa.neosisweb.ar
+2. Network tab
+3. Hacer un cálculo
+4. Verificar que las requests vayan a: cpau-ch2026-api-qa.neosisweb.ar
+
+================================================================================
+INFORMACIÓN ADICIONAL
+================================================================================
+
+CERTIFICADO SSL:
+✅ Ya configurado en ACM
+✅ Dominio: *.neosisweb.ar (wildcard)
+✅ Válido para: cpau-ch2026-api-qa.neosisweb.ar
+
+CORS:
+✅ Backend ya permite: https://ch2026-qa.neosisweb.ar
+✅ Variable FRONTEND_URL configurada en Lambda
+⚠️ IMPORTANTE: NO es necesario agregar el nuevo dominio al CORS porque
+   el dominio personalizado es solo un alias del mismo API Gateway
+
+API GATEWAY EXISTENTE:
+- ID: 73n8fqftl5
+- Tipo: HTTP API (no REST API)
+- Región: us-east-1
+- Integración: Lambda cpau-ch2026-api-qa
+
+DOMINIO PERSONALIZADO EXISTENTE:
+- Nombre: cpau-ch2026-api-qa.neosisweb.ar
+- Estado: Disponible ✅
+- Endpoint: d-d5f6ipviaa.execute-api.us-east-1.amazonaws.com
+- Certificado: neosisweb.ar (ACM)
+- Security Policy: TLS 1.2/1.3
+
+NOTAS:
+- La URL original de AWS seguirá funcionando (no se elimina)
+- Ambas URLs apuntan a la misma Lambda function
+- Zero downtime durante la transición
+- No requiere cambios en el código backend
+
+================================================================================
+ORDEN DE EJECUCIÓN RECOMENDADO
+================================================================================
+1. Ticket #001 - API Mapping (5 min)
+2. Ticket #002 - Route 53 DNS (5 min) + Esperar propagación (5-30 min)
+3. Validar endpoint con PowerShell/Postman
+4. Ticket #003 - Actualizar Vercel (5 min)
+
+TIEMPO TOTAL ESTIMADO: 20 minutos + propagación DNS
+
+================================================================================
+ESTADO FINAL ESPERADO
+================================================================================
+✅ API accesible en: https://cpau-ch2026-api-qa.neosisweb.ar/api
+✅ Frontend usando URL amigable
+✅ DNS resolviendo correctamente
+✅ Certificado SSL funcionando
+✅ CORS funcionando
+✅ Cálculos guardándose en base de datos
+
+================================================================================

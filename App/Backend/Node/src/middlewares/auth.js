@@ -1,28 +1,60 @@
 // auth.js - Middleware de autenticación JWT
 const jwt = require('jsonwebtoken');
 
+// ========================================
+// CONFIGURACIÓN DE AUTENTICACIÓN
+// ========================================
+// Para habilitar autenticación JWT completa, cambiar en .env:
+// REQUIRE_JWT=true
+//
+// Mientras REQUIRE_JWT=false:
+// - Permite acceso sin token (usuario por defecto)
+// - Si hay token, lo verifica y rechaza si es inválido
+// ========================================
+
 const verificarToken = (req, res, next) => {
   try {
-    // Obtener token del header Authorization
+    const requireJWT = process.env.REQUIRE_JWT === 'true';
     const authHeader = req.headers['authorization'];
     
-    if (!authHeader) {
+    // MODO PERMISIVO (REQUIRE_JWT=false): Permitir acceso sin token
+    if (!requireJWT && !authHeader) {
+      req.usuario = {
+        id: 2,
+        email: 'temporal@cpau.com',
+        nombre: 'Usuario Temporal',
+        role: 'admin'
+      };
+      return next();
+    }
+
+    // MODO ESTRICTO (REQUIRE_JWT=true): Rechazar si no hay token
+    if (requireJWT && !authHeader) {
       return res.status(401).json({ error: 'Token no proporcionado' });
     }
 
-    // El formato esperado es: "Bearer TOKEN"
+    // Si hay token, verificarlo siempre
     const token = authHeader.startsWith('Bearer ') 
       ? authHeader.slice(7) 
       : authHeader;
 
     if (!token) {
-      return res.status(401).json({ error: 'Token no proporcionado' });
+      if (requireJWT) {
+        return res.status(401).json({ error: 'Token no proporcionado' });
+      }
+      // Modo permisivo: permitir sin token
+      req.usuario = {
+        id: 2,
+        email: 'temporal@cpau.com',
+        nombre: 'Usuario Temporal',
+        role: 'admin'
+      };
+      return next();
     }
 
     // Verificar el token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Agregar los datos del usuario al request para uso posterior
     req.usuario = {
       id: decoded.id,
       email: decoded.email,

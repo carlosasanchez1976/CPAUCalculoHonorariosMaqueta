@@ -1,31 +1,38 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CalculationTypeCard.module.css';
 
 /**
  * Card para seleccionar tipo de cálculo
  * @param {Object} props
+ * @param {number} props.tareaId - ID de la tarea profesional
+ * @param {string} props.codi - Código de la tarea
  * @param {string} props.title - Título del tipo de cálculo
- * @param {string} props.shortDescription - Descripción corta (1 línea) del cálculo
  * @param {string} props.fullDescription - Descripción completa del cálculo
- * @param {React.ReactNode} props.icon - Ícono del tipo
+ * @param {string} props.iconUrl - URL del ícono SVG
  * @param {string} props.path - Ruta a navegar
- * @param {string} props.tipoId - Identificador corto del tipo ('Básico', 'Arancel', etc.)
- * @param {string} props.vigente - 'Si' o 'No' indica si está disponible o en construcción
+ * @param {boolean} props.vigente - Indica si está disponible o en construcción
  */
-const CalculationTypeCard = ({ title, shortDescription, fullDescription, icon, path, tipoId, vigente }) => {
+const CalculationTypeCard = ({ tareaId, codi, title, fullDescription, iconUrl, path, vigente }) => {
   const navigate = useNavigate();
-  const isVigente = vigente === 'Si';
+  const [iconError, setIconError] = useState(false);
+  const isVigente = vigente === true || vigente === 1 || vigente === 'Si';
 
   const handleClick = () => {
     if (!isVigente) return; // No permitir click si no está vigente
     
     navigate(path, { 
       state: { 
-        tipo: tipoId || title,
+        tareaId: tareaId,
+        tipo: codi,
         tipoNombre: title,
         descripcion: fullDescription 
       } 
     });
+  };
+
+  const handleIconError = () => {
+    setIconError(true);
   };
 
   return (
@@ -35,7 +42,12 @@ const CalculationTypeCard = ({ title, shortDescription, fullDescription, icon, p
     >
       <div className={styles.headerRow}>
         <div className={styles.iconWrapper}>
-          {icon}
+          <img 
+            src={iconError ? '/assets/icons/tareas/DEFAULT.svg' : iconUrl}
+            alt={`Ícono de ${title}`}
+            className={styles.icon}
+            onError={handleIconError}
+          />
         </div>
         {!isVigente && (
           <div className={styles.badge}>

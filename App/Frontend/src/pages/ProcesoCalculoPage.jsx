@@ -12,7 +12,7 @@ import { useParametros } from '../contexts/ParametrosContext';
 import { calcularHonorarios, formatearErrorAPI } from '../services/honorariosService';
 import styles from './ProcesoCalculoPage.module.css';
 
-// Componentes específicos para Cálculo Básico
+// Componentes específicos para Cálculo PYDOA (Proyecto y Dirección de Obras)
 import DatosPrincipalesBasico from '../components/wizard/steps/DatosPrincipalesBasico';
 import DatosObraBasico from '../components/wizard/steps/DatosObraBasico';
 import TareasProfesionalesBasico from '../components/wizard/steps/TareasProfesionalesBasico';
@@ -26,14 +26,25 @@ const ProcesoCalculoPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationResult, setCalculationResult] = useState(null);
+  
+  // [T009.1] Extraer datos desde location.state
+  const { tareaId, tipo, tipoNombre, descripcion } = location.state || {};
+  
+  // [T009.2-T009.3] Validación: redirigir si no hay tareaId
+  useEffect(() => {
+    if (!tareaId) {
+      console.warn('⚠️ No se recibió tareaId, redirigiendo a selección de tarea');
+      navigate('/nuevo-calculo', { replace: true });
+    }
+  }, [tareaId, navigate]);
   const [formData, setFormData] = useState({
     // Datos del tipo de cálculo
     calculoId: null,
     usuarioId: null,
-    tareaId: null,
-    tipoCalculo: location.state?.tipo || 'Básico',
-    tipoNombre: location.state?.tipoNombre || 'Honorarios de Especialidades – Básico',
-    descripcionTipo: location.state?.descripcion || '',
+    tareaId: tareaId || null,  // [T009.1] Valor dinámico desde location.state
+    tipoCalculo: tipo || 'PYDOA',  // Valor de 'codi' desde API (ej: PYDOA, DEMO, GPYC)
+    tipoNombre: tipoNombre || 'Proyecto y Dirección de Obras de Arquitectura',
+    descripcionTipo: descripcion || '',
     
     // Paso 0: Tarea Profesional + Datos Principales (GENÉRICO)
     tareaProfesional: '',
@@ -54,19 +65,19 @@ const ProcesoCalculoPage = () => {
     cantidadOperarios: '',
     otrosGastos: '',
     
-    // --- CAMPOS ESPECÍFICOS PARA CÁLCULO BÁSICO ---
-    // Paso 0: Datos Principales Básico
+    // --- CAMPOS ESPECÍFICOS PARA CÁLCULO PYDOA (Proyecto y Dirección de Obras) ---
+    // Paso 0: Datos Principales PYDOA
     plazoEjecucion: '',
     observaciones: '',
     
-    // Paso 1: Datos de la Obra Básico
+    // Paso 1: Datos de la Obra PYDOA
     superficieTotal: '',
     valorMetro2: '',
     cotizDolar: '',
     valorObra: '',
     complejidad: '',
     
-    // Paso 2: Tareas Profesionales Básico
+    // Paso 2: Tareas Profesionales PYDOA
     obraProyecto: false,
     obraDireccion: false,
     instalacionSanitaria: false,
@@ -158,12 +169,11 @@ const ProcesoCalculoPage = () => {
         const datosAPI = {
           calculoId: null, // Se asignará en backend al guardar el cálculo
           
-          // ⚠️ PARÁMETROS HARCODEADOS TEMPORALMENTE
-          // Estos valores se obtendrán de contexto/props en futuras SPECs:
-          // - usuarioId: del contexto de autenticación (login)
-          // - tareaId: del tipo de cálculo seleccionado (básico=1, intermedio, avanzado)
+          // ⚠️ PARÁMETROS TEMPORALES/DINÁMICOS
+          // - usuarioId: temporal para testing (futuro: contexto de autenticación)
+          // - tareaId: ✅ DINÁMICO desde location.state (Ticket #009)
           usuarioId: 1,  // Usuario temporal para testing (ID válido en DB)
-          tareaId: 1,    // Tarea "Cálculo Básico" (ID válido en DB)
+          tareaId: formData.tareaId,  // [T009.4] ✅ Dinámico desde selección
           
           datosProyecto: {
             nombre: formData.nombreProyecto,
@@ -208,7 +218,7 @@ const ProcesoCalculoPage = () => {
         
         result = {
           detalleHonorarios,
-          tipoCalculo: 'Básico',
+          tipoCalculo: formData.tipoCalculo,  // Dinámico desde state
           calculoId: apiResult.calculoId,
           metadata: apiResult.metadata
         };
@@ -260,8 +270,8 @@ const ProcesoCalculoPage = () => {
   };
 
   const renderStep0 = () => {
-    // Si es Cálculo Básico, usar componente específico
-    if (formData.tipoCalculo === 'Básico') {
+    // Si es Cálculo PYDOA (Proyecto y Dirección de Obras), usar componente específico
+    if (formData.tipoCalculo === 'PYDOA') {
       return <DatosPrincipalesBasico formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
     }
 
@@ -341,8 +351,8 @@ const ProcesoCalculoPage = () => {
   };
 
   const renderStep1 = () => {
-    // Si es Cálculo Básico, usar componente específico
-    if (formData.tipoCalculo === 'Básico') {
+    // Si es Cálculo PYDOA (Proyecto y Dirección de Obras), usar componente específico
+    if (formData.tipoCalculo === 'PYDOA') {
       return <DatosObraBasico formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
     }
 
@@ -391,8 +401,8 @@ const ProcesoCalculoPage = () => {
   };
 
   const renderStep2 = () => {
-    // Si es Cálculo Básico, usar componente específico
-    if (formData.tipoCalculo === 'Básico') {
+    // Si es Cálculo PYDOA (Proyecto y Dirección de Obras), usar componente específico
+    if (formData.tipoCalculo === 'PYDOA') {
       return <TareasProfesionalesBasico formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
     }
 
@@ -446,8 +456,8 @@ const ProcesoCalculoPage = () => {
   };
 
   const renderStep3 = () => {
-    // Si es Cálculo Básico, usar componente específico
-    if (formData.tipoCalculo === 'Básico') {
+    // Si es Cálculo PYDOA (Proyecto y Dirección de Obras), usar componente específico
+    if (formData.tipoCalculo === 'PYDOA') {
       return <RevisionBasico formData={formData} onEditStep={(step) => setCurrentStep(step)} stepTitle={steps[currentStep]} />;
     }
 
@@ -564,8 +574,8 @@ const ProcesoCalculoPage = () => {
   );
 
   const renderStep5 = () => {
-    // Si es Cálculo Básico, usar componente específico
-    if (formData.tipoCalculo === 'Básico') {
+    // Si es Cálculo PYDOA (Proyecto y Dirección de Obras), usar componente específico
+    if (formData.tipoCalculo === 'PYDOA') {
       return (
         <ResultadoBasicoDetalle 
           formData={formData}

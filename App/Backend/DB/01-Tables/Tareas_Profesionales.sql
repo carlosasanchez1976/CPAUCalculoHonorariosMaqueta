@@ -16,3 +16,8 @@ CREATE TABLE Tareas_Profesionales (
   
   
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+ALTER TABLE Tareas_Profesionales
+ADD COLUMN baja_fecha DATETIME NULL COMMENT 'Fecha de baja lógica',
+ADD COLUMN baja_usuario_id INT NULL COMMENT 'Usuario que realizó la baja'

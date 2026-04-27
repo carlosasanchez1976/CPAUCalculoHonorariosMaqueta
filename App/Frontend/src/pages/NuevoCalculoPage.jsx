@@ -1,8 +1,10 @@
-import { FaBuilding, FaHammer, FaShieldAlt, FaCertificate, FaUserTie, FaSearchDollar, FaArrowLeft, FaCog, FaRulerCombined, FaLeaf, FaGavel, FaDollarSign, FaHardHat, FaFire, FaBalanceScale, FaFileContract, FaCity, FaCouch, FaTree } from 'react-icons/fa';
+import { FaArrowLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import CalculationTypeCard from '../components/common/CalculationTypeCard';
+import { obtenerTareasProfesionales } from '../services/tareasProfesionalesService';
 import styles from './NuevoCalculoPage.module.css';
 
 /**
@@ -11,166 +13,30 @@ import styles from './NuevoCalculoPage.module.css';
 const NuevoCalculoPage = () => {
   const navigate = useNavigate();
 
-  const calculationTypes = [
-    {
-      title: 'Proyecto y Dirección de obras de arquitectura',
-      shortDescription: 'Proyecto y dirección de obra de baja, mediana y alta complejidad',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de proyecto y dirección de obra de baja, mediana y alta complejidad. Incluye la opción de incorporar proyecto de instalaciones y cálculo de estructuras.',
-      icon: <FaBuilding />,
-      path: '/proceso-calculo',
-      tipoId: 'Básico',
-      Vigente: 'Si'
-    },
-    {
-      title: 'Demoliciones',
-      shortDescription: 'Proyecto y dirección de obras de demolición',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de proyecto y dirección de obras de demolición.',
-      icon: <FaHammer />,
-      path: '/proceso-calculo',
-      tipoId: 'Demoliciones',
-      Vigente: 'No'
-    },
-    {
-      title: 'Gerencia de proyectos y construcciones',
-      shortDescription: 'Gerenciamiento de proyectos y dirección de obras',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de gerenciamiento de proyecto y de dirección de obras.',
-      icon: <FaCog />,
-      path: '/proceso-calculo',
-      tipoId: 'Gerencia',
-      Vigente: 'No'
-    },
-    {
-      title: 'Habilitaciones',
-      shortDescription: 'Habilitaciones de locales, comercios e industrias',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de habilitaciones de locales, comercios e industrias.',
-      icon: <FaCertificate />,
-      path: '/proceso-calculo',
-      tipoId: 'Habilitaciones',
-      Vigente: 'No'
-    },
-    {
-      title: 'Conservación de fachadas',
-      shortDescription: 'Conservación de fachadas de edificios',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de conservación de fachadas.',
-      icon: <FaBuilding />,
-      path: '/proceso-calculo',
-      tipoId: 'Fachadas',
-      Vigente: 'No'
-    },
-    {
-      title: 'Consultas y otras tareas por tiempo empleado',
-      shortDescription: 'Honorarios en base al valor hora profesional',
-      fullDescription: 'Cálculo de honorarios profesionales en base al valor hora profesional. Incluye Consultas, Estudios e Informe Técnico, Asesoramiento, y Liquidación de Medianería.',
-      icon: <FaUserTie />,
-      path: '/proceso-calculo',
-      tipoId: 'PorTiempo',
-      Vigente: 'No'
-    },
-    {
-      title: 'Medición y ejecución de planos',
-      shortDescription: 'Medición y ejecución de planos',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de medición y ejecución de planos.',
-      icon: <FaRulerCombined />,
-      path: '/proceso-calculo',
-      tipoId: 'Planos',
-      Vigente: 'No'
-    },
-    {
-      title: 'Impacto ambiental',
-      shortDescription: 'Evaluación de impacto ambiental',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de impacto ambiental para todo tipo de uso.',
-      icon: <FaLeaf />,
-      path: '/proceso-calculo',
-      tipoId: 'Ambiental',
-      Vigente: 'No'
-    },
-    {
-      title: 'Peritajes',
-      shortDescription: 'Tareas de peritaje profesional',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de peritaje.',
-      icon: <FaGavel />,
-      path: '/proceso-calculo',
-      tipoId: 'Peritajes',
-      Vigente: 'No'
-    },
-    {
-      title: 'Higiene y Seguridad',
-      shortDescription: 'Tareas de higiene y seguridad',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de higiene y seguridad.',
-      icon: <FaShieldAlt />,
-      path: '/proceso-calculo',
-      tipoId: 'HyS',
-      Vigente: 'No'
-    },
-    {
-      title: 'Sistemas de autoprotección',
-      shortDescription: 'Diseño e implementación de planes de emergencia',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de diseño, implementación y actualización de planes de emergencia en edificios y establecimientos.',
-      icon: <FaFire />,
-      path: '/proceso-calculo',
-      tipoId: 'Autoproteccion',
-      Vigente: 'No'
-    },
-    {
-      title: 'Arbitraje',
-      shortDescription: 'Tareas de arbitraje profesional',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de arbitraje.',
-      icon: <FaBalanceScale />,
-      path: '/proceso-calculo',
-      tipoId: 'Arbitraje',
-      Vigente: 'No'
-    },
-    {
-      title: 'Tasación',
-      shortDescription: 'Justipreciación de bienes muebles e inmuebles',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de estudio que realiza el/la profesional tendiente a justipreciar bienes muebles o inmuebles o su valor locativo.',
-      icon: <FaDollarSign />,
-      path: '/proceso-calculo',
-      tipoId: 'Tasacion',
-      Vigente: 'No'
-    },
-    {
-      title: 'Representación técnica',
-      shortDescription: 'Representación técnica en obra',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de Representación Técnica en Obra.',
-      icon: <FaHardHat />,
-      path: '/proceso-calculo',
-      tipoId: 'RepTecnica',
-      Vigente: 'No'
-    },
-    {
-      title: 'Urbanismo',
-      shortDescription: 'Planificación y diseño urbano',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de planificación y diseño urbano.',
-      icon: <FaCity />,
-      path: '/proceso-calculo',
-      tipoId: 'Urbanismo',
-      Vigente: 'No'
-    },
-    {
-      title: 'Diseño de interiores',
-      shortDescription: 'Diseño de interiores y equipamiento',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de diseño de interiores y equipamiento.',
-      icon: <FaCouch />,
-      path: '/proceso-calculo',
-      tipoId: 'Interiores',
-      Vigente: 'No'
-    },
-    {
-      title: 'Diseño de paisaje',
-      shortDescription: 'Planificación y diseño del paisaje',
-      fullDescription: 'Cálculo de honorarios profesionales para tareas de planificación y diseño del paisaje.',
-      icon: <FaTree />,
-      path: '/proceso-calculo',
-      tipoId: 'Paisaje',
-      Vigente: 'No'
-    }
-  ];
+
+  const [tareas, setTareas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const cargarTareas = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const tareasAPI = await obtenerTareasProfesionales();
+        setTareas(tareasAPI);
+      } catch (err) {
+        setError('No se pudieron cargar las tareas profesionales.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    cargarTareas();
+  }, []);
 
   return (
     <div className={styles.pageContainer}>
       <Header />
-      
       <main className={styles.main}>
         <div className={styles.content}>
           <button 
@@ -189,23 +55,35 @@ const NuevoCalculoPage = () => {
             </p>
           </div>
 
-          <div className={styles.cardsGrid}>
-            {calculationTypes.map((type, index) => (
-              <CalculationTypeCard
-                key={index}
-                title={type.title}
-                shortDescription={type.shortDescription}
-                fullDescription={type.fullDescription}
-                icon={type.icon}
-                path={type.path}
-                tipoId={type.tipoId}
-                vigente={type.Vigente}
-              />
-            ))}
-          </div>
+          {loading && (
+            <div className={styles.loadingContainer}>
+              <p>Cargando tareas profesionales...</p>
+            </div>
+          )}
+          {error && (
+            <div className={styles.errorContainer}>
+              <span className={styles.errorMessage}>{error}</span>
+              <button className={styles.retryButton} onClick={() => window.location.reload()}>Reintentar</button>
+            </div>
+          )}
+          {!loading && !error && (
+            <div className={styles.cardsGrid}>
+              {tareas.map((tarea) => (
+                <CalculationTypeCard
+                  key={tarea.tarea_id}
+                  tareaId={tarea.tarea_id}
+                  codi={tarea.codi}
+                  title={tarea.descripcion}
+                  fullDescription={tarea.descripcion_larga}
+                  iconUrl={tarea.iconUrl}
+                  path="/proceso-calculo"
+                  vigente={tarea.vigente}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </main>
-
       <Footer />
     </div>
   );

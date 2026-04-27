@@ -2,45 +2,16 @@
 // Configuración de conexión a MySQL con soporte AWS Secrets Manager
 
 const mysql = require('mysql2/promise');
-const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager');
+// const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager');
 require('dotenv').config();
 
 let pool = null;
 
 // ========================================
-// OBTENER CREDENCIALES: ENV o AWS Secrets Manager
+// OBTENER CREDENCIALES: SOLO ENV LOCALES
 // ========================================
 async function getDBCredentials() {
-    // Si SECRET_NAME está configurado, usar Secrets Manager
-    const secretName = process.env.SECRET_NAME || process.env.AWS_SECRET_NAME;
-    
-    if (secretName) {
-        const client = new SecretsManagerClient({
-            region: process.env.AWS_REGION || 'us-east-1'
-        });
-
-        try {
-            console.log(`🔐 Obteniendo credenciales desde Secrets Manager: ${secretName}`);
-            const response = await client.send(
-                new GetSecretValueCommand({ SecretId: secretName })
-            );
-
-            const credentials = JSON.parse(response.SecretString);
-            console.log('✅ Credenciales obtenidas desde AWS Secrets Manager');
-            return {
-                host: credentials.DB_HOST,
-                port: parseInt(credentials.DB_PORT) || 3306,
-                user: credentials.DB_USER,
-                password: credentials.DB_PASSWORD,
-                database: credentials.DB_NAME
-            };
-        } catch (error) {
-            console.error('❌ Error obteniendo credenciales desde Secrets Manager:', error.message);
-            throw error;
-        }
-    }
-
-    // Si NO hay SECRET_NAME, usar variables de entorno directas
+    // Siempre usar variables de entorno directas
     console.log('📍 Usando credenciales desde variables de entorno');
     return {
         host: process.env.DB_HOST,

@@ -3,7 +3,7 @@
   background-color: var(--color-celeste);
   border-radius: var(--radius-lg);
   padding: var(--spacing-4);
-  box-shadow: var(--shadow-md);
+  /* box-shadow: var(--shadow-md); */
   cursor: pointer;
   transition: all var(--transition);
   display: flex;
@@ -43,11 +43,14 @@
 
 /* Título */
 .title {
+  max-height: 20px;
   font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--color-text-no-sel);
   margin: 0;
   transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
   
 }
 

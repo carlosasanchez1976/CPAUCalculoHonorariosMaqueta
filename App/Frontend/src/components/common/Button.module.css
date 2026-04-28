@@ -28,7 +28,7 @@
 
 .primary:hover:not(:disabled) {
   background-color: #4A25B8;  /* Morado oscuro */
-  box-shadow: var(--shadow-md);
+  /* box-shadow: var(--shadow-md); */
   transform: translateY(-1px);
 }
 
@@ -43,7 +43,7 @@
 
 .secondary:hover:not(:disabled) {
   background-color: #7CC5C9;  /* Turquesa oscuro */
-  box-shadow: var(--shadow-md);
+  /* box-shadow: var(--shadow-md); */
   transform: translateY(-1px);
 }
 

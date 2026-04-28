@@ -51,7 +51,7 @@ const CalculationTypeCard = ({ tareaId, codi, title, fullDescription, iconUrl, p
         </div>
         {!isVigente && (
           <div className={styles.badge}>
-            <span>En Construcción</span>
+            <span>EN CONSTRUCCIÓN</span>
           </div>
         )}
       </div>

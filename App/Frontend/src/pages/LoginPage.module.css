@@ -11,7 +11,7 @@
 .loginCard {
   background-color: var(--color-white);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  /* box-shadow: var(--shadow-lg); */
   padding: var(--spacing-5);
   width: 100%;
   max-width: 400px;
@@ -89,7 +89,7 @@
 
 .checkbox:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2);
+  /* box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2); */
 }
 
 .checkboxLabel {

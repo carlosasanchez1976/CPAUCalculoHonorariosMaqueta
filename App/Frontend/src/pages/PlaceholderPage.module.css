@@ -21,7 +21,7 @@
   background-color: var(--color-white);
   border-radius: var(--radius-lg);
   padding: var(--spacing-5);
-  box-shadow: var(--shadow-md);
+  /* box-shadow: var(--shadow-md); */
   text-align: center;
 }
 

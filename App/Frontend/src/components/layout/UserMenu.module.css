@@ -55,7 +55,7 @@
   right: 0;
   background-color: var(--color-gris);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
+  /* box-shadow: var(--shadow-lg); */
   width: 100%;
   min-width: auto;
   overflow: hidden;

@@ -5,7 +5,7 @@
   cursor: pointer;
   transition: all var(--transition);
   border: none;
-  box-shadow: var(--shadow-md);
+  /* box-shadow: var(--shadow-md); */
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -98,17 +98,17 @@
 
 .noVigente:hover {
   transform: none;
-  box-shadow: var(--shadow-md);
+  /* box-shadow: var(--shadow-md); */
 }
 
 .noVigente .iconWrapper {
   background: linear-gradient(135deg, var(--color-gris-medio) 0%, var(--color-gris-oscuro) 100%);
-  box-shadow: 0 4px 12px rgba(158, 158, 158, 0.4);
+  /* box-shadow: 0 4px 12px rgba(158, 158, 158, 0.4); */
 }
 
 .noVigente:hover .iconWrapper {
   transform: none;
-  box-shadow: 0 4px 12px rgba(158, 158, 158, 0.4);
+  /* box-shadow: 0 4px 12px rgba(158, 158, 158, 0.4); */
 }
 
 .noVigente .title {
@@ -122,13 +122,13 @@
 .badge {
   background: var(--color-primary);
   color: var(--color-white);
-  padding: 6px 12px;
-  border-radius: var(--radius-sm);
-  font-size: 0.7rem;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.50rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 2px 6px rgba(52, 0, 255, 0.3);
+  /* box-shadow: 0 2px 6px rgba(52, 0, 255, 0.3); */
   flex-shrink: 0;
   align-self: flex-start;
 }

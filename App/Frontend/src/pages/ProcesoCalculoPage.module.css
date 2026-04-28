@@ -35,7 +35,7 @@
   background: var(--color-white);
   border-radius: 12px;
   padding: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  /* box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); */
 }
 
 .stepDescription {
@@ -75,13 +75,13 @@
 
 .select:hover {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.1);
+  /* box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.1); */
 }
 
 .select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2);
+  /* box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2); */
 }
 
 /* Estilos para opciones del dropdown */
@@ -142,7 +142,7 @@
 
 .checkbox:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2);
+  /* box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2); */
 }
 
 .reviewSection {
@@ -194,7 +194,7 @@
   background: var(--color-white);
   border-radius: 12px;
   padding: 80px 32px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  /* box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); */
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -397,7 +397,7 @@
 
 .termsCheckbox:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2);
+  /* box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2); */
 }
 
 /* Responsive Mobile */

@@ -34,3 +34,23 @@ export const VALIDATION_MESSAGES = {
   MIN_LENGTH_PASSWORD: 'La contraseña debe tener al menos 4 caracteres',
   INVALID_CREDENTIALS: 'Usuario o contraseña incorrectos'
 };
+
+// Configuración de caché (TTL en milisegundos)
+export const CACHE_TTL = {
+  TAREAS_PROFESIONALES: 3600000,    // 1 hora - Cambian raramente
+  COMPLEJIDADES: 3600000,          // 1 hora - Datos muy estables
+  TIPOLOGIAS: 3600000,             // 1 hora - Catálogo fijo
+  PARAMETROS_SISTEMA: 3600000,     // 1 hora - Configuración
+  DEFAULT: 300000,                 // 5 minutos - Valor por defecto
+  MIN: 60000,                      // 1 minuto - Mínimo recomendado
+  MAX: 3600000                     // 1 hora - Máximo recomendado
+};
+
+// Mensajes de loading
+export const LOADING_MESSAGES = {
+  TAREAS: 'Cargando tareas profesionales...',
+  CALCULO: 'Calculando honorarios profesionales...',
+  GUARDANDO: 'Guardando información...',
+  ACTUALIZANDO: 'Actualizando datos...',
+  CARGANDO: 'Cargando...'
+};

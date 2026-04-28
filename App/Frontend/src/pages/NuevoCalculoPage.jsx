@@ -1,11 +1,12 @@
 import { FaArrowLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import CalculationTypeCard from '../components/common/CalculationTypeCard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import { useApiCache } from '../hooks/useApiCache';
 import { obtenerTareasProfesionales } from '../services/tareasProfesionalesService';
+import { CACHE_TTL } from '../utils/constants';
 import styles from './NuevoCalculoPage.module.css';
 
 /**
@@ -14,26 +15,22 @@ import styles from './NuevoCalculoPage.module.css';
 const NuevoCalculoPage = () => {
   const navigate = useNavigate();
 
-
-  const [tareas, setTareas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const cargarTareas = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const tareasAPI = await obtenerTareasProfesionales();
-        setTareas(tareasAPI);
-      } catch (err) {
-        setError('No se pudieron cargar las tareas profesionales.');
-      } finally {
-        setLoading(false);
+  // Usar hook de caché para tareas profesionales
+  const { 
+    data: tareas, 
+    loading, 
+    error,
+    refresh 
+  } = useApiCache(
+    'tareas_profesionales',           // Cache key único
+    obtenerTareasProfesionales,       // Función de fetch
+    { 
+      ttl: CACHE_TTL.TAREAS_PROFESIONALES,  // 10 minutos
+      onError: (err) => {
+        console.error('Error al cargar tareas:', err);
       }
-    };
-    cargarTareas();
-  }, []);
+    }
+  );
 
   return (
     <div className={styles.pageContainer}>
@@ -68,11 +65,13 @@ const NuevoCalculoPage = () => {
           )}
           {error && (
             <div className={styles.errorContainer}>
-              <span className={styles.errorMessage}>{error}</span>
-              <button className={styles.retryButton} onClick={() => window.location.reload()}>Reintentar</button>
+              <span className={styles.errorMessage}>
+                {typeof error === 'string' ? error : 'No se pudieron cargar las tareas profesionales.'}
+              </span>
+              <button className={styles.retryButton} onClick={refresh}>Reintentar</button>
             </div>
           )}
-          {!loading && !error && (
+          {!loading && !error && tareas && (
             <div className={styles.cardsGrid}>
               {tareas.map((tarea) => (
                 <CalculationTypeCard

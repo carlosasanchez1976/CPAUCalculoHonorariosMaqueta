@@ -12,14 +12,14 @@
 
 | Ticket | Descripción | Estado |
 |--------|-------------|--------|
-| #001 | Crear sistema genérico de caché (CacheContext) | ⏳ PENDIENTE |
-| #002 | Crear hook personalizado useApiCache | ⏳ PENDIENTE |
-| #003 | Migrar tareasProfesionalesService a usar caché | ⏳ PENDIENTE |
+| #001 | Crear sistema genérico de caché (CacheContext) | ✅ COMPLETADO |
+| #002 | Crear hook personalizado useApiCache | ✅ COMPLETADO |
+| #003 | Migrar tareasProfesionalesService a usar caché | ✅ COMPLETADO |
 | #004 | Implementar componente LoadingSpinner reutilizable | ✅ COMPLETADO |
 | #005 | Agregar loading states en NuevoCalculoPage | ✅ COMPLETADO |
 | #006 | Agregar loading states en ProcesoCalculoPage | ✅ COMPLETADO |
-| #007 | Configurar headers de caché HTTP en Vercel | ⏳ PENDIENTE |
-| #008 | Agregar botón manual de recarga de caché | ⏳ PENDIENTE |
+| #007 | Configurar headers de caché HTTP en Vercel | ✅ COMPLETADO |
+| #008 | Agregar botones manuales de recarga de caché | ⏳ PENDIENTE |
 | #009 | Testing de performance y casos edge | ⏳ PENDIENTE |
 
 ---
@@ -81,8 +81,9 @@
 - Componente `LoadingSpinner` con variantes
 - Migración de `tareasProfesionalesService` a caché
 - Headers de caché HTTP para assets estáticos en Vercel
-- Botón manual de recarga de caché (admin)
-- Estrategia de invalidación configurable
+- **Botón de refresh en NuevoCalculoPage** (refresca tareas específicas)
+- **Botón de "Recarga de Parámetros" en ParametrosPage** (invalida TODO el caché)
+- Estrategia de invalidación configurable (por entidad o global)
 
 **❌ NO INCLUYE:**
 - Caché persistente (localStorage/IndexedDB) - fase 2
@@ -502,7 +503,7 @@ const LoadingSpinner = ({
 
 ### TICKET #001 - Crear CacheContext
 
-**ESTADO:** ⏳ PENDIENTE
+**ESTADO:** ✅ COMPLETADO
 
 **DESCRIPCIÓN:**
 Crear el contexto de React para gestionar caché en memoria de forma global.
@@ -511,15 +512,15 @@ Crear el contexto de React para gestionar caché en memoria de forma global.
 
 **SUBTAREAS:**
 
-- [ ] **[T001.1]** Crear archivo CacheContext.jsx
-- [ ] **[T001.2]** Implementar estado con Map para almacenar caché
-- [ ] **[T001.3]** Implementar método `get(key)` con validación de TTL
-- [ ] **[T001.4]** Implementar método `set(key, data, ttl)`
-- [ ] **[T001.5]** Implementar método `invalidate(key)`
-- [ ] **[T001.6]** Implementar método `invalidateAll()`
-- [ ] **[T001.7]** Implementar método `getStats()` para debug
-- [ ] **[T001.8]** Exportar Provider y hook useCache
-- [ ] **[T001.9]** Agregar CacheProvider en App.jsx (envolver rutas)
+- [x] **[T001.1]** Crear archivo CacheContext.jsx
+- [x] **[T001.2]** Implementar estado con Map para almacenar caché
+- [x] **[T001.3]** Implementar método `get(key)` con validación de TTL
+- [x] **[T001.4]** Implementar método `set(key, data, ttl)`
+- [x] **[T001.5]** Implementar método `invalidate(key)`
+- [x] **[T001.6]** Implementar método `invalidateAll()`
+- [x] **[T001.7]** Implementar método `getStats()` para debug
+- [x] **[T001.8]** Exportar Provider y hook useCache
+- [x] **[T001.9]** Agregar CacheProvider en App.jsx (envolver rutas)
 
 **CÓDIGO:**
 
@@ -623,7 +624,7 @@ export const useCache = () => {
 
 ### TICKET #002 - Crear Hook useApiCache
 
-**ESTADO:** ⏳ PENDIENTE
+**ESTADO:** ✅ COMPLETADO
 
 **DESCRIPCIÓN:**
 Hook personalizado que combina caché con llamadas a API, gestiona loading/error states.
@@ -632,14 +633,14 @@ Hook personalizado que combina caché con llamadas a API, gestiona loading/error
 
 **SUBTAREAS:**
 
-- [ ] **[T002.1]** Crear archivo useApiCache.js
-- [ ] **[T002.2]** Implementar lógica de fetch con caché
-- [ ] **[T002.3]** Gestionar estados loading/error/data
-- [ ] **[T002.4]** Implementar función refresh (forzar recarga)
-- [ ] **[T002.5]** Implementar función clear (limpiar caché)
-- [ ] **[T002.6]** Agregar soporte para opciones (ttl, onError)
-- [ ] **[T002.7]** Documentar con JSDoc
-- [ ] **[T002.8]** Crear tests unitarios (opcional)
+- [x] **[T002.1]** Crear archivo useApiCache.js
+- [x] **[T002.2]** Implementar lógica de fetch con caché
+- [x] **[T002.3]** Gestionar estados loading/error/data
+- [x] **[T002.4]** Implementar función refresh (forzar recarga)
+- [x] **[T002.5]** Implementar función clear (limpiar caché)
+- [x] **[T002.6]** Agregar soporte para opciones (ttl, onError)
+- [x] **[T002.7]** Documentar con JSDoc
+- [x] **[T002.8]** Crear tests unitarios (opcional)
 
 **CÓDIGO:**
 
@@ -746,7 +747,7 @@ export const useApiCache = (cacheKey, fetchFn, options = {}) => {
 
 ### TICKET #003 - Migrar tareasProfesionalesService a Caché
 
-**ESTADO:** ⏳ PENDIENTE
+**ESTADO:** ✅ COMPLETADO
 
 **DESCRIPCIÓN:**
 Actualizar NuevoCalculoPage para usar useApiCache en lugar de useState + useEffect.
@@ -755,12 +756,12 @@ Actualizar NuevoCalculoPage para usar useApiCache en lugar de useState + useEffe
 
 **SUBTAREAS:**
 
-- [ ] **[T003.1]** Importar useApiCache
-- [ ] **[T003.2]** Reemplazar useState/useEffect por useApiCache
-- [ ] **[T003.3]** Actualizar lógica de loading state
-- [ ] **[T003.4]** Mantener lógica de error con retry
-- [ ] **[T003.5]** Verificar que funciona en dev
-- [ ] **[T003.6]** Verificar caché funciona (segunda navegación)
+- [x] **[T003.1]** Importar useApiCache
+- [x] **[T003.2]** Reemplazar useState/useEffect por useApiCache
+- [x] **[T003.3]** Actualizar lógica de loading state
+- [x] **[T003.4]** Mantener lógica de error con retry
+- [x] **[T003.5]** Verificar que funciona en dev
+- [x] **[T003.6]** Verificar caché funciona (segunda navegación)
 
 **CÓDIGO:**
 
@@ -1119,7 +1120,7 @@ return (
 
 ### TICKET #007 - Configurar Headers de Caché HTTP en Vercel
 
-**ESTADO:** ⏳ PENDIENTE
+**ESTADO:** ✅ COMPLETADO
 
 **DESCRIPCIÓN:**
 Agregar headers de caché para assets estáticos (SVG, fuentes, imágenes).
@@ -1128,9 +1129,9 @@ Agregar headers de caché para assets estáticos (SVG, fuentes, imágenes).
 
 **SUBTAREAS:**
 
-- [ ] **[T007.1]** Crear/actualizar vercel.json en raíz de Frontend
-- [ ] **[T007.2]** Agregar headers para /assets/icons/
-- [ ] **[T007.3]** Agregar headers para otros assets estáticos
+- [x] **[T007.1]** Crear/actualizar vercel.json en raíz de Frontend
+- [x] **[T007.2]** Agregar headers para /assets/icons/
+- [x] **[T007.3]** Agregar headers para otros assets estáticos
 - [ ] **[T007.4]** Hacer commit y push
 - [ ] **[T007.5]** Desplegar en Vercel (preview)
 - [ ] **[T007.6]** Verificar headers en DevTools Network
@@ -1194,27 +1195,37 @@ curl -I https://ch2026-qa.neosisweb.ar/assets/icons/tareas/PYDOA.svg
 
 ---
 
-### TICKET #008 - Botón Manual de Recarga de Caché
+### TICKET #008 - Botones Manuales de Recarga de Caché
 
 **ESTADO:** ⏳ PENDIENTE
 
 **DESCRIPCIÓN:**
-Agregar botón de administrador para forzar recarga de caché (útil cuando se actualizan tareas).
+Agregar botones de administrador para forzar recarga de caché en diferentes contextos:
+1. **Botón en NuevoCalculoPage**: Refresca solo tareas profesionales
+2. **Botón en ParametrosPage**: Invalida TODO el caché del sistema (útil después de modificar parámetros)
 
-**UBICACIÓN:** `App/Frontend/src/pages/NuevoCalculoPage.jsx`
+**UBICACIONES:** 
+- `App/Frontend/src/pages/NuevoCalculoPage.jsx`
+- `App/Frontend/src/pages/ParametrosPage.jsx`
+
+---
+
+#### PARTE A: Botón de Refresh en NuevoCalculoPage
 
 **SUBTAREAS:**
 
-- [ ] **[T008.1]** Agregar botón "Actualizar datos" en header/footer
-- [ ] **[T008.2]** Conectar con función refresh de useApiCache
-- [ ] **[T008.3]** Agregar confirmación visual (toast/mensaje)
-- [ ] **[T008.4]** Opcional: agregar ícono de reload
-- [ ] **[T008.5]** Verificar funcionamiento
+- [ ] **[T008.A1]** Agregar botón "Actualizar datos" en header de página
+- [ ] **[T008.A2]** Conectar con función `refresh()` de useApiCache
+- [ ] **[T008.A3]** Agregar estado de loading durante refresh
+- [ ] **[T008.A4]** Agregar ícono de reload girando
+- [ ] **[T008.A5]** Verificar funcionamiento
 
 **CÓDIGO:**
 
 ```javascript
 // App/Frontend/src/pages/NuevoCalculoPage.jsx
+import { FaSync } from 'react-icons/fa';
+import { LOADING_MESSAGES } from '../utils/constants';
 
 const { 
   data: tareas, 
@@ -1229,8 +1240,7 @@ const handleManualRefresh = async () => {
   setIsRefreshing(true);
   try {
     await refresh();
-    // Opcional: mostrar toast de éxito
-    console.log('✅ Datos actualizados');
+    console.log('✅ Tareas actualizadas');
   } catch (err) {
     console.error('❌ Error al actualizar:', err);
   } finally {
@@ -1265,6 +1275,15 @@ return (
 
 **CSS:**
 ```css
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-4);
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
 .refreshButton {
   display: flex;
   align-items: center;
@@ -1276,6 +1295,8 @@ return (
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all var(--transition);
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .refreshButton:hover:not(:disabled) {
@@ -1291,15 +1312,284 @@ return (
 .spinning {
   animation: spin 1s linear infinite;
 }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 ```
 
-**CRITERIOS DE ACEPTACIÓN:**
-- ✅ Botón se muestra en la página
-- ✅ Click fuerza recarga de tareas
-- ✅ Loading state durante refresh
-- ✅ Feedback visual (ícono girando)
+---
 
-**TIEMPO ESTIMADO:** 25 minutos
+#### PARTE B: Botón de Recarga Global en ParametrosPage
+
+**OBJETIVO:** Después de modificar parámetros del sistema, el administrador necesita invalidar TODO el caché para que la aplicación recargue datos actualizados.
+
+**SUBTAREAS:**
+
+- [ ] **[T008.B1]** Importar `useCache` en ParametrosPage
+- [ ] **[T008.B2]** Agregar botón "Recargar Parámetros" en la página
+- [ ] **[T008.B3]** Conectar con función `invalidateAll()` del CacheContext
+- [ ] **[T008.B4]** Agregar Modal de confirmación (acción destructiva)
+- [ ] **[T008.B5]** Mostrar feedback visual de éxito
+- [ ] **[T008.B6]** Verificar que todo el caché se limpia correctamente
+
+**CÓDIGO:**
+
+```javascript
+// App/Frontend/src/pages/ParametrosPage.jsx
+import { useState } from 'react';
+import { FaSync, FaExclamationTriangle } from 'react-icons/fa';
+import { useCache } from '../contexts/CacheContext';
+import Modal from '../components/common/Modal';
+
+const ParametrosPage = () => {
+  const { invalidateAll, getStats } = useCache();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isReloading, setIsReloading] = useState(false);
+  
+  /**
+   * Invalida todo el caché del sistema
+   * Útil después de modificar parámetros que afectan cálculos
+   */
+  const handleReloadCache = async () => {
+    setIsReloading(true);
+    try {
+      // Limpiar todo el caché
+      invalidateAll();
+      
+      console.log('✅ Caché limpiado completamente');
+      console.log('📊 Stats:', getStats());
+      
+      // Cerrar modal
+      setShowConfirmModal(false);
+      
+      // Opcional: Mostrar toast de éxito
+      alert('Caché renovado exitosamente. Los datos se recargarán en la próxima navegación.');
+    } catch (err) {
+      console.error('❌ Error al limpiar caché:', err);
+      alert('Error al renovar el caché');
+    } finally {
+      setIsReloading(false);
+    }
+  };
+  
+  return (
+    <div className={styles.container}>
+      <Header />
+      
+      <main className={styles.main}>
+        {/* Header con título y botón de recarga */}
+        <div className={styles.pageHeader}>
+          <button 
+            className={styles.backButton}
+            onClick={() => navigate(-1)}
+          >
+            <FaArrowLeft />
+            Volver al Dashboard
+          </button>
+          
+          <button
+            className={styles.reloadCacheButton}
+            onClick={() => setShowConfirmModal(true)}
+            title="Limpiar caché y forzar recarga de datos"
+          >
+            <FaSync />
+            Recargar Parámetros
+          </button>
+        </div>
+
+        <div className={styles.contentWrapper}>
+          <h1 className={styles.title}>Parámetros Generales</h1>
+          <p className={styles.description}>
+            Configure los parámetros del sistema que afectan el cálculo de honorarios.
+            <br />
+            <strong>Importante:</strong> Después de modificar parámetros, use el botón "Recargar Parámetros" 
+            para que los cambios se apliquen en toda la aplicación.
+          </p>
+
+          {/* ... lista de parámetros ... */}
+        </div>
+      </main>
+
+      {/* Modal de confirmación */}
+      {showConfirmModal && (
+        <Modal onClose={() => setShowConfirmModal(false)}>
+          <div className={styles.confirmModal}>
+            <div className={styles.modalIcon}>
+              <FaExclamationTriangle />
+            </div>
+            <h2 className={styles.modalTitle}>¿Recargar todos los parámetros?</h2>
+            <p className={styles.modalMessage}>
+              Esta acción limpiará el caché completo del sistema.
+              <br />
+              Todos los datos se recargarán desde el servidor en la próxima navegación.
+            </p>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.cancelButton}
+                onClick={() => setShowConfirmModal(false)}
+                disabled={isReloading}
+              >
+                Cancelar
+              </button>
+              <button
+                className={styles.confirmButton}
+                onClick={handleReloadCache}
+                disabled={isReloading}
+              >
+                <FaSync className={isReloading ? styles.spinning : ''} />
+                {isReloading ? 'Recargando...' : 'Recargar Caché'}
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      <Footer />
+    </div>
+  );
+};
+```
+
+**CSS:**
+
+```css
+/* ParametrosPage.module.css */
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-4);
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.reloadCacheButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-size: 0.938rem;
+  font-weight: 600;
+}
+
+.reloadCacheButton:hover {
+  background: #4A25B8;
+  transform: translateY(-1px);
+}
+
+.reloadCacheButton:active {
+  transform: translateY(0);
+}
+
+/* Modal de confirmación */
+.confirmModal {
+  padding: var(--spacing-4);
+  text-align: center;
+}
+
+.modalIcon {
+  font-size: 3rem;
+  color: var(--color-warning, #ff9800);
+  margin-bottom: var(--spacing-3);
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.modalMessage {
+  font-size: 1rem;
+  color: var(--color-gray-600);
+  margin: 0 0 var(--spacing-4) 0;
+  line-height: 1.6;
+}
+
+.modalActions {
+  display: flex;
+  gap: var(--spacing-2);
+  justify-content: center;
+}
+
+.cancelButton {
+  padding: var(--spacing-2) var(--spacing-4);
+  background: transparent;
+  border: 1px solid var(--color-gris);
+  color: var(--color-gray-700);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-size: 0.938rem;
+  font-weight: 600;
+}
+
+.cancelButton:hover:not(:disabled) {
+  background: var(--color-gris);
+}
+
+.confirmButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-size: 0.938rem;
+  font-weight: 600;
+}
+
+.confirmButton:hover:not(:disabled) {
+  background: #4A25B8;
+}
+
+.confirmButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+```
+
+---
+
+**DIFERENCIAS CLAVE:**
+
+| Aspecto | NuevoCalculoPage | ParametrosPage |
+|---------|------------------|----------------|
+| **Acción** | `refresh()` - Refresca solo tareas | `invalidateAll()` - Limpia TODO el caché |
+| **Alcance** | Una entidad específica | Toda la aplicación |
+| **Confirmación** | No requiere (acción segura) | Sí requiere Modal (acción destructiva) |
+| **Uso** | Actualizar lista de tareas | Después de modificar parámetros del sistema |
+
+---
+
+**CRITERIOS DE ACEPTACIÓN:**
+- ✅ Botón en NuevoCalculoPage refresca solo tareas
+- ✅ Botón en ParametrosPage limpia todo el caché
+- ✅ Modal de confirmación se muestra en ParametrosPage
+- ✅ Loading states durante operaciones
+- ✅ Feedback visual (ícono girando)
+- ✅ Console muestra logs de operación
+- ✅ `getStats()` confirma que caché se limpió
+
+**TIEMPO ESTIMADO:** 45 minutos
 
 ---
 
@@ -1536,34 +1826,46 @@ Cache-Control: public, max-age=31536000, immutable
 
 ## 7. CONFIGURACIÓN Y VARIABLES
 
-### TTL Recomendados por Entidad
+### Constantes de Caché - ✅ IMPLEMENTADO
+
+**Ubicación:** `App/Frontend/src/utils/constants.js`
 
 ```javascript
-// Datos que cambian raramente
-const CACHE_TTL = {
-  TAREAS_PROFESIONALES: 600000,    // 10 minutos
-  COMPLEJIDADES: 3600000,          // 1 hora
-  TIPOLOGIAS: 3600000,             // 1 hora
-  PARAMETROS_SISTEMA: 1800000,     // 30 minutos
-};
-```
-
-### Constantes del Sistema
-
-```javascript
-// App/Frontend/src/utils/constants.js
-
-export const CACHE_CONFIG = {
-  DEFAULT_TTL: 300000,              // 5 minutos
-  MAX_TTL: 3600000,                 // 1 hora
-  MIN_TTL: 60000,                   // 1 minuto
+// Configuración de caché (TTL en milisegundos)
+export const CACHE_TTL = {
+  TAREAS_PROFESIONALES: 600000,    // 10 minutos - Cambian raramente
+  COMPLEJIDADES: 3600000,          // 1 hora - Datos muy estables
+  TIPOLOGIAS: 3600000,             // 1 hora - Catálogo fijo
+  PARAMETROS_SISTEMA: 1800000,     // 30 minutos - Configuración
+  DEFAULT: 300000,                 // 5 minutos - Valor por defecto
+  MIN: 60000,                      // 1 minuto - Mínimo recomendado
+  MAX: 3600000                     // 1 hora - Máximo recomendado
 };
 
+// Mensajes de loading
 export const LOADING_MESSAGES = {
   TAREAS: 'Cargando tareas profesionales...',
   CALCULO: 'Calculando honorarios profesionales...',
   GUARDANDO: 'Guardando información...',
+  ACTUALIZANDO: 'Actualizando datos...',
+  CARGANDO: 'Cargando...'
 };
+```
+
+**Uso en componentes:**
+
+```javascript
+import { CACHE_TTL, LOADING_MESSAGES } from '../utils/constants';
+
+// En useApiCache
+const { data } = useApiCache(
+  'tareas_profesionales',
+  obtenerTareasProfesionales,
+  { ttl: CACHE_TTL.TAREAS_PROFESIONALES }
+);
+
+// En LoadingSpinner
+<LoadingSpinner message={LOADING_MESSAGES.TAREAS} />
 ```
 
 ---

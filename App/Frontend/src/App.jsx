@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ParametrosProvider } from './contexts/ParametrosContext';
+import { CacheProvider } from './contexts/CacheContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
@@ -25,13 +26,14 @@ import './styles/variables.css';
 function App() {
   return (
     <AuthProvider>
-      <ParametrosProvider>
-        <BrowserRouter
-          future={{
-            v7_startTransition: true,
-            v7_relativeSplatPath: true,
-          }}
-        >
+      <CacheProvider>
+        <ParametrosProvider>
+          <BrowserRouter
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true,
+            }}
+          >
           <Routes>
             {/* Ruta pública - Login */}
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
@@ -157,7 +159,8 @@ function App() {
           />
         </Routes>
       </BrowserRouter>
-      </ParametrosProvider>
+        </ParametrosProvider>
+      </CacheProvider>
     </AuthProvider>
   );
 }

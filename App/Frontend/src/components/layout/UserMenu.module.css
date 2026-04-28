@@ -1,6 +1,8 @@
 /* Estilos para el componente UserMenu */
 .userMenuWrapper {
   position: relative;
+  align-self: flex-end;
+  margin-bottom: 1px;
 }
 
 .userButton {
@@ -9,7 +11,7 @@
   gap: var(--spacing-1);
   background-color: var(--color-fondo);
   color: var(--color-text-no-sel);
-  padding: 8px 16px;
+  padding: 4px 60px;
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all var(--transition);
@@ -17,7 +19,7 @@
 }
 
 .userButton:hover {
-  background-color: var(--color-gris);
+  /*background-color: var(--color-gris);*/
   border-color: var(--color-text-no-sel);
 }
 
@@ -54,7 +56,8 @@
   background-color: var(--color-gris);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
-  min-width: 200px;
+  width: 100%;
+  min-width: auto;
   overflow: hidden;
   opacity: 0;
   visibility: hidden;

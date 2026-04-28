@@ -44,7 +44,7 @@
 /* Título */
 .title {
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-no-sel);
   margin: 0;
   transition: color 0.2s ease;

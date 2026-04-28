@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaChevronDown, FaCog, FaUserCircle, FaSignOutAlt, FaSlidersH } from 'react-icons/fa';
+import { FaChevronDown , FaSignOutAlt} from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import { ROUTES } from '../../utils/constants';
 import styles from './UserMenu.module.css';
@@ -53,6 +53,10 @@ const UserMenu = () => {
     }
   };
 
+  // ATENCION
+  // reemplazar 'Usuario del Sistema' por user.name cuando esté disponible
+  //
+
   return (
     <div className={styles.userMenuWrapper} ref={menuRef} onKeyDown={handleKeyDown}>
       <button
@@ -61,8 +65,9 @@ const UserMenu = () => {
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <FaUser className={styles.userIcon} />
-        <span className={styles.userName}>{user?.username || 'Usuario'}</span>
+        
+
+        <span className={styles.userName}>{'Usuario del Sistema' || 'Usuario'}</span>
         <FaChevronDown className={styles.chevronIcon} />
       </button>
 
@@ -72,7 +77,7 @@ const UserMenu = () => {
           onClick={() => handleMenuItemClick(ROUTES.PREFERENCIAS)}
           role="menuitem"
         >
-          <FaCog className={styles.menuIcon} />
+          
           <span>Preferencias</span>
         </button>
 
@@ -81,7 +86,7 @@ const UserMenu = () => {
           onClick={() => handleMenuItemClick(ROUTES.PARAMETROS)}
           role="menuitem"
         >
-          <FaSlidersH className={styles.menuIcon} />
+          
           <span>Parámetros</span>
         </button>
 
@@ -90,7 +95,7 @@ const UserMenu = () => {
           onClick={() => handleMenuItemClick(ROUTES.MI_CUENTA)}
           role="menuitem"
         >
-          <FaUserCircle className={styles.menuIcon} />
+          
           <span>Mi Cuenta</span>
         </button>
 

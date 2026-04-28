@@ -9,12 +9,14 @@
   flex: 1;
   padding: var(--spacing-5) 0;
   background-color: var(--color-fondo);
+  display: flex;
+  align-items: center;
 }
 
 .contentWrapper {
-  max-width: 1200px;
+  max-width: var(--layout-max-width);
   margin: 0 auto;
-  padding: 0 var(--spacing-3);
+  padding: 0 var(--layout-padding-x);
 }
 
 /* Layout de 2 columnas */
@@ -29,7 +31,7 @@
 /* COLUMNA 1 - Sección de Bienvenida */
 .welcomeSection {
   background-color: var(--color-white);
-  padding: var(--spacing-3);
+  /* padding: var(--spacing-3); */
   border-radius: var(--radius-lg);
 }
 
@@ -56,8 +58,15 @@
 .cardSection {
   display: flex;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-end;
 }
+
+/* Bastante más ancha */
+.cardSection > * {
+  width: 95%;
+  max-width: 300px;
+}
+
 
 /* Responsive - Tablet */
 @media (max-width: 1024px) {

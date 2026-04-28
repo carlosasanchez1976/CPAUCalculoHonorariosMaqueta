@@ -22,12 +22,13 @@
 
 .main {
   flex: 1;
-  padding: 0;
+  padding: var(--spacing-3) 0;
 }
 
 .content {
-  max-width: 1400px;
+  max-width: var(--layout-max-width);
   margin: 0 auto;
+  padding: 0 var(--layout-padding-x);
 }
 
 .formContainer {

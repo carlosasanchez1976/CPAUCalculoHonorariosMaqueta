@@ -36,6 +36,11 @@
   --spacing-4: 32px;
   --spacing-5: 40px;
   
+  /* LAYOUT CONSISTENTE - Sistema de márgenes (TICKET-DISEÑO-001) */
+  --layout-max-width: 1200px;                   /* Ancho máximo del contenido */
+  --layout-padding-x: var(--spacing-2);         /* 16px - Padding horizontal desktop */
+  --layout-padding-x-mobile: var(--spacing-2);  /* 16px - Padding horizontal mobile */
+  
   /* Bordes */
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -100,6 +105,19 @@ button {
 
 input, textarea {
   font-family: var(--font-family);
+}
+
+/* Clase utilitaria para contenedores de página con márgenes consistentes */
+.page-content-container {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: 0 var(--layout-padding-x);
+}
+
+@media (max-width: 768px) {
+  .page-content-container {
+    padding: 0 var(--layout-padding-x-mobile);
+  }
 }
 
 /* Estilos globales para campos de entrada - Bordes redondeados por defecto */

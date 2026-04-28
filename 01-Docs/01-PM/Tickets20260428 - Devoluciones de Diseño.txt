@@ -1,0 +1,43 @@
+# TICKETS DE DEVOLUCIONES DE DISEÑO - 28/04/2026
+# Cliente: CPAU
+# Proyecto: CH2026 - Calculadora de Honorarios
+
+================================================================================
+TICKET-DISEÑO-001: Márgenes generales en páginas, header y footer
+================================================================================
+Estado: ✅ COMPLETADO
+Prioridad: 🔴 ALTA
+Fecha: 28/04/2026
+
+PROBLEMA:
+---------
+Inconsistencias en los márgenes laterales entre header, footer y contenido 
+de las páginas. Las líneas verticales de alineación del diseño original no 
+coinciden entre diferentes componentes.
+
+SOLUCIÓN IMPLEMENTADA:
+---------------------
+1. Variables CSS estandarizadas en variables.css:
+   - --layout-max-width: 1200px
+   - --layout-padding-x: 16px (spacing-2)
+   - --layout-padding-x-mobile: 16px
+
+2. Clase utilitaria global: .page-content-container
+
+3. Archivos actualizados:
+   ✅ App/Frontend/src/styles/variables.css
+   ✅ App/Frontend/src/components/layout/Header.module.css
+   ✅ App/Frontend/src/components/layout/Footer.module.css
+   ✅ App/Frontend/src/pages/DashboardPage.module.css
+   ✅ App/Frontend/src/pages/NuevoCalculoPage.module.css
+   ✅ App/Frontend/src/pages/ProcesoCalculoPage.module.css
+
+RESULTADO:
+----------
+Todas las páginas ahora tienen márgenes laterales consistentes de 16px,
+alineando perfectamente header, contenido y footer según las líneas rojas
+verticales del diseño del cliente.
+
+Documentación: 01-Docs/01-PM/TICKET-DISEÑO-001-Márgenes-Generales.md
+
+================================================================================

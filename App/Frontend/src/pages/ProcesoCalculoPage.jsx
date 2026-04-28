@@ -7,6 +7,7 @@ import StepperProgress from '../components/wizard/StepperProgress';
 import WizardNavigation from '../components/wizard/WizardNavigation';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 import { ROUTES } from '../utils/constants';
 import { useParametros } from '../contexts/ParametrosContext';
 import { calcularHonorarios, formatearErrorAPI } from '../services/honorariosService';
@@ -669,6 +670,16 @@ const ProcesoCalculoPage = () => {
   return (
     <div className={styles.pageContainer}>
       <Header />
+      
+      {/* Loading overlay durante cálculo */}
+      {isCalculating && (
+        <LoadingSpinner 
+          size="xl"
+          variant="spinner"
+          message="Calculando honorarios profesionales..."
+          overlay
+        />
+      )}
       
       <div className={styles.wizardHeader}>
         <h1 className={styles.wizardTitle}>{formData.tipoNombre}</h1>

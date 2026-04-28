@@ -1,0 +1,181 @@
+/* Estilos para el componente LoadingSpinner */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2, 0.5rem);
+}
+
+/* ==================== Spinner circular ==================== */
+.spinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==================== Dots animados ==================== */
+.dots {
+  display: flex;
+  gap: var(--spacing-1, 0.25rem);
+}
+
+.dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dots span:nth-child(1) { 
+  animation-delay: -0.32s; 
+}
+
+.dots span:nth-child(2) { 
+  animation-delay: -0.16s; 
+}
+
+@keyframes bounce {
+  0%, 80%, 100% { 
+    transform: scale(0); 
+  }
+  40% { 
+    transform: scale(1); 
+  }
+}
+
+/* ==================== Pulse ==================== */
+.pulse {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(0.8); 
+    opacity: 1; 
+  }
+  50% { 
+    transform: scale(1.2); 
+    opacity: 0.5; 
+  }
+}
+
+/* ==================== Tamaños ==================== */
+/* Spinner */
+.sm .spinner { 
+  width: 20px; 
+  height: 20px; 
+  border-width: 2px; 
+}
+
+.md .spinner { 
+  width: 40px; 
+  height: 40px; 
+  border-width: 3px; 
+}
+
+.lg .spinner { 
+  width: 60px; 
+  height: 60px; 
+  border-width: 4px; 
+}
+
+.xl .spinner { 
+  width: 80px; 
+  height: 80px; 
+  border-width: 5px; 
+}
+
+/* Dots */
+.sm .dots span { 
+  width: 6px; 
+  height: 6px; 
+}
+
+.md .dots span { 
+  width: 8px; 
+  height: 8px; 
+}
+
+.lg .dots span { 
+  width: 10px; 
+  height: 10px; 
+}
+
+.xl .dots span { 
+  width: 12px; 
+  height: 12px; 
+}
+
+/* Pulse */
+.sm .pulse { 
+  width: 24px; 
+  height: 24px; 
+}
+
+.md .pulse { 
+  width: 40px; 
+  height: 40px; 
+}
+
+.lg .pulse { 
+  width: 56px; 
+  height: 56px; 
+}
+
+.xl .pulse { 
+  width: 72px; 
+  height: 72px; 
+}
+
+/* ==================== Mensaje ==================== */
+.message {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary, #666);
+  text-align: center;
+}
+
+.sm .message {
+  font-size: 0.75rem;
+}
+
+.lg .message,
+.xl .message {
+  font-size: 1rem;
+}
+
+/* ==================== Overlay ==================== */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+
+/* Asegurar que el contenido dentro del overlay sea visible */
+.overlay .container {
+  background: transparent;
+}
+
+.overlay .message {
+  color: #ffffff;
+  font-weight: 500;
+}

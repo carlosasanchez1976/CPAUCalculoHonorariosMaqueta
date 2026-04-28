@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import CalculationTypeCard from '../components/common/CalculationTypeCard';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 import { obtenerTareasProfesionales } from '../services/tareasProfesionalesService';
 import styles from './NuevoCalculoPage.module.css';
 
@@ -57,7 +58,11 @@ const NuevoCalculoPage = () => {
 
           {loading && (
             <div className={styles.loadingContainer}>
-              <p>Cargando tareas profesionales...</p>
+              <LoadingSpinner 
+                size="lg"
+                variant="spinner"
+                message="Cargando tareas profesionales..."
+              />
             </div>
           )}
           {error && (

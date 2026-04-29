@@ -1309,6 +1309,7 @@ return (
   cursor: not-allowed;
 }
 
+
 .spinning {
   animation: spin 1s linear infinite;
 }

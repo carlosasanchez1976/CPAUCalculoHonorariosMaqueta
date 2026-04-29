@@ -9,8 +9,9 @@ import styles from './Modal.module.css';
  * @param {string} props.title - Título del modal
  * @param {React.ReactNode} props.children - Contenido del modal
  * @param {React.ReactNode} props.footer - Contenido del footer (botones)
+ * @param {string} props.modalClassName - Clase CSS adicional para el modal
  */
-const Modal = ({ isOpen, onClose, title, children, footer }) => {
+const Modal = ({ isOpen, onClose, title, children, footer, modalClassName }) => {
   if (!isOpen) return null;
 
   const handleBackdropClick = (e) => {
@@ -21,7 +22,7 @@ const Modal = ({ isOpen, onClose, title, children, footer }) => {
 
   return (
     <div className={styles.overlay} onClick={handleBackdropClick}>
-      <div className={styles.modal}>
+      <div className={`${styles.modal} ${modalClassName || ''}`}>
         <div className={styles.header}>
           <h2 className={styles.title}>{title}</h2>
           <button 

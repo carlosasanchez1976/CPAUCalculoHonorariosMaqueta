@@ -5,6 +5,7 @@ import html2pdf from 'html2pdf.js';
 import { formatCurrencyARS, formatDate, generateCalculationNumber } from '../../utils/formatters';
 import Button from '../common/Button';
 import { ROUTES } from '../../utils/constants';
+import DetalleItemsModal from './DetalleItemsModal';
 import styles from './ResultadoBasicoDetalle.module.css';
 
 /**
@@ -15,7 +16,16 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
   const navigate = useNavigate();
   const pdfRef = useRef(null);
   const [calculationNumber] = useState(generateCalculationNumber());
+  const [modalDetalleAbierto, setModalDetalleAbierto] = useState(false);
   const currentDate = formatDate(new Date());
+
+  const mostrarDetalleItems = () => {
+    setModalDetalleAbierto(true);
+  };
+
+  const cerrarModalDetalle = () => {
+    setModalDetalleAbierto(false);
+  };
 
   const handleNuevoCalculo = () => {
     navigate('/nuevo-calculo');
@@ -166,33 +176,39 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                 <table className={styles.table}>
                   <thead>
                     <tr>
-                      <th>Ítem</th>
-                      <th>Tarea Profesional</th>
-                      <th className={styles.rightAlign}>Importe</th>
-                      <th className={styles.centered}>%</th>
+                      <th colSpan={1}>Ítem</th>
+                      <th colSpan={2}>Tarea Profesional</th>
+                      <th colSpan={3} className={styles.rightAlign}>Importe</th>
+                      <th colSpan={2} className={styles.centered}>%</th>
                     </tr>
                   </thead>
                   <tbody>
                     {honorariosAgrupados.map((grupo, index) => (
                       <tr key={grupo.tareaProfesional}>
-                        <td className={styles.centered}>{index + 1}</td>
-                        <td>{grupo.tareaProfesional}</td>
-                        <td className={styles.rightAlign}>{formatCurrencyARS(grupo.importe)}</td>
-                        <td className={styles.centered}>{((grupo.importe / formData.valorObra) * 100).toFixed(2)}%</td>
+                        <td colSpan={1} className={styles.centered}>{index + 1}</td>
+                        <td colSpan={2}>{grupo.tareaProfesional}</td>
+                        <td colSpan={3} className={styles.rightAlign}>{formatCurrencyARS(grupo.importe)}</td>
+                        <td colSpan={2} className={styles.centered}>{((grupo.importe / formData.valorObra) * 100).toFixed(2)}%</td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot>
                     <tr className={styles.totalRow}>
-                      <td colSpan={2}><strong>Total honorarios profesionales</strong></td>
-                      <td className={styles.rightAlign}>
+                      <td colSpan={3}><strong>Total honorarios profesionales</strong></td>
+                      <td 
+                        colSpan={3} 
+                        className={styles.rightAlign}
+                        onDoubleClick={mostrarDetalleItems}
+                        title="Doble click para ver detalle completo"
+                        style={{ cursor: 'pointer' }}
+                      >
                         <strong className={styles.totalAmount}>
                           {formatCurrencyARS(
                             honorariosAgrupados.reduce((sum, grupo) => sum + grupo.importe, 0)
                           )}
                         </strong>
                       </td>
-                      <td className={styles.centered}>
+                      <td colSpan={2} className={styles.centered}>
                         <strong>
                           {((honorariosAgrupados.reduce((sum, grupo) => sum + grupo.importe, 0) / formData.valorObra) * 100).toFixed(2)}%
                         </strong>
@@ -254,6 +270,15 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
 
       </div>
       {/* Fin contenido para PDF */}
+
+      {/* Modal de detalle de items */}
+      {formData.detalleHonorarios && formData.detalleHonorarios.length > 0 && (
+        <DetalleItemsModal
+          isOpen={modalDetalleAbierto}
+          onClose={cerrarModalDetalle}
+          detalleHonorarios={formData.detalleHonorarios}
+        />
+      )}
 
     </div>
   );

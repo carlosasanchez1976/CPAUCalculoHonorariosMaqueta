@@ -56,14 +56,14 @@
 .title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-gray-900);
+  color: var(--color-text-no-sel);
   margin: 0;
 }
 
 .closeButton {
   background: none;
   border: none;
-  color: var(--color-gris);
+  color: var(--color-primary);
   font-size: 1.25rem;
   cursor: pointer;
   padding: 8px;
@@ -83,7 +83,7 @@
   padding: 24px;
   overflow-y: auto;
   flex: 1;
-  color: var(--color-celeste);
+  color: var(--color-text-no-sel);
   line-height: 1.6;
 }
 

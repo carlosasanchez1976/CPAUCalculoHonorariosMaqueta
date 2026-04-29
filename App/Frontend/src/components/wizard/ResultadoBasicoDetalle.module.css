@@ -168,7 +168,7 @@
   background-color: var(--color-fondo);
   border: 1px solid var(--color-gris);
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 0.25rem;
   /* box-shadow: 0 1px 3px var(--color-text-no-sel); */
   display: flex;
   flex-direction: column;
@@ -244,14 +244,20 @@
 
 .totalRow td {
   padding: 1rem;
-  font-size: 1.125rem;
+  font-size: 1rem;
   border-bottom: none;
   color: var(--color-primary);
+  transition: background-color 0.2s ease;
+}
+
+.totalRow td[style*="cursor: pointer"]:hover {
+  background-color: #e0f2fe;
+  border-radius: 4px;
 }
 
 .totalAmount {
-  
-  font-size: 1.125rem;
+  font-size: 1rem;
+  white-space: nowrap;
 }
 
 /* Nota Final */

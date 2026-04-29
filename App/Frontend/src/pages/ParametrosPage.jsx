@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaSave, FaCheck } from 'react-icons/fa';
+import { FaArrowLeft, FaSave, FaCheck, FaSync, FaExclamationTriangle } from 'react-icons/fa';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import ToggleSwitch from '../components/common/ToggleSwitch';
+import Modal from '../components/common/Modal';
 import { useParametros } from '../contexts/ParametrosContext';
+import { useCache } from '../contexts/CacheContext';
 import styles from './ParametrosPage.module.css';
 
 /**
@@ -14,11 +16,16 @@ import styles from './ParametrosPage.module.css';
 const ParametrosPage = () => {
   const navigate = useNavigate();
   const { getAllParametros, updateParametro } = useParametros();
+  const { invalidateAll, getStats } = useCache();
   const parametros = getAllParametros();
 
   // Estado local para ediciones temporales
   const [editedValues, setEditedValues] = useState({});
   const [savedStatus, setSavedStatus] = useState({});
+  
+  // Estado para modal de recarga de caché
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isReloading, setIsReloading] = useState(false);
 
   /**
    * Formatear número con estilo español (punto miles, coma decimal)
@@ -101,6 +108,32 @@ const ParametrosPage = () => {
   };
 
   /**
+   * Invalida todo el caché del sistema
+   * Útil después de modificar parámetros que afectan cálculos
+   */
+  const handleReloadCache = async () => {
+    setIsReloading(true);
+    try {
+      // Limpiar todo el caché
+      invalidateAll();
+      
+      console.log('✅ Caché limpiado completamente');
+      console.log('📊 Stats:', getStats());
+      
+      // Cerrar modal
+      setShowConfirmModal(false);
+      
+      // Mostrar feedback
+      alert('Caché renovado exitosamente. Los datos se recargarán en la próxima navegación.');
+    } catch (err) {
+      console.error('❌ Error al limpiar caché:', err);
+      alert('Error al renovar el caché');
+    } finally {
+      setIsReloading(false);
+    }
+  };
+
+  /**
    * Renderizar control según tipo de parámetro
    */
   const renderControl = (parametro) => {
@@ -138,19 +171,33 @@ const ParametrosPage = () => {
 
       <main className={styles.main}>
         <div className={styles.content}>
-          <button 
-            className={styles.backButton}
-            onClick={() => navigate('/dashboard')}
-            aria-label="Volver al Dashboard"
-          >
-            <FaArrowLeft className={styles.backIcon} />
-            <span>Volver al Dashboard</span>
-          </button>
+          <div className={styles.pageHeader}>
+            <button 
+              className={styles.backButton}
+              onClick={() => navigate('/dashboard')}
+              aria-label="Volver al Dashboard"
+            >
+              <FaArrowLeft className={styles.backIcon} />
+              <span>Volver al Dashboard</span>
+            </button>
+            
+            <button
+              className={styles.reloadCacheButton}
+              onClick={() => setShowConfirmModal(true)}
+              title="Limpiar caché y forzar recarga de datos"
+            >
+              <FaSync />
+              Recargar Parámetros
+            </button>
+          </div>
 
           <div className={styles.header}>
             <h1 className={styles.title}>Parámetros Generales</h1>
             <p className={styles.subtitle}>
-              Configure los parámetros del sistema que afectan el cálculo de honorarios y comportamiento de la aplicación
+              Configure los parámetros del sistema que afectan el cálculo de honorarios y comportamiento de la aplicación.
+              <br />
+              <strong>Importante:</strong> Después de modificar parámetros, use el botón "Recargar Parámetros" 
+              para que los cambios se apliquen en toda la aplicación.
             </p>
           </div>
 
@@ -208,6 +255,41 @@ const ParametrosPage = () => {
           </div>
         </div>
       </main>
+
+      {/* Modal de confirmación */}
+      <Modal 
+        isOpen={showConfirmModal} 
+        onClose={() => setShowConfirmModal(false)}
+        title="¿Recargar todos los parámetros?"
+      >
+        <div className={styles.confirmModal}>
+          <div className={styles.modalIcon}>
+            <FaExclamationTriangle />
+          </div>
+          <p className={styles.modalMessage}>
+            Esta acción limpiará el caché completo del sistema.
+            <br />
+            Todos los datos se recargarán desde el servidor en la próxima navegación.
+          </p>
+          <div className={styles.modalActions}>
+            <button
+              className={styles.cancelButton}
+              onClick={() => setShowConfirmModal(false)}
+              disabled={isReloading}
+            >
+              Cancelar
+            </button>
+            <button
+              className={styles.confirmButton}
+              onClick={handleReloadCache}
+              disabled={isReloading}
+            >
+              <FaSync className={isReloading ? styles.spinning : ''} />
+              {isReloading ? 'Recargando...' : 'Recargar Caché'}
+            </button>
+          </div>
+        </div>
+      </Modal>
 
       <Footer />
     </div>

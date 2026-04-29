@@ -19,7 +19,7 @@
 | #005 | Agregar loading states en NuevoCalculoPage | ✅ COMPLETADO |
 | #006 | Agregar loading states en ProcesoCalculoPage | ✅ COMPLETADO |
 | #007 | Configurar headers de caché HTTP en Vercel | ✅ COMPLETADO |
-| #008 | Agregar botones manuales de recarga de caché | ⏳ PENDIENTE |
+| #008 | Agregar botones manuales de recarga de caché | 🔄 EN PROGRESO (PARTE B ✅) |
 | #009 | Testing de performance y casos edge | ⏳ PENDIENTE |
 
 ---
@@ -1327,12 +1327,12 @@ return (
 
 **SUBTAREAS:**
 
-- [ ] **[T008.B1]** Importar `useCache` en ParametrosPage
-- [ ] **[T008.B2]** Agregar botón "Recargar Parámetros" en la página
-- [ ] **[T008.B3]** Conectar con función `invalidateAll()` del CacheContext
-- [ ] **[T008.B4]** Agregar Modal de confirmación (acción destructiva)
-- [ ] **[T008.B5]** Mostrar feedback visual de éxito
-- [ ] **[T008.B6]** Verificar que todo el caché se limpia correctamente
+- [x] **[T008.B1]** Importar `useCache` en ParametrosPage
+- [x] **[T008.B2]** Agregar botón "Recargar Parámetros" en la página
+- [x] **[T008.B3]** Conectar con función `invalidateAll()` del CacheContext
+- [x] **[T008.B4]** Agregar Modal de confirmación (acción destructiva)
+- [x] **[T008.B5]** Mostrar feedback visual de éxito
+- [x] **[T008.B6]** Verificar que todo el caché se limpia correctamente
 
 **CÓDIGO:**
 

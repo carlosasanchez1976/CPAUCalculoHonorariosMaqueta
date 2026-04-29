@@ -18,7 +18,7 @@
 | #004 | Implementar componente LoadingSpinner reutilizable | ✅ COMPLETADO |
 | #005 | Agregar loading states en NuevoCalculoPage | ✅ COMPLETADO |
 | #006 | Agregar loading states en ProcesoCalculoPage | ✅ COMPLETADO |
-| #007 | Configurar headers de caché HTTP en Vercel | ✅ COMPLETADO |
+| #007 | Configurar headers de caché HTTP en Vercel | ❌ DESESTIMADO (conflictos con routing) |
 | #008 | Agregar botones manuales de recarga de caché | 🔄 EN PROGRESO (PARTE B ✅) |
 | #009 | Testing de performance y casos edge | ⏳ PENDIENTE |
 
@@ -1120,23 +1120,32 @@ return (
 
 ### TICKET #007 - Configurar Headers de Caché HTTP en Vercel
 
-**ESTADO:** ✅ COMPLETADO
+**ESTADO:** ❌ DESESTIMADO
 
-**DESCRIPCIÓN:**
+**RAZÓN:** La configuración de headers de caché en `vercel.json` causaba conflictos con el sistema de routing de SPA, generando errores "Invalid route source pattern". Los headers de caché HTTP se gestionarán mejor a nivel de CDN o mediante configuración de Vercel UI en una fase posterior.
+
+**DESCRIPCIÓN ORIGINAL:**
 Agregar headers de caché para assets estáticos (SVG, fuentes, imágenes).
 
 **UBICACIÓN:** `App/Frontend/vercel.json`
+
+**NOTAS:**
+- Se mantiene solo la configuración básica de `rewrites` para routing SPA
+- Los headers de caché HTTP quedan pendientes para implementación futura
+- Alternativas: Configurar caché en Vercel UI o usar CDN externo
+
+**TIEMPO INVERTIDO:** 45 minutos
 
 **SUBTAREAS:**
 
 - [x] **[T007.1]** Crear/actualizar vercel.json en raíz de Frontend
 - [x] **[T007.2]** Agregar headers para /assets/icons/
 - [x] **[T007.3]** Agregar headers para otros assets estáticos
-- [ ] **[T007.4]** Hacer commit y push
-- [ ] **[T007.5]** Desplegar en Vercel (preview)
-- [ ] **[T007.6]** Verificar headers en DevTools Network
-- [ ] **[T007.7]** Verificar caché en segunda visita
-- [ ] **[T007.8]** Desplegar a producción
+- [x] **[T007.4]** Hacer commit y push → ❌ Causó conflictos
+- [ ] **[T007.5]** Desplegar en Vercel (preview) → ❌ Build failures
+- [ ] **[T007.6]** Verificar headers en DevTools Network → No completado
+- [ ] **[T007.7]** Verificar caché en segunda visita → No completado
+- [ ] **[T007.8]** Desplegar a producción → No completado
 
 **CÓDIGO:**
 

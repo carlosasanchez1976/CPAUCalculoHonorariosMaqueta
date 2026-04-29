@@ -1,0 +1,45 @@
+===============================================================================
+TICKETS - AJUSTES Y MEJORAS VISUALIZACIÓN DE RESULTADOS
+Fecha: 29/04/2026
+===============================================================================
+
+## TICKET #001 - Ajuste layout tabla de resultados
+Archivo: ResultadoBasicoDetalle.jsx, ResultadoBasicoDetalle.module.css
+Problema: Importe total con números grandes no cabía en columna y se separaba en múltiples líneas
+Solución:
+- Rediseño estructura tabla de 4 a 8 columnas base
+- Header/Body: colspan={2} en cada celda (mantiene apariencia de 4 columnas)
+- Footer: distribución 3-3-2 (texto-importe-porcentaje) para mayor espacio al total
+- Agregado white-space: nowrap en .totalAmount para evitar saltos de línea
+Estado: ✅ Completado
+
+## TICKET #002 - Modal de detalle de items calculados
+Archivos: DetalleItemsModal.jsx (nuevo), DetalleItemsModal.module.css (nuevo)
+Requerimiento: Mostrar detalle completo de items intermedios del cálculo
+Funcionalidades implementadas:
+- Modal con tabla completa de items (itemNumero, tareaProfesional, descripcion, importe)
+- Botón "Copiar" que envía datos al portapapeles con formato tabular (separado por tabs para Excel)
+- Botón "Salir" para cerrar modal
+- Evento doble click en celda de importe total del footer abre el modal
+- Tooltip indicador "Doble click para ver detalle completo"
+- Hover effect en celda clickeable
+- Scroll vertical con header sticky
+- Feedback visual "✓ Copiado" después de copiar
+Estado: ✅ Completado
+
+## TICKET #003 - Extensión componente Modal
+Archivo: Modal.jsx
+Modificación: Agregada prop modalClassName para permitir personalización de ancho
+Uso: Permite que DetalleItemsModal tenga max-width: 1000px (vs. 500px predeterminado)
+Estado: ✅ Completado
+
+===============================================================================
+Archivos modificados:
+- App/Frontend/src/components/wizard/ResultadoBasicoDetalle.jsx
+- App/Frontend/src/components/wizard/ResultadoBasicoDetalle.module.css
+- App/Frontend/src/components/common/Modal.jsx
+
+Archivos creados:
+- App/Frontend/src/components/wizard/DetalleItemsModal.jsx
+- App/Frontend/src/components/wizard/DetalleItemsModal.module.css
+===============================================================================

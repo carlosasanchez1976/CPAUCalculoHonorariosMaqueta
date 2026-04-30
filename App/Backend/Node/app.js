@@ -10,6 +10,7 @@ const rateLimit = require('express-rate-limit');
 const usuariosRoutes = require('./src/routes/usuarios.js');
 const calculosRoutes = require('./src/routes/calculos.js');
 const tareasProfesionalesRoutes = require('./src/routes/tareasProfesionales.js');
+const parametrosRoutes = require('./src/routes/parametros.js');
 
 require('dotenv').config();
 
@@ -128,6 +129,7 @@ app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/calculos', calculosRoutes);
 app.use('/api/tareas', tareasProfesionalesRoutes);
 app.use('/api/tareasProfesionales', tareasProfesionalesRoutes);
+app.use('/api/parametros', parametrosRoutes);
 
 
 

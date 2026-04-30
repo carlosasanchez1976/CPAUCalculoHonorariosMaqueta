@@ -6,17 +6,18 @@
 }
 
 .wizardHeader {
-
-  padding: 6px 4px;
-
+  width: 100%;
+  padding: 6px 0;
 }
 
 .wizardTitle {
   font-size: 1.5rem;
   font-weight: 700;
-  text-align: center;
+  text-align: left !important;
   color: var(--color-text-no-sel);
-
+  margin: 0 auto;
+  max-width: var(--layout-max-width);
+  padding: 0 var(--layout-padding-x);
 }
 
 

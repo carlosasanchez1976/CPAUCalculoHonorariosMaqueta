@@ -1,20 +1,18 @@
 .container {
   background: var(--color-white);
-  padding: 24px 20px;
-  
+  padding: 24px 0;
   position: sticky;
   top: 60px;
   z-index: 80;
-
-  
 }
 
 .stepper {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  max-width: 900px;
+  max-width: var(--layout-max-width);
   margin: 0 auto;
+  padding: 0 var(--layout-padding-x);
 }
 
 .stepWrapper {

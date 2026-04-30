@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { FaCalculator } from 'react-icons/fa';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import Card from '../components/common/Card';
@@ -42,7 +41,7 @@ const DashboardPage = () => {
                 title="Nuevo cálculo"
                 title2="de honorarios"
                 description="Genera un nuevo proyecto para cálculo de honorarios profesionales"
-                icon={<FaCalculator />}
+                icon={<img src="/assets/icons/calculadora.svg" alt="Calculadora" style={{ width: '60px', height: '60px' }} />}
                 onClick={() => navigate(ROUTES.NUEVO_CALCULO)}
               />
             </div>

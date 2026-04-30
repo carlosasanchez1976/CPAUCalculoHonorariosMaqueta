@@ -41,7 +41,7 @@ BEGIN
   DECLARE v_tarea_proyecto_estructuras BOOLEAN;
   
   -- Constantes de cálculo (CPAU 2026 - SPEC-CALC-002)
-  DECLARE v_valor_k DECIMAL(15,2) DEFAULT 589183947.83;
+  DECLARE v_valor_k DECIMAL(15,2);
   
   -- Variables de rango
   DECLARE v_coeficiente_k DECIMAL(10,4);
@@ -103,6 +103,17 @@ BEGIN
   FROM Calculos
   WHERE calculo_id = p_calculo_id;
   
+  -- Obtener valorK desde Parámetros
+  SELECT
+      valor INTO v_valor_k
+    FROM
+      Parametros
+    WHERE
+      nombre = 'valorK'
+      AND (baja_fecha IS NULL OR baja_fecha > NOW()); -- Solo parámetros activos
+
+
+
   -- ========================================================================
   -- PASO 2: CALCULAR LÍMITES DE RANGOS EN PESOS (SPEC-CALC-002)
   -- ========================================================================

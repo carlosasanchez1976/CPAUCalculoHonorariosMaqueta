@@ -23,7 +23,7 @@
 
 .main {
   flex: 1;
-  padding: var(--spacing-3) 0;
+  padding: var(--spacing-1) 0;
 }
 
 .content {

@@ -17,11 +17,6 @@ export const ROUTES = {
   LOGIN: '/login',
   DASHBOARD: '/dashboard',
   NUEVO_CALCULO: '/nuevo-calculo',
-  CALCULOS_REALIZADOS: '/calculos-realizados',
-  NUEVO_PROYECTO: '/nuevo-proyecto',
-  PROYECTOS_REALIZADOS: '/proyectos-realizados',
-  CONSULTA_PRECIOS: '/consulta-precios',
-  PERSONALIZAR: '/personalizar',
   PREFERENCIAS: '/preferencias',
   MI_CUENTA: '/mi-cuenta',
   PARAMETROS: '/parametros'

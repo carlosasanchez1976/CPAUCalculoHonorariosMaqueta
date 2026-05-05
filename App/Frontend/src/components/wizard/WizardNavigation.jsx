@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FaChevronLeft, FaChevronRight, FaQuestionCircle, FaHome } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import Button from '../common/Button';
 import Modal from '../common/Modal';
@@ -24,7 +24,6 @@ const WizardNavigation = ({
   isCalculating = false
 }) => {
   const navigate = useNavigate();
-  const [showHelpModal, setShowHelpModal] = useState(false);
   const [showBackConfirmModal, setShowBackConfirmModal] = useState(false);
 
   const getNextButtonLabel = () => {
@@ -67,16 +66,15 @@ const WizardNavigation = ({
 
           {/* Botones Centrales */}
           <div className={styles.centerButtons}>
-            {/* Botón Ayuda */}
-            <Button
-              variant="outline"
-              onClick={() => setShowHelpModal(true)}
-              className={styles.helpButton}
-              title="Ayuda"
+            {/* Botón Home */}
+            <button
+              onClick={() => navigate('/')}
+              className={styles.homeButton}
+              title="Ir al inicio"
               disabled={isCalculating}
             >
-              <FaQuestionCircle className={styles.iconLarge} />
-            </Button>
+              <img src="/assets/icons/home.svg" alt="Home" className={styles.homeIcon} />
+            </button>
           </div>
 
           {/* Botón Siguiente */}
@@ -91,23 +89,6 @@ const WizardNavigation = ({
           </Button>
         </div>
       </div>
-
-      {/* Modal de Ayuda */}
-      <Modal
-        isOpen={showHelpModal}
-        onClose={() => setShowHelpModal(false)}
-        title="Ayuda"
-        footer={
-          <Button variant="primary" onClick={() => setShowHelpModal(false)}>
-            Entendido
-          </Button>
-        }
-      >
-        <p>
-          Aquí se mostrará un texto de ayuda y tutoriales y documentación para 
-          comprender el proceso del cálculo específico.
-        </p>
-      </Modal>
 
       {/* Modal de Confirmación Volver */}
       <Modal

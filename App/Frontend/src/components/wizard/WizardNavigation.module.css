@@ -75,19 +75,15 @@
   font-size: 0.875rem;
 }
 
-.iconLarge {
-  font-size: 1.25rem;
-}
-
-.helpButton,
+.homeButton,
 .backButton {
-  background: var(--color-white);
+  background: var(--color-celeste);
   color: var(--color-text-no-sel);
-  border: 2px solid var(--color-primary);
-  padding: 12px;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
+  
+  padding: 0px;
+  
+  width: 80px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -95,12 +91,15 @@
   transition: all 0.3s ease;
 }
 
-.helpButton:hover,
+
 .backButton:hover {
   background: var(--color-text-no-sel);
-  color: var(--color-white);
   transform: translateY(-2px);
+}
 
+.homeIcon {
+  width: 50px;
+  height: 50px;
 }
 
 
@@ -130,14 +129,15 @@
     gap: 16px;
   }
 
-  .helpButton,
+  .homeButton,
   .backButton {
     width: 56px;
     height: 56px;
   }
 
-  .iconLarge {
-    font-size: 1.5rem;
+  .homeIcon {
+    width: 28px;
+    height: 28px;
   }
 }
 

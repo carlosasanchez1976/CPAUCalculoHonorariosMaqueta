@@ -7,11 +7,6 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import NuevoCalculoPage from './pages/NuevoCalculoPage';
 import ProcesoCalculoPage from './pages/ProcesoCalculoPage';
-import CalculosRealizadosPage from './pages/CalculosRealizadosPage';
-import NuevoProyectoPage from './pages/NuevoProyectoPage';
-import ProyectosRealizadosPage from './pages/ProyectosRealizadosPage';
-import ConsultaPreciosPage from './pages/ConsultaPreciosPage';
-import PersonalizarPage from './pages/PersonalizarPage';
 import PreferenciasPage from './pages/PreferenciasPage';
 import MiCuentaPage from './pages/MiCuentaPage';
 import ParametrosPage from './pages/ParametrosPage';
@@ -72,51 +67,6 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProcesoCalculoPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path={ROUTES.CALCULOS_REALIZADOS}
-            element={
-              <ProtectedRoute>
-                <CalculosRealizadosPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path={ROUTES.NUEVO_PROYECTO}
-            element={
-              <ProtectedRoute>
-                <NuevoProyectoPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path={ROUTES.PROYECTOS_REALIZADOS}
-            element={
-              <ProtectedRoute>
-                <ProyectosRealizadosPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path={ROUTES.CONSULTA_PRECIOS}
-            element={
-              <ProtectedRoute>
-                <ConsultaPreciosPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path={ROUTES.PERSONALIZAR}
-            element={
-              <ProtectedRoute>
-                <PersonalizarPage />
               </ProtectedRoute>
             }
           />

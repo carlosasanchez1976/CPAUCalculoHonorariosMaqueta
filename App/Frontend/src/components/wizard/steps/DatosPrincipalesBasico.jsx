@@ -18,7 +18,7 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
             name="nombreProyecto"
             value={formData.nombreProyecto}
             onChange={onChange}
-            placeholder="Nombre del proyecto"
+            placeholder="Nombre del proyecto *"
             required
           />
 
@@ -27,7 +27,7 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
             name="cliente"
             value={formData.cliente}
             onChange={onChange}
-            placeholder="Comitente"
+            placeholder="Comitente *"
             required
           />
 
@@ -36,7 +36,7 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
             name="ubicacion"
             value={formData.ubicacion}
             onChange={onChange}
-            placeholder="Ubicación"
+            placeholder="Ubicación *"
             required
           />
         </div>
@@ -54,7 +54,7 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
               onChange={onChange}
               className={styles.select}
             >
-              <option value="">Seleccione...</option>
+              <option value="">Seleccioná...</option>
               <option value="Nueva">Nueva</option>
               <option value="Remodelación">Remodelación</option>
               <option value="Ampliación">Ampliación</option>
@@ -73,7 +73,7 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
               onChange={onChange}
               className={styles.select}
             >
-              <option value="">Seleccione...</option>
+              <option value="">Seleccioná...</option>
               <option value="Residencial Unifamiliar">Residencial Unifamiliar</option>
               <option value="Residencial Multifamiliar">Residencial Multifamiliar</option>
               <option value="Industrial">Industrial</option>

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaChevronDown , FaSignOutAlt} from 'react-icons/fa';
+import { FaSignOutAlt } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import { ROUTES } from '../../utils/constants';
 import styles from './UserMenu.module.css';
@@ -65,10 +65,7 @@ const UserMenu = () => {
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        
-
         <span className={styles.userName}>{'Usuario del Sistema' || 'Usuario'}</span>
-        <FaChevronDown className={styles.chevronIcon} />
       </button>
 
       <div className={`${styles.dropdown} ${isOpen ? styles.open : ''}`} role="menu">

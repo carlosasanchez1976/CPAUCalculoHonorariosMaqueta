@@ -11,11 +11,17 @@
   gap: var(--spacing-1);
   background-color: var(--color-fondo);
   color: var(--color-text-no-sel);
-  padding: 4px 60px;
+  padding: 4px 60px 4px 20px;
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all var(--transition);
   border: 1px solid transparent;
+  
+  /* Flecha SVG customizada */
+  background-image: url('/assets/icons/flecha-celeste-abajo.svg');
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px;
 }
 
 .userButton:hover {
@@ -37,15 +43,10 @@
   font-size: var(--font-size-base);
 }
 
-.chevronIcon {
-  font-size: 14px;
-  color: var(--color-text-no-sel); /* Celeste/Turquesa según diseño CPAU */
-  transition: transform var(--transition);
-}
-
-.userButton.open .chevronIcon {
-  transform: rotate(180deg);
-
+.userButton.open {
+  background-image: url('/assets/icons/flecha-celeste-abajo.svg');
+  transform: scaleY(-1);
+  background-position: right 16px center;
 } 
 
 /* Dropdown Menu */

@@ -25,7 +25,7 @@
   flex-direction: column;
   align-items: left;
   gap: 8px;
-  width: 110px; /* Ancho fijo */
+  width: 140px; /* Ancho fijo aumentado */
   flex-shrink: 0; /* Evitar que se comprima */
 }
 
@@ -81,12 +81,17 @@
 }
 
 .stepLabel {
-  font-size: 0.875rem;
+  font-size: 0.938rem;
   font-weight: 500;
   color: var(--color-text-no-sel);
   text-align: left;
-  max-width: 130px;
-  line-height: 1.3;
+  max-width: 140px;
+  line-height: 1.4;
+  max-height: 2.8rem; /* Máximo 2 líneas (0.938rem * 1.4 * 2) */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .connector {
@@ -116,7 +121,7 @@
   }
 
   .stepItem {
-    width: 65px;
+    width: 70px;
   }
 
   .stepper {
@@ -132,6 +137,7 @@
   .stepLabel {
     font-size: 0.75rem;
     max-width: 70px;
+    max-height: 2.1rem; /* 2 líneas en mobile */
   }
 
   .connector {
@@ -154,12 +160,13 @@
   }
 
   .stepLabel {
-    font-size: 0.813rem;
-    max-width: 85px;
+    font-size: 0.875rem;
+    max-width: 100px;
+    max-height: 2.45rem; /* 2 líneas en tablet */
   }
 
   .stepItem {
-    min-width: 70px;
+    width: 100px;
   }
 
   .connector {

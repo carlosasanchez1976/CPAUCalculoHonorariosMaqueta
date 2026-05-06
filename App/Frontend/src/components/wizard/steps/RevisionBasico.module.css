@@ -47,7 +47,7 @@
   justify-content: flex-end;
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--color-gris);
+
 }
 
 /* Filas de datos */
@@ -55,8 +55,9 @@
   display: grid;
   grid-template-columns: 200px 1fr;
   gap: 1rem;
-  padding: 0.75rem 0;
+  padding: 1.25rem 0;
   border-bottom: 1px solid var(--color-gris);
+
 }
 
 .dataRow:last-child {
@@ -70,7 +71,7 @@
 }
 
 .dataValue {
-  color: var(--color-text-no-sel);
+  color: var(--color-gris-oscuro);
   font-size: 0.9375rem;
 }
 
@@ -81,20 +82,20 @@
   gap: 1rem;
   padding: 1rem;
   margin-top: 1rem;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  
   border-radius: 8px;
-  border: 1px solid #3b82f6;
+  
 }
 
 .highlightValue {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1e40af;
+  color: var(--color-primary);
 }
 
 .adjustmentNote {
   font-size: 0.875rem;
-  color: #1e40af;
+  color: var(--color-primary);
   margin: 0.5rem 0 0 0;
   font-style: italic;
 }
@@ -111,7 +112,6 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1rem;
-  background-color: #f9fafb;
   border-radius: 8px;
   border: 1px solid var(--color-gris);
 }
@@ -141,7 +141,7 @@
   gap: 0.25rem;
   padding: 0.25rem 0.75rem;
   background-color:var(--color-gris);
-  color: var(--color-text-no-sel);
+  color: var(--color-gris-oscuro);
   font-size: 1rem;
   font-weight: 600;
 }
@@ -151,7 +151,7 @@
 .observacionesBox {
   margin-top: 1rem;
   padding: 1rem;
-  background-color: #f9fafb;
+  
   border: 1px solid var(--color-gris);
   border-radius: 8px;
 }
@@ -173,10 +173,10 @@
 
 /* Info box */
 .infoBox {
-  background-color: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-left: 4px solid #0284c7;
-  color: #075985;
+  background-color: var(--color-gris);
+  border: 1px solid var(--color-gris-oscuro);
+  
+  color: var(--color-text-no-sel);
   padding: 1rem 1.25rem;
   border-radius: 8px;
   font-size: 0.9375rem;

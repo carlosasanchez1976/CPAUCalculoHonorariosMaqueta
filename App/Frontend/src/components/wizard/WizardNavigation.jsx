@@ -30,7 +30,7 @@ const WizardNavigation = ({
     if (nextLabel) return nextLabel;
     
     if (currentStep === 2) return 'Revisar';
-    if (currentStep === 3) return 'Calcular';
+    
     if (currentStep === 5) return 'Finalizar';
     return 'Siguiente';
   };

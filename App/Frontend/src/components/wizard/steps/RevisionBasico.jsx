@@ -32,12 +32,12 @@ const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
 
           <div className={styles.section}>
             <div className={styles.sectionContent}>
-              <DataRow label="Nombre del Proyecto:" value={formData.nombreProyecto} />
-              <DataRow label="Comitente:" value={formData.cliente} />
-              <DataRow label="Ubicación:" value={formData.ubicacion} />
-              <DataRow label="Tipo de obra:" value={formData.tipoObra} />
-              <DataRow label="Destino/Uso:" value={formData.destinoUso} />
-              <DataRow label="Plazo estimado de ejecución:" value={formData.plazoEjecucion ? `${formData.plazoEjecucion} meses` : ''} />
+              <DataRow label="Nombre del Proyecto" value={formData.nombreProyecto} />
+              <DataRow label="Comitente" value={formData.cliente} />
+              <DataRow label="Ubicación" value={formData.ubicacion} />
+              <DataRow label="Tipo de obra" value={formData.tipoObra} />
+              <DataRow label="Destino/Uso" value={formData.destinoUso} />
+              <DataRow label="Plazo estimado de ejecución" value={formData.plazoEjecucion ? `${formData.plazoEjecucion} meses` : ''} />
               <DataRow label="Observaciones" value={formData.observaciones} />
               
               <div className={styles.buttonRow}>
@@ -61,11 +61,11 @@ const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
           <div className={styles.section}>
             <div className={styles.sectionContent}>
               <DataRow 
-                label="Superficie total:" 
+                label="Superficie total" 
                 value={formData.superficieTotal ? `${formData.superficieTotal} m²` : ''} 
               />
               <DataRow 
-                label="Costo por m²:" 
+                label="Costo por m²" 
                 value={formData.valorMetro2 ? formatCurrencyARS(formData.valorMetro2) : ''} 
               />
               <div className={styles.highlightRow}>
@@ -136,12 +136,12 @@ const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
                   </span>
                 </div>
               </div>
-              {formData.observacionesTareas && (
+              
                 <div className={styles.observacionesBox}>
                   <strong>Observaciones:</strong>
                   <p>{formData.observacionesTareas}</p>
                 </div>
-              )}
+              
               
               <div className={styles.buttonRow}>
                 <Button
@@ -158,7 +158,7 @@ const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
       </div>
 
       <div className={styles.infoBox}>
-        💡 Si todos los datos son correctos, haga clic en "Calcular" para proceder con el cálculo de honorarios.
+        Si todos los datos son correctos, hacé clic en "Siguiente" para proceder con el cálculo de honorarios.
       </div>
     </div>
   );

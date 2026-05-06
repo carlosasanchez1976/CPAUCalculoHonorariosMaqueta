@@ -18,8 +18,6 @@
   --color-text-primary: var(--color-primary);     /* Títulos principales */
   --color-text-no-sel: #000000;        /* Texto no seleccionado */
   
-
-
   
   /* Tipografía */
   --font-family: 'Avenir';
@@ -198,4 +196,10 @@ textarea {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* Utilidades para formularios */
+.required {
+  color: var(--color-primary);
+  margin-left: 0.25rem;
 }

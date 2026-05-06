@@ -47,22 +47,24 @@ const DatosObraBasico = ({ formData, onChange, stepTitle }) => {
         {/* Row 1: 2 inputs + campo calculado (3 columnas) */}
         <div className={styles.inputRow}>
           <Input
-            label="Superficie total"
+            label={<span className={styles.required}>*</span>}
             name="superficieTotal"
             type="number"
             value={formData.superficieTotal}
             onChange={onChange}
+            placeholder="Superficie total"
             required
             min="0"
             step="0.01"
           />
 
           <Input
-            label="Costo por m²"
+            label={<span className={styles.required}>*</span>}
             name="valorMetro2"
             type="number"
             value={formData.valorMetro2}
             onChange={onChange}
+            placeholder="Costo por m²"
             required
             min="0"
             step="0.01"

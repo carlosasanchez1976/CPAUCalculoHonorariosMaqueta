@@ -43,10 +43,7 @@
   margin-bottom: 0.5rem;
 }
 
-.required {
-  color: var(--color-primary);
-  margin-left: 0.25rem;
-}
+
 
 .select {
   width: 100%;

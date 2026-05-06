@@ -87,11 +87,14 @@
   text-align: left;
   max-width: 140px;
   line-height: 1.4;
-  max-height: 2.8rem; /* Máximo 2 líneas (0.938rem * 1.4 * 2) */
+  max-height: 2.8rem;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  /* autoprefixer: off */
   -webkit-box-orient: vertical;
+  /* autoprefixer: on */
+  line-clamp: 2; /* Estándar moderno CSS */
+  -webkit-line-clamp: 2; /* Fallback para compatibilidad */
 }
 
 .connector {

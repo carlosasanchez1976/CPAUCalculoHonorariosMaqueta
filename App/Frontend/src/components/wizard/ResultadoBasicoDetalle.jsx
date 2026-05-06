@@ -98,7 +98,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
       {/* Header del Certificado */}
       <div className={styles.certificateHeader}>
         <div className={styles.headerLeft}>
-          <div className={styles.logoPlaceholder}>CPAU</div>
+          <img src="/assets/icons/logoBlanco.svg" alt="CPAU Logo" className={styles.logo} />
         </div>
         <div className={styles.headerRight}>
           <h3 className={styles.title}>Cálculo de honorarios profesionales</h3>
@@ -224,7 +224,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
 
           <div className={styles.notaFinal}>
             <p>
-              Nota: Este honorario corresponde únicamente a las tareas profesionales seleccionadas. NO incluye IVA.
+              NOTA: Este honorario corresponde únicamente a las tareas profesionales seleccionadas. NO incluye IVA.
             </p>
           </div>
 
@@ -245,10 +245,14 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                 <table className={styles.table}>
                   <tfoot>
                     <tr className={styles.table}>
-                      <td colSpan={2}><strong>Recomendamos leer las notas anexas al PDF descargable</strong></td>
-                      <td colSpan={2}>
+                      <td colSpan={2} className={styles.alignedCell}>
+                        <div className={styles.noteBox}>
+                          <strong>Recomendamos leer las notas anexas al PDF descargable</strong>
+                        </div>
+                      </td>
+                      <td colSpan={2} className={styles.alignedCell}>
                         <Button
-                          
+                          className={styles.downloadButton}
                           disabled={!termsAccepted}
                           onClick={handleDescargarPDF}
                           icon={<FaDownload />}

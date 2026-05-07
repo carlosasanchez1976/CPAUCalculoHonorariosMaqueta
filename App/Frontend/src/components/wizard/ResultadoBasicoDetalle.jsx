@@ -120,8 +120,9 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
         {/* COLUMNA IZQUIERDA */}
         <div className={styles.leftColumn}>
           {/* Resumen del Proyecto */}
+          <h4 className={styles.sectionTitle}>Resumen del Proyecto</h4>
           <div className={styles.proyectoResumen}>
-            <h4 className={styles.sectionTitle}>Resumen del Proyecto</h4>
+            
             <div className={styles.resumenGrid}>
               <div className={styles.resumenItem}>
                 <span className={styles.resumenLabel}>Nombre del Proyecto:</span>
@@ -158,6 +159,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
               y factores estándar del mercado. Los valores finales pueden variar según condiciones particulares 
               de cada proyecto. <strong>No constituye una cotización formal ni un compromiso contractual.</strong>
               <br />
+              <br />
               <span>Vigencia de índices: Febrero 2026</span>
               <br />
               <span>Base de cálculo: arancel sugerido CPAU (versión 2026)</span>
@@ -168,9 +170,10 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
         {/* COLUMNA DERECHA */}
         <div className={styles.rightColumn}>
           {/* Tabla de Resultados */}
+          <h4 className={styles.sectionTitle}>Detalle de honorarios</h4>
           {formData.detalleHonorarios && formData.detalleHonorarios.length > 0 && (
             <div className={styles.resultsSection}>
-              <h4 className={styles.sectionTitle}>Detalle de honorarios</h4>
+              
               
               <div className={styles.tableContainer}>
                 <table className={styles.table}>
@@ -179,7 +182,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                       <th colSpan={1}>Ítem</th>
                       <th colSpan={2}>Tarea Profesional</th>
                       <th colSpan={3} className={styles.rightAlign}>Importe</th>
-                      <th colSpan={2} className={styles.centered}>%</th>
+                      <th colSpan={2} className={styles.centered}>% sobre costo de obra</th>
                     </tr>
                   </thead>
                   <tbody>

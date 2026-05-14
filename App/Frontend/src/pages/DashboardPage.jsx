@@ -41,7 +41,7 @@ const DashboardPage = () => {
                 title="Nuevo cálculo"
                 title2="de honorarios"
                 description="Genera un nuevo proyecto para cálculo de honorarios profesionales"
-                icon={<img src="/assets/icons/calculadora.svg" alt="Calculadora" style={{ width: '60px', height: '60px' }} />}
+                icon={<img src="/assets/icons/calculadora.svg" alt="Calculadora" style={{ width: '78px', height: '106.5px' }} />}
                 onClick={() => navigate(ROUTES.NUEVO_CALCULO)}
               />
             </div>

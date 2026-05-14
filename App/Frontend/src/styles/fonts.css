@@ -3,6 +3,15 @@
  * Fuente principal: Avenir (provista por CPAU)
  */
 
+/* Avenir Roman (Avenir LT Std 55 Roman) */
+@font-face {
+  font-family: 'Avenir Roman';
+  src: url('../assets/fonts/Avenir-Roman.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Avenir Regular */
 @font-face {
   font-family: 'Avenir';
@@ -29,6 +38,15 @@
   src: url('../assets/fonts/Avenir-Heavy.woff2') format('woff2'),
        url('../assets/fonts/Avenir-Heavy.woff') format('woff');
   font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Avenir Black (Avenir LT Std 95 Black) */
+@font-face {
+  font-family: 'Avenir Black';
+  src: url('../assets/fonts/Avenir-Black.woff') format('woff');
+  font-weight: 900;
   font-style: normal;
   font-display: swap;
 }

@@ -2,11 +2,14 @@
 .header {
   background-color: var(--color-celeste);
   color: var(--color-celeste);
+  height: 190px;
   padding: var(--spacing-2) 0;
   /* box-shadow: var(--shadow-md); */
   position: sticky;
   top: 0;
   z-index: 100;
+  display: flex;
+  align-items: center;
 }
 
 .headerContainer {
@@ -14,8 +17,7 @@
   justify-content: space-between;
   align-items: center;
   gap: var(--spacing-2);
-  max-width: var(--layout-max-width);
-  margin: 0 auto;
+  width: 100%;
   padding: 0 var(--layout-padding-x);
 }
 
@@ -27,8 +29,8 @@
 }
 
 .logo {
-  height: 80px;
-  width: auto;
+  width: 315px;
+  height: auto;
 }
 
 

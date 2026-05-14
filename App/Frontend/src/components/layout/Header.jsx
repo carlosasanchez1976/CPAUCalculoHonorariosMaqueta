@@ -1,5 +1,4 @@
 import UserMenu from './UserMenu';
-/*import cpauLogo from '../../assets/images/cpau.svg';*/
 import marcaLogo from '../../assets/images/logoCalculadora.svg';
 import styles from './Header.module.css';
 

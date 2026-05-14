@@ -9,6 +9,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-1);
+  width: 383px;
   background-color: var(--color-fondo);
   color: var(--color-text-no-sel);
   padding: 4px 60px 4px 20px;

@@ -1,14 +1,16 @@
 /* Estilos para el componente Footer */
 .footer {
   background-color: var(--color-gris);
+  height: 80px;
   padding: 5px 0;
   margin-top: auto;
   border-top: 1px solid var(--color-gris);
+  display: flex;
+  align-items: center;
 }
 
 .footerContainer {
-  max-width: var(--layout-max-width);
-  margin: 0 auto;
+  width: 100%;
   padding: 0 var(--layout-padding-x);
   display: flex;
   align-items: center;

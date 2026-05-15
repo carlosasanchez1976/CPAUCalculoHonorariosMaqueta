@@ -24,7 +24,7 @@
 
 /* Avenir Medium */
 @font-face {
-  font-family: 'Avenir';
+  font-family: 'Avenir Medium';
   src: url('../assets/fonts/Avenir-Medium.woff2') format('woff2'),
        url('../assets/fonts/Avenir-Medium.woff') format('woff');
   font-weight: 500;

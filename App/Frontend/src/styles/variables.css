@@ -36,7 +36,7 @@
   
   /* LAYOUT CONSISTENTE - Sistema de márgenes (TICKET-DISEÑO-001) */
   --layout-max-width: none;                     /* Sin ancho máximo - ocupar todo el ancho */
-  --layout-padding-x: 150px;                     /* 80px - Márgenes laterales fijos desktop */
+  --layout-padding-x: 150px;                     /* 150px - Márgenes laterales fijos desktop */
   --layout-padding-x-mobile: var(--spacing-2);  /* 16px - Padding horizontal mobile */
   
   /* Bordes */

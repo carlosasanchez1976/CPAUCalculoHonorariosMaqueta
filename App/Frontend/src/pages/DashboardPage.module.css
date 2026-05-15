@@ -36,7 +36,7 @@
 
 .welcomeTitle {
   font-family: 'Avenir Black', 'Avenir', sans-serif;
-  font-size: 20pt;
+  font-size: 28pt;
   color: var(--color-primary);
   margin: 0 0 var(--spacing-1) 0;
   line-height: 1.3;

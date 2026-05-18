@@ -17,11 +17,12 @@
 .headerLeft {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   background-color: var(--color-primary);
-  border-radius: 8px;
-  padding: 1rem;
-  min-width: 120px;
+  border-radius: 12px;
+  padding: 2rem;
+  min-width: 310px;
+  min-height: 155px;
 }
 
 .logo {
@@ -43,26 +44,30 @@
 }
 
 .title {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-family: 'Avenir Black', sans-serif;
+  font-size: 32px;
+  
   margin: 0;
   letter-spacing: 0.05rem;
-  
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #000000;
 }
 
 .metadata {
   display: flex;
-  gap: 2rem;
+  justify-content: space-between;
+  align-items: center;
   flex-wrap: wrap;
   font-size: 0.9375rem;
+  margin-top: 0.75rem;
 }
 
 .metadataItem {
   display: flex;
   gap: 0.5rem;
-  font-size: 1.25rem;
-  font-weight: 600;
-
+  font-family: 'Avenir Medium', sans-serif;
+  font-size: 22px;
+  font-weight: regular;
 }
 
 

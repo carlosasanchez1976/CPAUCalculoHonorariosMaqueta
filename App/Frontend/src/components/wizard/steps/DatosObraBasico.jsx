@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Input from '../../common/Input';
 import { formatCurrencyARS } from '../../../utils/formatters';
+import sharedStyles from './SharedStepStyles.module.css';
 import styles from './DatosObraBasico.module.css';
 
 /**
@@ -40,14 +41,14 @@ const DatosObraBasico = ({ formData, onChange, stepTitle }) => {
   }, [formData.superficieTotal, formData.valorMetro2, formData.valorObra, onChange]);
 
   return (
-    <div className={styles.container}>
+    <div className={sharedStyles.container}>
       <h2 className="stepTitle">{stepTitle}</h2>
 
-      <div className={styles.formGrid}>
+      <div className={sharedStyles.formGrid}>
         {/* Row 1: 2 inputs + campo calculado (3 columnas) */}
-        <div className={styles.inputRow}>
+        <div className={sharedStyles.inputRow}>
           <Input
-            label={<span className={styles.required}>*</span>}
+            label={<span className={sharedStyles.required}>*</span>}
             name="superficieTotal"
             type="number"
             value={formData.superficieTotal}
@@ -59,7 +60,7 @@ const DatosObraBasico = ({ formData, onChange, stepTitle }) => {
           />
 
           <Input
-            label={<span className={styles.required}>*</span>}
+            label={<span className={sharedStyles.required}>*</span>}
             name="valorMetro2"
             type="number"
             value={formData.valorMetro2}
@@ -72,7 +73,7 @@ const DatosObraBasico = ({ formData, onChange, stepTitle }) => {
 
           {/* Campo calculado que se ve como input */}
           <div className={styles.inputWrapper}>
-            <label className={styles.label}>
+            <label className={sharedStyles.label}>
               Costo estimado de obra (ARS)
             </label>
             <div className={styles.calculatedInput}>
@@ -89,19 +90,20 @@ const DatosObraBasico = ({ formData, onChange, stepTitle }) => {
         <div className={styles.notesRow}>
           {/* Nota columna 1 - Superficie */}
           <div className={styles.noteItem}>
-            <p>
-              <strong>NOTA:</strong> La superficie consideradora deberá definirse en función de las 
-              características específicas de la obra y de los valores de referencia disponibles, 
-              según el criterio técnico profesional, a fin de obtener la superficie total equivalente.
+            <p>NOTA: la superficie cubierta se computa al 100%; las demás
+              superficies deberán incorporarse según su condición y los
+              criterios de ponderación aplicables en cada caso, conforme al
+              criterio técnico del profesional, a fin de obtener la superficie
+              total equivalente.
             </p>
           </div>
 
           {/* Nota columna 2 - Costo m2 */}
           <div className={styles.noteItem}>
             <p>
-              <strong>NOTA:</strong> El valor considerador deberá definirse en función de las 
-              características específicas de la obra y de los valores de referencia disponibles, 
-              según el criterio técnico profesional.
+              NOTA: el valor a considerar deberá definirse en función de las
+              características específicas de la obra y de los valores de
+              referencia disponibles, según el criterio técnico del profesional.
             </p>
           </div>
 

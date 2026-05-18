@@ -110,7 +110,7 @@
   width: 140px;
   background: transparent;
 }
-
+/*
 .connectorCompleted {
   background: var(--color-primary);
 }
@@ -118,6 +118,8 @@
 .connectorPending {
   background: transparent;
 }
+*/
+
 
 /* Responsive Mobile */
 @media (max-width: 768px) {

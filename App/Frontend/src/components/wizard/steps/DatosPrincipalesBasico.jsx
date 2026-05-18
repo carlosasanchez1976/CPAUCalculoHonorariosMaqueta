@@ -1,4 +1,5 @@
 import Input from '../../common/Input';
+import sharedStyles from './SharedStepStyles.module.css';
 import styles from './DatosPrincipalesBasico.module.css';
 
 /**
@@ -7,12 +8,12 @@ import styles from './DatosPrincipalesBasico.module.css';
  */
 const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
   return (
-    <div className={styles.container}>
+    <div className={sharedStyles.container}>
       <h2 className="stepTitle">{stepTitle}</h2>
 
-      <div className={styles.formGrid}>
+      <div className={sharedStyles.formGrid}>
         {/* FILA 1: Tres campos en una fila */}
-        <div className={styles.inputRow}>
+        <div className={sharedStyles.inputRow}>
           <Input
             // label="Nombre del Proyecto"
             name="nombreProyecto"
@@ -42,11 +43,11 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
         </div>
 
         {/* FILA 2: Dos desplegables */}
-        <div className={styles.selectRow}>
+        <div className={sharedStyles.selectRow}>
           <div className={styles.selectWrapper}>
-            <label className={styles.label}>
+            <label className={sharedStyles.label}>
               Tipo de Obra
-              <span className={styles.required}>*</span>
+              <span className={sharedStyles.required}>*</span>
             </label>
             <select
               name="tipoObra"
@@ -63,9 +64,9 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
           </div>
 
           <div className={styles.selectWrapper}>
-            <label className={styles.label}>
+            <label className={sharedStyles.label}>
               Destino/Uso
-              <span className={styles.required}>*</span>
+              <span className={sharedStyles.required}>*</span>
             </label>
             <select
               name="destinoUso"
@@ -90,7 +91,7 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
         </div>
 
         {/* FILA 3: Tres campos en una fila */}
-        <div className={styles.inputRow}>
+        <div className={sharedStyles.inputRow}>
           <Input
             
             name="plazoEjecucion"
@@ -105,7 +106,7 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
 
         {/* Observaciones a todo el ancho */}
         <div className={styles.textareaWrapper}>
-          <label className={styles.label}>
+          <label className={sharedStyles.label}>
             Observaciones
           </label>
           <textarea

@@ -44,7 +44,7 @@ const ProcesoCalculoPage = () => {
     usuarioId: null,
     tareaId: tareaId || null,  // [T009.1] Valor dinámico desde location.state
     tipoCalculo: tipo || 'PYDOA',  // Valor de 'codi' desde API (ej: PYDOA, DEMO, GPYC)
-    tipoNombre: tipoNombre || 'Proyecto y Dirección de Obras de Arquitectura',
+    tipoNombre: tipoNombre ,
     descripcionTipo: descripcion || '',
     
     // Paso 0: Tarea Profesional + Datos Principales (GENÉRICO)

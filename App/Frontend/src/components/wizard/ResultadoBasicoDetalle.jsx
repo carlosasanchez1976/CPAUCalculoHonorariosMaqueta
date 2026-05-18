@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaDownload, FaSave, FaCalculator, FaHome } from 'react-icons/fa';
+import { FaDownload } from 'react-icons/fa';
 import html2pdf from 'html2pdf.js';
 import { formatCurrencyARS, formatDate, generateCalculationNumber } from '../../utils/formatters';
 import Button from '../common/Button';
@@ -105,7 +105,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
           <div className={styles.metadata}>
             <div className={styles.metadataItem}>
               <span className={styles.metadataLabel}>Tipo:</span>
-              <span className={styles.metadataValue}>Proyecto y Dirección de obras de arquitectura</span>
+              <span className={styles.metadataValue}>{formData.tipoNombre}</span>
             </div>
             <div className={styles.metadataItem}>
               <span >Fecha:</span>

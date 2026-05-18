@@ -12,10 +12,9 @@
 }
 
 .errorAlert {
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
-  border-left: 4px solid #ef4444;
-  color: var(--color-error);
+  background-color: var(--color-gris);
+  border: 1px solid var(--color-text-no-sel);
+  color: var(--color-text-no-sel);
   padding: 1rem 1.25rem;
   border-radius: 8px;
   margin-bottom: 2rem;

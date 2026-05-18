@@ -1,6 +1,6 @@
-import { FaEdit } from 'react-icons/fa';
 import { formatCurrencyARS, formatCurrencyUSD } from '../../../utils/formatters';
 import Button from '../../common/Button';
+import sharedStyles from './SharedStepStyles.module.css';
 import styles from './RevisionBasico.module.css';
 
 /**
@@ -22,7 +22,7 @@ const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={sharedStyles.container}>
       <h2 className="stepTitle">{stepTitle}</h2>
 
       <div className={styles.mainGrid}>
@@ -44,7 +44,7 @@ const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
                 <Button
                   size="small"
                   onClick={() => onEditStep(0)}
-                  icon={<FaEdit />}
+                  
                 >
                   Editar
                 </Button>
@@ -79,7 +79,7 @@ const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
                 <Button
                   size="small"
                   onClick={() => onEditStep(1)}
-                  icon={<FaEdit />}
+                  
                 >
                   Editar
                 </Button>
@@ -147,7 +147,6 @@ const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
                 <Button
                   size="small"
                   onClick={() => onEditStep(2)}
-                  icon={<FaEdit />}
                 >
                   Editar
                 </Button>

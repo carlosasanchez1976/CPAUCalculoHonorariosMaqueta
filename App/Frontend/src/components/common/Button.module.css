@@ -4,14 +4,15 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-1);
-  padding: 12px 24px;
+  padding: 6px 24px;
   font-size: var(--font-size-base);
-  font-weight: 500;
+  font-weight: bold;
   border-radius: var(--radius-md);
   transition: all var(--transition);
   cursor: pointer;
   border: none;
   outline: none;
+  max-height: 50px;
   min-width: 120px;
 }
 
@@ -26,11 +27,6 @@
   color: var(--color-white);
 }
 
-.primary:hover:not(:disabled) {
-  background-color: #4A25B8;  /* Morado oscuro */
-  /* box-shadow: var(--shadow-md); */
-  transform: translateY(-1px);
-}
 
 .primary:active:not(:disabled) {
   transform: translateY(0);
@@ -41,11 +37,6 @@
   color: var(--color-celeste);
 }
 
-.secondary:hover:not(:disabled) {
-  background-color: #7CC5C9;  /* Turquesa oscuro */
-  /* box-shadow: var(--shadow-md); */
-  transform: translateY(-1px);
-}
 
 .secondary:active:not(:disabled) {
   transform: translateY(0);

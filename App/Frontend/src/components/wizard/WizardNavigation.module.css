@@ -51,9 +51,6 @@
 
 }
 
-.prevButton:hover:not(:disabled) {
-  transform: translateY(-1px);
-}
 
 .prevButton:disabled {
   opacity: 0.4;
@@ -67,11 +64,6 @@
   
 }
 
-.nextButton:hover {
-  
-  transform: translateY(-2px);
-  
-}
 
 .nextButton:active {
   transform: translateY(0);

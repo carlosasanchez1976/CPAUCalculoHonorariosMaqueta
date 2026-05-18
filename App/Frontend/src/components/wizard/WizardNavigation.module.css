@@ -12,15 +12,20 @@
 }
 
 .buttonGroup {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
+  padding: 0 var(--layout-padding-x);
   gap: 16px;
+  min-height: 124px;
 }
 
 .centerButtons {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   gap: 12px;
   align-items: center;

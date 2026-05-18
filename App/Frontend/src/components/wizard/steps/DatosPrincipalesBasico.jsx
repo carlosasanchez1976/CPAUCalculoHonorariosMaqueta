@@ -57,8 +57,8 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
               <option value="">Seleccioná...</option>
               <option value="Nueva">Nueva</option>
               <option value="Remodelación">Remodelación</option>
-              <option value="Ampliación">Ampliación</option>
-              <option value="Remodelación y ampliación">Remodelación y ampliación</option>
+              {/* <option value="Ampliación">Ampliación</option> */}
+              {/* <option value="Remodelación y ampliación">Remodelación y ampliación</option> */}
             </select>
           </div>
 
@@ -95,6 +95,7 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
             
             name="plazoEjecucion"
             value={formData.plazoEjecucion}
+            type="number"
             onChange={onChange}
             placeholder="Plazo estimado de ejecución *"
             required

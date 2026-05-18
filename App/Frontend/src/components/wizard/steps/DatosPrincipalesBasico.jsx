@@ -89,6 +89,19 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
           </div>
         </div>
 
+        {/* FILA 3: Tres campos en una fila */}
+        <div className={styles.inputRow}>
+          <Input
+            
+            name="plazoEjecucion"
+            value={formData.plazoEjecucion}
+            onChange={onChange}
+            placeholder="Plazo estimado de ejecución *"
+            required
+          />
+
+        </div>
+
         {/* Observaciones a todo el ancho */}
         <div className={styles.textareaWrapper}>
           <label className={styles.label}>

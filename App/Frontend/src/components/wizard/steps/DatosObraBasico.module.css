@@ -14,7 +14,7 @@
 .inputRow {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: rem;
   align-items: start;
 }
 

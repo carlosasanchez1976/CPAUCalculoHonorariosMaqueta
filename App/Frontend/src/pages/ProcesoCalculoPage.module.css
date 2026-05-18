@@ -7,12 +7,13 @@
 
 .wizardHeader {
   width: 100%;
-  padding: 6px 0;
+  padding: 52px 0 52px 0;
 }
 
 .wizardTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-family: 'Avenir Black', sans-serif;
+  font-size: 2.25rem;
+  
   text-align: left !important;
   color: var(--color-text-no-sel);
   width: 100%;
@@ -22,7 +23,7 @@
 
 .main {
   flex: 1;
-  padding: var(--spacing-1) 0;
+  padding: 0;
 }
 
 .content {

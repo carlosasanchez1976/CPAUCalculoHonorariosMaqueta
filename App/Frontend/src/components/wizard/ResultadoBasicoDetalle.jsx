@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaDownload } from 'react-icons/fa';
+
 import html2pdf from 'html2pdf.js';
 import { formatCurrencyARS, formatDate, generateCalculationNumber } from '../../utils/formatters';
 import Button from '../common/Button';
@@ -258,7 +258,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                           className={styles.downloadButton}
                           disabled={!termsAccepted}
                           onClick={handleDescargarPDF}
-                          icon={<FaDownload />}
+                          
                         >
                           Descargar PDF
                         </Button>

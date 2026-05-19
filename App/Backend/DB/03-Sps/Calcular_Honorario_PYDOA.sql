@@ -18,7 +18,13 @@ DROP PROCEDURE IF EXISTS Calcular_Honorario_PYDOA$$
  * 4. Instalaciones y Estructuras: aplica arrastre progresivo entre rangos
  * 5. Genera ítems separados para coef_obra y coef_k cuando corresponda
  * 6. Aplica coeficiente K solo en el rango final
- * 
+ * 7. Debe agregar adicional en el caso de tipología de obra = 'Remodelación'
+ *
+ ******************************************************************************
+ * MODIFICACIONES:
+ * - 2026-05-19: Se agrega adicionales para 'Remodelación' (CPAU)
+ ******************************************************************************
+ * PARAMETROS:
  * @param p_calculo_id INT - ID del cálculo en tabla Calculos
  */
 CREATE PROCEDURE Calcular_Honorario_PYDOA(
@@ -32,6 +38,7 @@ BEGIN
   
   -- Datos del cálculo
   DECLARE v_valor_obra DECIMAL(15,2);
+  DECLARE v_obra_tipologia VARCHAR(50);
   DECLARE v_tarea_obra_proyecto BOOLEAN;
   DECLARE v_tarea_obra_direccion BOOLEAN;
   DECLARE v_tarea_instalacion_sanitaria BOOLEAN;
@@ -67,6 +74,7 @@ BEGIN
   -- Coeficientes según rango
   DECLARE v_coef_obra DECIMAL(6,5);
   DECLARE v_coef_k DECIMAL(6,5);
+  DECLARE v_coef_remodelacion DECIMAL(6,5);
   
   -- Variables de cálculo de ítems
   DECLARE v_item_numero INT DEFAULT 0;
@@ -84,6 +92,7 @@ BEGIN
   
   SELECT 
     obra_valor_obra,
+    obra_tipologia,
     tarea_obra_proyecto,
     tarea_obra_direccion,
     tarea_instalacion_sanitaria,
@@ -93,6 +102,7 @@ BEGIN
     tarea_proyecto_estructuras
   INTO
     v_valor_obra,
+    v_obra_tipologia,
     v_tarea_obra_proyecto,
     v_tarea_obra_direccion,
     v_tarea_instalacion_sanitaria,
@@ -161,19 +171,26 @@ BEGIN
   -- -----------------------------------------------------------------------
   
   -- Obtener coeficientes del rango donde cae la obra
+  -- Se agrega coeficiente para Remodelación
+
+
 CASE v_rango_final_numero
   WHEN 1 THEN -- Rango A
 	SET v_coef_obra = 0.14;
 	SET v_coef_k = 0;
+  SET v_coef_remodelacion = 0.4; -- Adicional para remodelación
   WHEN 2 THEN -- Rango B
 	SET v_coef_obra = 0.08;
 	SET v_coef_k = 0.03;
+  SET v_coef_remodelacion = 0.3; -- Adicional para remodelación
   WHEN 3 THEN -- Rango C
 	SET v_coef_obra = 0.03;
 	SET v_coef_k = 0.13;
+  SET v_coef_remodelacion = 0.25; -- Adicional para remodelación
   WHEN 4 THEN -- Rango D
 	SET v_coef_obra = 0.02;
 	SET v_coef_k = 0.4;
+  SET v_coef_remodelacion = 0.2; -- Adicional para remodelación
 END CASE;
 
   
@@ -192,6 +209,19 @@ END CASE;
       CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
       
       SET v_total_honorarios = v_total_honorarios + v_importe_item;
+
+      if v_obra_tipologia = 'Remodelación' THEN
+        -- Agregar ítem adicional por remodelación
+        SET v_item_numero = v_item_numero + 1;
+        SET v_importe_item = ROUND(v_coef_remodelacion * v_importe_item);
+        SET v_descripcion = CONCAT('Adicional por Remodelación Art. 3.18 (coef ', CAST((v_coef_remodelacion * 100) AS CHAR), '%)');
+        
+        CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+        
+        SET v_total_honorarios = v_total_honorarios + v_importe_item;
+      END IF;
+
+
     END IF;
     
     -- Ítem por coeficiente K
@@ -224,6 +254,18 @@ END CASE;
       CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
       
       SET v_total_honorarios = v_total_honorarios + v_importe_item;
+
+      if v_obra_tipologia = 'Remodelación' THEN
+        -- Agregar ítem adicional por remodelación
+        SET v_item_numero = v_item_numero + 1;
+        SET v_importe_item = ROUND(v_coef_remodelacion * v_importe_item);
+        SET v_descripcion = CONCAT('Adicional por Remodelación Art. 3.18 (coef ', CAST((v_coef_remodelacion * 100) AS CHAR), '%)');
+        
+        CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+        
+        SET v_total_honorarios = v_total_honorarios + v_importe_item;
+      END IF;
+
     END IF;
     
     -- Ítem por coeficiente K

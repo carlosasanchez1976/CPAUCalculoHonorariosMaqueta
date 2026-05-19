@@ -244,7 +244,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
             </label>
           </div>
 
-              <div className={styles.tableContainer}>
+              <div className={styles.footerContainer}>
                 <table className={styles.table}>
                   <tfoot>
                     <tr className={styles.table}>

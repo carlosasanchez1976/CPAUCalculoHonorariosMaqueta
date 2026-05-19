@@ -398,6 +398,15 @@
   height: auto;
 }
 
+/* Contenedor para tabla de footer sin bordes */
+.footerContainer {
+  overflow-x: auto;
+}
+
+.footerContainer .table td {
+  border-bottom: none;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .certificateHeader {

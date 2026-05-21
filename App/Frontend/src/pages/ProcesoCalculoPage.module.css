@@ -46,7 +46,11 @@
 
 .formGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* SPEC007 Ticket #005: minmax(0, 1fr) permite que las columnas se
+     compriman sin desbordar el formContainer en escalas Windows
+     125%/150%. Sin esto, contenido natural (selects con etiquetas
+     largas) podía forzar overflow horizontal. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
 

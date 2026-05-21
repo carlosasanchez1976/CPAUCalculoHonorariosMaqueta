@@ -34,9 +34,11 @@
   --spacing-4: clamp(24px, 2vw, 32px);
   --spacing-5: clamp(32px, 2.5vw, 40px);
   
-  /* LAYOUT CONSISTENTE - Sistema de márgenes (TICKET-DISEÑO-001) */
+  /* LAYOUT CONSISTENTE - Sistema de márgenes (TICKET-DISEÑO-001 + SPEC-FRONTEND-004 Ticket #001)
+     Base 150px (escala Windows 100% = diseño aprobado del cliente).
+     Las media queries por escala (125% y 150%) se aplican en Ticket #002. */
   --layout-max-width: none;                     /* Sin ancho máximo - ocupar todo el ancho */
-  --layout-padding-x: clamp(32px, 4.5vw, 150px); /* Balance: márgenes visibles + contenido escalable */
+  --layout-padding-x: 150px;                    /* Margen lateral base - diseño original aprobado */
   --layout-padding-x-mobile: var(--spacing-2);  /* 16px - Padding horizontal mobile */
   
   /* Bordes */
@@ -51,6 +53,31 @@
   
   /* Transiciones */
   --transition: 300ms ease;
+}
+
+/* ============================================================================
+   SPEC-FRONTEND-004 Ticket #002 - Márgenes adaptativos por escala de Windows
+   ----------------------------------------------------------------------------
+   La escala de Windows (DPI Scaling) reduce el viewport CSS efectivo:
+   - Escala 100% → 1920px → margen 150px (diseño aprobado del cliente)
+   - Escala 125% → 1536px → margen 100px (reducción 33%)
+   - Escala 150% → 1280px → margen  70px (reducción 53%)
+   El override de mobile (max-width: 768px) se mantiene más abajo y prevalece
+   sobre estas reglas por orden de cascada + especificidad.
+   ============================================================================ */
+
+/* Escala de Windows 125% (DPR 1.25) */
+@media (min-resolution: 1.25dppx) {
+  :root {
+    --layout-padding-x: 100px;
+  }
+}
+
+/* Escala de Windows 150% (DPR 1.5) */
+@media (min-resolution: 1.5dppx) {
+  :root {
+    --layout-padding-x: 70px;
+  }
 }
 
 /* Reset y estilos base */

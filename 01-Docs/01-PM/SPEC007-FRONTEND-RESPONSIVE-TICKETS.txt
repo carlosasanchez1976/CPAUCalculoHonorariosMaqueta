@@ -22,7 +22,7 @@ ESTRATEGIA:
 - Mantener variables de fuente y spacing con clamp() (escalan suavemente)
 
 ================================================================================
-TICKET #001 ⏳ PENDIENTE
+TICKET #001 ✅ COMPLETADO (21/05/2026)
 ================================================================================
 TÍTULO: Revertir cambios globales en variables.css
 
@@ -63,7 +63,7 @@ CRITERIO DE ACEPTACIÓN:
 ✅ No hay regresiones en otras páginas
 
 ================================================================================
-TICKET #002 ⏳ PENDIENTE
+TICKET #002 ✅ COMPLETADO (21/05/2026)
 ================================================================================
 TÍTULO: Implementar media queries por escala en variables.css
 
@@ -108,12 +108,13 @@ CRITERIO DE ACEPTACIÓN:
 ✅ Recargar página con Ctrl+Shift+R aplica los cambios
 
 ================================================================================
-TICKET #003 ⏳ PENDIENTE
+TICKET #003 ✅ COMPLETADO (21/05/2026)
 ================================================================================
 TÍTULO: Corregir grid responsive en NuevoCalculoPage
 
 PRIORIDAD: 🔴 ALTA
 TIEMPO ESTIMADO: 45 minutos
+TIEMPO REAL: ~90 minutos (incluye 3 subtareas detectadas durante testing)
 DEPENDENCIAS: Ticket #002
 
 DESCRIPCIÓN:
@@ -122,50 +123,221 @@ no permite que las columnas se compriman. Cambiar a minmax(0, 1fr).
 
 ARCHIVOS AFECTADOS:
 - App/Frontend/src/pages/NuevoCalculoPage.module.css
+- App/Frontend/src/components/common/CalculationTypeCard.module.css (agregado)
+
+CAMBIOS APLICADOS:
+
+[1] .cardsGrid base:
+    ANTES:  grid-template-columns: repeat(4, 1fr);
+    DESPUÉS: grid-template-columns: repeat(4, minmax(0, 1fr));
+
+[2] .cardsGrid (1025-1280px):
+    ANTES:  grid-template-columns: repeat(4, 1fr);
+    DESPUÉS: grid-template-columns: repeat(4, minmax(0, 1fr));
+
+[3] Media queries por resolución (nuevas):
+    @media (min-resolution: 1.25dppx) { .cardsGrid { gap: 20px; } }
+    @media (min-resolution: 1.5dppx)  { .cardsGrid { gap: 16px; } }
+
+================================================================================
+SUBTAREAS ADICIONALES (Detectadas durante testing visual)
+================================================================================
+
+--------------------------------------------------------------------------------
+SUBTAREA #003.1 ✅ - Eliminar min-width fijo en CalculationTypeCard
+--------------------------------------------------------------------------------
+
+PROBLEMA DETECTADO:
+Tras aplicar minmax(0, 1fr) al grid, las cards continuaban solapándose en
+escala 125%. El min-width fijo de la card prevalecía sobre el grid.
+
+CAUSA RAÍZ:
+.card tenía min-width: 382px, generando overflow de ~252px en escala 125%.
+
+CÁLCULO DEL PROBLEMA:
+  4 cards × 382px = 1528px (mínimo forzado)
+  + 3 gaps × 20px = 60px
+  = 1588px requeridos
+  Vs. 1336px disponibles → overflow 252px
+
+ARCHIVO: App/Frontend/src/components/common/CalculationTypeCard.module.css
+
+CAMBIO:
+  ANTES:  min-width: 382px;
+  DESPUÉS: min-width: 0;
+
+RESULTADO: Cards se comprimen correctamente con el grid en todas las escalas.
+
+--------------------------------------------------------------------------------
+SUBTAREA #003.2 ✅ - Reposicionar badge "EN CONSTRUCCIÓN" con position absolute
+--------------------------------------------------------------------------------
+
+PROBLEMA DETECTADO:
+El badge "EN CONSTRUCCIÓN" desbordaba ~25px hacia la derecha de la card en
+escala 125%, solapándose con la card vecina.
+
+CAUSA RAÍZ:
+El badge competía por espacio con el icono dentro del .headerRow (flex) con
+flex-shrink: 0, generando overflow del contenedor.
+
+CÁLCULO DEL PROBLEMA:
+  icon (78px) + gap (12px) + badge (206px) = 296px requeridos
+  Vs. ~271px disponibles en card comprimida → overflow 25px
+
+INTENTO PREVIO FALLIDO:
+Agregar flex-wrap: wrap al .headerRow hizo que el badge cayera debajo del
+icono, rompiendo el diseño aprobado por el cliente.
+
+ARCHIVO: App/Frontend/src/components/common/CalculationTypeCard.module.css
+
+CAMBIOS:
+  [a] .card:
+        + position: relative;  (referencia para el badge)
+
+  [b] .headerRow:
+        + min-width: 0;
+        - flex-wrap: wrap;  (revertido tras intento fallido)
+
+  [c] .badge:
+        + position: absolute;
+        + top: var(--spacing-3);
+        + right: var(--spacing-3);
+        + z-index: 1;
+        - flex-shrink: 0;  (ya no aplica fuera del flex)
+        - width: 100%;
+        - max-height: 40px;
+        - height: 100%;
+
+RESULTADO: Badge siempre visible en esquina superior derecha, independiente
+del ancho de la card. Coincide con el diseño aprobado del cliente.
+
+--------------------------------------------------------------------------------
+SUBTAREA #003.3 ✅ - Reducir tamaño visual del badge
+--------------------------------------------------------------------------------
+
+PROBLEMA DETECTADO:
+Tras reposicionar el badge, se veía exageradamente grande comparado con el
+diseño original aprobado por el cliente.
+
+COMPARATIVA CON DISEÑO:
+  Propiedad       | Antes        | Después      | Diseño
+  ---------------+--------------+--------------+----------
+  font-size      | 17px         | 12px         | ~12px
+  padding        | 8px 14px     | 5px 10px     | ~5px 10px
+  border-radius  | --radius-lg  | --radius-md  | 8px
+                   (12px)         (8px)
+
+ARCHIVO: App/Frontend/src/components/common/CalculationTypeCard.module.css
+
+CAMBIO:
+  .badge {
+    font-size: 12px;          /* antes: 17px */
+    padding: 5px 10px;         /* antes: 8px 14px */
+    border-radius: var(--radius-md);  /* antes: --radius-lg */
+    /* eliminados: max-width: 206px, width: 100%, max-height: 40px */
+  }
+
+RESULTADO: Badge compacto, alineado con el diseño aprobado del cliente.
+
+--------------------------------------------------------------------------------
+SUBTAREA #003.4 ✅ - Eliminar max-width: 1400px del .cardsGrid
+--------------------------------------------------------------------------------
+
+PROBLEMA DETECTADO (escala 100%):
+Las cards no respetaban los márgenes laterales definidos por
+--layout-padding-x. El grid quedaba visualmente desalineado respecto al
+header de la página ("Nuevo cálculo de honorarios").
+
+CAUSA RAÍZ:
+El selector .cardsGrid tenía max-width: 1400px + margin: 0 auto, estilo
+ÚNICO de esta página (no replicado en DashboardPage, ProcesoCalculoPage,
+etc.). En viewports con content > 1400px, el grid se autocentraba dentro
+de .content y quedaba más estrecho que el header, generando dos cajas de
+layout distintas.
+
+ANÁLISIS COMPARATIVO:
+- Otras páginas: usan solo padding: 0 var(--layout-padding-x)
+                 → todo el contenido alineado a un único ancho.
+- NuevoCalculoPage: aplicaba doble restricción (padding del contenedor +
+                    max-width interno del grid) → desalineación.
+
+ARCHIVO: App/Frontend/src/pages/NuevoCalculoPage.module.css
+
+CAMBIO en .cardsGrid (base):
+  ANTES:
+    max-width: 1400px;
+    margin: 0 auto;
+    justify-content: center;
+  DESPUÉS:
+    width: 100%;
+    (eliminados los 3 anteriores)
+
+CAMBIO en .cardsGrid @media (1025-1280px):
+  ANTES:  max-width: 1200px;
+  DESPUÉS: (eliminado)
+
+RESULTADO: El grid llena el ancho completo de .content, alineado con el
+header y consistente con las demás páginas de la app.
+
+--------------------------------------------------------------------------------
+SUBTAREA #003.5 ✅ - Tipografía escalable y liberación del titleBox
+--------------------------------------------------------------------------------
+
+PROBLEMA DETECTADO (escala 100%):
+El título "Proyecto y dirección de obras de arquitectura" se desbordaba
+del contenedor blanco interior (.titleBox) de la card.
+
+CAUSA RAÍZ (doble):
+[a] .title usaba font-size: 24px FIJO, ignorando el sistema escalable de
+    variables (--font-size-xl con clamp).
+[b] .titleBox tenía max-width: 322px y max-height: 97px FIJOS, recortando
+    títulos largos al comprimirse la card.
+
+ARCHIVO: App/Frontend/src/components/common/CalculationTypeCard.module.css
 
 CAMBIOS:
 
-ANTES:
-  .cardsGrid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
+[1] .title:
+    ANTES:  font-size: 24px;
+    DESPUÉS: font-size: var(--font-size-xl);
+            /* clamp(1.25rem, 1.2vw + 0.8rem, 1.5rem) */
 
-DESPUÉS:
-  .cardsGrid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 24px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
+[2] .titleBox:
+    ANTES:
+      max-width: 322px;
+      width: 100%;
+      max-height: 97px;
+      height: 100%;
+    DESPUÉS:
+      width: 100%;
+      (eliminados max-width, max-height, height)
 
-  /* Reducir gap en escalas altas */
-  @media (min-resolution: 1.25dppx) {
-    .cardsGrid {
-      gap: 20px;
-    }
-  }
+RESULTADO: El título escala con el viewport y el contenedor se adapta al
+ancho real de la card; títulos largos visibles completos sin recortes.
 
-  @media (min-resolution: 1.5dppx) {
-    .cardsGrid {
-      gap: 16px;
-    }
-  }
+================================================================================
+CRITERIO DE ACEPTACIÓN (Estado Final)
+================================================================================
+✅ Escala 100%: 4 cards alineadas con header (subtarea #003.4), sin overflow,
+   badge correcto, títulos visibles sin desborde (subtarea #003.5)
+✅ Escala 125%: 4 cards visibles sin solapamiento, badge dentro de cada card
+⏳ Escala 150%: Pendiente de validación por Charly
 
-PRUEBAS:
-- Verificar 4 cards completas en escala 100%
-- Verificar 4 cards completas en escala 125%
-- Si en escala 150% no caben 4 cards: cambiar a 3 columnas (decisión de diseño)
+LECCIONES APRENDIDAS:
+- Un grid con minmax(0, 1fr) NO es suficiente si los items tienen min-width fijo
+- Elementos con flex-shrink: 0 dentro de contenedores que se comprimen causan
+  overflow, no shrinking
+- Para badges/etiquetas en esquinas: position: absolute es más robusto que flex
+- Un max-width interno + autocenter (margin: 0 auto) en una sección rompe la
+  alineación con otras secciones del mismo contenedor que NO tienen ese
+  max-width → evitar restricciones de ancho duplicadas dentro de la misma
+  página (#003.4)
+- Tamaños fijos en px (font-size, max-width, max-height) impiden la
+  responsividad cuando los contenedores se comprimen → preferir variables
+  con clamp() y dejar que los contenedores fluyan al ancho disponible (#003.5)
+- Siempre validar visualmente en las 3 escalas; los cálculos teóricos no
+  capturan problemas de elementos internos (badge, padding, etc.)
 
-CRITERIO DE ACEPTACIÓN:
-✅ Escala 100%: 4 cards alineadas con márgenes del header
-✅ Escala 125%: 4 cards visibles sin overflow
-✅ Escala 150%: 4 cards visibles (o reorganizadas si es necesario)
-✅ Cards no se desbordan del contenedor padre
 
 ================================================================================
 TICKET #004 ⏳ PENDIENTE

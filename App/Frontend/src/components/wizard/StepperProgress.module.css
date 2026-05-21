@@ -188,3 +188,38 @@
     min-width: 25px;
   }
 }
+
+/* SPEC007 Ticket #005 - Escala Windows 125%: reducir ancho de pasos y
+   conectores para que el stepper completo entre sin overflow horizontal
+   dentro de los márgenes laterales reducidos (--layout-padding-x: 100px). */
+@media (min-resolution: 1.25dppx) {
+  .stepItem {
+    width: 120px;
+  }
+  .connector {
+    width: 120px;
+  }
+  .stepLabel {
+    max-width: 120px;
+  }
+}
+
+/* SPEC007 Ticket #005 - Escala Windows 150%: reducción adicional para
+   evitar overflow del stepper en viewports comprimidos (~1140px de
+   contenido útil con 5 pasos + 4 conectores). */
+@media (min-resolution: 1.5dppx) {
+  .stepItem {
+    width: 100px;
+  }
+  .connector {
+    width: 100px;
+  }
+  .stepLabel {
+    max-width: 100px;
+    font-size: 0.813rem;
+  }
+  .stepCircle {
+    width: 70px;
+    height: 60px;
+  }
+}

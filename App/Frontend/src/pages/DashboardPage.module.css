@@ -21,7 +21,11 @@
 /* Layout de 2 columnas */
 .twoColumnLayout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* SPEC007 Ticket #004: minmax(0, 1fr) permite que cada columna se
+     comprima sin desbordar la fila en escalas Windows 125%/150%.
+     Sin esto, el contenido natural (título 28pt + card 430px) podía
+     forzar overflow horizontal de la grilla. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--spacing-2);
   align-items: center;
   
@@ -51,7 +55,11 @@
 
 /* Dimensiones específicas de la card */
 .cardSection > * {
-  width: 430px;
+  /* SPEC007 Ticket #004: width: min(430px, 100%) previene overflow
+     cuando la columna del grid se comprime en escalas Windows 125%/150%.
+     El valor previo (width: 430px) forzaba el ancho fijo y generaba
+     desborde horizontal de la card en viewports comprimidos. */
+  width: min(430px, 100%);
   max-width: 430px;
 }
 

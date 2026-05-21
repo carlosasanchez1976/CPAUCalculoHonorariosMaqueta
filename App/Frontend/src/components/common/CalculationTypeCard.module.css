@@ -11,10 +11,15 @@
   align-items: stretch;
   text-align: left;
   gap: var(--spacing-2);
-  min-width: 382px;
+  /* SPEC-FRONTEND-004 Ticket #003: min-width: 0 permite que el grid (minmax(0, 1fr))
+     comprima la card en escalas Windows 125%/150% sin generar solapamiento.
+     El min-width fijo anterior (382px) causaba overflow de ~252px en escala 125%. */
+  min-width: 0;
   width: 100%;
   min-height: 450px;
   height: 100%;
+  /* Referencia para posicionamiento absoluto del badge "EN CONSTRUCCIÓN" */
+  position: relative;
 }
 
 /* Hover: solo cambio de color de texto (sin movimiento) */
@@ -35,6 +40,9 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
+  /* SPEC-FRONTEND-004 Ticket #003: permite que el contenido se comprima
+     sin desbordar la card en escalas Windows 125%/150% */
+  min-width: 0;
 }
 
 .iconWrapper {
@@ -63,15 +71,16 @@
 .description {
   flex: 1;
   font-family: 'Avenir Roman', 'Avenir', sans-serif;
-  /*font-size: 0.875rem;*/
-  font-size: 18px;
+  /* SPEC007 Ajuste: tamaño base 16px (escala 100%) y reducido a 14px en
+     escalas Windows 125%/150% (ver media queries al final del archivo).
+     Se eliminó el line-clamp porque la card tiene suficiente espacio
+     vertical y la fuente reducida permite mostrar la descripción completa. */
+  font-size: 16px;
+  line-height: 1.35;
   font-weight: normal;
   color: var(--color-text-no-sel);
   margin: 0;
-  display: flex;
-  align-items: flex-start;
   text-align: left;
-  justify-content: flex-start;
   padding: 8px;
   transition: color 0.2s ease;
 }
@@ -82,23 +91,39 @@
   padding: 12px 16px;
   margin-top: auto;
   text-align: left;
-  max-width: 322px;
+  /* SPEC007 Ajuste: altura fija para que la caja del título tenga
+     siempre el mismo tamaño y posición en todas las cards,
+     independientemente del largo del título (1 a 3 líneas).
+     Título alineado arriba a la izquierda según diseño original. */
   width: 100%;
-  max-height: 97px;
-  height: 100%;
+  min-height: 72px;
+  height: 72px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: flex-start;
+  box-sizing: border-box;
 }
 
 .title {
   font-family: 'Avenir Black', 'Avenir', sans-serif;
-  font-size: 24px;
+  /* SPEC007 Ajuste: tipografía reducida ~33% respecto a --font-size-xl
+     (clamp 20-24px) para que el título entre en máximo 2 líneas dentro
+     de la caja blanca en cualquier escala Windows (100/125/150%). */
+  font-size: clamp(0.875rem, 0.5vw + 0.6rem, 1rem);
   /*font-weight: 700;*/
   color: var(--color-text-no-sel);
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.2;
   align-self: flex-start;
+  text-align: left;
   transition: color var(--transition);
+  /* SPEC007 Ajuste: limitar título a 2 líneas para mantener consistencia
+     dentro de la caja blanca de altura fija. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Estilos para cards no vigentes (en construcción) */
@@ -135,19 +160,19 @@
   font-family: 'Avenir Medium', 'Avenir', sans-serif;
   background: var(--color-primary);
   color: var(--color-white);
-  padding: 8px 14px;
-  border-radius: var(--radius-lg);
-  font-size: 17px;
-  max-width: 206px;
-  width: 100%;
-  max-height: 40px;
-  height: 100%;
-  /*font-weight: 700;*/
+  padding: 5px 10px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  /* SPEC-FRONTEND-004 Ticket #003: posición absoluta para mantener el badge
+     en la esquina superior derecha en todas las escalas Windows, sin
+     desplazar el icono ni ser empujado fuera de la card por overflow del header. */
+  position: absolute;
+  top: var(--spacing-3);
+  right: var(--spacing-3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  /* box-shadow: 0 2px 6px rgba(52, 0, 255, 0.3); */
-  flex-shrink: 0;
-  align-self: flex-start;
+  white-space: nowrap;
+  z-index: 1;
 }
 
 /* Responsive Mobile */
@@ -165,11 +190,11 @@
   }
 
   .title {
-    font-size: 1.25rem;
+    font-size: 0.875rem;
   }
 
   .description {
-    font-size: 0.938rem;
+    font-size: 13px;
   }
 }
 
@@ -187,6 +212,21 @@
   }
 
   .title {
-    font-size: 1.375rem;
+    font-size: 0.938rem;
+  }
+}
+
+/* SPEC007 - Escala de Windows 125%: reducir descripción para evitar
+   percepción de tamaño excesivo (el SO ya escala el viewport). */
+@media (min-resolution: 1.25dppx) {
+  .description {
+    font-size: 14px;
+  }
+}
+
+/* SPEC007 - Escala de Windows 150%: reducción adicional. */
+@media (min-resolution: 1.5dppx) {
+  .description {
+    font-size: 13px;
   }
 }

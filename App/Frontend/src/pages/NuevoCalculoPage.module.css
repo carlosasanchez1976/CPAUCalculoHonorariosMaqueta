@@ -65,12 +65,16 @@
 
 .cardsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* SPEC-FRONTEND-004 Ticket #003: minmax(0, 1fr) permite que las columnas
+     se compriman sin generar overflow en escalas Windows 125%/150% */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-auto-rows: 1fr;
   gap: 24px;
-  max-width: 1400px;
-  margin: 0 auto;
-  justify-content: center;
+  /* SPEC-FRONTEND-004 Ticket #003.4: el grid debe usar el ancho completo
+     de .content (definido por --layout-padding-x) para alinearse con el
+     header de la página. El max-width: 1400px previo lo centraba dentro
+     de .content generando desalineación visual con el título superior. */
+  width: 100%;
   align-items: stretch;
 }
 
@@ -119,8 +123,21 @@
 /* Responsive Desktop pequeño */
 @media (min-width: 1025px) and (max-width: 1280px) {
   .cardsGrid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 22px;
-    max-width: 1200px;
+  }
+}
+
+/* SPEC-FRONTEND-004 Ticket #003 - Reducción de gap en escalas Windows altas
+   Da más espacio interno a las cards cuando el viewport efectivo es menor. */
+@media (min-resolution: 1.25dppx) {
+  .cardsGrid {
+    gap: 20px;
+  }
+}
+
+@media (min-resolution: 1.5dppx) {
+  .cardsGrid {
+    gap: 16px;
   }
 }

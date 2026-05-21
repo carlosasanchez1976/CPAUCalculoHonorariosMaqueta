@@ -19,24 +19,24 @@
   --color-text-no-sel: #000000;        /* Texto no seleccionado */
   
   
-  /* Tipografía */
+  /* Tipografía - Escalable con viewport */
   --font-family: 'Avenir';
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.5rem;
-  --font-size-2xl: 2rem;
+  --font-size-sm: clamp(0.75rem, 0.8vw + 0.5rem, 0.875rem);
+  --font-size-base: clamp(0.875rem, 0.9vw + 0.6rem, 1rem);
+  --font-size-lg: clamp(1rem, 1vw + 0.65rem, 1.125rem);
+  --font-size-xl: clamp(1.25rem, 1.2vw + 0.8rem, 1.5rem);
+  --font-size-2xl: clamp(1.5rem, 1.5vw + 1rem, 2rem);
   
-  /* Espaciado (sistema 8px) */
-  --spacing-1: 8px;
-  --spacing-2: 16px;
-  --spacing-3: 24px;
-  --spacing-4: 32px;
-  --spacing-5: 40px;
+  /* Espaciado (sistema 8px) - Escalable */
+  --spacing-1: clamp(6px, 0.5vw, 8px);
+  --spacing-2: clamp(12px, 1vw, 16px);
+  --spacing-3: clamp(18px, 1.5vw, 24px);
+  --spacing-4: clamp(24px, 2vw, 32px);
+  --spacing-5: clamp(32px, 2.5vw, 40px);
   
   /* LAYOUT CONSISTENTE - Sistema de márgenes (TICKET-DISEÑO-001) */
   --layout-max-width: none;                     /* Sin ancho máximo - ocupar todo el ancho */
-  --layout-padding-x: 150px;                     /* 150px - Márgenes laterales fijos desktop */
+  --layout-padding-x: clamp(32px, 4.5vw, 150px); /* Balance: márgenes visibles + contenido escalable */
   --layout-padding-x-mobile: var(--spacing-2);  /* 16px - Padding horizontal mobile */
   
   /* Bordes */

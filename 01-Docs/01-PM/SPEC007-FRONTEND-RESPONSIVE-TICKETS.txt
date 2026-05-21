@@ -1,0 +1,414 @@
+================================================================================
+TICKETS DERIVADOS DE SPEC-FRONTEND-004
+================================================================================
+SPEC: Responsive Design para Escalas de Windows
+Fecha: 21/05/2026
+Versión: 1.0
+Estado: 📋 EN ANÁLISIS
+================================================================================
+
+CONTEXTO:
+La aplicación fue diseñada en escala 100% (1920x1080). Al cambiar la escala de
+Windows a 125% o 150%, se producen desbordes y desalineaciones visuales.
+
+OBJETIVO:
+Implementar márgenes adaptativos por escala de Windows que preserven el diseño
+original en 100% y mantengan márgenes visibles en 125% y 150%.
+
+ESTRATEGIA:
+- Mantener variable --layout-padding-x: 150px como base (escala 100%)
+- Usar @media (min-resolution: 1.25dppx) para escala 125%
+- Usar @media (min-resolution: 1.5dppx) para escala 150%
+- Mantener variables de fuente y spacing con clamp() (escalan suavemente)
+
+================================================================================
+TICKET #001 ⏳ PENDIENTE
+================================================================================
+TÍTULO: Revertir cambios globales en variables.css
+
+PRIORIDAD: 🔴 ALTA
+TIEMPO ESTIMADO: 15 minutos
+
+DESCRIPCIÓN:
+Restaurar el valor fijo de --layout-padding-x a 150px (estado original).
+Mantener las variables de fuente y spacing con clamp() (ya están bien).
+
+ARCHIVOS AFECTADOS:
+- App/Frontend/src/styles/variables.css
+
+CAMBIOS:
+ANTES (incorrecto):
+  --layout-padding-x: clamp(16px, 2vw, 150px);
+
+DESPUÉS (correcto):
+  --layout-padding-x: 150px;
+
+MANTENER (estos sí están bien):
+  --font-size-sm:   clamp(0.75rem, 0.8vw + 0.5rem, 0.875rem);
+  --font-size-base: clamp(0.875rem, 0.9vw + 0.6rem, 1rem);
+  --font-size-lg:   clamp(1rem, 1vw + 0.65rem, 1.125rem);
+  --font-size-xl:   clamp(1.25rem, 1.2vw + 0.8rem, 1.5rem);
+  --font-size-2xl:  clamp(1.5rem, 1.5vw + 1rem, 2rem);
+
+  --spacing-1: clamp(6px, 0.5vw, 8px);
+  --spacing-2: clamp(12px, 1vw, 16px);
+  --spacing-3: clamp(18px, 1.5vw, 24px);
+  --spacing-4: clamp(24px, 2vw, 32px);
+  --spacing-5: clamp(32px, 2.5vw, 40px);
+
+CRITERIO DE ACEPTACIÓN:
+✅ Escala 100% recupera diseño original aprobado del cliente
+✅ DashboardPage muestra márgenes ~150px visibles
+✅ NuevoCalculoPage muestra márgenes ~150px visibles
+✅ No hay regresiones en otras páginas
+
+================================================================================
+TICKET #002 ⏳ PENDIENTE
+================================================================================
+TÍTULO: Implementar media queries por escala en variables.css
+
+PRIORIDAD: 🔴 ALTA
+TIEMPO ESTIMADO: 30 minutos
+DEPENDENCIAS: Ticket #001
+
+DESCRIPCIÓN:
+Agregar media queries que detecten la escala de Windows (DPR) y ajusten
+el valor de --layout-padding-x acorde.
+
+ARCHIVOS AFECTADOS:
+- App/Frontend/src/styles/variables.css
+
+CÓDIGO A AGREGAR (al final del :root o como reglas separadas):
+
+  /* Escala de Windows 125% (DPR 1.25) */
+  @media (min-resolution: 1.25dppx) {
+    :root {
+      --layout-padding-x: 100px;
+    }
+  }
+
+  /* Escala de Windows 150% (DPR 1.5) */
+  @media (min-resolution: 1.5dppx) {
+    :root {
+      --layout-padding-x: 70px;
+    }
+  }
+
+NOTA: Mantener override de mobile DESPUÉS de estas reglas:
+  @media (max-width: 768px) {
+    :root {
+      --layout-padding-x: var(--spacing-2);  /* 16px en móvil */
+    }
+  }
+
+CRITERIO DE ACEPTACIÓN:
+✅ Cambiar escala de Windows actualiza márgenes automáticamente
+✅ En escala 125%: márgenes ~100px
+✅ En escala 150%: márgenes ~70px
+✅ Recargar página con Ctrl+Shift+R aplica los cambios
+
+================================================================================
+TICKET #003 ⏳ PENDIENTE
+================================================================================
+TÍTULO: Corregir grid responsive en NuevoCalculoPage
+
+PRIORIDAD: 🔴 ALTA
+TIEMPO ESTIMADO: 45 minutos
+DEPENDENCIAS: Ticket #002
+
+DESCRIPCIÓN:
+El grid de 4 columnas (.cardsGrid) genera overflow en escalas 125%+ porque
+no permite que las columnas se compriman. Cambiar a minmax(0, 1fr).
+
+ARCHIVOS AFECTADOS:
+- App/Frontend/src/pages/NuevoCalculoPage.module.css
+
+CAMBIOS:
+
+ANTES:
+  .cardsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+DESPUÉS:
+  .cardsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Reducir gap en escalas altas */
+  @media (min-resolution: 1.25dppx) {
+    .cardsGrid {
+      gap: 20px;
+    }
+  }
+
+  @media (min-resolution: 1.5dppx) {
+    .cardsGrid {
+      gap: 16px;
+    }
+  }
+
+PRUEBAS:
+- Verificar 4 cards completas en escala 100%
+- Verificar 4 cards completas en escala 125%
+- Si en escala 150% no caben 4 cards: cambiar a 3 columnas (decisión de diseño)
+
+CRITERIO DE ACEPTACIÓN:
+✅ Escala 100%: 4 cards alineadas con márgenes del header
+✅ Escala 125%: 4 cards visibles sin overflow
+✅ Escala 150%: 4 cards visibles (o reorganizadas si es necesario)
+✅ Cards no se desbordan del contenedor padre
+
+================================================================================
+TICKET #004 ⏳ PENDIENTE
+================================================================================
+TÍTULO: Verificar alineación en DashboardPage
+
+PRIORIDAD: 🟡 MEDIA
+TIEMPO ESTIMADO: 30 minutos
+DEPENDENCIAS: Ticket #002
+
+DESCRIPCIÓN:
+Validar que el layout de 2 columnas (texto bienvenida + card) mantiene
+alineación con los márgenes en todas las escalas. Aplicar fix de overflow
+en .cardSection si es necesario.
+
+ARCHIVOS AFECTADOS:
+- App/Frontend/src/pages/DashboardPage.module.css
+
+CAMBIOS POTENCIALES:
+
+ANTES:
+  .cardSection > * {
+    width: 430px;
+    max-width: 430px;
+  }
+
+DESPUÉS:
+  .cardSection > * {
+    width: min(430px, 100%);
+    max-width: 430px;
+  }
+
+PRUEBAS VISUALES:
+- Comparar lado a lado con diseño original del cliente
+- Verificar que texto de bienvenida no se solapa con card
+- Verificar que márgenes coinciden con header/footer
+
+CRITERIO DE ACEPTACIÓN:
+✅ Escala 100%: Layout idéntico al diseño aprobado
+✅ Escala 125%: Texto y card mantienen proporciones
+✅ Escala 150%: Layout funcional sin desbordes
+✅ Card de "Nuevo cálculo de honorarios" alineada con borde derecho
+
+================================================================================
+TICKET #005 ⏳ PENDIENTE
+================================================================================
+TÍTULO: Verificar márgenes en ProcesoCalculoPage
+
+PRIORIDAD: 🟡 MEDIA
+TIEMPO ESTIMADO: 30 minutos
+DEPENDENCIAS: Ticket #002
+
+DESCRIPCIÓN:
+Validar que el wizard de 5 pasos respeta los márgenes laterales.
+Especial atención al .formContainer y al StepperProgress.
+
+ARCHIVOS AFECTADOS:
+- App/Frontend/src/pages/ProcesoCalculoPage.module.css
+
+PASOS A VERIFICAR:
+- Paso 0: Datos principales del proyecto
+- Paso 1: Datos específicos de la obra
+- Paso 2: Tareas profesionales a realizar
+- Paso 3: Revisión de datos ingresados
+- Paso 4: Cálculo (loading)
+- Paso 5: Resultado (delega en ResultadoBasicoDetalle)
+
+CRITERIO DE ACEPTACIÓN:
+✅ Wizard navegable en escala 100%, 125% y 150%
+✅ Campos de formulario alineados correctamente
+✅ Sin scroll horizontal en ningún paso
+✅ StepperProgress visible y proporcionado
+
+================================================================================
+TICKET #006 ⏳ PENDIENTE
+================================================================================
+TÍTULO: Verificar ResultadoBasicoDetalle en escalas 125%/150%
+
+PRIORIDAD: 🟡 MEDIA
+TIEMPO ESTIMADO: 30 minutos
+DEPENDENCIAS: Ticket #002
+
+DESCRIPCIÓN:
+Validar que el certificado de honorarios se ve correctamente en pantalla
+y que el PDF generado mantiene calidad independientemente de la escala.
+
+ARCHIVOS AFECTADOS:
+- App/Frontend/src/components/wizard/ResultadoBasicoDetalle.module.css
+
+ELEMENTOS A VERIFICAR:
+- Header del certificado (logo + título)
+- Resumen del proyecto (2 columnas)
+- Disclaimer
+- Tabla de honorarios
+- Botón de descarga PDF
+
+PRUEBAS:
+- Generar PDF en escala 100% → guardar
+- Generar PDF en escala 125% → comparar con el anterior
+- Generar PDF en escala 150% → comparar con el primero
+
+CRITERIO DE ACEPTACIÓN:
+✅ Certificado se ve idéntico en pantalla en todas las escalas
+✅ PDF generado es consistente independientemente de la escala
+✅ Tabla de honorarios legible sin desborde
+✅ Layout de 2 columnas se mantiene o colapsa elegantemente
+
+================================================================================
+TICKET #007 ⏳ PENDIENTE
+================================================================================
+TÍTULO: Testing manual en 3 escalas (100%, 125%, 150%)
+
+PRIORIDAD: 🔴 ALTA
+TIEMPO ESTIMADO: 90 minutos
+DEPENDENCIAS: Tickets #001 a #006
+
+DESCRIPCIÓN:
+Ejecutar pruebas manuales completas en las 3 escalas objetivo.
+Documentar con capturas comparativas.
+
+MATRIZ DE TESTING:
+
+| Escala | DashboardPage | NuevoCalculoPage | ProcesoCalculoPage | ResultadoBasicoDetalle |
+|--------|---------------|------------------|---------------------|------------------------|
+| 100%   | TEST-001      | TEST-002         | TEST-003            | TEST-004               |
+| 125%   | TEST-005      | TEST-006         | TEST-007            | TEST-008               |
+| 150%   | TEST-009      | TEST-010         | TEST-011            | TEST-012               |
+
+PROCEDIMIENTO POR TEST:
+1. Configurar Windows en escala objetivo
+2. Recargar página (Ctrl + Shift + R)
+3. Capturar pantalla completa
+4. Verificar checklist:
+   - [ ] Márgenes laterales visibles
+   - [ ] Sin overflow horizontal
+   - [ ] Elementos alineados
+   - [ ] Texto legible
+   - [ ] Botones funcionales
+5. Si falla → registrar como bug
+
+ENTREGABLES:
+- 12 capturas (3 escalas × 4 páginas)
+- Documento con resultados y observaciones
+- Lista de bugs encontrados (si los hay)
+
+CRITERIO DE ACEPTACIÓN:
+✅ 12 capturas adjuntas
+✅ 100% de tests pasados o bugs registrados
+✅ Diseño 100% idéntico al original aprobado
+
+================================================================================
+TICKET #008 ⏳ PENDIENTE
+================================================================================
+TÍTULO: Documentar convenciones responsive en README
+
+PRIORIDAD: 🟢 BAJA
+TIEMPO ESTIMADO: 30 minutos
+DEPENDENCIAS: Tickets #001 a #007
+
+DESCRIPCIÓN:
+Agregar sección "Responsive Design" en README del frontend con
+convenciones para nuevos desarrollos.
+
+ARCHIVOS AFECTADOS:
+- App/Frontend/README.md
+
+CONTENIDO A AGREGAR:
+
+## Responsive Design
+
+### Sistema de márgenes adaptativos
+
+La aplicación usa márgenes laterales que se adaptan a la escala de Windows:
+
+- **Escala 100%:** 150px (diseño original)
+- **Escala 125%:** 100px (vía @media min-resolution: 1.25dppx)
+- **Escala 150%:** 70px (vía @media min-resolution: 1.5dppx)
+- **Mobile:** 16px (vía @media max-width: 768px)
+
+### Cómo usar en nuevos componentes
+
+✅ HACER:
+  .mi-componente {
+    padding: 0 var(--layout-padding-x);
+    font-size: var(--font-size-xl);
+    gap: var(--spacing-3);
+  }
+
+❌ NO HACER:
+  .mi-componente {
+    padding: 0 150px;       /* Píxeles fijos */
+    font-size: 24px;         /* No escala */
+    gap: 24px;               /* No escala */
+  }
+
+### Cómo probar antes de hacer PR
+
+1. Configurar Windows en escala 100% → verificar diseño
+2. Cambiar a escala 125% → verificar sin overflow
+3. Cambiar a escala 150% → verificar funcionalidad
+4. Probar en mobile (DevTools, viewport 375px)
+
+CRITERIO DE ACEPTACIÓN:
+✅ Sección documentada con ejemplos
+✅ Convenciones claras para futuros desarrollos
+✅ Equipo informado sobre el cambio
+
+================================================================================
+RESUMEN DE PROGRESO
+================================================================================
+
+TOTAL TICKETS:    8
+PENDIENTES:       8
+EN PROGRESO:      0
+COMPLETADOS:      0
+
+TIEMPO ESTIMADO TOTAL: ~5 horas (300 minutos)
+
+PRIORIDADES:
+- 🔴 ALTA:   #001, #002, #003, #007  (4 tickets - 3h)
+- 🟡 MEDIA:  #004, #005, #006        (3 tickets - 1.5h)
+- 🟢 BAJA:   #008                     (1 ticket - 0.5h)
+
+================================================================================
+ORDEN SUGERIDO DE EJECUCIÓN
+================================================================================
+
+FASE 1 - SETUP (45 min):
+  1. Ticket #001 - Revertir cambios globales
+  2. Ticket #002 - Media queries por escala
+
+FASE 2 - CORRECCIONES POR PÁGINA (2h 15min):
+  3. Ticket #003 - NuevoCalculoPage (grid responsive)
+  4. Ticket #004 - DashboardPage (alineación)
+  5. Ticket #005 - ProcesoCalculoPage (verificación)
+  6. Ticket #006 - ResultadoBasicoDetalle (verificación)
+
+FASE 3 - VALIDACIÓN (1h 30min):
+  7. Ticket #007 - Testing manual completo
+
+FASE 4 - DOCUMENTACIÓN (30min):
+  8. Ticket #008 - README
+
+================================================================================
+FIN DEL DOCUMENTO
+================================================================================

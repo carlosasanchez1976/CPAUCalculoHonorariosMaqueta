@@ -24,6 +24,11 @@ DROP PROCEDURE IF EXISTS Calcular_Honorario_PYDOA$$
  * MODIFICACIONES:
  * - 2026-05-19: Se agrega adicionales para 'Remodelación' (CPAU)
  ******************************************************************************
+ * - 2026-05-22: Se modifican coeficientes para Proyecto y Dirección según rango (CPAU)
+ ******************************************************************************
+ * - 2026-05-22: Spec008 - Implementacion de arrastre progresivo para proyecto y dirección (CPAU)
+ ******************************************************************************
+ *
  * PARAMETROS:
  * @param p_calculo_id INT - ID del cálculo en tabla Calculos
  */
@@ -79,6 +84,7 @@ BEGIN
   -- Variables de cálculo de ítems
   DECLARE v_item_numero INT DEFAULT 0;
   DECLARE v_importe_item DECIMAL(15,2);
+  DECLARE v_importe_adicional_remodelacion DECIMAL(15,2);
   DECLARE v_descripcion VARCHAR(500);
   DECLARE v_tarea_profesional VARCHAR(200);
   DECLARE v_porcentaje_tarea DECIMAL(4,2);
@@ -167,118 +173,201 @@ BEGIN
   -- ========================================================================
   
   -- -----------------------------------------------------------------------
-  -- 4.1 PROYECTO DE OBRA (60% del coeficiente) - SIN ARRASTRE
+  -- 4.1 PROYECTO DE OBRA (60% del coeficiente) - CON ARRASTRE PROGRESIVO
+  -- SPEC-CALC-003: Arrastre progresivo entre rangos
   -- -----------------------------------------------------------------------
-  
-  -- Obtener coeficientes del rango donde cae la obra
-  -- Se agrega coeficiente para Remodelación
-
-
-CASE v_rango_final_numero
-  WHEN 1 THEN -- Rango A
-	SET v_coef_obra = 0.14;
-	SET v_coef_k = 0;
-  SET v_coef_remodelacion = 0.4; -- Adicional para remodelación
-  WHEN 2 THEN -- Rango B
-	SET v_coef_obra = 0.08;
-	SET v_coef_k = 0.03;
-  SET v_coef_remodelacion = 0.3; -- Adicional para remodelación
-  WHEN 3 THEN -- Rango C
-	SET v_coef_obra = 0.03;
-	SET v_coef_k = 0.13;
-  SET v_coef_remodelacion = 0.25; -- Adicional para remodelación
-  WHEN 4 THEN -- Rango D
-	SET v_coef_obra = 0.02;
-	SET v_coef_k = 0.4;
-  SET v_coef_remodelacion = 0.2; -- Adicional para remodelación
-END CASE;
-
   
   IF v_tarea_obra_proyecto THEN
     SET v_tarea_profesional = 'Proyecto de obra de arquitectura';
     SET v_porcentaje_tarea = 0.60;
     
-    
-    -- Ítem por coeficiente de obra
-    IF v_coef_obra > 0 THEN
-      SET v_item_numero = v_item_numero + 1;
-      SET v_importe_item = ROUND(v_coef_obra * v_valor_obra * v_porcentaje_tarea);
-      SET v_descripcion = CONCAT('Rango ', v_rango_final, 
-                                  ' (coef ', CAST((v_coef_obra * 100) AS CHAR), '%)');
+    -- Bucle progresivo: itera desde Rango A hasta el rango final donde cae la obra
+    SET v_rango_actual = 1;
+    WHILE v_rango_actual <= v_rango_final_numero DO
       
-      CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+      -- Obtener coeficientes específicos de este rango
+      CASE v_rango_actual
+        WHEN 1 THEN -- Rango A
+          SET v_rango_nombre = 'A';
+          SET v_lim_inferior = 0;
+          SET v_lim_superior = v_limite_a_sup;
+          SET v_coef_obra = 0.14;
+          SET v_coef_k = 0;
+          SET v_coef_remodelacion = 0.4;
+        WHEN 2 THEN -- Rango B
+          SET v_rango_nombre = 'B';
+          SET v_lim_inferior = v_limite_b_inf;
+          SET v_lim_superior = v_limite_b_sup;
+          SET v_coef_obra = 0.095;
+          SET v_coef_k = 0.03;
+          SET v_coef_remodelacion = 0.3;
+        WHEN 3 THEN -- Rango C
+          SET v_rango_nombre = 'C';
+          SET v_lim_inferior = v_limite_c_inf;
+          SET v_lim_superior = v_limite_c_sup;
+          SET v_coef_obra = 0.06;
+          SET v_coef_k = 0.13;
+          SET v_coef_remodelacion = 0.25;
+        WHEN 4 THEN -- Rango D
+          SET v_rango_nombre = 'D';
+          SET v_lim_inferior = v_limite_d_inf;
+          SET v_lim_superior = 999999999999.99;
+          SET v_coef_obra = 0.025;
+          SET v_coef_k = 0.4;
+          SET v_coef_remodelacion = 0.2;
+      END CASE;
       
-      SET v_total_honorarios = v_total_honorarios + v_importe_item;
-
-      if v_obra_tipologia = 'Remodelación' THEN
-        -- Agregar ítem adicional por remodelación
-        SET v_item_numero = v_item_numero + 1;
-        SET v_importe_item = ROUND(v_coef_remodelacion * v_importe_item);
-        SET v_descripcion = CONCAT('Adicional por Remodelación Art. 3.18 (coef ', CAST((v_coef_remodelacion * 100) AS CHAR), '%)');
+      -- Calcular límite superior efectivo (no exceder valor de obra)
+      SET v_lim_sup_efectivo = IF(v_valor_obra > v_lim_superior, v_lim_superior, v_valor_obra);
+      
+      -- Solo procesar si hay monto afectado en este rango
+      IF v_lim_sup_efectivo > v_lim_inferior THEN
+        SET v_monto_afectado = v_lim_sup_efectivo - v_lim_inferior;
         
-        CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+        -- Ítem por coeficiente de obra (porción que cae en este rango)
+        IF v_coef_obra > 0 THEN
+          SET v_item_numero = v_item_numero + 1;
+          SET v_importe_item = ROUND(v_coef_obra * v_monto_afectado * v_porcentaje_tarea);
+          SET v_descripcion = CONCAT('Rango ', v_rango_nombre, 
+                                      ' (coef ', CAST((v_coef_obra * 100) AS CHAR), '%)');
+          
+          CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+          
+          SET v_total_honorarios = v_total_honorarios + v_importe_item;
+          
+          -- Adicional por Remodelación (se aplica sobre cada ítem de rango)
+          IF v_obra_tipologia = 'Remodelación' THEN
+            SET v_item_numero = v_item_numero + 1;
+            SET v_importe_adicional_remodelacion = ROUND(v_coef_remodelacion * v_importe_item);
+            SET v_descripcion = CONCAT('Adicional por Remodelación Art. 3.18 (coef ', 
+                                        CAST((v_coef_remodelacion * 100) AS CHAR), '%)');
+            
+            CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, 
+                                        v_descripcion, v_importe_adicional_remodelacion);
+            
+            SET v_total_honorarios = v_total_honorarios + v_importe_adicional_remodelacion;
+          END IF;
+        END IF;
         
-        SET v_total_honorarios = v_total_honorarios + v_importe_item;
+        -- Ítem por coeficiente K (solo en rango final)
+        IF v_coef_k > 0 AND v_rango_actual = v_rango_final_numero THEN
+          SET v_item_numero = v_item_numero + 1;
+          SET v_importe_item = ROUND(v_coef_k * v_valor_k * v_porcentaje_tarea);
+          SET v_descripcion = CONCAT('Rango ', v_rango_nombre, 
+                                      ' (coef K ', CAST((v_coef_k * 100) AS CHAR), '%)');
+          
+          CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+          
+          SET v_total_honorarios = v_total_honorarios + v_importe_item;
+        END IF;
       END IF;
-
-
-    END IF;
-    
-    -- Ítem por coeficiente K
-    IF v_coef_k > 0 THEN
-      SET v_item_numero = v_item_numero + 1;
-      SET v_importe_item = ROUND(v_coef_k * v_valor_k * v_porcentaje_tarea);
-      SET v_descripcion = CONCAT('Rango ', v_rango_final, 
-                                  ' (coef K ', CAST((v_coef_k * 100) AS CHAR), '%)');
       
-      CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-      
-      SET v_total_honorarios = v_total_honorarios + v_importe_item;
-    END IF;
+      -- Control de salida del bucle
+      IF v_valor_obra <= v_lim_superior THEN
+        SET v_rango_actual = v_rango_final_numero + 1; -- Forzar salida
+      ELSE
+        SET v_rango_actual = v_rango_actual + 1; -- Continuar al siguiente rango
+      END IF;
+    END WHILE;
   END IF;
   
   -- -----------------------------------------------------------------------
-  -- 4.2 DIRECCIÓN DE OBRA (40% del coeficiente) - SIN ARRASTRE
+  -- 4.2 DIRECCIÓN DE OBRA (40% del coeficiente) - CON ARRASTRE PROGRESIVO
+  -- SPEC-CALC-003: Arrastre progresivo entre rangos
   -- -----------------------------------------------------------------------
+  
   IF v_tarea_obra_direccion THEN
     SET v_tarea_profesional = 'Dirección de obra de arquitectura';
     SET v_porcentaje_tarea = 0.40;
     
-    -- Ítem por coeficiente de obra
-    IF v_coef_obra > 0 THEN
-      SET v_item_numero = v_item_numero + 1;
-      SET v_importe_item = ROUND(v_coef_obra * v_valor_obra * v_porcentaje_tarea);
-      SET v_descripcion = CONCAT('Rango ', v_rango_final, 
-                                  ' (coef ', CAST((v_coef_obra * 100) AS CHAR), '%)');
+    -- Bucle progresivo: itera desde Rango A hasta el rango final donde cae la obra
+    SET v_rango_actual = 1;
+    WHILE v_rango_actual <= v_rango_final_numero DO
       
-      CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+      -- Obtener coeficientes específicos de este rango
+      CASE v_rango_actual
+        WHEN 1 THEN -- Rango A
+          SET v_rango_nombre = 'A';
+          SET v_lim_inferior = 0;
+          SET v_lim_superior = v_limite_a_sup;
+          SET v_coef_obra = 0.14;
+          SET v_coef_k = 0;
+          SET v_coef_remodelacion = 0.4;
+        WHEN 2 THEN -- Rango B
+          SET v_rango_nombre = 'B';
+          SET v_lim_inferior = v_limite_b_inf;
+          SET v_lim_superior = v_limite_b_sup;
+          SET v_coef_obra = 0.095;
+          SET v_coef_k = 0.03;
+          SET v_coef_remodelacion = 0.3;
+        WHEN 3 THEN -- Rango C
+          SET v_rango_nombre = 'C';
+          SET v_lim_inferior = v_limite_c_inf;
+          SET v_lim_superior = v_limite_c_sup;
+          SET v_coef_obra = 0.06;
+          SET v_coef_k = 0.13;
+          SET v_coef_remodelacion = 0.25;
+        WHEN 4 THEN -- Rango D
+          SET v_rango_nombre = 'D';
+          SET v_lim_inferior = v_limite_d_inf;
+          SET v_lim_superior = 999999999999.99;
+          SET v_coef_obra = 0.025;
+          SET v_coef_k = 0.4;
+          SET v_coef_remodelacion = 0.2;
+      END CASE;
       
-      SET v_total_honorarios = v_total_honorarios + v_importe_item;
-
-      if v_obra_tipologia = 'Remodelación' THEN
-        -- Agregar ítem adicional por remodelación
-        SET v_item_numero = v_item_numero + 1;
-        SET v_importe_item = ROUND(v_coef_remodelacion * v_importe_item);
-        SET v_descripcion = CONCAT('Adicional por Remodelación Art. 3.18 (coef ', CAST((v_coef_remodelacion * 100) AS CHAR), '%)');
+      -- Calcular límite superior efectivo (no exceder valor de obra)
+      SET v_lim_sup_efectivo = IF(v_valor_obra > v_lim_superior, v_lim_superior, v_valor_obra);
+      
+      -- Solo procesar si hay monto afectado en este rango
+      IF v_lim_sup_efectivo > v_lim_inferior THEN
+        SET v_monto_afectado = v_lim_sup_efectivo - v_lim_inferior;
         
-        CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+        -- Ítem por coeficiente de obra (porción que cae en este rango)
+        IF v_coef_obra > 0 THEN
+          SET v_item_numero = v_item_numero + 1;
+          SET v_importe_item = ROUND(v_coef_obra * v_monto_afectado * v_porcentaje_tarea);
+          SET v_descripcion = CONCAT('Rango ', v_rango_nombre, 
+                                      ' (coef ', CAST((v_coef_obra * 100) AS CHAR), '%)');
+          
+          CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+          
+          SET v_total_honorarios = v_total_honorarios + v_importe_item;
+          
+          -- Adicional por Remodelación (se aplica sobre cada ítem de rango)
+          IF v_obra_tipologia = 'Remodelación' THEN
+            SET v_item_numero = v_item_numero + 1;
+            SET v_importe_adicional_remodelacion = ROUND(v_coef_remodelacion * v_importe_item);
+            SET v_descripcion = CONCAT('Adicional por Remodelación Art. 3.18 (coef ', 
+                                        CAST((v_coef_remodelacion * 100) AS CHAR), '%)');
+            
+            CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, 
+                                        v_descripcion, v_importe_adicional_remodelacion);
+            
+            SET v_total_honorarios = v_total_honorarios + v_importe_adicional_remodelacion;
+          END IF;
+        END IF;
         
-        SET v_total_honorarios = v_total_honorarios + v_importe_item;
+        -- Ítem por coeficiente K (solo en rango final)
+        IF v_coef_k > 0 AND v_rango_actual = v_rango_final_numero THEN
+          SET v_item_numero = v_item_numero + 1;
+          SET v_importe_item = ROUND(v_coef_k * v_valor_k * v_porcentaje_tarea);
+          SET v_descripcion = CONCAT('Rango ', v_rango_nombre, 
+                                      ' (coef K ', CAST((v_coef_k * 100) AS CHAR), '%)');
+          
+          CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+          
+          SET v_total_honorarios = v_total_honorarios + v_importe_item;
+        END IF;
       END IF;
-
-    END IF;
-    
-    -- Ítem por coeficiente K
-    IF v_coef_k > 0 THEN
-      SET v_item_numero = v_item_numero + 1;
-      SET v_importe_item = ROUND(v_coef_k * v_valor_k * v_porcentaje_tarea);
-      SET v_descripcion = CONCAT('Rango ', v_rango_final, 
-                                  ' (coef K ', CAST((v_coef_k * 100) AS CHAR), '%)');
       
-      CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-      
-      SET v_total_honorarios = v_total_honorarios + v_importe_item;
-    END IF;
+      -- Control de salida del bucle
+      IF v_valor_obra <= v_lim_superior THEN
+        SET v_rango_actual = v_rango_final_numero + 1; -- Forzar salida
+      ELSE
+        SET v_rango_actual = v_rango_actual + 1; -- Continuar al siguiente rango
+      END IF;
+    END WHILE;
   END IF;
   
   -- -----------------------------------------------------------------------

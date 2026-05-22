@@ -1,0 +1,481 @@
+================================================================================
+TICKETS - SPEC-CALC-003: ARRASTRE PROGRESIVO PARA PROYECTO Y DIRECCIÓN
+================================================================================
+Proyecto: CH2026 - Sistema de Gestión de Cálculo de Honorarios CPAU
+Fecha: 22/05/2026
+Versión: 1.0
+Spec Origen: SPEC008-CALC-003-Arrastre-Progresivo-Proyecto-Direccion.md
+Dependencias: SPEC-CALC-002 (Arrastre Progresivo) - IMPLEMENTADO ✅
+================================================================================
+
+OBJETIVO GENERAL:
+Extender el sistema de arrastre progresivo existente (SPEC-CALC-002) para
+incluir las tareas de Proyecto y Dirección de Obra de Arquitectura, que
+actualmente calculan con coeficientes del rango final sobre el valor total.
+
+JUSTIFICACIÓN:
+Solicitud del cliente CPAU para uniformar el criterio de cálculo en TODAS
+las tareas profesionales. Beneficios:
+- Consistencia: mismo sistema de cálculo para todas las tareas
+- Transparencia: facilita explicación a profesionales matriculados
+- Equidad: aplicación uniforme del principio de progresividad
+
+TIPO DE CAMBIO:
+📐 REFACTOR: Adaptar secciones 4.1 y 4.2 del SP usando lógica existente 4.3-4.7
+
+ESTRATEGIA DE IMPLEMENTACIÓN:
+- Principio: Reutilizar código probado (DRY)
+- Método: Copiar y adaptar lógica de bucle progresivo de instalaciones
+- Tests: Validar con 5 casos base + casos extremos
+- Deploy: Reemplazo directo del SP (sin feature flags)
+
+ALCANCE:
+✅ Refactorizar sección 4.1 - Proyecto de Obra (CON arrastre progresivo)
+✅ Refactorizar sección 4.2 - Dirección de Obra (CON arrastre progresivo)
+✅ Mantener lógica de adicional por Remodelación (sin cambios)
+✅ Testing completo con 5 casos base validados por CPAU
+❌ NO modificar coeficientes (se mantienen según actualización 22/05/2026)
+❌ NO modificar instalaciones ni estructuras (sin cambios)
+❌ NO requiere cambios en frontend (estructura de output compatible)
+
+ARCHIVOS AFECTADOS:
+- App/Backend/DB/03-Sps/Calcular_Honorario_PYDOA.sql ← ÚNICO ARCHIVO
+
+IMPACTO EN HONORARIOS:
+- Rango A: Sin cambio (solo atraviesa 1 rango)
+- Rango B: Incremento ~7.8%
+- Rango C: Incremento ~8.5%
+- Rango D: Incremento ~7.7%
+
+ESTIMACIÓN TOTAL: 9 horas (~1.5 días laborables)
+
+PLAN DE TRABAJO:
+- Ticket 001: Análisis y preparación (1h)
+- Ticket 002: Refactor Proyecto de Obra (3h)
+- Ticket 003: Refactor Dirección de Obra (2h)
+- Ticket 004: Testing y validación (2h)
+- Ticket 005: Deploy y documentación (1h)
+
+================================================================================
+TICKET #001 - ANÁLISIS: PREPARACIÓN Y DISEÑO TÉCNICO
+================================================================================
+ESTADO: 🟡 PENDIENTE
+PRIORIDAD: 🟢 NORMAL
+ASIGNADO A: Backend Dev
+ESTIMACIÓN: 1 hora
+DEPENDENCIAS: Ninguna
+
+DESCRIPCIÓN:
+Analizar el código existente del SP Calcular_Honorario_PYDOA.sql para
+identificar las secciones exactas a modificar y validar el enfoque técnico.
+
+UBICACIÓN: 
+- App/Backend/DB/03-Sps/Calcular_Honorario_PYDOA.sql
+
+TAREAS:
+
+[T001.1] Análisis del código actual
+  □ Leer secciones 4.1 y 4.2 (Proyecto y Dirección sin arrastre)
+  □ Leer sección 4.3 (Instalación Sanitaria CON arrastre) como referencia
+  □ Identificar diferencias estructurales clave
+  □ Documentar líneas exactas a modificar
+
+[T001.2] Diseño del cambio
+  □ Validar que coeficientes están actualizados (modificación 22/05/2026)
+  □ Confirmar que lógica de Remodelación se mantiene
+  □ Verificar que variables declaradas son suficientes
+  □ Identificar posibles conflictos o edge cases
+
+[T001.3] Preparación del entorno
+  □ Hacer backup del SP actual (Git commit antes de cambios)
+  □ Preparar ambiente de testing con casos base
+  □ Documentar estrategia de rollback si fuera necesario
+
+CRITERIOS DE ACEPTACIÓN:
+✅ Documentación clara de las líneas a modificar
+✅ Estrategia técnica validada y sin riesgos identificados
+✅ Backup del SP realizado
+
+NOTAS:
+- El SP ya tiene toda la infraestructura de bucles y variables necesarias
+- Solo se requiere copiar/adaptar la lógica existente de 4.3
+- No hay cambios en la estructura de tablas ni contratos de API
+
+--------------------------------------------------------------------------------
+TICKET #002 - DESARROLLO: REFACTOR PROYECTO DE OBRA (4.1)
+--------------------------------------------------------------------------------
+ESTADO: 🟡 PENDIENTE
+PRIORIDAD: 🔴 ALTA
+ASIGNADO A: Backend Dev
+ESTIMACIÓN: 3 horas
+DEPENDENCIAS: Ticket #001 ✅
+
+DESCRIPCIÓN:
+Refactorizar la sección 4.1 (Proyecto de Obra de Arquitectura) para aplicar
+el sistema de arrastre progresivo, reemplazando el cálculo simple actual.
+
+UBICACIÓN: 
+- App/Backend/DB/03-Sps/Calcular_Honorario_PYDOA.sql (líneas ~150-200)
+
+TAREAS:
+
+[T002.1] Reemplazo de lógica de cálculo
+  □ Eliminar cálculo simple actual (v_coef_obra * v_valor_obra)
+  □ Implementar bucle WHILE v_rango_actual <= v_rango_final_numero
+  □ Agregar CASE para obtener coeficientes por rango
+  □ Calcular límites de cada rango (inferior/superior)
+  □ Calcular monto_afectado por rango
+
+[T002.2] Generación de ítems por rango
+  □ Generar ítem por coef_obra cuando v_monto_afectado > 0
+  □ Generar ítem por coef_k solo en rango final
+  □ Mantener lógica de adicional por Remodelación después de cada ítem
+  □ Actualizar contador de ítems correctamente
+
+[T002.3] Validación inline
+  □ Agregar comentarios explicativos en el código
+  □ Verificar que porcentaje_tarea = 0.60 se aplica correctamente
+  □ Validar que descripción de ítem incluye rango y coeficiente
+
+CÓDIGO DE REFERENCIA (basado en 4.3 - Instalación Sanitaria):
+```sql
+IF v_tarea_obra_proyecto THEN
+  SET v_tarea_profesional = 'Proyecto de obra de arquitectura';
+  SET v_porcentaje_tarea = 0.60;
+  
+  SET v_rango_actual = 1;
+  WHILE v_rango_actual <= v_rango_final_numero DO
+    
+    CASE v_rango_actual
+      WHEN 1 THEN
+        SET v_rango_nombre = 'A';
+        SET v_lim_inferior = 0;
+        SET v_lim_superior = v_limite_a_sup;
+        SET v_coef_obra = 0.14;
+        SET v_coef_k = 0;
+      WHEN 2 THEN
+        SET v_rango_nombre = 'B';
+        SET v_lim_inferior = v_limite_b_inf;
+        SET v_lim_superior = v_limite_b_sup;
+        SET v_coef_obra = 0.095;
+        SET v_coef_k = 0.03;
+      WHEN 3 THEN
+        SET v_rango_nombre = 'C';
+        SET v_lim_inferior = v_limite_c_inf;
+        SET v_lim_superior = v_limite_c_sup;
+        SET v_coef_obra = 0.06;
+        SET v_coef_k = 0.13;
+      WHEN 4 THEN
+        SET v_rango_nombre = 'D';
+        SET v_lim_inferior = v_limite_d_inf;
+        SET v_lim_superior = 999999999999.99;
+        SET v_coef_obra = 0.025;
+        SET v_coef_k = 0.4;
+    END CASE;
+    
+    SET v_lim_sup_efectivo = IF(v_valor_obra > v_lim_superior, v_lim_superior, v_valor_obra);
+    
+    IF v_lim_sup_efectivo > v_lim_inferior THEN
+      SET v_monto_afectado = v_lim_sup_efectivo - v_lim_inferior;
+      
+      IF v_coef_obra > 0 THEN
+        SET v_item_numero = v_item_numero + 1;
+        SET v_importe_item = ROUND(v_coef_obra * v_monto_afectado * v_porcentaje_tarea);
+        SET v_descripcion = CONCAT('Rango ', v_rango_nombre, 
+                                    ' (coef ', CAST((v_coef_obra * 100) AS CHAR), '%)');
+        
+        CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+        
+        SET v_total_honorarios = v_total_honorarios + v_importe_item;
+        
+        -- Adicional por Remodelación
+        IF v_obra_tipologia = 'Remodelación' THEN
+          SET v_item_numero = v_item_numero + 1;
+          SET v_importe_item = ROUND(v_coef_remodelacion * v_importe_item);
+          SET v_descripcion = CONCAT('Adicional por Remodelación Art. 3.18 (coef ', 
+                                      CAST((v_coef_remodelacion * 100) AS CHAR), '%)');
+          
+          CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+          
+          SET v_total_honorarios = v_total_honorarios + v_importe_item;
+        END IF;
+      END IF;
+      
+      -- Ítem por coeficiente K (solo en rango final)
+      IF v_coef_k > 0 AND v_rango_actual = v_rango_final_numero THEN
+        SET v_item_numero = v_item_numero + 1;
+        SET v_importe_item = ROUND(v_coef_k * v_valor_k * v_porcentaje_tarea);
+        SET v_descripcion = CONCAT('Rango ', v_rango_nombre, 
+                                    ' (coef K ', CAST((v_coef_k * 100) AS CHAR), '%)');
+        
+        CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+        
+        SET v_total_honorarios = v_total_honorarios + v_importe_item;
+      END IF;
+    END IF;
+    
+    IF v_valor_obra <= v_lim_superior THEN
+      SET v_rango_actual = v_rango_final_numero + 1;
+    ELSE
+      SET v_rango_actual = v_rango_actual + 1;
+    END IF;
+  END WHILE;
+END IF;
+```
+
+CRITERIOS DE ACEPTACIÓN:
+✅ El SP compila sin errores de sintaxis
+✅ La sección 4.1 genera múltiples ítems por rango
+✅ El número de ítems = (rangos atravesados × 2) si aplica Remodelación
+✅ El ítem por coef_k solo aparece en rango final
+✅ Cada ítem muestra correctamente: rango, coeficiente, importe
+
+CASOS DE PRUEBA INTERNOS:
+1. Obra $300.000 (Rango A) → 1 ítem (sin K)
+2. Obra $3.000.000 (Rango B) → 3 ítems (A + B + K)
+3. Obra $3.000.000 Remodelación → 5 ítems (A + adicional + B + adicional + K)
+
+--------------------------------------------------------------------------------
+TICKET #003 - DESARROLLO: REFACTOR DIRECCIÓN DE OBRA (4.2)
+--------------------------------------------------------------------------------
+ESTADO: 🟡 PENDIENTE
+PRIORIDAD: 🔴 ALTA
+ASIGNADO A: Backend Dev
+ESTIMACIÓN: 2 horas
+DEPENDENCIAS: Ticket #002 ✅
+
+DESCRIPCIÓN:
+Refactorizar la sección 4.2 (Dirección de Obra de Arquitectura) aplicando
+la misma lógica de arrastre progresivo implementada en 4.1.
+
+UBICACIÓN: 
+- App/Backend/DB/03-Sps/Calcular_Honorario_PYDOA.sql (líneas ~200-250)
+
+TAREAS:
+
+[T003.1] Replicar lógica de 4.1
+  □ Copiar estructura de bucle de la sección 4.1
+  □ Cambiar v_tarea_profesional = 'Dirección de obra de arquitectura'
+  □ Cambiar v_porcentaje_tarea = 0.40
+  □ Mantener todos los coeficientes idénticos a 4.1
+  □ Validar que lógica de Remodelación funciona correctamente
+
+[T003.2] Ajuste de coeficientes
+  □ Verificar que los coeficientes son los mismos que en 4.1
+  □ Confirmar que v_coef_remodelacion se obtiene del CASE según rango
+  □ Validar que porcentaje_tarea = 0.40 se aplica consistentemente
+
+[T003.3] Testing inline
+  □ Agregar comentarios en código
+  □ Verificar que contador de ítems continúa desde 4.1
+  □ Validar que v_total_honorarios acumula correctamente
+
+CRITERIOS DE ACEPTACIÓN:
+✅ La sección 4.2 funciona idénticamente a 4.1 (excepto % tarea)
+✅ Genera múltiples ítems por rango correctamente
+✅ El ítem por coef_k solo aparece en rango final
+✅ El adicional por Remodelación se calcula sobre cada ítem de rango
+
+CASOS DE PRUEBA INTERNOS:
+1. Obra $3.000.000 (Rango B) → 3 ítems (A + B + K)
+2. Dirección calcula 40% vs. 60% de Proyecto
+3. Sumar Proyecto + Dirección = Total esperado
+
+--------------------------------------------------------------------------------
+TICKET #004 - TESTING: VALIDACIÓN COMPLETA
+--------------------------------------------------------------------------------
+ESTADO: 🟡 PENDIENTE
+PRIORIDAD: 🔴 CRÍTICA
+ASIGNADO A: QA + Backend Dev
+ESTIMACIÓN: 2 horas
+DEPENDENCIAS: Tickets #002, #003 ✅
+
+DESCRIPCIÓN:
+Ejecutar batería completa de casos de prueba para validar que el cambio
+funciona correctamente y cumple con los criterios de aceptación de la SPEC.
+
+UBICACIÓN: 
+- Base de datos de desarrollo/staging
+
+TAREAS:
+
+[T004.1] Preparar entorno de testing
+  □ Limpiar tabla Calculos_Items
+  □ Preparar 5 registros en Calculos con valores de prueba
+  □ Configurar valorK = $522.181 en Parametros
+  □ Verificar que coeficientes están actualizados
+
+[T004.2] Ejecutar casos base (SPEC Sección 5.1)
+  Caso 1: Obra $300.000 (Rango A)
+    □ Ejecutar SP con Proyecto habilitado
+    □ Verificar: 1 ítem generado
+    □ Validar: importe = $25.200
+  
+  Caso 2: Obra $3.000.000 (Rango B)
+    □ Ejecutar SP con Proyecto + Dirección
+    □ Verificar Proyecto: 3 ítems (A + B + K)
+    □ Verificar Dirección: 3 ítems (A + B + K)
+    □ Validar importes:
+      - Proyecto: $194.497 (+7.8% vs. anterior)
+      - Dirección: $129.665 (+7.8% vs. anterior)
+  
+  Caso 3: Obra $10.000.000 (Rango C)
+    □ Ejecutar SP con Proyecto habilitado
+    □ Verificar: 4 ítems (A + B + C + K)
+    □ Validar: importe total = $696.127 (+8.5% vs. anterior)
+  
+  Caso 4: Obra $50.000.000 (Rango D)
+    □ Ejecutar SP con Proyecto habilitado
+    □ Verificar: 5 ítems (A + B + C + D + K)
+    □ Validar: importe total = $2.026.986 (+7.7% vs. anterior)
+  
+  Caso 5: Obra $3.000.000 Remodelación
+    □ Ejecutar SP con obra_tipologia = 'Remodelación'
+    □ Verificar: 5 ítems (A + adicional + B + adicional + K)
+    □ Validar: importe total = $252.846 (+7.8% vs. anterior)
+
+[T004.3] Casos extremos (SPEC Sección 5.2)
+  Caso 6: Obra en límite exacto ($522.181 = 1k)
+    □ Verificar que genera solo ítems Rango A
+    □ Validar que NO genera ítems Rango B
+  
+  Caso 7: Todas las tareas habilitadas
+    □ Habilitar: Proyecto + Dirección + 4 Instalaciones + Estructuras
+    □ Contar total de ítems generados
+    □ Verificar que metadata_numero_items es correcto
+    □ Validar que total_honorarios = suma de todos los ítems
+
+[T004.4] Validación de integridad
+  □ Verificar que metadata_rango se guarda correctamente
+  □ Verificar que metadata_valor_k se guarda correctamente
+  □ Verificar que metadata_numero_items coincide con ítems reales
+  □ Validar que no hay ítems duplicados
+  □ Validar que todos los ítems tienen importe > 0
+
+[T004.5] Comparación antes/después
+  □ Documentar diferencias de importes para cada caso
+  □ Validar que incrementos están en rango esperado (7-9%)
+  □ Confirmar que Rango A no tiene cambios
+  □ Verificar que incremento es consistente entre Proyecto y Dirección
+
+CRITERIOS DE ACEPTACIÓN:
+✅ Los 5 casos base pasan sin errores
+✅ Los 2 casos extremos pasan correctamente
+✅ Todos los importes coinciden con valores esperados (±$1 por redondeo)
+✅ El incremento de honorarios está en rango 7-9% para Rangos B/C/D
+✅ No hay regresiones en instalaciones ni estructuras
+✅ Metadata se guarda correctamente en tabla Calculos
+
+ENTREGABLES:
+- Reporte de testing con resultados de cada caso
+- Capturas o logs de ejecución
+- Confirmación de aprobación para deploy
+
+--------------------------------------------------------------------------------
+TICKET #005 - DEPLOY: PRODUCCIÓN Y DOCUMENTACIÓN
+--------------------------------------------------------------------------------
+ESTADO: 🟡 PENDIENTE
+PRIORIDAD: 🟢 NORMAL
+ASIGNADO A: DevOps + Backend Dev
+ESTIMACIÓN: 1 hora
+DEPENDENCIAS: Ticket #004 ✅ + Aprobación CPAU ✅
+
+DESCRIPCIÓN:
+Desplegar el cambio a producción y actualizar la documentación correspondiente.
+
+UBICACIÓN: 
+- Base de datos de producción
+
+TAREAS:
+
+[T005.1] Pre-deploy checklist
+  □ Confirmar que todos los tests pasaron (Ticket #004)
+  □ Obtener aprobación formal de CPAU documentada
+  □ Verificar que backup del SP está realizado
+  □ Notificar a equipo de frontend sobre deploy
+
+[T005.2] Ejecución del deploy
+  □ Conectar a base de datos de producción
+  □ Ejecutar script DROP PROCEDURE Calcular_Honorario_PYDOA
+  □ Ejecutar script CREATE PROCEDURE con cambios
+  □ Verificar que SP se creó correctamente (SHOW PROCEDURE STATUS)
+  □ Realizar test smoke: ejecutar SP con 1 caso simple
+
+[T005.3] Validación post-deploy
+  □ Ejecutar 1 cálculo real desde frontend
+  □ Verificar que response es correcta
+  □ Verificar que frontend muestra correctamente múltiples ítems
+  □ Monitorear logs por 15 minutos buscando errores
+
+[T005.4] Actualización de documentación
+  □ Actualizar header del SP con cambio y fecha
+  □ Actualizar SPEC008 con estado "IMPLEMENTADO"
+  □ Cerrar tickets #001 a #005 como completados
+  □ Documentar fecha de deploy y versión
+
+[T005.5] Comunicación
+  □ Notificar a CPAU: cambio en producción
+  □ Notificar a equipo de desarrollo: cambio completado
+  □ Actualizar documentación de API si fuera necesario
+
+ROLLBACK PLAN:
+Si hay errores en producción:
+1. Ejecutar DROP PROCEDURE Calcular_Honorario_PYDOA
+2. Restaurar versión anterior desde Git
+3. Notificar al equipo inmediatamente
+4. Documentar causa del rollback
+
+CRITERIOS DE ACEPTACIÓN:
+✅ SP desplegado sin errores en producción
+✅ Test smoke pasa correctamente
+✅ Frontend funciona correctamente con nuevo output
+✅ Documentación actualizada
+✅ CPAU notificado del cambio
+
+NOTAS POST-DEPLOY:
+- No se requiere actualización de frontend (compatible)
+- No se requiere migración de datos (cambio forward-only)
+- Todos los cálculos nuevos usarán el sistema progresivo
+- Cálculos anteriores permanecen sin cambios en el historial
+
+================================================================================
+RESUMEN DE ESTIMACIÓN
+================================================================================
+
+| Ticket | Descripción | Horas |
+|--------|-------------|-------|
+| #001 | Análisis y preparación | 1h |
+| #002 | Refactor Proyecto de Obra | 3h |
+| #003 | Refactor Dirección de Obra | 2h |
+| #004 | Testing y validación | 2h |
+| #005 | Deploy y documentación | 1h |
+| **TOTAL** | | **9h** |
+
+DURACIÓN: ~1.5 días laborables
+RIESGO: 🟢 BAJO (refactor de código probado)
+IMPACTO: 🟡 MEDIO (cambio en importes finales +7-9%)
+
+================================================================================
+NOTAS FINALES
+================================================================================
+
+PUNTOS CLAVE:
+- Este es un cambio de REFACTOR, no de nueva funcionalidad
+- La lógica de arrastre progresivo YA EXISTE y está probada (SPEC-CALC-002)
+- Solo se adapta/copia la lógica existente a 2 secciones nuevas
+- NO hay cambios en coeficientes ni en estructura de datos
+- El frontend ya soporta múltiples ítems por tarea
+
+RIESGOS IDENTIFICADOS:
+🟢 BAJO: Sintaxis SQL incorrecta → Mitigado con testing exhaustivo
+🟢 BAJO: Incremento inesperado de honorarios → Validado con 5 casos base
+🟢 BAJO: Incompatibilidad con frontend → Ya soporta esta estructura
+
+APROBACIONES REQUERIDAS:
+✅ CPAU - Dirección Técnica (solicitante del cambio)
+✅ Backend Lead (revisión de código)
+✅ QA (aprobación de tests)
+
+================================================================================
+FIN DEL DOCUMENTO
+================================================================================

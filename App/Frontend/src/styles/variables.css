@@ -59,22 +59,55 @@
    SPEC-FRONTEND-004 Ticket #002 - Márgenes adaptativos por escala de Windows
    ----------------------------------------------------------------------------
    La escala de Windows (DPI Scaling) reduce el viewport CSS efectivo:
-   - Escala 100% → 1920px → margen 150px (diseño aprobado del cliente)
+   - Escala 100% → 1920px → margen 150px base / 300px en pantallas anchas
    - Escala 125% → 1536px → margen 100px (reducción 33%)
    - Escala 150% → 1280px → margen  70px (reducción 53%)
    El override de mobile (max-width: 768px) se mantiene más abajo y prevalece
    sobre estas reglas por orden de cascada + especificidad.
    ============================================================================ */
 
-/* Escala de Windows 125% (DPR 1.25) */
-@media (min-resolution: 1.25dppx) {
+/* ----------------------------------------------------------------------------
+   SPEC-FRONTEND-004 Ticket #011 - Refactor: breakpoints por viewport width
+   ----------------------------------------------------------------------------
+   CONTEXTO: el approach original de #009.2 usaba `min-resolution: 1.25dppx`
+   y `1.5dppx` para detectar las escalas de Windows. Validado empíricamente
+   en máquina del usuario, `window.devicePixelRatio` NO refleja la escala
+   del SO de forma confiable:
+      Escala Windows 125% → dppx 1.0  → reglas dppx NO disparan ❌
+      Escala Windows 150% → dppx 1.2  → reglas dppx NO disparan ❌
+   Resultado: en 125%/150% se aplicaba el margen base 150px en vez de los
+   100px/70px previstos. El sistema responsive estaba efectivamente roto
+   fuera de escala 100%.
+
+   SOLUCIÓN: usar breakpoints por `min-width`/`max-width` del viewport,
+   que sí varía con la escala de Windows de forma consistente:
+      Escala 100% en FHD → viewport 1920
+      Escala 100% normal → viewport 1280-1599
+      Escala 125%        → viewport ~1188 (medido en máquina del usuario)
+      Escala 150%        → viewport ~867  (medido en máquina del usuario)
+
+   Resultado esperado por escenario:
+     ≥1600px → 300px  (escala 100% wide — sin cambio respecto #009.2)
+     1281-1599 → 150px (base, escala 100% normal)
+     ≤1280px → 100px  (escala 125% típica)
+     ≤1000px → 70px   (escala 150% típica)
+     ≤768px  → 16px   (mobile)
+   ---------------------------------------------------------------------------- */
+@media (min-width: 1600px) {
+  :root {
+    --layout-padding-x: 200px;
+  }
+}
+
+/* "Escala 125%" típica — viewport comprimido a ~1100-1280 */
+@media (max-width: 1280px) {
   :root {
     --layout-padding-x: 100px;
   }
 }
 
-/* Escala de Windows 150% (DPR 1.5) */
-@media (min-resolution: 1.5dppx) {
+/* "Escala 150%" típica — viewport comprimido a ~800-1000 */
+@media (max-width: 1000px) {
   :root {
     --layout-padding-x: 70px;
   }

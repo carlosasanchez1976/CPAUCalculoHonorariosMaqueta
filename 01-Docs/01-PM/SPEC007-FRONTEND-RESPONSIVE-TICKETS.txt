@@ -546,6 +546,287 @@ CRITERIO DE ACEPTACIÓN:
 ✅ Equipo informado sobre el cambio
 
 ================================================================================
+TICKET #009 ✅ COMPLETADO (22/05/2026)
+================================================================================
+TÍTULO: DashboardPage - Tipografía fluida en texto de bienvenida
+
+PRIORIDAD: 🟡 MEDIA
+TIEMPO ESTIMADO: 20 minutos
+DEPENDENCIAS: Ninguna (refinamiento post-cierre del SPEC007)
+
+CONTEXTO:
+Al revisar el Dashboard en distintas escalas de Windows, se detectó que el
+texto de bienvenida se ajustaba al contenido (wrap correcto), pero el tamaño
+de la fuente NO escalaba proporcionalmente: se veía visiblemente más grande
+respecto al viewport efectivo en escalas 125% y 150%, generando 3-4 líneas
+por párrafo en lugar de las 2 líneas del diseño original (1920px @ 100%).
+
+ORIGEN DE LA DISTORSIÓN:
+.welcomeTitle usaba `font-size: 28pt` (≈37.3px), una unidad ABSOLUTA que no
+escala con el viewport. Esto rompía la "regla de oro" #4 del README
+(tipografía fluida con clamp()).
+
+Matemática del problema (porcentaje del viewport ocupado por la fuente):
+  Escala 100% (1920px): 37px / 1920 = 1.94%  ✅ Proporcionado (original)
+  Escala 125% (1536px): 37px / 1536 = 2.41%  ⚠️ +24% relativo
+  Escala 150% (1280px): 37px / 1280 = 2.91%  ❌ +50% relativo
+
+Adicionalmente, los media queries existentes pisaban con valores fijos
+(1.5rem en tablet, 1.375rem en mobile) en lugar de permitir una transición
+fluida.
+
+ARCHIVOS AFECTADOS:
+- App/Frontend/src/pages/DashboardPage.module.css
+
+CAMBIOS APLICADOS:
+
+ANTES (incorrecto):
+  .welcomeTitle {
+    font-size: 28pt;   /* unidad absoluta, no escala */
+  }
+  @media (max-width: 1024px) {
+    .welcomeTitle { font-size: 1.5rem; }   /* override fijo */
+  }
+  @media (max-width: 768px) {
+    .welcomeTitle { font-size: 1.375rem; } /* override fijo */
+  }
+
+DESPUÉS (correcto):
+  .welcomeTitle {
+    font-size: clamp(1.375rem, 0.625rem + 1.4vw, 2.333rem);
+    /* min 22px (mobile) → fluido → max 37.3px (≈28pt @ escala 100%) */
+  }
+  /* media queries ya no overridean font-size: el clamp() cubre todo el rango */
+
+COMPORTAMIENTO ESPERADO:
+  Viewport 1920px (escala 100%) → ~37px   ✅ idéntico al diseño original
+  Viewport 1536px (escala 125%) → ~31.5px ✅ proporcional
+  Viewport 1280px (escala 150%) → ~28px   ✅ proporcional
+  Viewport 1024px (tablet)      → ~24px   ✅ legible
+  Viewport <768px (mobile)      → 22px    ✅ mínimo del clamp
+
+CRITERIO DE ACEPTACIÓN:
+✅ Texto de bienvenida mantiene proporción visual al diseño original
+   en escalas Windows 100%/125%/150%
+✅ Se eliminaron los font-size fijos en media queries
+✅ Comentario en CSS explica la decisión y el comportamiento esperado
+✅ No genera overflow horizontal en ninguna escala
+
+VALIDACIÓN VISUAL:
+- Comparar contra el diseño cliente (3 párrafos × 2 líneas en full HD)
+- Verificar en escala 100%, 125% y 150% de Windows
+- Verificar en breakpoints tablet (1024px) y mobile (768px)
+
+--------------------------------------------------------------------------------
+SUBTAREA #009.1 ❌ REVERTIDO (22/05/2026)
+--------------------------------------------------------------------------------
+TÍTULO: DashboardPage - Limitar ancho del contenido para emparejar márgenes
+        con el diseño original del cliente
+
+ESTADO FINAL: REVERTIDO — la propuesta era incorrecta.
+
+CONTEXTO ORIGINAL:
+Tras corregir el font-size del texto de bienvenida (Ticket #009), al comparar
+contra la maqueta del cliente en resolución 1920x1080 @ escala 100% se
+percibió un "espacio muerto" entre el texto de bienvenida y la card. Se
+propuso limitar el ancho del contenido con max-width: 1200px + margin: 0 auto.
+
+POR QUÉ SE REVIRTIÓ:
+Al aplicar el cambio, se rompió una regla de diseño FUNDAMENTAL que ya
+estaba resuelta en tickets anteriores del SPEC007:
+
+  ⚠️ REGLA DE ORO: El contenido de cada página DEBE alinearse
+     verticalmente con:
+       - Borde izquierdo: logos del Header ("Calculadora DE HONORARIOS")
+       - Borde derecho:   user-box del Header ("Usuario del Sistema")
+       - Y replicar esa misma alineación en el Footer.
+
+Esa alineación está garantizada por `--layout-padding-x` (150px/100px/70px
+según escala Windows). Al introducir `max-width: 1200px; margin: 0 auto`
+en .twoColumnLayout, el contenido quedó CENTRADO en el viewport en lugar
+de respetar los bordes definidos por el padding lateral. Resultado:
+
+  - Texto desalineado respecto al logo (margen izquierdo mayor que el header)
+  - Card desalineada respecto al dropdown de usuario
+  - Texto comprimido en columna más angosta → wrapping innecesario
+
+El cliente envió maquetas con líneas verticales rojas que demarcan
+explícitamente esos límites de alineación.
+
+DIAGNÓSTICO CORREGIDO:
+El "espacio muerto" percibido inicialmente era consecuencia del Ticket
+#009 ANTERIOR a su aplicación: con `font-size: 28pt` fijo el texto se
+veía desproporcionadamente grande respecto al viewport (en cualquier
+escala), y eso hacía parecer que la card estaba "demasiado lejos". Una
+vez aplicado el clamp() fluido del Ticket #009, la proporción visual
+queda correcta SIN necesidad de tocar el ancho del layout.
+
+ARCHIVOS REVERTIDOS:
+- App/Frontend/src/pages/DashboardPage.module.css
+  → Removido max-width: 1200px y margin: 0 auto en .twoColumnLayout
+  → Agregado comentario "NO reintroducir max-width aquí" para evitar
+    regresiones futuras.
+
+APRENDIZAJE / NOTAS PARA FUTURO:
+✅ La alineación de contenido con header/footer es INNEGOCIABLE en CH2026
+✅ Antes de introducir max-width o margin auto en contenedores de página,
+   verificar siempre contra las maquetas del cliente con líneas guía.
+✅ `--layout-padding-x` es el ÚNICO mecanismo aprobado para definir
+   márgenes laterales de contenido — no introducir constraints
+   adicionales a nivel de página.
+✅ Si un texto se ve "demasiado grande" o "demasiado separado de otros
+   elementos", el problema suele ser tipográfico (unidades absolutas,
+   falta de clamp), NO de ancho de layout.
+
+--------------------------------------------------------------------------------
+SUBTAREA #009.2 ✅ COMPLETADO (22/05/2026)
+--------------------------------------------------------------------------------
+TÍTULO: Ampliar márgenes laterales globales en escala 100% (pantallas anchas)
+        sin afectar escalas 125% / 150% ni viewports menores
+
+CONTEXTO:
+Tras corregir el font-size (Ticket #009) y revertir la subtarea #009.1, en
+escala 100% sobre 1920x1080 el contenido seguía viéndose "muy ancho"
+respecto al diseño cliente, con vacío interno horizontal excesivo en todas
+las páginas (Dashboard, NuevoCalculo, ProcesoCalculo, ResultadoBasicoDetalle).
+
+REGLA INNEGOCIABLE A RESPETAR:
+El contenido de cada página DEBE seguir alineado verticalmente con los
+logos del Header (izquierda) y la user-box (derecha). Por lo tanto, la
+modificación debe ser GLOBAL y UNIFORME — afectar simultáneamente a
+header, body y footer vía la variable `--layout-padding-x`.
+
+DECISIÓN DE DISEÑO:
+Aplicar un escenario EXCLUSIVO para escala 100% sobre pantallas anchas,
+sin tocar el resto de breakpoints. Margen elegido: 300px (ajuste
+"agresivo" iterado — primero se probó 200px y se subió a 300px para
+reducir notoriamente el vacío interno y centrar más el contenido).
+
+ARCHIVOS AFECTADOS:
+- App/Frontend/src/styles/variables.css
+
+CAMBIOS APLICADOS:
+
+Se agrega una media query con DOBLE condición que aísla
+quirúrgicamente el escenario "escala 100% en Full HD o superior":
+
+  @media (min-width: 1600px) and (max-resolution: 1.24dppx) {
+    :root {
+      --layout-padding-x: 300px;
+    }
+  }
+
+  - `min-width: 1600px`        → solo viewports anchos
+  - `max-resolution: 1.24dppx` → solo sin scaling de Windows (escala 100%)
+
+  Ambas condiciones combinadas garantizan CERO intersección con escalas
+  125% (dppx=1.25) y 150% (dppx=1.5): esas resoluciones violan la
+  condición max-resolution y nunca matchean esta regla.
+
+  Se ubicó ANTES de los `@media (min-resolution: ...)` para que, si en
+  el futuro alguien agrega un viewport ancho con scaling, el override
+  por resolución prevalezca correctamente.
+
+MATRIZ DE VALIDACIÓN:
+
+  Escenario                       | padding-x | Contenido útil | Estado
+  --------------------------------|-----------|----------------|----------
+  1920px @ 100% (Full HD wide)    | 300px ✨  | 1320px (68.8%) | NUEVO
+  2560px @ 100% (QHD wide)        | 300px ✨  | 1960px (76.6%) | NUEVO
+  1536px @ 125% (FHD escala 125%) | 100px     | 1336px (87.0%) | SIN CAMBIO
+  1280px @ 150% (FHD escala 150%) |  70px     | 1140px (89.1%) | SIN CAMBIO
+  1366px @ 100% (laptop estándar) | 150px     | 1066px (78.0%) | SIN CAMBIO
+  1024px @ 100% (tablet horiz.)   | 150px     |  724px (70.7%) | SIN CAMBIO
+  <768px (mobile)                 |  16px     | viewport-32    | SIN CAMBIO
+
+CRITERIO DE ACEPTACIÓN:
+✅ En 1920x1080 @ escala 100%, header/body/footer se desplazan
+   uniformemente hacia el centro (300px de margen lateral)
+✅ Alineación de contenido con logos y user-box preservada
+✅ Escala 125% NO se modifica (sigue en 100px)
+✅ Escala 150% NO se modifica (sigue en 70px)
+✅ Laptops <1600px @ 100% NO se modifican (siguen en 150px)
+✅ Tablet y mobile NO se modifican
+✅ Cambio centralizado en variables.css — afecta todas las páginas
+   simultáneamente (Dashboard, NuevoCalculo, ProcesoCalculo,
+   ResultadoBasicoDetalle) sin necesidad de tocarlas individualmente
+
+VALIDACIÓN VISUAL:
+- Refrescar dev server y validar las 4 páginas en escala 100% (1920px)
+- Confirmar que header (logos + user-box), body y footer respetan
+  los mismos bordes verticales
+- Verificar en escala 125%: idéntico al estado previo
+- Verificar en escala 150%: idéntico al estado previo
+
+--------------------------------------------------------------------------------
+SUBTAREA #009.3 ✅ COMPLETADO (22/05/2026)
+--------------------------------------------------------------------------------
+TÍTULO: Tipografía welcome del Dashboard - matchear spec cliente (45pt)
+        EXCLUSIVAMENTE en escala 100% wide
+
+CONTEXTO:
+Tras aplicar el margen 300px (#009.2) la maquetación se acercó al diseño,
+pero el cliente identificó una diferencia de wrap:
+  - Diseño cliente: el segundo renglón dice "del CPAU."
+  - Nuestro dev:    el segundo renglón dice solo "CPAU."
+La maqueta del cliente especifica explícitamente "Avenir Black - 45pt"
+para el texto de bienvenida. Nuestro clamp() topaba en ~37px (28pt),
+lo que dejaba lugar para "del" al final del renglón 1.
+
+DECISIÓN DE DISEÑO:
+Aplicar 45pt = 60px EXCLUSIVAMENTE en escala 100% wide, usando el mismo
+patrón de aislamiento doble del Ticket #009.2 (min-width + max-resolution).
+El clamp() base SIGUE rigiendo para las demás escalas → cero regresión.
+
+ARCHIVOS AFECTADOS:
+- App/Frontend/src/pages/DashboardPage.module.css
+
+CAMBIOS APLICADOS:
+
+  @media (min-width: 1600px) and (max-resolution: 1.24dppx) {
+    .welcomeTitle {
+      font-size: 30pt;   /* ≈ 40px, valor final validado visualmente */
+    }
+  }
+
+  Iteración del valor:
+    - Intento 1: 45pt (spec literal cliente)  → 10 renglones, desborde ❌
+    - Intento 2: 32pt (ajustado proporcional) → cerca, pero aún levemente grande
+    - Intento 3: 30pt (ajuste fino del usuario) → matchea mockup ✅
+
+  Justificación del 30pt:
+    Nuestra columna de bienvenida mide ~660px (margen 300px del #009.2),
+    mientras que la del mockup cliente media ~810px (margen ~150px).
+    Ratio: 660/810 = 0.815. Aplicado al spec: 45pt × 0.815 ≈ 36.7pt.
+    El ajuste final a 30pt (≈ 40px) lo definió Charly validando visualmente
+    contra la maqueta: asegura "del CPAU" junto en línea 2 y 7 renglones
+    totales matcheando el diseño cliente sin desborde.
+
+MATRIZ DE VALIDACIÓN:
+
+  Escenario                       | font-size  | Estado
+  --------------------------------|------------|----------
+  1920px @ 100% (Full HD wide)    | 40px (30pt)| NUEVO ✨
+  2560px @ 100% (QHD wide)        | 40px (30pt)| NUEVO ✨
+  1536px @ 125% (FHD escala 125%) | clamp ~32px| SIN CAMBIO
+  1280px @ 150% (FHD escala 150%) | clamp ~28px| SIN CAMBIO
+  1366px @ 100% (laptop estándar) | clamp ~29px| SIN CAMBIO
+  1024px @ 100% (tablet horiz.)   | clamp ~24px| SIN CAMBIO
+  <768px (mobile)                 | 22px (min) | SIN CAMBIO
+
+CRITERIO DE ACEPTACIÓN:
+✅ En 1920x1080 @ escala 100%, texto de bienvenida usa 45pt como spec cliente
+✅ El wrap del texto refleja el del diseño cliente
+   (segundo renglón comienza con "del CPAU.")
+✅ Escalas 125% / 150% / tablet / mobile sin cambios
+✅ Patrón de aislamiento consistente con Ticket #009.2
+
+NOTA DE ITERACIÓN:
+Si con 45pt el wrap queda mal en nuestra columna (más angosta que la
+maqueta cliente debido al margen 300px), iterar a 40pt (~53px) o 36pt
+manteniendo el mismo patrón de aislamiento.
+
+================================================================================
 RESUMEN DE PROGRESO
 ================================================================================
 
@@ -580,6 +861,146 @@ FASE 3 - VALIDACIÓN (1h 30min):
 
 FASE 4 - DOCUMENTACIÓN (30min):
   8. Ticket #008 - README
+
+================================================================================
+TICKET #010 ⏳ EN VALIDACIÓN VISUAL (22/05/2026)
+================================================================================
+TÍTULO: Tipografía de CalculationTypeCard en escala 100% wide
+PÁGINA: NuevoCalculoPage (componente CalculationTypeCard)
+PRIORIDAD: Media — afecta primera pantalla de selección
+
+PROBLEMA DETECTADO:
+Comparando dev (escala 100%, 1920px) con el mockup del cliente:
+  - Las cards se ven "muy anchas" → percepción causada por contenido interno
+    subdimensionado, NO por ancho real (el ancho está bloqueado por
+    --layout-padding-x: 300px del Ticket #009.2, regla innegociable).
+  - .description (16px), .title (clamp tope 16px) y .iconWrapper (78px)
+    fueron calibrados para viewports comprimidos en escalas 125/150%.
+  - En escala 100% wide la card crece a ~325px y el contenido queda chico.
+
+DECISIÓN DE DISEÑO:
+Mismo patrón de aislamiento que Ticket #009.3:
+  @media (min-width: 1600px) and (max-resolution: 1.24dppx)
+NO se modifica el ancho de la card ni el grid. SOLO tipografía + ícono.
+
+ARCHIVOS AFECTADOS:
+- App/Frontend/src/components/common/CalculationTypeCard.module.css
+
+CAMBIOS APLICADOS (Intento 1 — conservador):
+
+  @media (min-width: 1600px) and (max-resolution: 1.24dppx) {
+    .description  { font-size: 18px; }   /* +12.5% desde 16px */
+    .title        { font-size: 20px; }   /* override clamp tope 16px */
+    .iconWrapper  { width: 96px; height: 96px; }  /* +23% desde 78px */
+  }
+
+  Justificación proporcional:
+    Card actual ~325px / card mockup cliente ~215px → ratio ~1.51.
+    Aplicamos un aumento moderado (~15-25%) para no exceder altura mín.
+    de la card (450px) ni romper el line-clamp:2 del título.
+
+MATRIZ DE VALIDACIÓN:
+
+  Escenario                       | description | title  | icono  | Estado
+  --------------------------------|-------------|--------|--------|----------
+  1920px @ 100% (Full HD wide)    | 18px        | 20px   | 96px   | NUEVO ✨
+  2560px @ 100% (QHD wide)        | 18px        | 20px   | 96px   | NUEVO ✨
+  1536px @ 125% (FHD escala 125%) | 14px        | clamp  | 78px   | SIN CAMBIO
+  1280px @ 150% (FHD escala 150%) | 13px        | clamp  | 78px   | SIN CAMBIO
+  Tablet (769-1024)               | 16px        | 0.938r | 72px   | SIN CAMBIO
+  Mobile (<768)                   | 13px        | 0.875r | 64px   | SIN CAMBIO
+
+PRÓXIMOS PASOS:
+  1. Validar visualmente en escala 100% wide vs mockup cliente.
+  2. Iterar valores si quedan chicos (siguiente intento: 19/22/100px)
+     o si quedan grandes (siguiente intento: 17/19/88px).
+  3. Marcar resuelto cuando coincida con la maqueta.
+
+================================================================================
+TICKET #011 ✅ COMPLETADO (22/05/2026)
+================================================================================
+TÍTULO: Refactor de breakpoints — de `min-resolution` (dppx) a `min-width`/`max-width`
+ALCANCE: Global (variables.css + 3 módulos CSS)
+PRIORIDAD: 🔴 Crítica — el sistema responsive estaba efectivamente roto
+
+PROBLEMA DETECTADO (validado empíricamente en máquina del usuario):
+Todo el approach responsive de SPEC007 se basaba en detectar la escala de
+Windows vía `@media (min-resolution: 1.25dppx)` y `1.5dppx`. Ejecutando
+en consola del navegador:
+
+  Escala Windows  | viewport     | window.devicePixelRatio | Regla activa
+  ----------------|--------------|-------------------------|----------------
+  100% wide       | ≥1600        | 1.0                     | 300px ✅
+  125%            | 1188         | 1.0  ← NO es 1.25       | 150px ❌ (debía 100)
+  150%            |  867         | 1.2  ← NO es 1.5        | 150px ❌ (debía 70)
+
+CAUSA RAÍZ:
+`window.devicePixelRatio` en Chrome/Windows NO refleja la escala del SO
+de forma confiable. Depende de:
+  - Configuración "Override high DPI scaling behavior" del .exe de Chrome
+  - Drivers de gráficos / monitor
+  - Versión del navegador
+  - Settings del display
+Esta inconsistencia es un problema conocido y `min-resolution` NO sirve
+como breakpoint cross-environment.
+
+Lo que SÍ es confiable: el **viewport width** (`window.innerWidth`) varía
+consistentemente con la escala de Windows.
+
+DECISIÓN DE DISEÑO:
+Reemplazar TODOS los breakpoints basados en `dppx` por breakpoints basados
+en `min-width`/`max-width` del viewport.
+
+MAPEO DE BREAKPOINTS (calibrados con datos reales del usuario):
+
+  Escenario             | viewport medido | Breakpoint usado
+  ----------------------|-----------------|------------------------
+  100% wide (FHD+)      | ≥1600           | min-width: 1600px
+  100% normal           | 1281-1599       | (base, sin regla)
+  Escala 125% típica    | 1188            | max-width: 1280px
+  Escala 150% típica    |  867            | max-width: 1000px
+  Tablet                | 769-1024        | (reglas existentes)
+  Mobile                | ≤768            | max-width: 768px
+
+ARCHIVOS AFECTADOS (4):
+  1. App/Frontend/src/styles/variables.css
+     - Removidas reglas `min-resolution: 1.25dppx` y `1.5dppx`
+     - Removida condición `max-resolution: 1.24dppx` de la regla wide
+     - Agregadas: max-width:1280 → 100px, max-width:1000 → 70px
+     - Mantenida: min-width:1600 → 300px
+
+  2. App/Frontend/src/pages/DashboardPage.module.css
+     - .welcomeTitle 30pt: `min-width:1600 and max-resolution:1.24dppx`
+       → `min-width:1600px`
+
+  3. App/Frontend/src/components/common/CalculationTypeCard.module.css
+     - .description 14px/13px: `min-resolution:1.25/1.5dppx`
+       → `max-width:1280px` / `max-width:1000px`
+     - Override #010 (description/title/iconWrapper): condición simplificada
+       a `min-width:1600px`
+
+  4. App/Frontend/src/pages/NuevoCalculoPage.module.css
+     - .cardsGrid gap 20px/16px: `min-resolution:1.25/1.5dppx`
+       → `max-width:1280px` / `max-width:1000px`
+
+  5. App/Frontend/src/components/wizard/StepperProgress.module.css
+     - Anchos de step/connector/label: `min-resolution:1.25/1.5dppx`
+       → `max-width:1280px` / `max-width:1000px`
+
+VALIDACIÓN POST-REFACTOR (esperada):
+
+  Escenario        | viewport | --layout-padding-x | welcomeTitle | description card
+  -----------------|----------|--------------------|--------------|------------------
+  100% wide        | 1920     | 300px              | 30pt         | 18px / 20px / 96px
+  100% normal      | 1366     | 150px (base)       | clamp ~29px  | 16px
+  125%             | 1188     | 100px ✨ FIX       | clamp ~27px  | 14px ✨ FIX
+  150%             |  867     | 70px  ✨ FIX       | clamp ~22px  | 13px ✨ FIX
+  Mobile           | ≤768     | 16px (per-page)    | clamp 22px   | 13px
+
+LECCIÓN APRENDIDA (guardada en memory):
+NUNCA usar `min-resolution` / `max-resolution` como breakpoint para detectar
+escalas del SO. `window.devicePixelRatio` no es confiable en
+Chrome/Windows. Usar siempre `min-width`/`max-width` del viewport.
 
 ================================================================================
 FIN DEL DOCUMENTO

@@ -216,17 +216,56 @@
   }
 }
 
-/* SPEC007 - Escala de Windows 125%: reducir descripción para evitar
-   percepción de tamaño excesivo (el SO ya escala el viewport). */
-@media (min-resolution: 1.25dppx) {
+/* SPEC007 Ticket #011 - Refactor: breakpoints por viewport width.
+   Reglas originales basadas en `min-resolution` no disparaban porque
+   devicePixelRatio en Windows no refleja la escala del SO de forma
+   confiable. Reemplazadas por `max-width`. Ver Ticket #011. */
+
+/* "Escala 125%" típica — viewport ≤1280 */
+@media (max-width: 1280px) {
   .description {
     font-size: 14px;
   }
 }
 
-/* SPEC007 - Escala de Windows 150%: reducción adicional. */
-@media (min-resolution: 1.5dppx) {
+/* "Escala 150%" típica — viewport ≤1000 */
+@media (max-width: 1000px) {
   .description {
     font-size: 13px;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   SPEC007 Ticket #010 - Tipografía CalculationTypeCard EXCLUSIVA escala 100% wide
+   ----------------------------------------------------------------------------
+   Objetivo: aumentar proporción visual del contenido interno de la card
+   (descripción, título de la caja blanca, ícono) ÚNICAMENTE en escala 100%
+   sobre pantallas anchas (≥1600px), donde la card crece a ~325px y el
+   contenido base (calibrado para viewports comprimidos 125/150%) queda
+   subdimensionado.
+
+   Ticket #011: condición simplificada a `min-width: 1600px` (se removió
+   `max-resolution: 1.24dppx` porque devicePixelRatio no es confiable).
+   En 125%/150% el viewport baja a ~1188/~867 y nunca matchea min-width:1600.
+   ---------------------------------------------------------------------------- */
+@media (min-width: 1600px) {
+  .description {
+    /* +12.5% respecto a base 16px. Mejora legibilidad y proporción con
+       card de ~325px sin riesgo de desbordar la altura mín. 450px. */
+    font-size: 18px;
+  }
+
+  .title {
+    /* Override del clamp(): el tope era 16px (1rem). Subimos a 20px
+       para matchear la proporción del título de la caja blanca con
+       el mockup cliente. Mantiene line-clamp: 2. */
+    font-size: 20px;
+  }
+
+  .iconWrapper {
+    /* +23% respecto a base 78px. Acompaña el aumento tipográfico
+       manteniendo la jerarquía visual de la card. */
+    width: 96px;
+    height: 96px;
   }
 }

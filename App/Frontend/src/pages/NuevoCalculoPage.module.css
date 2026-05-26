@@ -128,15 +128,20 @@
   }
 }
 
-/* SPEC-FRONTEND-004 Ticket #003 - Reducción de gap en escalas Windows altas
-   Da más espacio interno a las cards cuando el viewport efectivo es menor. */
-@media (min-resolution: 1.25dppx) {
+/* SPEC007 Ticket #011 - Refactor: breakpoints por viewport width.
+   Reglas originales basadas en `min-resolution` no disparaban porque
+   devicePixelRatio en Windows no refleja la escala del SO de forma
+   confiable. Reemplazadas por `max-width`. Ver Ticket #011. */
+
+/* "Escala 125%" típica — viewport ≤1280 */
+@media (max-width: 1280px) {
   .cardsGrid {
     gap: 20px;
   }
 }
 
-@media (min-resolution: 1.5dppx) {
+/* "Escala 150%" típica — viewport ≤1000 */
+@media (max-width: 1000px) {
   .cardsGrid {
     gap: 16px;
   }

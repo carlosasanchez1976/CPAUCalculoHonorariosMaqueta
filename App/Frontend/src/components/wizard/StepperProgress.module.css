@@ -189,10 +189,15 @@
   }
 }
 
-/* SPEC007 Ticket #005 - Escala Windows 125%: reducir ancho de pasos y
+/* SPEC007 Ticket #011 - Refactor: breakpoints por viewport width.
+   Reglas originales basadas en `min-resolution` no disparaban porque
+   devicePixelRatio en Windows no refleja la escala del SO de forma
+   confiable. Reemplazadas por `max-width`. Ver Ticket #011. */
+
+/* "Escala 125%" típica — viewport ≤1280: reducir ancho de pasos y
    conectores para que el stepper completo entre sin overflow horizontal
    dentro de los márgenes laterales reducidos (--layout-padding-x: 100px). */
-@media (min-resolution: 1.25dppx) {
+@media (max-width: 1280px) {
   .stepItem {
     width: 120px;
   }
@@ -204,10 +209,9 @@
   }
 }
 
-/* SPEC007 Ticket #005 - Escala Windows 150%: reducción adicional para
-   evitar overflow del stepper en viewports comprimidos (~1140px de
-   contenido útil con 5 pasos + 4 conectores). */
-@media (min-resolution: 1.5dppx) {
+/* "Escala 150%" típica — viewport ≤1000: reducción adicional para
+   evitar overflow del stepper en viewports comprimidos. */
+@media (max-width: 1000px) {
   .stepItem {
     width: 100px;
   }

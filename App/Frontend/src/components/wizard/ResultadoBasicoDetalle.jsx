@@ -164,10 +164,75 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
             margin: 0 !important;
             box-shadow: none !important;
             max-width: 100% !important;
+            width: 100% !important;
           }
 
           .preview-actions {
             display: none !important;
+          }
+
+          /* ============================================
+             FIX HEADER: Forzar tamaños fijos en impresión
+             Usa [class*="..."] para matchear clases hasheadas de CSS Modules
+             ============================================ */
+          [class*="certificateHeader"] {
+            display: grid !important;
+            grid-template-columns: 180px 1fr !important;
+            gap: 0.5rem !important;
+            align-items: stretch !important;
+          }
+
+          [class*="headerLeft"] {
+            width: 180px !important;
+            min-width: 180px !important;
+            max-width: 180px !important;
+            min-height: 100px !important;
+            height: auto !important;
+            padding: 1.2rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 8px !important;
+          }
+
+          [class*="headerRight"] {
+            padding: 1rem 1.2rem !important;
+            border-radius: 8px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+          }
+
+          [class*="logo"]:not([class*="logoPlaceholder"]) {
+            width: 130px !important;
+            max-width: 130px !important;
+            max-height: 65px !important;
+            height: auto !important;
+            object-fit: contain !important;
+            display: block !important;
+          }
+
+          [class*="title"] {
+            font-size: 1.4rem !important;
+            margin: 0 !important;
+            padding-bottom: 0.5rem !important;
+            letter-spacing: 0.05rem !important;
+          }
+
+          [class*="metadata"]:not([class*="metadataItem"]):not([class*="metadataLabel"]):not([class*="metadataValue"]) {
+            font-size: 0.9rem !important;
+            gap: 1rem !important;
+            margin-top: 0.5rem !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            flex-wrap: wrap !important;
+          }
+
+          [class*="metadataItem"] {
+            font-size: 0.9rem !important;
+            display: flex !important;
+            gap: 0.5rem !important;
           }
         }
       `;

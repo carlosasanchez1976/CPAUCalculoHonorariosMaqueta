@@ -141,17 +141,31 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
           cursor: not-allowed;
         }
 
-        /* CRÍTICO: Ocultar botones y ajustar diseño en impresión */
+        /* CRÍTICO: Estilos de impresión SOLO para esta ventana */
         @media print {
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+
+          @page {
+            size: A4 portrait;
+            margin: 10mm;
+          }
+
           body {
             padding: 0 !important;
             background: white !important;
+            width: 100% !important;
           }
+
           #preview-container {
             margin: 0 !important;
             box-shadow: none !important;
             max-width: 100% !important;
           }
+
           .preview-actions {
             display: none !important;
           }

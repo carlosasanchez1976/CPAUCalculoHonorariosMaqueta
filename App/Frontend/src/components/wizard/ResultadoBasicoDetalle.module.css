@@ -115,7 +115,7 @@
 
 .resumenItem {
   display: grid;
-  grid-template-columns: minmax(min(200px, 100%), max-content) 1fr;
+  grid-template-columns: minmax(180px, max-content) 1fr;
   gap: 1rem;
   align-items: baseline;
   border-bottom: 2px solid var(--color-gris);
@@ -495,6 +495,10 @@
     gap: 1.5rem;
   }
 
+  .resumenGrid {
+    grid-template-columns: 1fr;
+  }
+
   .disclaimerMeta {
     flex-direction: column;
     gap: 0.5rem;
@@ -535,14 +539,41 @@
 
 /* Estilos optimizados para generación de PDF */
 .pdfExport {
-  max-width: 850px;
+  max-width: 750px; /* Ajustado para formato A4 (210mm) */
   margin: 0 auto;
+  padding: 0; /* CRÍTICO: Sin padding para evitar páginas en blanco */
 }
 
 .pdfExport .certificateHeader {
   grid-template-columns: auto 1fr;
+  padding: 0;
+  margin-bottom: 0.5rem;
+  gap: 0.4rem;
+}
+
+.pdfExport .headerLeft {
   padding: 1rem;
-  margin-bottom: 0.8rem;
+  min-width: 150px;
+  min-height: 80px;
+  width: 150px;
+  height: 80px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdfExport .logo {
+  width: 100%;
+  height: 100%;
+  max-width: 140px;
+  max-height: 70px;
+  object-fit: contain;
+}
+
+.pdfExport .headerRight {
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
 }
 
 .pdfExport .logoPlaceholder {
@@ -553,32 +584,47 @@
 .pdfExport .title {
   font-size: 1.05rem;
   margin: 0;
+  padding-bottom: 0.4rem;
 }
 
 .pdfExport .metadata {
   font-size: 0.75rem;
   gap: 0.8rem;
+  margin-top: 0.4rem;
+}
+
+.pdfExport .metadataItem {
+  font-size: 0.75rem;
 }
 
 .pdfExport .twoColumnLayout {
-  gap: 1rem;
+  gap: 0.7rem;
 }
 
 .pdfExport .proyectoResumen,
 .pdfExport .disclaimer,
 .pdfExport .resultsSection {
-  padding: 0.8rem;
+  padding: 0.6rem;
   margin-bottom: 0;
 }
 
 .pdfExport .sectionTitle {
-  font-size: 0.9rem;
-  margin: 0 0 0.5rem 0;
-  padding-bottom: 0.4rem;
+  font-size: 0.85rem;
+  margin: 0 0 0.4rem 0;
+  padding-bottom: 0.3rem;
 }
 
 .pdfExport .resumenGrid {
-  gap: 0.4rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  column-gap: 1.5rem;
+}
+
+.pdfExport .resumenItem {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.5rem;
 }
 
 .pdfExport .disclaimerTitle {
@@ -625,6 +671,13 @@
 }
 
 @media print {
+  /* CRÍTICO: Forzar impresión de fondos e imágenes */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
   .container {
     max-width: 100%;
     padding: 0;
@@ -632,9 +685,45 @@
   }
 
   .certificateHeader {
-    grid-template-columns: auto 1fr;
-    padding: 1.5rem;
-    margin-bottom: 1.2rem;
+    grid-template-columns: 180px 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* CRÍTICO: Forzar fondos de color */
+  .headerLeft {
+    background-color: var(--color-primary) !important;
+    padding: 1.2rem !important;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .headerRight {
+    background-color: var(--color-celeste) !important;
+    padding: 1rem 1.2rem !important;
+    border-radius: 8px;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* CRÍTICO: Forzar impresión del logo */
+  .logo {
+    display: block !important;
+    opacity: 1 !important;
+    max-width: 140px !important;
+    max-height: 70px !important;
+    width: 100% !important;
+    height: auto !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .logoPlaceholder {
@@ -642,50 +731,278 @@
   }
 
   .title {
-    font-size: 1.3rem;
+    font-size: 1.15rem;
+    margin: 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #000000;
   }
 
   .metadata {
-    font-size: 0.875rem;
-    gap: 1.5rem;
+    font-size: 0.85rem;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .metadataItem {
+    font-size: 0.85rem;
   }
 
   .twoColumnLayout {
-    gap: 1.5rem;
+    gap: 1rem;
   }
 
   .proyectoResumen,
   .disclaimer,
   .resultsSection {
-    padding: 1.2rem;
-    margin-bottom: 0;
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
   }
 
   .sectionTitle {
-    font-size: 1rem;
-    margin: 0 0 0.8rem 0;
-    padding-bottom: 0.6rem;
+    font-size: 0.9rem;
+    margin: 0 0 0.5rem 0;
+    padding-bottom: 0.4rem;
   }
 
   .resumenGrid {
-    gap: 0.7rem;
+    gap: 0.5rem;
+  }
+
+  .resumenItem {
+    padding-bottom: 0.3rem;
+  }
+
+  .disclaimerTitle {
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .disclaimerText {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    margin-bottom: 0.4rem;
+  }
+
+  .disclaimerMeta {
+    font-size: 0.7rem;
+    padding-top: 0.4rem;
   }
 
   .table {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
   }
 
   .table th,
   .table td {
-    padding: 0.6rem 0.8rem;
+    padding: 0.5rem 0.6rem;
+  }
+
+  .totalRow td {
+    padding: 0.6rem;
+  }
+
+  .totalAmount {
+    font-size: 1.1rem;
   }
 
   .notaFinal {
-    margin-top: 0;
+    margin-top: 0.4rem;
   }
 
   .notaFinal p {
-    font-size: 0.875rem;
-    line-height: 1.5;
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+
+  /* CRÍTICO: Control de saltos de página */
+  .page {
+    page-break-after: always;
+    page-break-inside: avoid;
+  }
+
+  .page.pageBreak {
+    display: block !important;
+    page-break-before: always;
+  }
+
+  /* Evitar saltos dentro de secciones */
+  .proyectoResumen,
+  .disclaimer,
+  .resultsSection {
+    page-break-inside: avoid;
+  }
+
+  /* Ocultar elementos interactivos en impresión */
+  .termsCheckbox,
+  .footerContainer,
+  .actions {
+    display: none !important;
   }
 }
+
+
+/* ========================================
+   PÁGINA 2: NOTAS INSTITUCIONALES
+   ======================================== */
+
+/* Salto de página en PDF */
+.pageBreak {
+  page-break-before: always;
+}
+
+/* Contenedor de página individual */
+.page {
+  min-height: 100vh;
+  background: white;
+}
+
+/* CRÍTICO: Ocultar página 2 en pantalla, solo se ve en el PDF */
+.page.pageBreak {
+  display: none;
+}
+
+/* Ajuste de altura en PDF */
+.pdfExport .page {
+  min-height: auto;
+  padding: 0; /* CRÍTICO: Sin padding para evitar espacio extra */
+}
+
+/* En PDF: mostrar la página 2 */
+.pdfExport .page.pageBreak {
+  display: block;
+}
+
+/* CRÍTICO: Ocultar checkbox y botones en el PDF */
+.pdfExport .termsCheckbox,
+.pdfExport .footerContainer {
+  display: none !important;
+}
+
+/* Sección de notas (página 2) */
+.notasSection {
+  padding: 40px 60px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Título principal de Notas */
+.notasTitle {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #333;
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 10px;
+}
+
+/* Bloque de nota individual */
+.notaBlock {
+  margin-bottom: 28px;
+}
+
+.notaBlock h4 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.notaBlock p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+  margin: 0 0 12px 0;
+  white-space: pre-line; /* Respeta saltos de línea en el texto */
+}
+
+.notaBlock ul {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+  padding-left: 20px;
+  list-style-type: disc;
+  margin: 10px 0;
+}
+
+.notaBlock ul li {
+  margin-bottom: 6px;
+}
+
+/* Tabla de etapas del proyecto */
+.etapasTable {
+  width: 100%;
+  max-width: 450px;
+  border-collapse: collapse;
+  margin: 15px 0 20px 0;
+  font-size: 14px;
+}
+
+.etapasTable tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.etapasTable tbody tr:last-child {
+  border-bottom: 2px solid #333;
+  font-weight: bold;
+}
+
+.etapasTable td {
+  padding: 8px 12px;
+}
+
+.etapasTable td:first-child {
+  text-align: left;
+  color: #555;
+}
+
+.etapasTable td:last-child {
+  text-align: right;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Nota al pie de la tabla de etapas */
+.etapasNota {
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+/* Ajustes específicos para PDF */
+.pdfExport .notasSection {
+  padding: 30px 50px;
+}
+
+.pdfExport .notasTitle {
+  font-size: 24px;
+  margin-bottom: 25px;
+}
+
+.pdfExport .notaBlock {
+  margin-bottom: 24px;
+}
+
+.pdfExport .notaBlock h4 {
+  font-size: 15px;
+}
+
+.pdfExport .notaBlock p {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.pdfExport .etapasTable {
+  font-size: 13px;
+  max-width: 400px;
+}
+
+.pdfExport .etapasTable td {
+  padding: 6px 10px;
+}
+
+.pdfExport .etapasNota {
+  font-size: 12px;
+}
+

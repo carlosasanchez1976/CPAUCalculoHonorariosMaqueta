@@ -65,7 +65,7 @@ const DatosObraBasico = ({ formData, onChange, stepTitle }) => {
             type="number"
             value={formData.valorMetro2}
             onChange={onChange}
-            placeholder="Costo por m²"
+            placeholder="Costo por m² (ARS)"
             required
             min="0"
             step="0.01"

@@ -1,0 +1,913 @@
+═══════════════════════════════════════════════════════════════════════════════
+  SPEC-CALC-004: ENTREGABLE PDF - CERTIFICADO DE HONORARIOS PROFESIONALES
+═══════════════════════════════════════════════════════════════════════════════
+
+📅 Fecha creación: 28/05/2026
+📄 Referencia: 01-Docs/00-Specs/SPEC009-CALC-Entregable.md
+👤 Owner: Frontend Team
+⏱️  Estimación total: 2-3 días desarrollo + 1 día testing
+
+⚠️  ALCANCE CRÍTICO:
+    Esta SPEC modifica ÚNICAMENTE el PDF exportado mediante el botón "Descargar PDF".
+    NO debe cambiar la interfaz de usuario visible en pantalla.
+    La página 2 de "Notas" solo debe aparecer en el archivo PDF descargado.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🎯 OBJETIVO GENERAL                                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Actualizar el entregable PDF para incluir una segunda página con las "Notas" 
+institucionales del CPAU, manteniendo la página 1 con los datos del cálculo.
+
+ALCANCE:
+  ✅ PDF exportado: Agregar página 2 con notas institucionales
+  ✅ Interfaz de usuario: Sin cambios (mantener igual)
+  ✅ Página 2: Visible SOLO en PDF, oculta en pantalla
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📋 TICKETS                                                                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+───────────────────────────────────────────────────────────────────────────────
+[TICKET-001] Crear constantes de texto para las Notas institucionales
+───────────────────────────────────────────────────────────────────────────────
+
+🎯 OBJETIVO
+  Centralizar los textos de las notas de la página 2 en un archivo de constantes
+  para facilitar mantenimiento y actualizaciones futuras.
+
+📦 ENTREGABLES
+  ☐ Crear archivo: App/Frontend/src/utils/pdfConstants.js
+  ☐ Definir objeto PDF_NOTAS con 6 secciones:
+    1. alcance (Alcance y carácter del cálculo)
+    2. costo (Costo de obra considerado)
+    3. etapas (Etapas del proyecto - array de objetos)
+    4. alcanceHonorarios (Alcance de los honorarios sugeridos)
+    5. noIncluidos (Conceptos no incluidos en los honorarios)
+    6. resolucion (Resolución de los honorarios)
+  ☐ Exportar constante PDF_NOTAS
+
+🛠️  IMPLEMENTACIÓN
+
+Crear archivo: App/Frontend/src/utils/pdfConstants.js
+
+```javascript
+/**
+ * Constantes de texto para el PDF de Honorarios Profesionales
+ * Página 2: Notas institucionales CPAU
+ */
+
+export const PDF_NOTAS = {
+  alcance: {
+    titulo: 'Alcance y carácter del cálculo',
+    contenido: `La presente calculadora de honorarios profesionales sugeridos, de carácter orientativo, calculado a partir de las variables ingresadas (tipo de obra, superficie, costo estimado por m2, alcance del encargo, entre otros), con el objetivo de obtener un honorario equitativo.
+
+El monto resultante podrá pactarse como honorario fijo o ajustable según lo que acuerden las partes.
+Tanto el cambio en el alcance de las tareas profesionales encomendadas, como cualquiera de las variables ingresadas habilita la revisión de los honorarios originalmente pactados.`
+  },
+  
+  costo: {
+    titulo: 'Costo de obra considerado',
+    contenido: `El costo de obra por m2 utilizado en el cálculo constituye una estimación consensuada entre profesional y comitente. El CPAU publica mensualmente índices de referencia de costos de construcción, elaborados por distintos organismos y/o medios, disponibles en la web institucional, quedando a criterio del/la profesional y del comitente seleccionar el valor que consideren adecuado.`
+  },
+
+  etapas: {
+    titulo: 'Etapas del proyecto',
+    items: [
+      { etapa: 'Croquis preliminar', porcentaje: '10%' },
+      { etapa: 'Anteproyecto', porcentaje: '15%' },
+      { etapa: 'Proyecto básico', porcentaje: '15%' },
+      { etapa: 'Documentación licitatoria', porcentaje: '20%' },
+      { etapa: 'Total proyecto', porcentaje: '60%' },
+      { etapa: 'Dirección de obra', porcentaje: '40%' }
+    ],
+    nota: 'A fin de conocer el contenido y alcance de cada una de las etapas del proyecto, se recomienda consultar el MEPAU.'
+  },
+
+  alcanceHonorarios: {
+    titulo: 'Alcance de los honorarios sugeridos',
+    contenido: `Los honorarios resultantes de esta calculadora contemplan las tareas profesionales correspondientes a un encargo ordinario, de acuerdo con los alcances definidos por la normtiva y usus profesionales vigentes, ver MEPAU.
+Para los encargos de Proyecto y Dirección, las tareas profesionales vinculadas al interiorismo, equipamiento no edilicio, mobiliario, iluminación, cortinas u otros elementos no habituales en una propiedad vacía del mercado inmobiliario no están incluidas y requerirán honorarios adicionales a pactar.
+Se recomienda a los profesionales acompañar la encomienda con el detalle de tareas, la modalidad de prestación y la lista de documentos entregables, pudiendo indicarse también su modo de ejecución (AutoCAD, BIM), a fin de clarificar el alcance del encargo y evitar confusiones.`
+  },
+
+  noIncluidos: {
+    titulo: 'Conceptos no incluidos en los honorarios',
+    contenido: `IVA, en caso de corresponder.
+Gestión municipal, derechos de construcción y/o cualquier tipo de gravámenes, tasas o derechos.
+Cálculo estructural, salvo el caso que se encuentre específicamente agregado al cálculo realizado.
+Proyecto de instalaciones, salvo el caso que se encuentren específicamente agregados al cálculo realizado.
+Documentación y planos comerciales, renders, maquetas, etc.
+Cualquier otro concepto que no esté expresado en el cálculo.`
+  },
+
+  resolucion: {
+    titulo: 'Resolución de los honorarios',
+    contenido: `En caso de que alguna de las partes decida no continuar con la totalidad del encargo, deberán abonarse los honorarios de las tareas efectivamente realizadas según lo acordado por las partes, y considerando las etapas de proyecto previamente mencionadas en este documento.
+En caso de rescisión unilateral por parte del comitente, se deberá convenir un resarcimiento en favor del profesional por las tareas encomendadas y no ejecutadas, de acuerdo a la normativa vigente.
+
+Para ampliar la información consultar al MEPAU, capítulo 02 Honorarios, o ponerse en contacto con tecnica@cpau.org`
+  }
+};
+```
+
+✅ CRITERIOS DE ACEPTACIÓN
+  ☐ Archivo pdfConstants.js creado en utils/
+  ☐ Objeto PDF_NOTAS exportado correctamente
+  ☐ Todos los textos coinciden con el diseño del cliente
+  ☐ No hay errores ortográficos ni de puntuación
+  ☐ Formato de array para etapas permite fácil renderizado
+
+⏱️  ESTIMACIÓN: 30 minutos
+
+💡 NOTAS
+  - Validar textos finales con CPAU antes de implementar
+  - Considerar agregar versión en inglés en el futuro
+  - Mantener formato de párrafos con \n\n para separación
+
+
+───────────────────────────────────────────────────────────────────────────────
+[TICKET-002] Agregar estilos CSS para página 2 y saltos de página
+───────────────────────────────────────────────────────────────────────────────
+
+🎯 OBJETIVO
+  Implementar los estilos necesarios para la segunda página del PDF y asegurar
+  saltos de página limpios entre contenidos.
+
+📦que la página 2 esté OCULTA en pantalla (solo visible en el PDF exportado).
+
+📦 ENTREGABLES
+  ☐ Agregar estilos para salto de página (.pageBreak)
+  ☐ Agregar estilos para contenedor de página (.page)
+  ☐ Ocultar página 2 en pantalla (.page.pageBreak { display: none; })
+  ☐ Mostrar página 2 en PDF (.pdfExport .page.pageBreak { display: block; })
+  ☐ Ocultar checkbox y botones en PDF (.pdfExport .termsCheckbox, .footerContainer)
+  ☐ Agregar estilos para sección de notas (.notasSection)
+  ☐ Agregar estilos para bloques de notas (.notaBlock)
+  ☐ Agregar estilos para tabla de etapas (.etapasTable
+
+Modificar: App/Frontend/src/components/wizard/ResultadoBasicoDetalle.module.css
+
+Agregar al final del archivo:
+
+```css
+/* ========================================
+   PÁGINA 2: NOTAS INSTITUCIONALES
+   Contenedor de página individual */
+.page {
+  min-height: 100vh;
+  background: white;
+}
+
+/* CRÍTICO: Ocultar página 2 en pantalla, solo se ve en el PDF */
+.page.pageBreak {
+  display: none;
+}
+
+/* Ajuste de altura en PDF */
+.pdfExport .page {
+  min-height: auto;
+  padding-bottom: 20px;
+}
+
+/* En PDF: mostrar la página 2 */
+.pdfExport .page.pageBreak {
+  display: block;
+}
+
+/* CRÍTICO: Ocultar checkbox y botones en el PDF */
+.pdfExport .termsCheckbox,
+.pdfExport .footerContainer {
+  display: none !important
+  min-height: auto;
+  padding-bottom: 20px;
+}
+
+/* Sección de notas (página 2) */
+.notasSection {
+  padding: 40px 60px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Título principal de Notas */
+.notasTitle {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 10px;
+}
+
+/* Bloque de nota individual */
+.notaBlock {
+  margin-bottom: 28px;
+}
+
+.notaBlock h4 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.notaBlock p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+  margin: 0 0 12px 0;
+  white-space: pre-line; /* Respeta saltos de línea en el texto */
+}
+
+.notaBlock ul {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+  padding-left: 20px;
+  list-style-type: disc;
+  margin: 10px 0;
+}
+
+.notaBlock ul li {
+  margin-bottom: 6px;
+}
+
+/* Tabla de etapas del proyecto */
+.etapasTable {
+  width: 100%;
+  max-width: 450px;
+  border-collapse: collapse;
+  margin: 15px 0 20px 0;
+  font-size: 14px;
+}
+
+.etapasTable tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.etapasTable tbody tr:last-child {
+  border-bottom: 2px solid #333;
+  font-weight: bold;
+}
+
+.etapasTable td {
+  padding: 8px 12px;
+}
+
+.etapasTable td:first-child {
+  text-align: left;
+  color: #555;
+}
+
+.etapasTable td:last-child {
+  text-align: right;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Nota al pie de la tabla de etapas */
+.etapasNota {
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+/* Ajustes específicos para PDF */
+.pdfExport .notasSection {
+  padding: 30px 50px;
+}
+
+.pdfExport .notasTitle {
+  font-size: 24px;
+  margin-bottom: 25px;
+}
+
+.pdfPágina 2 NO es visible en la interfaz de usuario (pantalla)
+  ☐ Salto de página funciona correctamente en PDF
+  ☐ Checkbox y botones NO aparecen en el PDF exportado
+  ☐ Texto de notas legible con interlineado adecuado
+  ☐ Tabla de etapas bien formateada
+  ☐ Estilos se ven bien en el PDF exportado
+.pdfExport .notaBlock p {
+  font-size: 13px;
+  line-height: 1.5;
+}
+```
+
+✅ CRITERIOS DE ACEPTACIÓN
+  ☐ Salto de página funciona correctamente en PDF
+  ☐ Texto de notas legible con interlineado adecuado
+  ☐ Tabla de etapas bien formateada
+  ☐ Estilos se ven bien tanto en pantalla como en PDF
+  ☐ No hay overflow de contenido
+  ☐ Márgenes consistentes con página 1
+
+⏱️  ESTIMACIÓN: 1 hora
+
+💡 NOTAS
+  - Probar con diferentes navegadores (Chrome, Edge, Firefox)
+  - Validar que la propiedad page-break-before funciona en html2pdf
+  - Si hay problemas con salto de página, considerar usar div vacío con altura
+
+
+───────────────────────────────────────────────────────────────────────────────
+[TICKET-003] Implementar markup de página 2 con secciones de notas
+───────────────────────────────────────────────────────────────────────────────
+
+🎯 OBJETIVO
+  Agregar el JSX de la segunda página dentro del componente ResultadoBasicoDetalle,
+  incluyendo todas las secciones de notas institucionales.
+
+📦 ENTREGABLES
+  ☐ Importar PDF_NOTAS desde pdfConstants
+  ☐ Agregar página 2 dentro del pdfRef
+  ☐ Duplicar header en página 2
+  ☐ Implementar 6 secciones de notas
+  ☐ Implementar tabla de etapas del proyecto
+  ☐ Asegurar que checkbox y botones queden FUERA del pdfRef
+
+🛠️  IMPLEMENTACIÓN
+
+Modificar: App/Frontend/src/components/wizard/ResultadoBasicoDetalle.jsx
+
+1. Agregar import al inicio del archivo:
+
+```javascript
+import { PDF_NOTAS } from '../../utils/pdfConstants';
+```
+
+2. Modificar el return del componente:
+
+BUSCAR:
+```jsx
+return (
+  <div className={styles.container}>
+    {/* Contenido para PDF */}
+    <div ref={pdfRef}>
+      {/* Header del Certificado */}
+      <div className={styles.certificateHeader}>
+        {/* ... header actual ... */}
+      </div>
+
+      {/* Layout de Dos Columnas */}
+      <div className={styles.twoColumnLayout}>
+        {/* ... contenido actual ... */}
+      </div>
+    </div>
+    {/* Fin contenido para PDF */}
+```
+
+REEMPLAZAR por:
+```jsx
+return (
+  <div className={styles.container}>
+    {/* Contenido para PDF */}
+    <div ref={pdfRef}>
+      
+      {/* ========================================
+          PÁGINA 1: DATOS DEL CÁLCULO
+          ======================================== */}
+      <div className={styles.page}>
+        {/* Header del Certificado */}
+        <div className={styles.certificateHeader}>
+          <div className={styles.headerLeft}>
+            <img src="/assets/icons/logoBlanco.svg" alt="CPAU Logo" className={styles.logo} />
+          </div>
+          <div className={styles.headerRight}>
+            <h3 className={styles.title}>Cálculo de honorarios profesionales</h3>
+            <div className={styles.metadata}>
+              <div className={styles.metadataItem}>
+                <span className={styles.metadataLabel}>Tipo:</span>
+                <span className={styles.metadataValue}>{formData.tipoNombre}</span>
+              </div>
+              <div className={styles.metadataItem}>
+                <span>Fecha:</span>
+                <span>{currentDate}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Layout de Dos Columnas */}
+        <div className={styles.twoColumnLayout}>
+          {/* ... MANTENER TODO EL CONTENIDO ACTUAL ... */}
+        </div>
+      </div>
+
+      {/* ========================================
+          PÁGINA 2: NOTAS INSTITUCIONALES
+          ======================================== */}
+      <div className={`${styles.page} ${styles.pageBreak}`}>
+        {/* Header (repetido) */}
+        <div className={styles.certificateHeader}>
+          <div className={styles.headerLeft}>
+            <img src="/assets/icons/logoBlanco.svg" alt="CPAU Logo" className={styles.logo} />
+          </div>
+          <div className={styles.headerRight}>
+            <h3 className={styles.title}>Cálculo de honorarios profesionales</h3>
+            <div className={styles.metadata}>
+              <div className={styles.metadataItem}>
+                <span className={styles.metadataLabel}>Tipo:</span>
+                <span className={styles.metadataValue}>{formData.tipoNombre}</span>
+              </div>
+              <div className={styles.metadataItem}>
+                <span>Fecha:</span>
+                <span>{currentDate}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Contenido de Notas */}
+        <div className={styles.notasSection}>
+          <h2 className={styles.notasTitle}>Notas</h2>
+          
+          {/* Alcance y carácter del cálculo */}
+          <section className={styles.notaBlock}>
+            <h4>{PDF_NOTAS.alcance.titulo}</h4>
+            <p>{PDF_NOTAS.alcance.contenido}</p>
+          </section>
+
+          {/* Costo de obra considerado */}
+          <section className={styles.notaBlock}>
+            <h4>{PDF_NOTAS.costo.titulo}</h4>
+            <p>{PDF_NOTAS.costo.contenido}</p>
+          </section>
+
+          {/* Etapas del proyecto */}
+          <section className={styles.notaBlock}>
+            <h4>{PDF_NOTAS.etapas.titulo}</h4>
+            <table className={styles.etapasTable}>
+              <tbody>
+                {PDF_NOTAS.etapas.items.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.etapa}</td>
+                    <td>{item.porcentaje}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className={styles.etapasNota}>{PDF_NOTAS.etapas.nota}</p>
+          </section>
+
+          {/* Alcance de los honorarios sugeridos */}
+          <section className={styles.notaBlock}>
+            <h4>{PDF_NOTAS.alcanceHonorarios.titulo}</h4>
+            <p>{PDF_NOTAS.alcanceHonorarios.contenido}</p>
+          </section>
+
+          {/* Conceptos no incluidos */}
+          <section className={styles.notaBlock}>
+            <h4>{PDF_NOTAS.noIncluidos.titulo}</h4>
+            <p>{PDF_NOTAS.noIncluidos.contenido}</p>
+          </section>
+
+          {/* Resolución de los honorarios */}
+          <section className={styles.notaBlock}>
+            <h4>{PDF_NOTAS.resolucion.titulo}</h4>
+            <p>{PDF_NOTAS.resolucion.contenido}</p>
+          </section>
+        </div>
+      </div>
+
+    </div>
+    {/* Fin contenido para PDF */}
+```
+
+3. Asegurar que el resto del componente (checkbox, botones) queda FUERA del pdfRef:
+
+```jsx
+    {/* Fin contenido para PDF */}
+
+    {/* Checkbox de Términos - FUERA del PDF */}
+    <div className={styles.termsCheckbox}>
+      <label className={styles.checkboxLabel}>
+        <input
+          type="checkbox"
+          checked={termsAccepted}
+          onChange={(e) => onAcceptTerms(e.target.checked)}
+          className={styles.checkbox}
+        />
+        <span>He leído y acepto las condiciones del cálculo</span>
+      </label>
+    </div>
+
+    {/* Botones de acción - FUERA del PDF */}
+    <div className={styles.actionsContainer}>
+      <Button
+        className={styles.downloadButton}
+        disabled={!termsAccepted}
+        onClick={handleDescargarPDF}
+      >
+        Descargar PDF
+      </Button>
+      <Button onClick={handleNuevoCalculo}>
+        Nuevo Cálculo
+      </Button>
+      <Button onClick={handleVolverDashboard}>
+        Volver al Dashboard
+      </Button>
+    </div>
+
+    {/* Modal de detalle */}
+    {modalDetalleAbierto && (
+      <DetalleItemsModal
+        detalleHonorarios={formData.detalleHonorarios}
+        onClose={cerrarModalDetalle}
+      />
+    )}
+  </div>
+);
+```
+
+✅ CRITERIOS DE ACEPTACIÓN
+  ☐ Página 1 se mantiene igual (sin cambios visuales)
+  ☐ Página 2 se renderiza correctamente con 6 secciones
+  ☐ Header se repite en ambas páginas
+  ☐ Tabla de etapas se formatea correctamente
+  ☐ Checkbox y botones NO aparecen en el PDF
+  ☐ No hay errores en consola
+  ☐ PDF se genera con 2 páginas
+
+⏱️  ESTIMACIÓN: 2 horas
+
+💡 NOTAS
+  - Validar que el pdfRef envuelve solo el contenido del PDF
+  - Probar que el salto de página funciona correctamente
+  - Verificar que no se rompe la funcionalidad del modal de detalle
+
+
+───────────────────────────────────────────────────────────────────────────────
+[TICKET-004] ❌ CANCELADO - Extraer header a componente reutilizable
+───────────────────────────────────────────────────────────────────────────────
+
+🎯 OBJETIVO
+  ~~Evitar duplicación de código del header creando un componente reutilizable.~~
+  
+❌ CANCELADO: Se decidió mantener el header inline (duplicado) para no afectar
+   la interfaz de usuario. El alcance de la SPEC es solo el PDF exportado.
+
+RAZÓN: Mantener simplicidad y no modificar la UI visible en pantalla.
+
+📦 ENTREGABLES
+  ☐ Crear componente PDFHeader
+  ☐ Migrar markup y estilos del header
+  ☐ Usar PDFHeader en ambas páginas
+  ☐ Asegurar que se mantiene el comportamiento actual
+
+🛠️  IMPLEMENTACIÓN
+
+1. Crear archivo: App/Frontend/src/components/wizard/PDFHeader.jsx
+
+```jsx
+import styles from './ResultadoBasicoDetalle.module.css';
+
+/**
+ * Header reutilizable para el PDF de honorarios
+ * Se usa en página 1 y página 2
+ */
+const PDFHeader = ({ formData, currentDate }) => {
+  return (
+    <div className={styles.certificateHeader}>
+      <div className={styles.headerLeft}>
+        <img src="/assets/icons/logoBlanco.svg" alt="CPAU Logo" className={styles.logo} />
+      </div>
+      <div className={styles.headerRight}>
+        <h3 className={styles.title}>Cálculo de honorarios profesionales</h3>
+        <div className={styles.metadata}>
+          <div className={styles.metadataItem}>
+            <span className={styles.metadataLabel}>Tipo:</span>
+            <span className={styles.metadataValue}>{formData.tipoNombre}</span>
+          </div>
+          <div className={styles.metadataItem}>
+            <span>Fecha:</span>
+            <span>{currentDate}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PDFHeader;
+```
+
+2. Modificar ResultadoBasicoDetalle.jsx:
+
+Agregar import:
+```javascript
+import PDFHeader from './PDFHeader';
+```
+
+Reemplazar markup del header en ambas páginas:
+```jsx
+{/* Antes */}
+<div className={styles.certificateHeader}>
+  <div className={styles.headerLeft}>
+    {/* ... */}
+  </div>
+  <div className={styles.headerRight}>
+    {/* ... */}
+  </div>
+</div>
+
+{/* Después */}
+<PDFHeader formData={formData} currentDate={currentDate} />
+```
+
+✅ CRITERIOS DE ACEPTACIÓN
+  ☐ Componente PDFHeader creado y exportado
+  ☐ Header funciona igual que antes en ambas páginas
+  ☐ No hay duplicación de código
+  ☐ Estilos se mantienen correctos
+  ☐ PDF se genera sin errores
+
+⏱️  ESTIMACIÓN: 45 minutos
+
+💡 NOTAS
+  - Solo implementar si el equipo valora la reducción de duplicación
+  - No es crítico para el funcionamiento
+  - Alternativa válida: duplicar el markup (más simple)
+
+
+───────────────────────────────────────────────────────────────────────────────
+[TICKET-005] Testing manual en diferentes escalas de Windows
+───────────────────────────────────────────────────────────────────────────────
+
+🎯 OBJETIVO
+  Validar que el PDF se genera correctamente en las 3 escalas principales de
+  Windows: 100%, 125%, 150%.
+
+📦 ENTREGABLES
+  ☐ Generar PDF en escala 100% y validar
+  ☐ Generar PDF en escala 125% y validar
+  ☐ Generar PDF en escala 150% y validar
+  ☐ Documentar hallazgos y issues
+  ☐ Reportar cualquier problema visual o de contenido
+
+🛠️  PLAN DE TESTING
+
+ESCENARIO 1: Escala 100% (configuración estándar)
+  ☐ Configurar Windows en escala 100%
+  ☐ Abrir aplicación en Chrome
+  ☐ Completar cálculo de prueba (proyecto estándar)
+  ☐ Descargar PDF
+  ☐ Validar checklist:
+    - Página 1 se ve correcta
+    - Página 2 se ve correcta
+    - Salto de página limpio
+    - Headers en ambas páginas
+    - Texto legible
+    - Tabla de honorarios correcta
+    - Tabla de etapas correcta
+    - No hay overflow
+    - Tamaño del archivo < 1 MB
+
+ESCENARIO 2: Escala 125% (configuración común en laptops)
+  ☐ Configurar Windows en escala 125%
+  ☐ Repetir validación completa
+  ☐ Comparar PDF con el de escala 100%
+  ☐ Documentar diferencias (si las hay)
+
+ESCENARIO 3: Escala 150% (configuración alta resolución)
+  ☐ Configurar Windows en escala 150%
+  ☐ Repetir validación completa
+  ☐ Comparar PDF con escalas anteriores
+  ☐ Documentar diferencias (si las hay)
+
+ESCENARIO 4: Diferentes navegadores (en escala 100%)
+  ☐ Chrome: Generar y validar PDF
+  ☐ Edge: Generar y validar PDF
+  ☐ Firefox: Generar y validar PDF
+  ☐ Comparar resultados entre navegadores
+
+ESCENARIO 5: Casos edge
+  ☐ Proyecto con 10 tareas profesionales (tabla grande)
+  ☐ Proyecto con nombre muy largo (>100 caracteres)
+  ☐ Honorarios > $100.000.000 (números grandes)
+  ☐ Validar que todo se muestra correctamente
+
+✅ CRITERIOS DE ACEPTACIÓN
+  ☐ PDF idéntico en las 3 escalas de Windows
+  ☐ PDF idéntico en los 3 navegadores
+  ☐ No hay contenido cortado entre páginas
+  ☐ Salto de página funciona correctamente
+  ☐ Tamaño del archivo < 1 MB en todos los casos
+  ☐ Generación toma < 5 segundos
+
+⏱️  ESTIMACIÓN: 3-4 horas
+
+💡 NOTAS
+  - Usar proyectos reales del cliente para testing
+  - Tomar screenshots para documentación
+  - Si se encuentran issues, crear tickets específicos para corregirlos
+  - Validar con el equipo de QA antes de cerrar
+
+
+───────────────────────────────────────────────────────────────────────────────
+[TICKET-006] Validación con cliente (envío de PDF de prueba)
+───────────────────────────────────────────────────────────────────────────────
+
+🎯 OBJETIVO
+  Enviar PDF de prueba al cliente CPAU para validación y aprobación antes de
+  pasar a producción.
+
+📦 ENTREGABLES
+  ☐ Generar 2-3 PDFs de prueba con datos reales
+  ☐ Preparar email de envío con contexto
+  ☐ Enviar a contacto del cliente (tecnica@cpau.org)
+  ☐ Recopilar feedback del cliente
+  ☐ Documentar cambios solicitados (si los hay)
+
+🛠️  PROCESO
+
+1. PREPARACIÓN DE PDFs
+  ☐ PDF 1: Proyecto estándar (5 tareas profesionales)
+  ☐ PDF 2: Proyecto complejo (10 tareas profesionales)
+  ☐ PDF 3: Proyecto mínimo (2 tareas profesionales)
+  ☐ Validar que los 3 PDFs se ven correctos
+
+2. ENVÍO AL CLIENTE
+  Plantilla de email:
+  
+  ---
+  Asunto: Validación - Nuevo formato de certificado PDF (2 páginas)
+  
+  Para: tecnica@cpau.org
+  CC: [contacto de diseño del cliente]
+  
+  Estimados,
+  
+  Adjuntamos los certificados PDF actualizados según el diseño entregado el 28/05/2026.
+  
+  Cambios implementados:
+  - Página 1: Datos del cálculo (sin cambios visuales respecto a la versión anterior)
+  - Página 2: Notas institucionales (NUEVA)
+  
+  Adjuntos:
+  - Certificado_Proyecto_Estandar.pdf
+  - Certificado_Proyecto_Complejo.pdf
+  - Certificado_Proyecto_Minimo.pdf
+  
+  Solicitamos validación de:
+  1. Diseño general de ambas páginas
+  2. Textos de las notas institucionales (página 2)
+  3. Formato de tablas y estilos
+  4. Cualquier ajuste o corrección necesaria
+  
+  Quedamos a la espera de su feedback para proceder con la implementación final.
+  
+  Saludos,
+  Equipo de Desarrollo CH2026
+  ---
+
+3. SEGUIMIENTO
+  ☐ Enviar email y confirmar recepción
+  ☐ Dar plazo de 2-3 días para respuesta
+  ☐ Recopilar feedback por email o reunión
+  ☐ Documentar cambios en esta spec o crear nueva si es necesario
+
+✅ CRITERIOS DE ACEPTACIÓN
+  ☐ Cliente recibe los 3 PDFs de prueba
+  ☐ Cliente valida contenido y diseño
+  ☐ Se documenta feedback (positivo o con cambios)
+  ☐ Se tiene aprobación formal para producción
+
+⏱️  ESTIMACIÓN: 1 día (espera de respuesta del cliente)
+
+💡 NOTAS
+  - No implementar en producción sin aprobación del cliente
+  - Guardar versión de los PDFs enviados para referencia
+  - Si el cliente solicita cambios menores, crear tickets específicos
+
+
+───────────────────────────────────────────────────────────────────────────────
+[TICKET-007] Ajustes finales según feedback del cliente
+───────────────────────────────────────────────────────────────────────────────
+
+🎯 OBJETIVO
+  Implementar ajustes finales solicitados por el cliente CPAU después de la
+  validación del PDF de prueba.
+
+📦 ENTREGABLES
+  ☐ (A definir según feedback del cliente)
+
+🛠️  IMPLEMENTACIÓN
+
+PLACEHOLDER - Este ticket se completará después de recibir feedback del cliente.
+
+Posibles ajustes esperados:
+  - Correcciones de textos en las notas
+  - Ajustes de tamaños de fuente
+  - Cambios de colores o estilos
+  - Reordenamiento de secciones
+  - Agregado de información adicional
+
+✅ CRITERIOS DE ACEPTACIÓN
+  ☐ Todos los cambios solicitados por el cliente implementados
+  ☐ Cliente da aprobación final
+  ☐ PDF listo para producción
+
+⏱️  ESTIMACIÓN: 1-2 horas (dependiendo de la cantidad de cambios)
+
+💡 NOTAS
+  - Solo implementar si hay feedback del cliente
+  - Si no hay cambios, cerrar este ticket sin acción
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📊 RESUMEN DE ESTIMACIONES                                                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+TICKET-001: Crear constantes de texto               → 30 minutos
+TICKET-002: Agregar estilos CSS                     → 1 hora
+TICKET-003: Implementar markup página 2             → 2 horas
+TICKET-004: (Opcional) Extraer header               → 45 minutos
+TICKET-005: Testing manual                          → 3-4 horas
+TICKET-006: Validación con cliente                  → 1 día (espera)
+TICKET-007: Ajustes finales                         → 1-2 horas
+
+─────────────────────────────────────────────────────────────────────────────
+TOTAL DESARROLLO: 7-8 horas (sin ticket opcional)
+TOTAL TESTING: 3-4 horas
+TOTAL ESPERA CLIENTE: 1 día
+TOTAL GENERAL: 2-3 días de trabajo efectivo
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🎯 CHECKLIST FINAL DE VALIDACIÓN                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+FUNCIONALIDAD
+  ☐ PDF se genera con exactamente 2 páginas
+  ☐ Página 1 contiene datos del cálculo
+  ☐ Página 2 contiene 6 secciones de notas
+  ☐ Header se repite en ambas páginas
+  ☐ Salto de página limpio
+  ☐ Botones y checkbox NO aparecen en PDF
+
+CONTENIDO
+  ☐ Todos los textos son correctos
+  ☐ No hay errores ortográficos
+  ☐ Tabla de honorarios correcta
+  ☐ Tabla de etapas correcta (suma 60% + 40%)
+  ☐ Fecha actual en formato correcto
+  ☐ Valores monetarios formateados correctamente
+
+VISUAL
+  ☐ Header azul con logo visible
+  ☐ Tabla de honorarios alineada (números a la derecha)
+  ☐ Texto de notas legible (interlineado 1.5-1.6)
+  ☐ Márgenes consistentes en ambas páginas
+  ☐ No hay overflow de contenido
+
+TÉCNICO
+  ☐ Funciona en Chrome, Edge, Firefox
+  ☐ Funciona en escalas 100%, 125%, 150%
+  ☐ Tamaño del archivo < 1 MB
+  ☐ Generación toma < 5 segundos
+  ☐ No hay errores en consola
+
+APROBACIONES
+  ☐ Equipo de desarrollo valida implementación
+  ☐ QA valida testing manual
+  ☐ Cliente CPAU valida PDFs de prueba
+  ☐ Product Owner da aprobación final
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📝 NOTAS ADICIONALES                                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+DEPENDENCIAS
+  - html2pdf.js v0.10.x (ya instalado)
+  - Logo CPAU en /assets/icons/logoBlanco.svg (ya existe)
+  - Componente ResultadoBasicoDetalle.jsx (ya implementado)
+
+RIESGOS
+  - Contenido de página 1 muy largo puede causar overflow a página 2
+    Mitigación: Ajustar tamaños de fuente en modo .pdfExport
+  
+  - html2pdf puede no respetar salto de página en algunos navegadores
+    Mitigación: Testing exhaustivo en Chrome, Edge, Firefox
+  
+  - Texto de notas puede cambiar después de implementación
+    Mitigación: Constantes en archivo separado para fácil edición
+
+REFERENCIAS
+  - SPEC: 01-Docs/00-Specs/SPEC009-CALC-Entregable.md
+  - Diseño cliente: Ver imágenes adjuntas en ticket original
+  - Diseño anterior: 01-Docs/00-Archs CPAU/Imprimible_ok.pdf
+
+
+═══════════════════════════════════════════════════════════════════════════════
+FIN DE TICKETS - SPEC-CALC-004
+═══════════════════════════════════════════════════════════════════════════════

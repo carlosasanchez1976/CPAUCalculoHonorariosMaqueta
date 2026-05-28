@@ -65,7 +65,7 @@ const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
                 value={formData.superficieTotal ? `${formData.superficieTotal} m²` : ''} 
               />
               <DataRow 
-                label="Costo por m²" 
+                label="Costo por m² (ARS)" 
                 value={formData.valorMetro2 ? formatCurrencyARS(formData.valorMetro2) : ''} 
               />
               <div className={styles.highlightRow}>

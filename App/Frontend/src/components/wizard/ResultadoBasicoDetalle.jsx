@@ -1,11 +1,11 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import html2pdf from 'html2pdf.js';
 import { formatCurrencyARS, formatDate, generateCalculationNumber } from '../../utils/formatters';
 import Button from '../common/Button';
 import { ROUTES } from '../../utils/constants';
 import DetalleItemsModal from './DetalleItemsModal';
+import { PDF_NOTAS } from '../../utils/pdfConstants';
 import styles from './ResultadoBasicoDetalle.module.css';
 
 /**
@@ -35,29 +35,213 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
     navigate(ROUTES.DASHBOARD);
   };
 
+  /**
+   * Abre ventana de previsualización del PDF
+   * Permite al usuario revisar el contenido antes de generar el PDF
+   */
   const handleDescargarPDF = () => {
+    abrirVentanaPreview();
+  };
+
+  /**
+   * Convierte rutas relativas de imágenes a rutas absolutas
+   */
+  const convertirRutasAAbsolutas = (elemento) => {
+    const imagenes = elemento.querySelectorAll('img');
+    imagenes.forEach(img => {
+      if (img.src && !img.src.startsWith('http')) {
+        const rutaAbsoluta = new URL(img.getAttribute('src'), window.location.origin).href;
+        img.src = rutaAbsoluta;
+      }
+    });
+  };
+
+  /**
+   * Copia todos los estilos CSS del documento principal a la ventana de previsualización
+   * Retorna una Promise que se resuelve cuando todos los estilos están cargados
+   */
+  const copiarEstilosAVentana = (ventanaDestino) => {
+    return new Promise((resolve) => {
+      const promesasCSS = [];
+      
+      // Copiar todos los <link> de CSS
+      const linksCSS = document.querySelectorAll('link[rel="stylesheet"]');
+      linksCSS.forEach(link => {
+        const promesa = new Promise((resolveLink) => {
+          const nuevoLink = ventanaDestino.document.createElement('link');
+          nuevoLink.rel = 'stylesheet';
+          nuevoLink.href = link.href;
+          nuevoLink.onload = () => resolveLink();
+          nuevoLink.onerror = () => resolveLink(); // Continuar aunque falle
+          ventanaDestino.document.head.appendChild(nuevoLink);
+        });
+        promesasCSS.push(promesa);
+      });
+      
+      // Copiar todos los <style> inline
+      const stylesInline = document.querySelectorAll('style');
+      stylesInline.forEach(style => {
+        const nuevoStyle = ventanaDestino.document.createElement('style');
+        nuevoStyle.textContent = style.textContent;
+        ventanaDestino.document.head.appendChild(nuevoStyle);
+      });
+      
+      // Agregar estilos específicos para la ventana de preview
+      const stylePreview = ventanaDestino.document.createElement('style');
+      stylePreview.textContent = `
+        body {
+          margin: 0;
+          padding: 0 0 80px 0;
+          font-family: system-ui, -apple-system, sans-serif;
+          background: #f5f5f5;
+        }
+        #preview-container {
+          max-width: 900px;
+          margin: 20px auto;
+          background: white;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .preview-actions {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: white;
+          border-top: 2px solid #ddd;
+          padding: 15px;
+          text-align: center;
+          box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+          z-index: 1000;
+        }
+        .preview-actions button {
+          padding: 12px 30px;
+          font-size: 16px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          margin: 0 10px;
+          transition: background-color 0.2s;
+        }
+        .btnCerrar {
+          background: #6c757d;
+          color: white;
+        }
+        .btnCerrar:hover {
+          background: #5a6268;
+        }
+        .btnGenerarPDF {
+          background: #007bff;
+          color: white;
+        }
+        .btnGenerarPDF:hover {
+          background: #0056b3;
+        }
+        .btnGenerarPDF:disabled {
+          background: #ccc;
+          cursor: not-allowed;
+        }
+
+        /* CRÍTICO: Ocultar botones y ajustar diseño en impresión */
+        @media print {
+          body {
+            padding: 0 !important;
+            background: white !important;
+          }
+          #preview-container {
+            margin: 0 !important;
+            box-shadow: none !important;
+            max-width: 100% !important;
+          }
+          .preview-actions {
+            display: none !important;
+          }
+        }
+      `;
+      ventanaDestino.document.head.appendChild(stylePreview);
+      
+      // Esperar a que todos los CSS se carguen
+      Promise.all(promesasCSS).then(() => {
+        // Dar un poco más de tiempo para asegurar que los estilos se apliquen
+        setTimeout(resolve, 200);
+      });
+    });
+  };
+
+  /**
+   * Abre ventana de previsualización con el contenido del PDF
+   */
+  const abrirVentanaPreview = async () => {
+    // Aplicar clase temporal para estilos de PDF
     const element = pdfRef.current;
-    
-    // Aplicar clase temporal para estilos compactos de PDF
     element.classList.add(styles.pdfExport);
     
-    const opt = {
-      margin: [10, 10, 10, 10],
-      filename: `Honorarios-CPAU-${calculationNumber}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
-        scale: 2, 
-        useCORS: true,
-        logging: false,
-        windowWidth: 1000
-      },
-      jsPDF: { unit: 'mm', format: 'legal', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(element).save().then(() => {
-      // Quitar clase temporal después de generar el PDF
+    // Clonar el elemento
+    const clonado = element.cloneNode(true);
+    
+    // Convertir rutas de imágenes a absolutas
+    convertirRutasAAbsolutas(clonado);
+    
+    // Abrir nueva ventana
+    const ventana = window.open('', '_blank', 'width=950,height=1200,scrollbars=yes');
+    
+    // Verificar si fue bloqueada por popup blocker
+    if (!ventana || ventana.closed || typeof ventana.closed === 'undefined') {
+      alert(
+        'Por favor, habilita las ventanas emergentes para ver la previsualización del PDF.\n\n' +
+        'Instrucciones:\n' +
+        '1. Haz clic en el ícono de configuración en la barra de direcciones\n' +
+        '2. Permite ventanas emergentes para este sitio\n' +
+        '3. Intenta nuevamente'
+      );
       element.classList.remove(styles.pdfExport);
-    });
+      return;
+    }
+    
+    // Construir estructura HTML de la ventana
+    ventana.document.open();
+    ventana.document.write(`
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Previsualización - Honorarios CPAU ${calculationNumber}</title>
+      </head>
+      <body>
+        <div id="preview-container"></div>
+        
+        <div class="preview-actions">
+          <button class="btnCerrar" onclick="window.close()">
+            ✕ Cerrar
+          </button>
+          <button class="btnGenerarPDF" id="btn-generar" onclick="generarPDFDesdeVentana()">
+            📄 Generar PDF
+          </button>
+        </div>
+        
+        <script>
+          function generarPDFDesdeVentana() {
+            // Usar el diálogo de impresión nativo del navegador
+            // El usuario seleccionará "Guardar como PDF" o "Microsoft Print to PDF"
+            window.print();
+          }
+        </script>
+      </body>
+      </html>
+    `);
+    ventana.document.close();
+    
+    // Copiar estilos y esperar a que se carguen
+    await copiarEstilosAVentana(ventana);
+    
+    // Insertar contenido clonado DESPUÉS de que los estilos estén cargados
+    ventana.document.getElementById('preview-container').appendChild(clonado);
+    
+    // Remover clase temporal del original
+    element.classList.remove(styles.pdfExport);
+    
+    // Dar foco a la nueva ventana
+    ventana.focus();
   };
 
   // Agrupar y totalizar honorarios por tarea profesional
@@ -93,30 +277,32 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
 
   return (
     <div className={styles.container}>
-      {/* Contenido para PDF */}
+      {/* Contenido para PDF y visualización en pantalla */}
       <div ref={pdfRef}>
-      {/* Header del Certificado */}
-      <div className={styles.certificateHeader}>
-        <div className={styles.headerLeft}>
-          <img src="/assets/icons/logoBlanco.svg" alt="CPAU Logo" className={styles.logo} />
-        </div>
-        <div className={styles.headerRight}>
-          <h3 className={styles.title}>Cálculo de honorarios profesionales</h3>
-          <div className={styles.metadata}>
-            <div className={styles.metadataItem}>
-              <span className={styles.metadataLabel}>Tipo:</span>
-              <span className={styles.metadataValue}>{formData.tipoNombre}</span>
+        {/* PÁGINA 1: Datos del cálculo */}
+        <div className={styles.page}>
+          {/* Header del Certificado */}
+          <div className={styles.certificateHeader}>
+            <div className={styles.headerLeft}>
+              <img src="/assets/icons/logoBlanco.svg" alt="CPAU Logo" className={styles.logo} />
             </div>
-            <div className={styles.metadataItem}>
-              <span >Fecha:</span>
-              <span >{currentDate}</span>
+            <div className={styles.headerRight}>
+              <h3 className={styles.title}>Cálculo de honorarios profesionales</h3>
+              <div className={styles.metadata}>
+                <div className={styles.metadataItem}>
+                  <span className={styles.metadataLabel}>Tipo:</span>
+                  <span className={styles.metadataValue}>{formData.tipoNombre}</span>
+                </div>
+                <div className={styles.metadataItem}>
+                  <span>Fecha:</span>
+                  <span>{currentDate}</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Layout de Dos Columnas */}
-      <div className={styles.twoColumnLayout}>
+          {/* Layout de Dos Columnas */}
+          <div className={styles.twoColumnLayout}>
         {/* COLUMNA IZQUIERDA */}
         <div className={styles.leftColumn}>
           {/* Resumen del Proyecto */}
@@ -231,7 +417,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
             </p>
           </div>
 
-          {/* Checkbox de Términos - Movido aquí */}
+          {/* Checkbox de Términos - Visible en pantalla, oculto en PDF */}
           <div className={styles.termsCheckbox}>
             <label className={styles.checkboxLabel}>
               <input
@@ -244,36 +430,111 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
             </label>
           </div>
 
-              <div className={styles.footerContainer}>
-                <table className={styles.table}>
-                  <tfoot>
-                    <tr className={styles.table}>
-                      <td colSpan={2} className={styles.alignedCell}>
-                        <div className={styles.noteBox}>
-                          <strong>Recomendamos leer las notas anexas al PDF descargable</strong>
-                        </div>
-                      </td>
-                      <td colSpan={2} className={styles.alignedCell}>
-                        <Button
-                          className={styles.downloadButton}
-                          disabled={!termsAccepted}
-                          onClick={handleDescargarPDF}
-                          
-                        >
-                          Descargar PDF
-                        </Button>
-
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-
-
-
+          {/* Botón de descarga - Visible en pantalla, oculto en PDF */}
+          <div className={styles.footerContainer}>
+            <table className={styles.table}>
+              <tfoot>
+                <tr className={styles.table}>
+                  <td colSpan={2} className={styles.alignedCell}>
+                    <div className={styles.noteBox}>
+                      <strong>Recomendamos leer las notas anexas al PDF descargable</strong>
+                    </div>
+                  </td>
+                  <td colSpan={2} className={styles.alignedCell}>
+                    <Button
+                      className={styles.downloadButton}
+                      disabled={!termsAccepted}
+                      onClick={handleDescargarPDF}
+                    >
+                      Descargar PDF
+                    </Button>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
 
         </div>
       </div>
+        </div>
+        {/* Fin página 1 */}
+
+        {/* ========================================
+            PÁGINA 2: SOLO EN PDF (oculta en pantalla)
+            ======================================== */}
+        <div className={`${styles.page} ${styles.pageBreak}`}>
+          {/* Header (repetido para PDF) */}
+          <div className={styles.certificateHeader}>
+            <div className={styles.headerLeft}>
+              <img src="/assets/icons/logoBlanco.svg" alt="CPAU Logo" className={styles.logo} />
+            </div>
+            <div className={styles.headerRight}>
+              <h3 className={styles.title}>Cálculo de honorarios profesionales</h3>
+              <div className={styles.metadata}>
+                <div className={styles.metadataItem}>
+                  <span className={styles.metadataLabel}>Tipo:</span>
+                  <span className={styles.metadataValue}>{formData.tipoNombre}</span>
+                </div>
+                <div className={styles.metadataItem}>
+                  <span>Fecha:</span>
+                  <span>{currentDate}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Contenido de Notas */}
+          <div className={styles.notasSection}>
+            <h2 className={styles.notasTitle}>Notas</h2>
+            
+            {/* Alcance y carácter del cálculo */}
+            <section className={styles.notaBlock}>
+              <h4>{PDF_NOTAS.alcance.titulo}</h4>
+              <p>{PDF_NOTAS.alcance.contenido}</p>
+            </section>
+
+            {/* Costo de obra considerado */}
+            <section className={styles.notaBlock}>
+              <h4>{PDF_NOTAS.costo.titulo}</h4>
+              <p>{PDF_NOTAS.costo.contenido}</p>
+            </section>
+
+            {/* Etapas del proyecto */}
+            <section className={styles.notaBlock}>
+              <h4>{PDF_NOTAS.etapas.titulo}</h4>
+              <table className={styles.etapasTable}>
+                <tbody>
+                  {PDF_NOTAS.etapas.items.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.etapa}</td>
+                      <td>{item.porcentaje}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className={styles.etapasNota}>{PDF_NOTAS.etapas.nota}</p>
+            </section>
+
+            {/* Alcance de los honorarios sugeridos */}
+            <section className={styles.notaBlock}>
+              <h4>{PDF_NOTAS.alcanceHonorarios.titulo}</h4>
+              <p>{PDF_NOTAS.alcanceHonorarios.contenido}</p>
+            </section>
+
+            {/* Conceptos no incluidos */}
+            <section className={styles.notaBlock}>
+              <h4>{PDF_NOTAS.noIncluidos.titulo}</h4>
+              <p>{PDF_NOTAS.noIncluidos.contenido}</p>
+            </section>
+
+            {/* Resolución de los honorarios */}
+            <section className={styles.notaBlock}>
+              <h4>{PDF_NOTAS.resolucion.titulo}</h4>
+              <p>{PDF_NOTAS.resolucion.contenido}</p>
+            </section>
+          </div>
+        </div>
+        {/* Fin página 2 - Solo en PDF */}
 
       </div>
       {/* Fin contenido para PDF */}

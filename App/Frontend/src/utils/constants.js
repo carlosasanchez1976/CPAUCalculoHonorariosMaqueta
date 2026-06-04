@@ -1,10 +1,24 @@
 // Constantes de la aplicación CH2026
 
 // Credenciales de ejemplo para login
-export const VALID_CREDENTIALS = {
-  username: 'admin',
-  password: 'CPAU'
-};
+// Múltiples usuarios con diferentes roles para testing
+export const VALID_CREDENTIALS = [
+  {
+    username: 'admin',
+    password: 'cpau!2026',
+    role: 'admin'
+  },
+  {
+    username: 'test',
+    password: 'CPAU',
+    role: 'user'
+  },
+  {
+    username: 'invitado',
+    password: 'guest2026',
+    role: 'guest'
+  }
+];
 
 // Keys para localStorage
 export const STORAGE_KEYS = {
@@ -29,6 +43,35 @@ export const VALIDATION_MESSAGES = {
   MIN_LENGTH_PASSWORD: 'La contraseña debe tener al menos 4 caracteres',
   INVALID_CREDENTIALS: 'Usuario o contraseña incorrectos'
 };
+
+// ============================================================================
+// CONFIGURACIÓN DE TESTING - CAPA INTERMEDIA PARA PRUEBAS DEL CLIENTE
+// ============================================================================
+/**
+ * Tareas profesionales que deben forzarse como "vigentes" para roles específicos
+ * 
+ * PROPÓSITO: Permitir al cliente realizar pruebas en tareas profesionales que
+ * están marcadas como "no vigentes" en la base de datos, pero que necesitan
+ * ser visibles para ciertos roles (ej: admin) durante el período de testing.
+ * 
+ * FUNCIONAMIENTO:
+ * - Si una tarea tiene vigente=0 en la API pero su "codi" aparece aquí 
+ *   asociado a un rol, se mostrará la card para ese rol específico.
+ * - Los demás roles seguirán viendo solo las tareas con vigente=1.
+ * 
+ * NOTA: Esta es una capa de presentación TEMPORAL para facilitar pruebas.
+ * No modifica los datos en la base de datos ni en la API.
+ */
+export const TAREAS_A_VALID_POR_ROL = [
+  {
+    role: 'admin',
+    codi: 'CONFAC'
+  },
+  {
+    role: 'admin',
+    codi: 'ARBI'
+  }
+];
 
 // Configuración de caché (TTL en milisegundos)
 export const CACHE_TTL = {

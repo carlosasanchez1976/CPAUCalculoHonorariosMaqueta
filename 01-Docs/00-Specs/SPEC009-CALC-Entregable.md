@@ -1422,3 +1422,154 @@ El cliente CPAU es una institución profesional seria. El PDF debe transmitir:
 **Fin de la especificación SPEC-CALC-004**
 
 *Documento vivo - actualizar según feedback del cliente y hallazgos de implementación*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🔍 **Análisis Profundo del Problema**
+
+### **Diagnóstico:**
+
+Observo las dos imágenes y veo que:
+- **Previsualización**: contenido ancho ~750px, header proporcionado
+- **Vista previa de impresión**: contenido ~720px (A4 con márgenes), header se ve más pequeño
+
+### **¿Por qué pasa esto?**
+
+El navegador hace **escalado automático** al imprimir:
+
+1. **Diferentes "unidades reales"**:
+   - Pantalla: 1px = 1px de monitor
+   - Impresión: el navegador convierte px → mm usando **96 DPI**
+   - 180px en pantalla = 47.6mm en papel
+   - Pero el navegador puede **re-escalar** para encajar todo en A4
+
+2. **El navegador aplica "Shrink to Fit"** automáticamente:
+   - Si tu contenido es ligeramente más ancho que el área imprimible
+   - Chrome/Edge lo reducen un % para que entre
+   - Esto comprime visualmente todo, incluido el header
+
+3. **CSS Responsive aún se ejecuta**:
+   - Aunque puse valores fijos en `@media print`, otras propiedades CSS (no del header) siguen siendo responsive
+   - Esto puede causar que el navegador recalcule todo
+
+---
+
+## 💡 **Posibles Soluciones (de mejor a peor):**
+
+### **🥇 SOLUCIÓN 1: "WYSIWYG" - Previsualización idéntica al PDF** ⭐⭐⭐
+**Hacer que la previsualización tenga EXACTAMENTE las mismas dimensiones que A4**
+
+```javascript
+#preview-container {
+  width: 190mm;  // A4 (210mm) menos márgenes (10mm × 2)
+  // En lugar de max-width: 900px
+}
+```
+
+**Ventajas:**
+- ✅ Lo que ves es **exactamente** lo que imprimes
+- ✅ El cliente nunca verá diferencia
+- ✅ El header se ve igual en ambas vistas (porque tienen el mismo ancho)
+- ✅ No hay sorpresas
+
+**Desventajas:**
+- La previsualización se ve un poco más estrecha (~720px en lugar de 900px)
+- Pero **es real** y coincidirá con el PDF
+
+---
+
+### **🥈 SOLUCIÓN 2: Usar unidades milímetros (mm)** ⭐⭐
+**Cambiar px por mm en los estilos de impresión**
+
+```css
+@media print {
+  [class*="headerLeft"] {
+    width: 48mm;        // En lugar de 180px
+    min-height: 27mm;
+  }
+  [class*="logo"] {
+    width: 35mm;
+    max-height: 18mm;
+  }
+}
+```
+
+**Ventajas:**
+- ✅ El navegador no necesita convertir unidades
+- ✅ Tamaños exactos en papel
+
+**Desventajas:**
+- ⚠️ Las unidades mm no funcionan bien en pantalla (la previsualización seguiría usando px)
+
+---
+
+### **🥉 SOLUCIÓN 3: Combinar ambas (RECOMENDADA)** ⭐⭐⭐⭐
+1. **Previsualización**: ancho 190mm (igual que A4 imprimible)
+2. **Impresión**: misma estructura, ya coinciden naturalmente
+3. **Resultado**: previsualización y vista de impresión son **idénticas**
+
+---
+
+### **🏅 SOLUCIÓN 4: Forzar zoom 100% en impresión** ⭐
+```css
+@media print {
+  html {
+    zoom: 1 !important;
+    transform: scale(1) !important;
+  }
+}
+```
+**Riesgo:** Puede no funcionar consistentemente en todos los navegadores
+
+---
+
+### **🎯 SOLUCIÓN 5: Pre-renderizar a tamaño A4 desde el inicio** ⭐⭐⭐⭐⭐
+Mostrar la previsualización con dimensiones EXACTAS de papel:
+- Ancho fijo: 793px (A4 a 96 DPI) o 190mm
+- Header con valores fijos en px y/o mm
+- Renderizar TODO en el tamaño final
+
+---
+
+## 🎯 **MI RECOMENDACIÓN: Solución 1 + 3 (Híbrido)**
+
+**Estrategia "What You See Is What You Get":**
+
+1. La ventana de previsualización tiene un contenedor de **190mm de ancho** (= A4 imprimible)
+2. Visualmente se ve un poco más estrecho, pero **es el tamaño real del PDF**
+3. Cuando el usuario imprima, la vista previa de Windows se verá **idéntica** porque el contenido ya tiene el tamaño correcto
+4. No hay shrink-to-fit, no hay recalculación responsive
+5. El header se ve igual porque el contexto es el mismo
+
+**Pros:**
+- ✅ Cliente satisfecho: ambas vistas son idénticas
+- ✅ Implementación mínima (5 líneas de cambio)
+- ✅ No rompe nada
+- ✅ Resultado profesional
+
+**Cons:**
+- Previsualización se ve ~20% más estrecha que ahora
+- Pero **es la realidad del PDF**
+
+---
+
+**¿Te parece bien que implementemos la Solución 1+3 (preview con dimensiones reales de A4)?**

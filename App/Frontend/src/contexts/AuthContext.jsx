@@ -39,9 +39,16 @@ export const AuthProvider = ({ children }) => {
    */
   const login = (username, password, remember = false) => {
     try {
-      // Validar credenciales
-      if (username === VALID_CREDENTIALS.username && password === VALID_CREDENTIALS.password) {
-        const userData = { username };
+      // Validar credenciales buscando en el array de usuarios
+      const usuarioValido = VALID_CREDENTIALS.find(
+        cred => cred.username === username && cred.password === password
+      );
+      
+      if (usuarioValido) {
+        const userData = { 
+          username: usuarioValido.username,
+          role: usuarioValido.role
+        };
         
         // Guardar usuario en estado
         setUser(userData);

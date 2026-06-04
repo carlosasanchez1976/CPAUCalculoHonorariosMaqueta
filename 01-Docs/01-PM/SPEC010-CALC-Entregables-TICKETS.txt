@@ -1,0 +1,490 @@
+═══════════════════════════════════════════════════════════════════════════════
+  SPEC-CALC-010: MIGRACIÓN DEL GENERADOR DE PDF A PUPPETEER (BACKEND LAMBDA)
+═══════════════════════════════════════════════════════════════════════════════
+
+📅 Fecha creación: 29/05/2026
+📄 Referencia: 01-Docs/00-Specs/SPEC010-CALC-Entregables.md
+👤 Owner: Full-Stack Team (Backend Lambda + Frontend React)
+⏱️  Estimación total: Fase 1 (T010-003) ~2 días | Fase 2 (T010-001 + T010-002) ~2 días
+
+⚠️  ALCANCE CRÍTICO:
+    Esta SPEC REEMPLAZA el mecanismo de generación de PDF implementado en SPEC009.
+    Mueve la generación del PDF del FRONTEND (html2pdf.js) al BACKEND (Puppeteer + Lambda).
+    El contrato visual del certificado se mantiene (página 1 datos + página 2 notas).
+    Es PRE-REQUISITO arquitectónico para soportar múltiples plantillas por tarea profesional.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🎯 OBJETIVO GENERAL                                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Generar el certificado PDF de honorarios en el Backend Lambda usando Puppeteer
++ @sparticuz/chromium, obteniendo un PDF vectorial fiel al diseño del cliente,
+con texto seleccionable y rendering consistente independiente del navegador,
+escala de Windows o dispositivo del usuario final.
+
+ALCANCE:
+  ✅ Backend Lambda: Nuevo endpoint POST /api/v1/honorarios/exportar-pdf
+  ✅ Frontend: Reemplazo del flujo html2pdf por fetch + descarga de blob
+  ✅ Eliminar dependencias frontend: html2pdf.js
+  ✅ Eliminar ventana de previsualización (ya no es necesaria)
+  ✅ Preparar arquitectura para múltiples plantillas (Fase 2)
+
+NO INCLUIDO EN ESTA SPEC:
+  ❌ Otros tipos de cálculo distintos a "Proyecto y Dirección Básico" (Fase 2)
+  ❌ Envío del PDF por email
+  ❌ Marca de agua, numeración de página (mejoras futuras)
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📋 ORDEN DE EJECUCIÓN RECOMENDADO                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+  1️⃣  T010-003  (Fase 1)  → PRIORITARIO. Valida Puppeteer end-to-end.
+  2️⃣  T010-001  (Fase 2)  → Modelo de datos para plantillas.
+  3️⃣  T010-002  (Fase 2)  → Carga del HTML en el modelo de datos.
+
+  Razón: la Fase 1 valida que Puppeteer funciona en Lambda con la fidelidad
+  esperada antes de invertir en el modelo de datos. Si falla, evita rework.
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📋 TICKETS                                                                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+───────────────────────────────────────────────────────────────────────────────
+[TICKET-T010-003] Migrar generación de PDF a Puppeteer (Proyecto y Dirección)
+───────────────────────────────────────────────────────────────────────────────
+
+🏷️  Tipo:        Backend (Lambda) + Frontend (integración)
+🎯 Fase:         1 — Migración funcional
+📊 Prioridad:    🔴 ALTA — Bloquea T010-001 y T010-002
+⏱️  Estimación:  2 días (1.5 backend + 0.5 frontend) + 0.5 día testing
+👥 Owner:        Full-Stack
+
+🎯 OBJETIVO
+  Implementar end-to-end la generación del certificado PDF en el Backend Lambda
+  usando Puppeteer con una plantilla HTML HARDCODEADA correspondiente al cálculo
+  "Básico - Proyecto y Dirección". Reemplazar el flujo actual del frontend.
+
+📦 ENTREGABLES
+
+  BACKEND (App/Backend)
+  ☐ Instalar dependencias:
+      • puppeteer-core
+      • @sparticuz/chromium
+  ☐ Configurar Lambda:
+      • Memoria mínima: 1024 MB (recomendado 1536 MB)
+      • Timeout mínimo: 30 segundos
+      • Layer o include del binario Chromium (vía @sparticuz/chromium)
+  ☐ Crear estructura de archivos:
+      • api/v1/honorarios/exportar-pdf.js          (handler HTTP)
+      • lib/services/pdfService.js                 (orquestador)
+      • lib/services/templates/proyectoDireccionBasico.js (plantilla HTML hardcodeada)
+      • lib/utils/puppeteerLauncher.js             (factory de browser, reutilizable)
+  ☐ Implementar handler exportar-pdf:
+      • Validar método POST
+      • Validar payload: { tipoCalculo, formData, calculationResult, calculationNumber }
+      • Llamar a pdfService.generarCertificado(...)
+      • Responder Content-Type: application/pdf
+      • Header: Content-Disposition: attachment; filename="Honorarios-CPAU-{n}.pdf"
+      • Body: buffer del PDF (base64 si API Gateway lo requiere)
+  ☐ Implementar pdfService.generarCertificado:
+      • Resolver plantilla por tipoCalculo (hardcodeado por ahora: única plantilla)
+      • Hidratar la plantilla con los datos (template literals o motor mínimo)
+      • Lanzar Chromium vía puppeteerLauncher
+      • page.setContent(html, { waitUntil: 'networkidle0' })
+      • page.pdf({ format: 'A4', printBackground: true, margin: {...}, preferCSSPageSize: true })
+      • Cerrar browser (try/finally)
+      • Retornar Buffer del PDF
+  ☐ Plantilla HTML hardcodeada (proyectoDireccionBasico.js):
+      • HTML completo del certificado (página 1 + página 2 de notas)
+      • CSS inline en <style> del documento
+      • Logo CPAU embebido como base64 (evita problemas de carga remota en Lambda)
+      • Placeholders para datos dinámicos: {{nombreProyecto}}, {{comitente}}, etc.
+      • Tabla de honorarios renderizada server-side desde calculationResult
+      • Salto de página entre página 1 y página 2 (page-break-before: always)
+      • Reglas @page con tamaño y márgenes definitivos
+      • Migrar textos de utils/pdfConstants.js (frontend) → backend
+  ☐ Logging:
+      • Duración de generación (page.pdf timing)
+      • Tamaño del PDF generado
+      • tipoCalculo y calculationNumber
+      • Errores con stack trace
+  ☐ Configurar CORS para el nuevo endpoint
+  ☐ Configurar API Gateway para respuesta binaria (binaryMediaTypes: application/pdf)
+
+  FRONTEND (App/Frontend)
+  ☐ Crear servicio: src/services/pdfService.js
+      • Función exportarPDF(tipoCalculo, formData, calculationResult, calculationNumber)
+      • POST al endpoint, responseType blob
+      • Manejo de errores con mensajes en español
+  ☐ Refactorizar ResultadoBasicoDetalle.jsx:
+      • ELIMINAR: abrirVentanaPreview, copiarEstilosAVentana, convertirRutasAAbsolutas
+      • ELIMINAR: import de html2pdf.js
+      • ELIMINAR: bloque @media print específico del PDF en .module.css
+      • NUEVO handleDescargarPDF:
+          - setLoading(true)
+          - try/catch llamando a pdfService.exportarPDF
+          - Convertir blob a URL → crear <a> oculto → click → revoke URL
+          - Manejar estados loading/error/success en el botón
+          - Toast/alert en caso de error
+      • Mantener UI en pantalla SIN cambios
+  ☐ Eliminar dependencia html2pdf.js de package.json
+  ☐ Eliminar archivo utils/pdfConstants.js del frontend (migrado al backend)
+  ☐ npm install + verificar bundle más liviano
+
+🛠️  IMPLEMENTACIÓN — REFERENCIA TÉCNICA
+
+Backend — lib/utils/puppeteerLauncher.js (esquema):
+```javascript
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
+
+/**
+ * Lanza una instancia de Chromium optimizada para AWS Lambda
+ */
+export async function lanzarBrowser() {
+  return puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
+  });
+}
+```
+
+Backend — lib/services/pdfService.js (esquema):
+```javascript
+import { lanzarBrowser } from '../utils/puppeteerLauncher.js';
+import { renderProyectoDireccionBasico } from './templates/proyectoDireccionBasico.js';
+
+const PLANTILLAS = {
+  'basico-proyecto-direccion': renderProyectoDireccionBasico,
+};
+
+export async function generarCertificado({ tipoCalculo, formData, calculationResult, calculationNumber }) {
+  const renderer = PLANTILLAS[tipoCalculo];
+  if (!renderer) throw new Error(`No hay plantilla para tipoCalculo: ${tipoCalculo}`);
+
+  const html = renderer({ formData, calculationResult, calculationNumber });
+
+  const browser = await lanzarBrowser();
+  try {
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' },
+      preferCSSPageSize: true,
+    });
+    return pdfBuffer;
+  } finally {
+    await browser.close();
+  }
+}
+```
+
+Backend — api/v1/honorarios/exportar-pdf.js (esquema handler):
+```javascript
+import { generarCertificado } from '../../../lib/services/pdfService.js';
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ success: false, error: 'Método no permitido' });
+  }
+  try {
+    const { tipoCalculo, formData, calculationResult, calculationNumber } = req.body;
+    if (!tipoCalculo || !formData || !calculationResult || !calculationNumber) {
+      return res.status(400).json({ success: false, error: 'Datos incompletos' });
+    }
+
+    const inicio = Date.now();
+    const pdfBuffer = await generarCertificado({ tipoCalculo, formData, calculationResult, calculationNumber });
+    const duracion = Date.now() - inicio;
+
+    console.log(`[exportar-pdf] tipoCalculo=${tipoCalculo} calc=${calculationNumber} duracion=${duracion}ms tamano=${pdfBuffer.length}B`);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="Honorarios-CPAU-${calculationNumber}.pdf"`);
+    return res.status(200).send(pdfBuffer);
+  } catch (error) {
+    console.error('[exportar-pdf] error:', error);
+    return res.status(500).json({ success: false, error: 'Error generando PDF' });
+  }
+}
+```
+
+Frontend — src/services/pdfService.js (esquema):
+```javascript
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+
+/**
+ * Solicita al backend la generación del PDF y dispara la descarga
+ */
+export async function exportarPDF(payload) {
+  const response = await fetch(`${API_BASE_URL}/v1/honorarios/exportar-pdf`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error || `Error ${response.status} generando PDF`);
+  }
+
+  return response.blob();
+}
+```
+
+Frontend — handleDescargarPDF refactor (esquema):
+```javascript
+const handleDescargarPDF = async () => {
+  try {
+    setDescargandoPDF(true);
+    const blob = await exportarPDF({
+      tipoCalculo: 'basico-proyecto-direccion',
+      formData,
+      calculationResult,
+      calculationNumber,
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Honorarios-CPAU-${calculationNumber}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error descargando PDF:', error);
+    alert('No pudimos generar el PDF. Por favor, intentá nuevamente.');
+  } finally {
+    setDescargandoPDF(false);
+  }
+};
+```
+
+✅ CRITERIOS DE ACEPTACIÓN
+  ☐ Endpoint POST /api/v1/honorarios/exportar-pdf responde 200 con application/pdf
+  ☐ PDF descargado tiene texto SELECCIONABLE y BUSCABLE (no es imagen)
+  ☐ PDF contiene página 1 (datos del cálculo) + página 2 (notas) con header CPAU
+  ☐ Header CPAU se ve correcto y consistente en ambas páginas
+  ☐ Salto de página entre página 1 y 2 es limpio (sin elementos cortados)
+  ☐ Logo CPAU se renderiza correctamente (embebido en base64)
+  ☐ PDF idéntico en Chrome, Edge y Firefox
+  ☐ PDF idéntico en escalas Windows 100%, 125%, 150%
+  ☐ Tiempo de generación < 5 segundos (warm) / < 8 segundos (cold start)
+  ☐ Tamaño del PDF < 500 KB
+  ☐ Frontend: package.json ya NO incluye html2pdf.js
+  ☐ Frontend: archivo utils/pdfConstants.js eliminado
+  ☐ Frontend: bundle reducido (verificar diff de tamaño)
+  ☐ Frontend: botón "Descargar PDF" muestra estado loading durante la generación
+  ☐ Frontend: manejo de error con mensaje claro al usuario
+  ☐ Logs en CloudWatch con duración, tamaño, tipoCalculo, calculationNumber
+  ☐ UI de la pantalla de resultados sin cambios visuales
+
+🧪 TESTING
+  ☐ Test local del endpoint con Postman/curl (con payload real)
+  ☐ Test del PDF en visor (Adobe, Edge): seleccionar texto, buscar, copiar
+  ☐ Test cross-browser de la descarga desde frontend
+  ☐ Test cross-escala Windows
+  ☐ Test con calculationResult de proyectos chicos (1 tarea) y grandes (10+ tareas)
+  ☐ Test con valores monetarios altos (> $1.000.000.000)
+  ☐ Test con nombres de proyecto largos (> 100 caracteres)
+  ☐ Test de cold start en Lambda staging
+  ☐ Test de error: payload inválido → respuesta 400 con mensaje claro
+  ☐ Test de error: Lambda falla → frontend muestra mensaje, no se descarga archivo corrupto
+
+🔗 DEPENDENCIAS
+  ✅ Backend Lambda operativo (SPEC003)
+  ✅ Componente ResultadoBasicoDetalle.jsx existente (SPEC009)
+  ✅ Constantes PDF_NOTAS existentes (migrar al backend)
+
+📌 NOTAS DE IMPLEMENTACIÓN
+  • La plantilla HTML debe escribirse con placeholders claros y separados de la
+    lógica de hidratación, para facilitar su posterior migración a la tabla
+    Entregables_PDF (T010-002).
+  • Embeber el logo CPAU en base64 dentro de la plantilla (evita CORS y problemas
+    de carga remota desde Chromium en Lambda).
+  • Si se usan fuentes custom, embeberlas vía @font-face base64.
+  • API Gateway debe estar configurado con binaryMediaTypes incluyendo
+    application/pdf para que el buffer no se corrompa.
+
+
+───────────────────────────────────────────────────────────────────────────────
+[TICKET-T010-001] Tabla de relación Tareas_Profesionales ↔ Entregables_PDF
+───────────────────────────────────────────────────────────────────────────────
+
+🏷️  Tipo:        Backend / Base de datos / Arquitectura
+🎯 Fase:         2 — Modelo de datos multi-plantilla
+📊 Prioridad:    🟡 MEDIA — Habilitador de escalabilidad multi-plantilla
+⏱️  Estimación:  1 día (análisis 0.5 + implementación 0.5)
+👥 Owner:        Backend
+🚧 Estado:       A ANALIZAR antes de desarrollar
+🔒 Depende de:   T010-003 completado y validado
+
+🎯 OBJETIVO
+  Diseñar e implementar el modelo de datos que permite asociar cada tarea
+  profesional con la(s) plantilla(s) de entregable PDF que le corresponde(n),
+  de modo que el servicio Puppeteer resuelva dinámicamente qué HTML renderizar
+  para cada cálculo.
+
+📦 ENTREGABLES (alto nivel — refinar en análisis)
+
+  ANÁLISIS
+  ☐ Documento de diseño del schema (en este mismo ticket o subarchivo .md):
+      • Tabla Entregables_PDF: campos, tipos, índices
+      • Tabla Tareas_Profesionales_Entregables_PDF: cardinalidad, foreign keys
+      • Estrategia de versionado de plantillas (¿activa/inactiva?, ¿histórico?)
+      • Política de "plantilla por defecto" si una tarea no tiene asignación
+  ☐ Validar con Backend Lead la viabilidad sobre la DB actual
+
+  IMPLEMENTACIÓN
+  ☐ Migración SQL/script de creación de:
+      • Tabla Entregables_PDF
+      • Tabla Tareas_Profesionales_Entregables_PDF
+  ☐ Seed inicial con la plantilla extraída de T010-003 (Proyecto y Dirección)
+  ☐ Servicio backend: lib/services/entregablesService.js
+      • resolverPlantillaPorTipoCalculo(tipoCalculo) → registro de Entregables_PDF
+      • obtenerPlantillaPorId(id) → registro
+  ☐ Refactor de pdfService:
+      • Eliminar el objeto PLANTILLAS hardcodeado
+      • Usar entregablesService para resolver dinámicamente
+  ☐ Endpoint opcional GET /api/v1/entregables (listado, para admin futuro)
+
+✅ CRITERIOS DE ACEPTACIÓN
+  ☐ Documento de diseño del schema aprobado por Backend Lead
+  ☐ Migración aplicada en entorno de desarrollo sin errores
+  ☐ Seed cargado correctamente con la plantilla de Proyecto y Dirección
+  ☐ pdfService resuelve la plantilla vía DB y NO vía hardcoded
+  ☐ El PDF generado tras la migración es VISUALMENTE IDÉNTICO al de T010-003
+  ☐ Tests de regresión: generación de PDF sigue funcionando end-to-end
+  ☐ Documentación actualizada del esquema de DB
+
+🔗 DEPENDENCIAS
+  ✅ T010-003 completado (plantilla hardcodeada existente para migrar)
+  ✅ Acceso a la DB del backend
+  ✅ Definición de la lista de tareas profesionales (catálogo existente)
+
+📌 NOTAS
+  • NO se desarrolla hasta que T010-003 esté en producción y validado por el cliente.
+  • La idea es que este ticket NO cambie el output (PDF) percibido por el usuario,
+    solo mueve el "código de la plantilla" del archivo .js a la DB.
+
+
+───────────────────────────────────────────────────────────────────────────────
+[TICKET-T010-002] Carga del HTML de plantillas en Entregables_PDF
+───────────────────────────────────────────────────────────────────────────────
+
+🏷️  Tipo:        Backend / Content / Tooling
+🎯 Fase:         2 — Modelo de datos multi-plantilla
+📊 Prioridad:    🟡 MEDIA
+⏱️  Estimación:  1 día (motor templating 0.5 + carga + herramientas 0.5)
+👥 Owner:        Backend
+🚧 Estado:       A ANALIZAR antes de desarrollar
+🔒 Depende de:   T010-001
+
+🎯 OBJETIVO
+  Definir el formato de las plantillas almacenadas en Entregables_PDF (HTML +
+  placeholders), el motor de hidratación, y cargar los HTML de las plantillas
+  iniciales (al menos la de Proyecto y Dirección).
+
+📦 ENTREGABLES (alto nivel — refinar en análisis)
+
+  ANÁLISIS
+  ☐ Decidir motor de templating:
+      • Opción A: template literals nativos (simple, requiere eval controlado)
+      • Opción B: Handlebars (estándar, seguro, bien documentado) ← recomendado
+      • Opción C: Mustache (más simple que Handlebars)
+  ☐ Definir convención de placeholders:
+      • Datos simples: {{formData.nombreProyecto}}
+      • Bloques: {{#each tareas}}...{{/each}}
+      • Helpers: formatCurrency, formatDate, formatPercentage
+  ☐ Decidir formato de almacenamiento del HTML:
+      • ¿Una sola columna HTML con CSS inline?
+      • ¿Columnas separadas html + css?
+      • ¿Múltiples páginas en un solo registro o varios?
+  ☐ Documento de "Cómo crear/editar una plantilla nueva"
+
+  IMPLEMENTACIÓN
+  ☐ Instalar motor de templating elegido (ej: handlebars)
+  ☐ Crear lib/services/templatingService.js:
+      • hidratar(template, datos) → HTML completo
+      • Registrar helpers (formatCurrency, formatDate, etc.)
+  ☐ Migrar la plantilla hardcodeada de T010-003 al formato de DB:
+      • Reemplazar template literals JS por placeholders del motor elegido
+      • Mover a un seed/migración SQL que la inserte en Entregables_PDF
+  ☐ Refactor de pdfService:
+      • Obtener registro Entregables_PDF vía entregablesService
+      • Hidratar con templatingService
+      • Pasar HTML hidratado a Puppeteer
+  ☐ Herramienta CLI o endpoint admin para:
+      • Validar sintaxis de una plantilla
+      • Previsualizar una plantilla con datos de prueba (genera PDF de muestra)
+  ☐ Estrategia de versionado:
+      • Cada actualización crea una nueva versión activa
+      • Histórico permite regenerar PDFs antiguos con la plantilla de la época
+
+✅ CRITERIOS DE ACEPTACIÓN
+  ☐ Motor de templating instalado y configurado
+  ☐ Plantilla de Proyecto y Dirección almacenada en Entregables_PDF
+  ☐ Hidratación funciona con todos los placeholders necesarios
+  ☐ PDF generado vía plantilla en DB es VISUALMENTE IDÉNTICO al de T010-003
+  ☐ Helpers de formato (currency ARS, fecha DD/MM/YYYY, %) funcionan
+  ☐ Documentación de cómo crear una plantilla nueva publicada en el repo
+  ☐ Tests unitarios del templatingService (hidratación, helpers)
+  ☐ Tests de regresión de generación de PDF
+
+🔗 DEPENDENCIAS
+  ✅ T010-001 completado (tablas creadas y servicio resolver disponible)
+  ✅ T010-003 completado (plantilla a migrar)
+
+📌 NOTAS
+  • Handlebars es la opción recomendada: seguro, ampliamente usado en Node, sin
+    riesgo de inyección de código (a diferencia de eval de template literals).
+  • El versionado de plantillas es importante para auditoría: un PDF emitido en
+    2026-05 debe poder regenerarse igual aunque la plantilla cambie en 2026-12.
+  • A futuro permitirá cargar nuevas plantillas (Relevamiento, Tasación, Mensura,
+    etc.) sin tocar código del backend, solo insertando registros en la DB.
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🔄 FLUJO DE TRABAJO SUGERIDO                                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+  Semana 1
+    Lun-Mar: T010-003 desarrollo Backend (Puppeteer + plantilla hardcodeada)
+    Mié:     T010-003 desarrollo Frontend (refactor + integración)
+    Jue:     T010-003 testing cross-browser y cross-escala
+    Vie:     T010-003 deploy staging + validación con cliente
+
+  Semana 2 (tras aprobación cliente)
+    Lun:     T010-001 análisis y diseño de schema
+    Mar:     T010-001 implementación (migración + seed + servicio)
+    Mié:     T010-002 análisis (motor templating + formato plantilla)
+    Jue:     T010-002 implementación + migración de plantilla a DB
+    Vie:     Testing integral + deploy producción
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📊 MÉTRICAS DE ÉXITO                                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+  ✅ Tiempo medio de generación de PDF (Lambda):     < 5 segundos (warm)
+  ✅ Tamaño medio del PDF:                            < 500 KB
+  ✅ Fidelidad visual al diseño del cliente:          100% (validación CPAU)
+  ✅ Compatibilidad cross-browser:                    Chrome, Edge, Firefox, Safari
+  ✅ Reducción del bundle frontend:                   ≥ 300 KB (al quitar html2pdf)
+  ✅ Texto seleccionable en el PDF:                   ✅ Sí
+  ✅ Capacidad de agregar nueva plantilla sin código: ✅ Sí (post Fase 2)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  FIN DEL DOCUMENTO DE TICKETS - SPEC-CALC-010
+═══════════════════════════════════════════════════════════════════════════════

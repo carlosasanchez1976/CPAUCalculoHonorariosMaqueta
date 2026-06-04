@@ -1,0 +1,74 @@
+================================================================================
+TICKETS - Ajustes para Cálculo de otras tareas
+Fecha: 2026-06-04
+================================================================================
+
+--------------------------------------------------------------------------------
+TICKET-001: Sistema de múltiples credenciales con roles de usuario
+--------------------------------------------------------------------------------
+OBJETIVO:
+Implementar sistema de autenticación con múltiples usuarios y roles para facilitar
+pruebas y accesos diferenciados según perfil.
+
+ALCANCE:
+- Convertir VALID_CREDENTIALS de objeto único a array de usuarios
+- Añadir propiedad "role" a cada usuario (admin, user, guest)
+- Actualizar lógica de validación en AuthContext para soportar array
+- Persistir rol del usuario en localStorage junto con sesión
+
+ARCHIVOS MODIFICADOS:
+- src/utils/constants.js
+- src/contexts/AuthContext.jsx
+
+CREDENCIALES IMPLEMENTADAS:
+| Usuario   | Contraseña  | Rol   |
+|-----------|-------------|-------|
+| admin     | cpau!2026   | admin |
+| test      | CPAU        | user  |
+| invitado  | guest2026   | guest |
+
+ESTADO: ✅ COMPLETADO
+
+--------------------------------------------------------------------------------
+TICKET-002: Capa intermedia de filtrado de tareas por rol (Testing)
+--------------------------------------------------------------------------------
+OBJETIVO:
+Permitir que usuarios con rol específico (ej: admin) puedan visualizar y probar
+tareas profesionales marcadas como "no vigentes" en la base de datos, sin modificar
+los datos de la API.
+
+ALCANCE:
+- Crear constante TAREAS_A_VALID_POR_ROL para configurar excepciones por rol
+- Implementar función filtrarTareasPorRol() como capa de presentación
+- Integrar filtro en NuevoCalculoPage antes de renderizar cards
+- Documentar claramente el propósito temporal de testing
+
+ARCHIVOS CREADOS:
+- src/utils/tareasHelper.js (nueva utility)
+
+ARCHIVOS MODIFICADOS:
+- src/utils/constants.js (añadida TAREAS_A_VALID_POR_ROL)
+- src/pages/NuevoCalculoPage.jsx (integración del filtro)
+
+LÓGICA IMPLEMENTADA:
+1. Tareas con vigente=1 → Siempre visibles para todos los roles
+2. Tareas con vigente=0 → Visibles solo si están en TAREAS_A_VALID_POR_ROL para ese rol
+3. Rol "admin" puede ver: CONFAC y ARBI (aunque vigente=0 en API)
+4. Otros roles solo ven tareas con vigente=1
+
+CARACTERÍSTICAS:
+- No modifica datos de API ni base de datos
+- Capa de presentación temporal para testing
+- Fácilmente removible cuando termine período de pruebas
+- Documentación extensiva en código
+
+ESTADO: ✅ COMPLETADO
+
+--------------------------------------------------------------------------------
+COMMIT SUGERIDO:
+feat(auth): implementar sistema multi-usuario con roles y filtrado de tareas
+
+- Sistema de múltiples credenciales (admin/user/guest)
+- Capa intermedia para testing de tareas no vigentes por rol
+- Filtrado en NuevoCalculoPage según perfil de usuario
+--------------------------------------------------------------------------------

@@ -7,6 +7,8 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import { useApiCache } from '../hooks/useApiCache';
 import { obtenerTareasProfesionales } from '../services/tareasProfesionalesService';
 import { CACHE_TTL } from '../utils/constants';
+import { useAuth } from '../contexts/AuthContext';
+import { filtrarTareasPorRol } from '../utils/tareasHelper';
 import styles from './NuevoCalculoPage.module.css';
 
 /**
@@ -14,6 +16,7 @@ import styles from './NuevoCalculoPage.module.css';
  */
 const NuevoCalculoPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // Usar hook de caché para tareas profesionales
   const { 
@@ -31,6 +34,14 @@ const NuevoCalculoPage = () => {
       }
     }
   );
+
+  // ============================================================================
+  // CAPA INTERMEDIA PARA TESTING - Filtrado de tareas por rol de usuario
+  // ============================================================================
+  // Aplica filtro especial para permitir que ciertos roles (ej: admin) vean
+  // tareas marcadas como "no vigentes" en la API, facilitando pruebas del cliente.
+  // Ver documentación en: src/utils/tareasHelper.js
+  const tareasFiltradas = tareas ? filtrarTareasPorRol(tareas, user?.role) : [];
 
   return (
     <div className={styles.pageContainer}>
@@ -71,9 +82,9 @@ const NuevoCalculoPage = () => {
               <button className={styles.retryButton} onClick={refresh}>Reintentar</button>
             </div>
           )}
-          {!loading && !error && tareas && (
+          {!loading && !error && tareasFiltradas && tareasFiltradas.length > 0 && (
             <div className={styles.cardsGrid}>
-              {tareas.map((tarea) => (
+              {tareasFiltradas.map((tarea) => (
                 <CalculationTypeCard
                   key={tarea.tarea_id}
                   tareaId={tarea.tarea_id}

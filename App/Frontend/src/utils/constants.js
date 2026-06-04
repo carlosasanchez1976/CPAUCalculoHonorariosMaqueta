@@ -6,17 +6,20 @@ export const VALID_CREDENTIALS = [
   {
     username: 'admin',
     password: 'cpau!2026',
-    role: 'admin'
+    role: 'admin',
+    displayName: 'Administrador del Sistema'
   },
   {
     username: 'test',
     password: 'CPAU',
-    role: 'user'
+    role: 'user',
+    displayName: 'Usuario de Prueba'
   },
   {
     username: 'invitado',
     password: 'guest2026',
-    role: 'guest'
+    role: 'guest',
+    displayName: 'Invitado'
   }
 ];
 
@@ -65,11 +68,15 @@ export const VALIDATION_MESSAGES = {
 export const TAREAS_A_VALID_POR_ROL = [
   {
     role: 'admin',
+    codi: 'HABI'
+  },
+  {
+    role: 'admin',
     codi: 'CONFAC'
   },
   {
     role: 'admin',
-    codi: 'ARBI'
+    codi: 'REPTEC'
   }
 ];
 

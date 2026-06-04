@@ -53,10 +53,6 @@ const UserMenu = () => {
     }
   };
 
-  // ATENCION
-  // reemplazar 'Usuario del Sistema' por user.name cuando esté disponible
-  //
-
   return (
     <div className={styles.userMenuWrapper} ref={menuRef} onKeyDown={handleKeyDown}>
       <button
@@ -65,7 +61,8 @@ const UserMenu = () => {
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <span className={styles.userName}>{'Usuario del Sistema' || 'Usuario'}</span>
+
+        <span className={styles.userName} >{user?.displayName || user?.username || 'Usuario'}</span>
       </button>
 
       <div className={`${styles.dropdown} ${isOpen ? styles.open : ''}`} role="menu">

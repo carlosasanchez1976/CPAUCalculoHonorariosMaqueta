@@ -408,6 +408,25 @@
   /* box-shadow: 0 0 0 3px rgba(91, 47, 230, 0.2); */
 }
 
+/* Modal de tarea en desarrollo */
+.modalContent {
+  padding: 24px;
+  text-align: center;
+}
+
+.modalIcon {
+  font-size: 3rem;
+  color: #ff9800;
+  margin-bottom: 16px;
+}
+
+.modalMessage {
+  font-size: 1rem;
+  color: var(--color-gray-600);
+  margin: 0;
+  line-height: 1.6;
+}
+
 /* Responsive */
 
 /* Para escalas de Windows 125% - 150% (viewport ~1200px - 1600px) */

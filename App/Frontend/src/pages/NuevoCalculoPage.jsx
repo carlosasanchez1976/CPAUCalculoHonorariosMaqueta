@@ -8,7 +8,7 @@ import { useApiCache } from '../hooks/useApiCache';
 import { obtenerTareasProfesionales } from '../services/tareasProfesionalesService';
 import { CACHE_TTL } from '../utils/constants';
 import { useAuth } from '../contexts/AuthContext';
-import { filtrarTareasPorRol } from '../utils/tareasHelper';
+import { ajustarVigenciaPorRol } from '../utils/tareasHelper';
 import styles from './NuevoCalculoPage.module.css';
 
 /**
@@ -36,12 +36,22 @@ const NuevoCalculoPage = () => {
   );
 
   // ============================================================================
-  // CAPA INTERMEDIA PARA TESTING - Filtrado de tareas por rol de usuario
+  // CAPA INTERMEDIA PARA TESTING - Ajuste de vigencia por rol de usuario
   // ============================================================================
-  // Aplica filtro especial para permitir que ciertos roles (ej: admin) vean
-  // tareas marcadas como "no vigentes" en la API, facilitando pruebas del cliente.
+  // Ajusta el campo "vigente" de cada tarea según el rol del usuario.
+  // Para roles con permisos especiales (ej: admin), fuerza vigente=1 en tareas
+  // configuradas en TAREAS_A_VALID_POR_ROL, removiendo el badge "EN CONSTRUCCIÓN"
+  // y habilitando la funcionalidad para pruebas.
   // Ver documentación en: src/utils/tareasHelper.js
-  const tareasFiltradas = tareas ? filtrarTareasPorRol(tareas, user?.role) : [];
+  const tareasAjustadas = tareas 
+    ? ajustarVigenciaPorRol(tareas, user?.role).sort((a, b) => {
+        // Ordenar por vigente (descendente) y luego por descripción (alfabético)
+        if (b.vigente !== a.vigente) {
+          return b.vigente - a.vigente; // Vigentes primero
+        }
+        return a.descripcion.localeCompare(b.descripcion); // Orden alfabético
+      })
+    : [];
 
   return (
     <div className={styles.pageContainer}>
@@ -82,9 +92,9 @@ const NuevoCalculoPage = () => {
               <button className={styles.retryButton} onClick={refresh}>Reintentar</button>
             </div>
           )}
-          {!loading && !error && tareasFiltradas && tareasFiltradas.length > 0 && (
+          {!loading && !error && tareasAjustadas && tareasAjustadas.length > 0 && (
             <div className={styles.cardsGrid}>
-              {tareasFiltradas.map((tarea) => (
+              {tareasAjustadas.map((tarea) => (
                 <CalculationTypeCard
                   key={tarea.tarea_id}
                   tareaId={tarea.tarea_id}

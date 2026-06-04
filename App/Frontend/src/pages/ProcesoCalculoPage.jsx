@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FaSpinner } from 'react-icons/fa';
+import { FaSpinner, FaExclamationTriangle } from 'react-icons/fa';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import StepperProgress from '../components/wizard/StepperProgress';
@@ -8,6 +8,7 @@ import WizardNavigation from '../components/wizard/WizardNavigation';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import Modal from '../components/common/Modal';
 import { ROUTES } from '../utils/constants';
 import { useParametros } from '../contexts/ParametrosContext';
 import { calcularHonorarios, formatearErrorAPI } from '../services/honorariosService';
@@ -27,6 +28,7 @@ const ProcesoCalculoPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationResult, setCalculationResult] = useState(null);
+  const [showUnderConstructionModal, setShowUnderConstructionModal] = useState(false);
   
   // [T009.1] Extraer datos desde location.state
   const { tareaId, tipo, tipoNombre, descripcion } = location.state || {};
@@ -276,79 +278,85 @@ const ProcesoCalculoPage = () => {
       return <DatosPrincipalesBasico formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
     }
 
-    // Componente genérico para otros tipos
-    return (
-      <div className={styles.formContainer}>
-        <h2 className="stepTitle">Datos Principales del Proyecto</h2>
-        <p className={styles.stepDescription}>
-          Ingrese los datos básicos del proyecto para el cálculo de honorarios
-        </p>
+    // Mostrar modal de tarea en desarrollo y retornar null
+    if (!showUnderConstructionModal) {
+      setShowUnderConstructionModal(true);
+    }
+    return null;
 
-        <div className={styles.formGrid}>
-          {/* Tarea Profesional - Campo FUNDAMENTAL como primer campo */}
-          <div className={styles.fullGridWidth}>
-            <label className={styles.label}>
-              Tarea Profesional *
-              <select
-                name="tareaProfesional"
-                value={formData.tareaProfesional}
-                onChange={handleInputChange}
-                className={styles.select}
-              >
-                <option value="">Seleccione la tarea profesional...</option>
-                {tareasProfesionales.map((tarea) => (
-                  <option key={tarea.codigo} value={tarea.codigo}>
-                    {tarea.codigo} - {tarea.descripcion}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
+    // // Componente genérico para otros tipos
+    // return (
+    //   <div className={styles.formContainer}>
+    //     <h2 className="stepTitle">Datos Principales del Proyecto</h2>
+    //     <p className={styles.stepDescription}>
+    //       Ingrese los datos básicos del proyecto para el cálculo de honorarios
+    //     </p>
 
-          <Input
-            label="Nombre del Proyecto"
-            name="nombreProyecto"
-            value={formData.nombreProyecto}
-            onChange={handleInputChange}
-            placeholder="Ej: Edificio Residencial Torre Sur"
-          />
+    //     <div className={styles.formGrid}>
+    //       {/* Tarea Profesional - Campo FUNDAMENTAL como primer campo */}
+    //       <div className={styles.fullGridWidth}>
+    //         <label className={styles.label}>
+    //           Tarea Profesional *
+    //           <select
+    //             name="tareaProfesional"
+    //             value={formData.tareaProfesional}
+    //             onChange={handleInputChange}
+    //             className={styles.select}
+    //           >
+    //             <option value="">Seleccione la tarea profesional...</option>
+    //             {tareasProfesionales.map((tarea) => (
+    //               <option key={tarea.codigo} value={tarea.codigo}>
+    //                 {tarea.codigo} - {tarea.descripcion}
+    //               </option>
+    //             ))}
+    //           </select>
+    //         </label>
+    //       </div>
 
-          <Input
-            label="Comitente"
-            name="cliente"
-            value={formData.cliente}
-            onChange={handleInputChange}
-            placeholder="Ej: Constructora ABC S.A."
-          />
+    //       <Input
+    //         label="Nombre del Proyecto"
+    //         name="nombreProyecto"
+    //         value={formData.nombreProyecto}
+    //         onChange={handleInputChange}
+    //         placeholder="Ej: Edificio Residencial Torre Sur"
+    //       />
 
-          <Input
-            label="Ubicación"
-            name="ubicacion"
-            value={formData.ubicacion}
-            onChange={handleInputChange}
-            placeholder="Ej: CABA, Palermo"
-          />
+    //       <Input
+    //         label="Comitente"
+    //         name="cliente"
+    //         value={formData.cliente}
+    //         onChange={handleInputChange}
+    //         placeholder="Ej: Constructora ABC S.A."
+    //       />
 
-          <div>
-            <label className={styles.label}>
-              Tipo de Obra
-              <select
-                name="tipoObra"
-                value={formData.tipoObra}
-                onChange={handleInputChange}
-                className={styles.select}
-              >
-                <option value="">Seleccione...</option>
-                <option value="Vivienda">Vivienda</option>
-                <option value="Edificio">Edificio</option>
-                <option value="Industrial">Industrial</option>
-                <option value="Comercial">Comercial</option>
-              </select>
-            </label>
-          </div>
-        </div>
-      </div>
-    );
+    //       <Input
+    //         label="Ubicación"
+    //         name="ubicacion"
+    //         value={formData.ubicacion}
+    //         onChange={handleInputChange}
+    //         placeholder="Ej: CABA, Palermo"
+    //       />
+
+    //       <div>
+    //         <label className={styles.label}>
+    //           Tipo de Obra
+    //           <select
+    //             name="tipoObra"
+    //             value={formData.tipoObra}
+    //             onChange={handleInputChange}
+    //             className={styles.select}
+    //           >
+    //             <option value="">Seleccione...</option>
+    //             <option value="Vivienda">Vivienda</option>
+    //             <option value="Edificio">Edificio</option>
+    //             <option value="Industrial">Industrial</option>
+    //             <option value="Comercial">Comercial</option>
+    //           </select>
+    //         </label>
+    //       </div>
+    //     </div>
+    //   </div>
+    // );
   };
 
   const renderStep1 = () => {
@@ -705,6 +713,36 @@ const ProcesoCalculoPage = () => {
       )}
 
       <Footer />
+      
+      {/* Modal de tarea en desarrollo */}
+      <Modal
+        isOpen={showUnderConstructionModal}
+        onClose={() => {
+          setShowUnderConstructionModal(false);
+          navigate('/nuevo-calculo');
+        }}
+        title="Funcionalidad en mantenimiento"
+        footer={
+          <Button
+            variant="primary"
+            onClick={() => {
+              setShowUnderConstructionModal(false);
+              navigate('/nuevo-calculo');
+            }}
+          >
+            Volver a selección de tareas
+          </Button>
+        }
+      >
+        <div className={styles.modalContent}>
+          <div className={styles.modalIcon}>
+            <FaExclamationTriangle />
+          </div>
+          <p className={styles.modalMessage}>
+            Esta tarea profesional no se encuentra disponible en éste momento. Por favor, intente más tarde, seleccione otra tarea disponible o contacte al administrador.
+          </p>
+        </div>
+      </Modal>
     </div>
   );
 };

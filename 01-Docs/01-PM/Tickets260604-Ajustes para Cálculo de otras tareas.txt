@@ -30,17 +30,17 @@ CREDENCIALES IMPLEMENTADAS:
 ESTADO: ✅ COMPLETADO
 
 --------------------------------------------------------------------------------
-TICKET-002: Capa intermedia de filtrado de tareas por rol (Testing)
+TICKET-002: Capa intermedia de ajuste de vigencia por rol (Testing)
 --------------------------------------------------------------------------------
 OBJETIVO:
-Permitir que usuarios con rol específico (ej: admin) puedan visualizar y probar
-tareas profesionales marcadas como "no vigentes" en la base de datos, sin modificar
-los datos de la API.
+Permitir que usuarios con rol específico (ej: admin) puedan acceder y probar
+tareas profesionales marcadas como "no vigentes" (EN CONSTRUCCIÓN) en la base 
+de datos, sin modificar los datos de la API.
 
 ALCANCE:
 - Crear constante TAREAS_A_VALID_POR_ROL para configurar excepciones por rol
-- Implementar función filtrarTareasPorRol() como capa de presentación
-- Integrar filtro en NuevoCalculoPage antes de renderizar cards
+- Implementar función ajustarVigenciaPorRol() como capa de presentación
+- Integrar ajuste en NuevoCalculoPage antes de renderizar cards
 - Documentar claramente el propósito temporal de testing
 
 ARCHIVOS CREADOS:
@@ -48,27 +48,69 @@ ARCHIVOS CREADOS:
 
 ARCHIVOS MODIFICADOS:
 - src/utils/constants.js (añadida TAREAS_A_VALID_POR_ROL)
-- src/pages/NuevoCalculoPage.jsx (integración del filtro)
+- src/pages/NuevoCalculoPage.jsx (integración del ajuste)
 
 LÓGICA IMPLEMENTADA:
-1. Tareas con vigente=1 → Siempre visibles para todos los roles
-2. Tareas con vigente=0 → Visibles solo si están en TAREAS_A_VALID_POR_ROL para ese rol
-3. Rol "admin" puede ver: CONFAC y ARBI (aunque vigente=0 en API)
-4. Otros roles solo ven tareas con vigente=1
+1. Se muestran TODAS las tareas (no se filtran)
+2. Tareas con vigente=1 → Badge normal, habilitadas para todos
+3. Tareas con vigente=0:
+   - Si el rol está en TAREAS_A_VALID_POR_ROL → Se fuerza vigente=1
+   - Resultado: Sin badge "EN CONSTRUCCIÓN", habilitada para ese rol
+   - Otros roles siguen viéndola "EN CONSTRUCCIÓN" y deshabilitada
+4. Rol "admin" ve CONFAC y ARBI habilitadas (sin badge)
+5. Otros roles las ven con badge "EN CONSTRUCCIÓN" (deshabilitadas)
+6. Reordenamiento post-ajuste: vigente DESC + descripción ASC
+   - Todas las vigentes (incluyendo ajustadas) aparecen primero
+   - Dentro de cada grupo (vigentes/no vigentes) se ordenan alfabéticamente
 
 CARACTERÍSTICAS:
 - No modifica datos de API ni base de datos
-- Capa de presentación temporal para testing
+- Ajusta solo el campo "vigente" en presentación
+- Reordena las cards para mantener vigentes juntas
+- Capa temporal para testing
 - Fácilmente removible cuando termine período de pruebas
 - Documentación extensiva en código
+
+CORRECCIONES APLICADAS:
+- Versión inicial filtraba las tareas (ocultaba las no vigentes)
+- Versión corregida muestra todas, pero ajusta el estado de vigencia
+- Ahora las cards "EN CONSTRUCCIÓN" se muestran pero habilitadas para admin
+- Agregado ordenamiento post-ajuste para agrupar vigentes (CORRECCIÓN 2026-06-04)
+
+ESTADO: ✅ COMPLETADO
+
+--------------------------------------------------------------------------------
+TICKET-003: Modal de funcionalidad en desarrollo
+--------------------------------------------------------------------------------
+OBJETIVO:
+Mostrar un modal informativo cuando el usuario intenta acceder a una tarea
+profesional que aún no está implementada (diferente de PYDOA).
+
+ALCANCE:
+- Reemplazar DIV estático por componente Modal reutilizable
+- Mostrar mensaje amigable con ícono de advertencia
+- Permitir cerrar modal y regresar a selección de tareas
+- Mantener consistencia visual con otros modales del sistema
+
+ARCHIVOS MODIFICADOS:
+- src/pages/ProcesoCalculoPage.jsx (importación Modal, estado, renderizado)
+- src/pages/ProcesoCalculoPage.module.css (estilos modalContent, modalIcon, modalMessage)
+
+CARACTERÍSTICAS:
+- Usa componente Modal existente del proyecto
+- Cierra automáticamente y navega a /nuevo-calculo
+- Diseño centrado con ícono de advertencia naranja
+- Botón primario para volver a selección
 
 ESTADO: ✅ COMPLETADO
 
 --------------------------------------------------------------------------------
 COMMIT SUGERIDO:
-feat(auth): implementar sistema multi-usuario con roles y filtrado de tareas
+feat(auth): sistema multi-usuario, ajuste vigencia y modal funcionalidad
 
 - Sistema de múltiples credenciales (admin/user/guest)
-- Capa intermedia para testing de tareas no vigentes por rol
-- Filtrado en NuevoCalculoPage según perfil de usuario
+- Capa intermedia para testing: ajuste de vigencia por rol
+- Admin puede probar tareas "EN CONSTRUCCIÓN" (CONFAC, ARBI)
+- Modal informativo para tareas en desarrollo
+- Navegación automática a selección tras cerrar modal
 --------------------------------------------------------------------------------

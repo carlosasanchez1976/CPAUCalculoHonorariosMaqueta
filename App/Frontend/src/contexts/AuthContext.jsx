@@ -47,7 +47,8 @@ export const AuthProvider = ({ children }) => {
       if (usuarioValido) {
         const userData = { 
           username: usuarioValido.username,
-          role: usuarioValido.role
+          role: usuarioValido.role,
+          displayName: usuarioValido.displayName
         };
         
         // Guardar usuario en estado
@@ -126,5 +127,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-export default AuthContext;

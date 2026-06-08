@@ -108,7 +108,7 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
 
             <div className={styles.selectWrapper}>
               <label className={sharedStyles.label}>
-                Monto de obra estimado
+                Capacidad de contratación de la empresa constructora
                 <span className={sharedStyles.required}>*</span>
               </label>
             <div className={sharedStyles.inputRow}>
@@ -150,7 +150,10 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
   }
 
   // Render por defecto para otros casos (POL u otros)
-  formData.obraProyecto = formData.obraProyecto || 'false'; // Asegurar que tenga un valor por defecto
+  // Asegurar que obraProyecto sea un número (0 o 1)
+  if (formData.obraProyecto !== 0 && formData.obraProyecto !== 1) {
+    formData.obraProyecto = 0;
+  }
   return (
 
     <div className={styles.container}>
@@ -191,9 +194,9 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
                 <input
                   type="radio"
                   name="obraProyecto"
-                  value="false"
-                  checked={formData.obraProyecto === 'false'}
-                  onChange={(e) => onChange({ target: { name: 'obraProyecto', value: e.target.value }})}
+                  value="0"
+                  checked={formData.obraProyecto === 0}
+                  onChange={(e) => onChange({ target: { name: 'obraProyecto', value: parseInt(e.target.value, 10) }})}
                   className={styles.radio}
                 />
                 <span className={styles.radioText}>La oferta de licitación no fué adjudicada</span>
@@ -203,9 +206,9 @@ const TareasProfesionalesBasico = ({ formData, onChange, stepTitle }) => {
                 <input
                   type="radio"
                   name="obraProyecto"
-                  value="true"
-                  checked={formData.obraProyecto === 'true'}
-                  onChange={(e) => onChange({ target: { name: 'obraProyecto', value: e.target.value }})}
+                  value="1"
+                  checked={formData.obraProyecto === 1}
+                  onChange={(e) => onChange({ target: { name: 'obraProyecto', value: parseInt(e.target.value, 10) }})}
                   className={styles.radio}
                 />
                 <span className={styles.radioText}>La empresa ha designado otro profesional</span>

@@ -44,7 +44,7 @@ function obtenerMensajeError(error, fallback) {
 
 exports.calcular = async (req, res) => {
     try {
-        const { tareaId, datosObra, tareasProfesionales } = req.body || {};
+        const { tareaId, datosObra, tareasProfesionales , tareaCodi } = req.body || {};
 
         const tareaIdInt = Number(tareaId);
         if (!esEnteroPositivo(tareaIdInt)) {
@@ -64,22 +64,25 @@ exports.calcular = async (req, res) => {
             });
         }
 
-        if (!datosObra || typeof datosObra !== 'object' || !esNumeroPositivo(datosObra.valorObra)) {
-            return res.status(400).json({
-                success: false,
-                error: 'datosObra.valorObra es requerido y debe ser un número mayor a 0',
-                version: '1.0'
-            });
-        }
+        if (tareaCodi === 'PYDOA') {
+        
+            if (!datosObra || typeof datosObra !== 'object' || !esNumeroPositivo(datosObra.valorObra)) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'datosObra.valorObra es requerido y debe ser un número mayor a 0',
+                    version: '1.0'
+                });
+            }
 
-        if (!hayAlMenosUnaTareaSeleccionada(tareasProfesionales)) {
-            return res.status(400).json({
-                success: false,
-                error: 'tareasProfesionales debe incluir al menos una tarea en true',
-                version: '1.0'
-            });
+            if (!hayAlMenosUnaTareaSeleccionada(tareasProfesionales)) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'tareasProfesionales debe incluir al menos una tarea en true',
+                    version: '1.0'
+                });
+            }
         }
-
+        
         const payload = {
             ...req.body,
             tareaId: tareaIdInt,

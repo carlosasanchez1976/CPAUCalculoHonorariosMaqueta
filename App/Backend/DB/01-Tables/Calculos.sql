@@ -54,3 +54,16 @@ CREATE TABLE Calculos (
   FOREIGN KEY (tarea_id) REFERENCES Tareas_Profesionales(tarea_id) 
 
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+alter table Calculos add column calc_valor_num1 decimal(15,2) null after proyecto_cliente;
+alter table Calculos add column calc_valor_num2 decimal(15,2) null after calc_valor_num1;
+alter table Calculos add column calc_valor_num3 decimal(15,2) null after calc_valor_num2;
+alter table Calculos add column calc_rel_id1 int null after calc_valor_num3;
+alter table Calculos add column calc_rel_id2 int null after calc_rel_id1;
+alter table Calculos add column calc_valor_bol1 boolean null after calc_rel_id2;
+alter table Calculos add column calc_valor_bol2 boolean null after calc_valor_bol1;
+alter table Calculos add column calc_valor_str1 varchar(255) null after calc_valor_bol2;
+alter table Calculos add column calc_valor_str2 varchar(255) null after calc_valor_str1;
+
+

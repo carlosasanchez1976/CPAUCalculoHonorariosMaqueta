@@ -22,7 +22,7 @@ BEGIN
     c.proyecto_ubicacion,
     c.obra_valor_obra
   FROM Calculos c
-  INNER JOIN Calculos_Items i ON i.calculo_id = c.calculo_id
+  LEFT JOIN Calculos_Items i ON i.calculo_id = c.calculo_id
   WHERE c.calculo_id = p_calculo_id
   ORDER BY i.item_numero;
 END$$

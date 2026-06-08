@@ -20,9 +20,9 @@ case v_Tarea_codi
   when 'PYDOA' then
     -- Lógica para calcular honorarios de obra proyecto
     call Calcular_Honorario_PYDOA(p_calculo_id);
-  when 'PYDOP' then
-    -- Lógica para calcular honorarios de obra proyecto
-    call Calcular_Honorario_PYDOP(p_calculo_id);
+  when 'REPTEC' then
+    -- Lógica para calcular honorarios de reparación técnica
+    call Calcular_Honorario_REPTEC(p_calculo_id);
   else
     select concat('Tarea profesional no reconocida: ', v_Tarea_codi) as mensaje_error;
 end case;

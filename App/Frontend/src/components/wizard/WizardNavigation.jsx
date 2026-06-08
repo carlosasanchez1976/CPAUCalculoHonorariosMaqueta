@@ -29,9 +29,14 @@ const WizardNavigation = ({
   const getNextButtonLabel = () => {
     if (nextLabel) return nextLabel;
     
-    if (currentStep === 2) return 'Revisar';
+    // Detección dinámica según totalSteps
+    const revisionStepIndex = totalSteps - 2;  // Penúltimo paso (Revisión)
+    const resultadoStepIndex = totalSteps;     // Paso de resultados (fuera del array)
     
-    if (currentStep === 5) return 'Finalizar';
+    // Mostrar "Revisar" cuando el SIGUIENTE paso es la revisión
+    if (currentStep === revisionStepIndex - 1) return 'Revisar';
+    if (currentStep === resultadoStepIndex) return 'Finalizar';
+    
     return 'Siguiente';
   };
 

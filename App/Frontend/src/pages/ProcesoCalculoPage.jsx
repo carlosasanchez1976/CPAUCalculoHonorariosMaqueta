@@ -26,6 +26,9 @@ import REPTECStep2 from '../components/wizard/steps/REPTECStep2';
 import REPTECStep3 from '../components/wizard/steps/REPTECStep3';
 import REPTECRevision from '../components/wizard/steps/REPTECRevision';
 
+import HABIStep2 from '../components/wizard/steps/HABIStep2 copy';
+
+
 
 
 
@@ -133,7 +136,15 @@ const ProcesoCalculoPage = () => {
         'Revisión de datos ingresados',
         'Cálculo'
       ]
-    : []; // Default vacío si no hay tipo definido
+    : tipo === 'HABI'
+    ? [
+        'Datos principales del proyecto',
+        'Datos específicos',
+        'Revisión de datos ingresados',
+        'Cálculo'
+      ]
+
+      : []; // Default vacío si no hay tipo definido
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -151,10 +162,14 @@ const ProcesoCalculoPage = () => {
   };
 
   const handleNext = () => {
-    if (currentStep === 3) {
+    // Detectar dinámicamente el paso de Revisión (penúltimo paso antes de Cálculo)
+    const revisionStepIndex = steps.length - 2;
+    const calculoStepIndex = steps.length - 1;
+    
+    if (currentStep === revisionStepIndex) {
       // Paso Revisión → Cálculo
       setIsCalculating(true); // Deshabilitar botones ANTES de cambiar de paso
-      setCurrentStep(4);
+      setCurrentStep(calculoStepIndex);
       performCalculation();
     } else if (currentStep < steps.length - 1) {
       setCurrentStep(prev => prev + 1);
@@ -165,11 +180,14 @@ const ProcesoCalculoPage = () => {
   };
 
   const handlePrevious = () => {
+    const resultadoStepIndex = steps.length; // Resultados está fuera del array steps
+    const revisionStepIndex = steps.length - 2;
+    
     if (currentStep === 0) {
       navigate('/nuevo-calculo');
-    } else if (currentStep === 5) {
-      // Desde Resultado (paso 5) volver a Revisión (paso 3), saltando el paso de Cálculo
-      setCurrentStep(3);
+    } else if (currentStep === resultadoStepIndex) {
+      // Desde Resultado volver a Revisión, saltando el paso de Cálculo
+      setCurrentStep(revisionStepIndex);
     } else if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
     }
@@ -244,7 +262,7 @@ const ProcesoCalculoPage = () => {
       
       setCalculationResult(result);
       setIsCalculating(false);
-      setCurrentStep(5); // Avanzar a Resultado
+      setCurrentStep(steps.length); // Avanzar a Resultado (dinámico)
       
     } catch (error) {
       console.error('Error al calcular honorarios:', error);
@@ -253,9 +271,9 @@ const ProcesoCalculoPage = () => {
       const errorMessage = formatearErrorAPI(error);
       alert(`Error en el cálculo:\n\n${errorMessage}\n\nPor favor, verifique los datos e intente nuevamente.`);
       
-      // Volver a paso de revisión
+      // Volver a paso de revisión (dinámico)
       setIsCalculating(false);
-      setCurrentStep(3);
+      setCurrentStep(steps.length - 2);
     }
   };
 
@@ -269,6 +287,38 @@ const ProcesoCalculoPage = () => {
   };
 
   const renderStepContent = () => {
+    const calculoStepIndex = steps.length - 1;    // Último paso del array (Cálculo/Spinner)
+    const resultadoStepIndex = steps.length;       // Paso fuera del array (Resultados)
+    
+    // Si estamos en el paso de Cálculo, mostrar spinner
+    if (currentStep === calculoStepIndex) {
+      return (
+        <div className={styles.calculatingContainer}>
+          <FaSpinner className={styles.spinner} />
+          <h2 className={styles.calculatingTitle}>Calculando honorarios...</h2>
+          <p className={styles.calculatingText}>
+            Procesando datos según {formData.tipoNombre}
+          </p>
+        </div>
+      );
+    }
+    
+    // Si estamos en el paso de Resultados, mostrar resultado
+    if (currentStep === resultadoStepIndex) {
+      if (formData.tipoCalculo === 'PYDOA' || formData.tipoCalculo === 'REPTEC' || formData.tipoCalculo === 'HABI') {
+        return (
+          <ResultadoBasicoDetalle 
+            formData={formData}
+            calculationResult={calculationResult}
+            onAcceptTerms={handleAcceptTerms}
+            termsAccepted={formData.aceptaTerminos}
+          />
+        );
+      }
+      return null;
+    }
+    
+    // Para los demás pasos, usar el switch original
     switch (currentStep) {
       case 0:
         return renderStep0();
@@ -278,23 +328,19 @@ const ProcesoCalculoPage = () => {
         return renderStep2();
       case 3:
         return renderStep3();
-      case 4:
-        return renderStep4();
-      case 5:
-        return renderStep5();
       default:
         return null;
     }
   };
 
   const renderStep0 = () => {
-    // Si es Cálculo PYDOA (Proyecto y Dirección de Obras), usar componente específico
+    // Si es Cálculo PYDOA (Proyecto y Dirección de Obras) o HABI, usar componente específico
     if (formData.tipoCalculo === 'PYDOA') {
       return <DatosPrincipalesBasico formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
     }
 
     // Si es Cálculo REPTEC, usar componente específico
-    if (formData.tipoCalculo === 'REPTEC') {
+    if (formData.tipoCalculo === 'REPTEC'  || formData.tipoCalculo === 'HABI') {
       return <REPTECStep1 formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
     }
 
@@ -315,6 +361,10 @@ const ProcesoCalculoPage = () => {
     // Si es Cálculo REPTEC, usar componente específico
     if (formData.tipoCalculo === 'REPTEC') {
       return <REPTECStep2 formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
+    }
+
+    if (formData.tipoCalculo === 'HABI') {
+      return <HABIStep2 formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
     }
 
     // Mostrar modal de tarea en desarrollo y retornar null
@@ -338,14 +388,15 @@ const ProcesoCalculoPage = () => {
       return <REPTECStep3 formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
     }
 
-
+    if (formData.tipoCalculo === 'HABI') {
+      return <REPTECRevision formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
+    }
 
         // Mostrar modal de tarea en desarrollo y retornar null
     if (!showUnderConstructionModal) {
       setShowUnderConstructionModal(true);
     }
     return null;
-
 
   };
 
@@ -358,6 +409,10 @@ const ProcesoCalculoPage = () => {
     // Si es Cálculo REPTEC, usar componente específico
     if (formData.tipoCalculo === 'REPTEC') {
       return <REPTECRevision formData={formData} onEditStep={(step) => setCurrentStep(step)} stepTitle={steps[currentStep]} />;
+    }
+
+    if (formData.tipoCalculo === 'HABI') {
+      return <ResultadoBasicoDetalle formData={formData} onEditStep={(step) => setCurrentStep(step)} stepTitle={steps[currentStep]} />;
     }
 
     // Mostrar modal de tarea en desarrollo y retornar null
@@ -423,8 +478,8 @@ const ProcesoCalculoPage = () => {
         </div>
       </main>
 
-      {/* Ocultar navegación durante el cálculo (paso 4) */}
-      {currentStep !== 4 && (
+      {/* Ocultar navegación durante el cálculo (dinámico) */}
+      {currentStep !== steps.length - 1 && (
         <WizardNavigation
           currentStep={currentStep}
           totalSteps={steps.length}

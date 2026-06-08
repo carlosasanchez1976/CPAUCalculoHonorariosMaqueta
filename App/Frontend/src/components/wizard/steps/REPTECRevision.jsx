@@ -4,7 +4,8 @@ import sharedStyles from './SharedStepStyles.module.css';
 import styles from './RevisionBasico.module.css';
 
 /**
- * Paso 3 - Revisión de Datos
+ * Paso 3 - Revisión de DatosetTipoTareaTextH100CEP">Locales hasta 100 m2 con ejecución de plano</option>
+
  * Específico para el cálculo REPTEC (Representación técnica)
  */
 const REPTECRevision = ({ formData, onEditStep, stepTitle }) => {
@@ -20,17 +21,16 @@ const REPTECRevision = ({ formData, onEditStep, stepTitle }) => {
     const servicios = {
       'IEC': 'Inscripción de Empresa Constructora',
       'POL': 'Presentación de ofertas y licitaciones',
-      'RTE': 'Representación técnica'
+      'RTE': 'Representación técnica',
+      'H100SEP':'Locales hasta 100 m2',
+      'H100CEP' : 'Locales hasta 100 m2 con ejecución de plano',
+      'H500SEP' : 'Locales hasta 500 m2',
+      'H500CEP' : 'Locales hasta 500 m2 con ejecución de plano',
+      'M500CEP' : 'Locales de más de 500 m2 con ejecución de plano'
     };
     return servicios[codigo] || codigo;
   };
-
-  const getTipoTareaText = (valor) => {
-    if (valor === 'proyecto') return 'Proyecto de obra';
-    if (valor === 'direccion') return 'Dirección de obra';
-    return 'No especificado';
-  };
-
+  
   return (
     <div className={sharedStyles.container}>
       <h2 className="stepTitle">{stepTitle}</h2>
@@ -84,65 +84,62 @@ const REPTECRevision = ({ formData, onEditStep, stepTitle }) => {
             </div>
           </div>
 
+          {/* Datos Específicos - No se muestran para cálculos de tipo HABI */}
           {/* Datos Específicos - Condicional según tipo de servicio */}
-          <h3 className={styles.sectionTitle}>Datos específicos del servicio</h3>
-          
-          <div className={styles.section}>
-            <div className={styles.sectionContent}>
-              {/* Si es IEC */}
-              {formData.tipoObra === 'IEC' && (
-                <>
-                  <div className={styles.highlightRow}>
-                    <span className={styles.dataLabel}>Capacidad de contratación (ARS):</span>
-                    <span className={styles.highlightValue}>
-                      {formData.valorObra ? `$ ${formatCurrencyARS(formData.valorObra, false)}` : 'No especificado'}
-                    </span>
-                  </div>
-                  {formData.observaciones && (
-                    <div className={styles.observacionesBox}>
-                      <strong>Observaciones:</strong>
-                      <p>{formData.observaciones}</p>
-                    </div>
-                  )}
-                </>
-              )}
-
-              {/* Si es RTE */}
-              {formData.tipoObra === 'RTE' && (
-                <>
-                  <div className={styles.highlightRow}>
-                    <span className={styles.dataLabel}>Monto de obra estimado (ARS):</span>
-                    <span className={styles.highlightValue}>
-                      {formData.valorObra ? `$ ${formatCurrencyARS(formData.valorObra, false)}` : 'No especificado'}
-                    </span>
-                  </div>
-                  {formData.observaciones && (
-                    <div className={styles.observacionesBox}>
-                      <strong>Observaciones:</strong>
-                      <p>{formData.observaciones}</p>
-                    </div>
-                  )}
-                </>
-              )}
-
-              {/* Si es POL */}
-              {formData.tipoObra === 'POL' && (
-                <DataRow 
-                  label="Tipo de tarea profesional" 
-                  value={getTipoTareaText(formData.obraProyecto)} 
-                />
-              )}
+          {formData.tipoCalculo !== 'HABI' && (
+            <>
+              <h3 className={styles.sectionTitle}>Datos específicos del servicio</h3>
               
-              <div className={styles.buttonRow}>
-                <Button
-                  size="small"
-                  onClick={() => onEditStep(2)}
-                >
-                  Editar
-                </Button>
+              <div className={styles.section}>
+                <div className={styles.sectionContent}>
+                  {/* Si es IEC */}
+                  {formData.tipoObra === 'IEC' && (
+                    <>
+                      <DataRow 
+                        label="Capacidad de contratación (ARS)" 
+                        value={formData.valorObra ? `$ ${formatCurrencyARS(formData.valorObra, false)}` : 'No especificado'} 
+                      />
+                    </>
+                  )}
+
+                  {/* Si es RTE */}
+                  {formData.tipoObra === 'RTE' && (
+                    <>
+                      <DataRow 
+                        label="Monto de obra estimado (ARS):" 
+                        value={formData.valorObra ? `$ ${formatCurrencyARS(formData.valorObra, false)}` : 'No especificado'} 
+                      />
+                    </>
+                  )}
+
+                  {/* Si es POL */}
+                  {formData.tipoObra === 'POL' && (
+                    <>
+                      <DataRow 
+                        label="Monto de obra estimado (ARS)" 
+                        value={formData.valorObra ? `$ ${formatCurrencyARS(formData.valorObra, false)}` : 'No especificado'} 
+                      />
+
+                      <DataRow 
+                        label="Tipo de tarea profesional" 
+                        value={formData.obraProyecto ? 'La empresa ha designado otro profesional' : 'La oferta de licitación no fué adjudicada'}
+                      />
+                    </>
+                  )}
+                  
+                  <div className={styles.buttonRow}>
+                    <Button
+                      size="small"
+                      onClick={() => onEditStep(2)}
+                    >
+                      Editar
+                    </Button>
+                  </div>
+                  
+                </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </div>
 

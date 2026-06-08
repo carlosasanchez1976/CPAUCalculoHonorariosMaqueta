@@ -1,9 +1,11 @@
+DROP PROCEDURE IF EXISTS Tareas_Profesionales_Listar;
 DELIMITER $$
 
 CREATE PROCEDURE Tareas_Profesionales_Listar()
 BEGIN
     SELECT 
         tarea_id,
+        orden,
         codi,
         descripcion,
         descripcion_larga,
@@ -17,7 +19,7 @@ BEGIN
     WHERE baja_fecha IS NULL -- Solo listar tareas que no han sido dadas de baja
     ORDER BY
         vigente DESC, -- Primero las vigentes
-        descripcion ASC; -- Luego por descripción
+        orden ASC;
 END$$
 
 DELIMITER ;

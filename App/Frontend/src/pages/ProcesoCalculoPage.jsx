@@ -26,7 +26,7 @@ import REPTECStep2 from '../components/wizard/steps/REPTECStep2';
 import REPTECStep3 from '../components/wizard/steps/REPTECStep3';
 import REPTECRevision from '../components/wizard/steps/REPTECRevision';
 
-import HABIStep2 from '../components/wizard/steps/HABIStep2 copy';
+import HABIStep2 from '../components/wizard/steps/HABIStep2';
 
 
 

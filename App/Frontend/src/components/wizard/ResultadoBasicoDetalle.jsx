@@ -456,7 +456,10 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                         <td colSpan={1} className={styles.centered}>{index + 1}</td>
                         <td colSpan={2}>{grupo.tareaProfesional}</td>
                         <td colSpan={3} className={styles.rightAlign}>{formatCurrencyARS(grupo.importe)}</td>
-                        <td colSpan={2} className={styles.centered}>{((grupo.importe / formData.valorObra) * 100).toFixed(2)}%</td>
+                        {/* mostrar porcentaje solo si valorObra es mayor a 0 para evitar división por cero */}
+                        <td colSpan={2} className={styles.centered}>
+                          {formData.valorObra > 0 ? ((grupo.importe / formData.valorObra) * 100).toFixed(2) + '%' : 'N/A'}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -478,7 +481,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                       </td>
                       <td colSpan={2} className={styles.centered}>
                         <strong>
-                          {((honorariosAgrupados.reduce((sum, grupo) => sum + grupo.importe, 0) / formData.valorObra) * 100).toFixed(2)}%
+                          {formData.valorObra > 0 ? ((honorariosAgrupados.reduce((sum, grupo) => sum + grupo.importe, 0) / formData.valorObra) * 100).toFixed(2) + '%' : 'N/A'}
                         </strong>
                       </td>
                     </tr>

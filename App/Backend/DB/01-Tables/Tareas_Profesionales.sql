@@ -24,12 +24,6 @@ ADD COLUMN baja_usuario_id INT NULL COMMENT 'Usuario que realizó la baja';
 
 
 ALTER TABLE Tareas_Profesionales
-drop column if exists calc_valor_num1_des,
-drop column if exists calc_valor_num2_des,
-drop column if exists calc_rel_id1_des,
-drop column if exists calc_rel_id2_des,
-drop column if exists calc_valor_bol1_des,
-drop column if exists calc_valor_bol2_des,
 ADD COLUMN calc_valor_num1_des VARCHAR(100) NULL AFTER vigente,
 ADD COLUMN calc_valor_num2_des VARCHAR(100) NULL AFTER calc_valor_num1_des,
 ADD COLUMN calc_rel_id1_des VARCHAR(100) NULL AFTER calc_valor_num2_des,
@@ -46,6 +40,12 @@ update Tareas_Profesionales set calc_valor_num2_des = 'Monto de Obra estimado' w
 update Tareas_Profesionales set calc_valor_num3_des = 'Monto de Obra' where codi = 'REPTEC';
 update tareas_Profesionales set calc_valor_bol1_des = 'La oferta de licitación no fué adjudicada' where codi = 'REPTEC';
 update tareas_Profesionales set calc_valor_bol2_des = 'La empresa ha designado otro profesional' where codi = 'REPTEC';
+
+
+ALTER TABLE Tareas_Profesionales
+ADD COLUMN orden tinyint NULL AFTER tarea_id
+
+
 
 
 

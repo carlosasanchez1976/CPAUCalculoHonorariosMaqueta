@@ -66,18 +66,18 @@ export const VALIDATION_MESSAGES = {
  * No modifica los datos en la base de datos ni en la API.
  */
 export const TAREAS_A_VALID_POR_ROL = [
-  {
-    role: 'admin',
-    codi: 'HABI'
-  },
-  {
-    role: 'admin',
-    codi: 'CONFAC'
-  },
-  {
-    role: 'admin',
-    codi: 'REPTEC'
-  }
+  // {
+  //   role: 'admin',
+  //   codi: 'HABI'
+  // },
+  // {
+  //   role: 'admin',
+  //   codi: 'CONFAC'
+  // },
+  // {
+  //   role: 'admin',
+  //   codi: 'REPTEC'
+  // }
 ];
 
 // Configuración de caché (TTL en milisegundos)

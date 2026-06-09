@@ -45,11 +45,11 @@ const NuevoCalculoPage = () => {
   // Ver documentación en: src/utils/tareasHelper.js
   const tareasAjustadas = tareas 
     ? ajustarVigenciaPorRol(tareas, user?.role).sort((a, b) => {
-        // Ordenar por vigente (descendente) y luego por descripción (alfabético)
+        // Ordenar por vigente (descendente)
         if (b.vigente !== a.vigente) {
           return b.vigente - a.vigente; // Vigentes primero
         }
-        return a.descripcion.localeCompare(b.descripcion); // Orden alfabético
+        // return a.descripcion.localeCompare(b.descripcion); // Orden alfabético
       })
     : [];
 

@@ -1,8 +1,10 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaExclamationTriangle } from 'react-icons/fa';
 
 import { formatCurrencyARS, formatDate, generateCalculationNumber } from '../../utils/formatters';
 import Button from '../common/Button';
+import Modal from '../common/Modal';
 import { ROUTES } from '../../utils/constants';
 import DetalleItemsModal from './DetalleItemsModal';
 import { PDF_NOTAS } from '../../utils/pdfConstants';
@@ -18,6 +20,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
   const pdfRef = useRef(null);
   const [calculationNumber] = useState(generateCalculationNumber());
   const [modalDetalleAbierto, setModalDetalleAbierto] = useState(false);
+  const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
   const currentDate = formatDate(new Date());
 
   const mostrarDetalleItems = () => {
@@ -42,6 +45,13 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
    */
   const handleDescargarPDF = () => {
     abrirVentanaPreview();
+  };
+
+  /**
+   * Función expuesta globalmente para que la ventana de preview la pueda llamar
+   */
+  const mostrarModalMantenimiento = () => {
+    setShowMaintenanceModal(true);
   };
 
   /**
@@ -301,9 +311,18 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
         
         <script>
           function generarPDFDesdeVentana() {
-            // Usar el diálogo de impresión nativo del navegador
-            // El usuario seleccionará "Guardar como PDF" o "Microsoft Print to PDF"
-            window.print();
+            // Llamar a la función del padre para mostrar el modal
+            if (window.opener && window.opener.mostrarModalMantenimiento) {
+              window.opener.mostrarModalMantenimiento();
+              // Cerrar la ventana de preview para que no tape el modal
+              window.close();
+            } else {
+              alert(
+                'Funcionalidad en mantenimiento\\n\\n' +
+                'La generación de PDF no se encuentra disponible en este momento.\\n\\n' +
+                'Por favor, intente más tarde o contacte al administrador.'
+              );
+            }
           }
         </script>
       </body>
@@ -316,6 +335,9 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
     
     // Insertar contenido clonado DESPUÉS de que los estilos estén cargados
     ventana.document.getElementById('preview-container').appendChild(clonado);
+    
+    // Exponer función al objeto window para que la ventana de preview pueda accederla
+    window.mostrarModalMantenimiento = mostrarModalMantenimiento;
     
     // Remover clase temporal del original
     element.classList.remove(styles.pdfExport);
@@ -863,6 +885,32 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
           detalleHonorarios={formData.detalleHonorarios}
         />
       )}
+
+      {/* Modal de funcionalidad en mantenimiento */}
+      <Modal
+        isOpen={showMaintenanceModal}
+        onClose={() => setShowMaintenanceModal(false)}
+        title="Funcionalidad en mantenimiento"
+        footer={
+          <Button
+            variant="primary"
+            onClick={() => setShowMaintenanceModal(false)}
+          >
+            Aceptar
+          </Button>
+        }
+      >
+        <div style={{ textAlign: 'center', padding: '1rem' }}>
+          <div style={{ fontSize: '3rem', color: '#f59e0b', marginBottom: '1rem' }}>
+            <FaExclamationTriangle />
+          </div>
+          <p style={{ fontSize: '1rem', lineHeight: '1.6' }}>
+            La generación de PDF no se encuentra disponible en este momento.
+            <br /><br />
+            Por favor, intente más tarde o contacte al administrador.
+          </p>
+        </div>
+      </Modal>
 
     </div>
   );

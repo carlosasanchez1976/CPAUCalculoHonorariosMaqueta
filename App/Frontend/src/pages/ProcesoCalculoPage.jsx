@@ -67,6 +67,9 @@ const ProcesoCalculoPage = () => {
     ubicacion: '',
     tipoObra: '',
     destinoUso: '',
+    plazoEjecucion: '',
+    observProyecto: '',
+
     
     // Paso 1: Datos Específicos (GENÉRICO)
     metrosCuadrados: '',
@@ -83,8 +86,6 @@ const ProcesoCalculoPage = () => {
     
     // --- CAMPOS ESPECÍFICOS PARA CÁLCULO PYDOA (Proyecto y Dirección de Obras) ---
     // Paso 0: Datos Principales PYDOA
-    plazoEjecucion: '',
-    observaciones: '',
     
     // Paso 1: Datos de la Obra PYDOA
     superficieTotal: '',
@@ -101,7 +102,9 @@ const ProcesoCalculoPage = () => {
     instalacionContraIncendio: false,
     instalacionTermomecanica: false,
     proyectoEstructuras: false,
-    observacionesTareas: '',
+    documentacionEjecutiva: false,
+    supervisionObra: false,
+    observTareas: '',
     
     // Paso 5: Aceptación
     aceptaTerminos: false,
@@ -217,7 +220,7 @@ const ProcesoCalculoPage = () => {
             cliente: formData.cliente,
             tipoObra: formData.tipoObra,
             destinoUso: formData.destinoUso,
-            observaciones: formData.observaciones
+            observProyecto: formData.observProyecto
           },
           datosObra: {
             valorObra: parseFloat(formData.valorObra) || 0,
@@ -233,7 +236,10 @@ const ProcesoCalculoPage = () => {
             instalacionElectrica: formData.instalacionElectrica,
             instalacionTermomecanica: formData.instalacionTermomecanica,
             instalacionContraIncendio: formData.instalacionContraIncendio,
-            proyectoEstructuras: formData.proyectoEstructuras
+            proyectoEstructuras: formData.proyectoEstructuras,
+            documentacionEjecutiva: formData.documentacionEjecutiva,
+            supervisionObra: formData.supervisionObra,
+            observTareas: formData.observTareas
           }
         };
         

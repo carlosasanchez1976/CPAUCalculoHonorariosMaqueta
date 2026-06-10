@@ -38,7 +38,7 @@ const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
               <DataRow label="Tipo de obra" value={formData.tipoObra} />
               <DataRow label="Destino/Uso" value={formData.destinoUso} />
               <DataRow label="Plazo estimado de ejecución" value={formData.plazoEjecucion ? `${formData.plazoEjecucion} meses` : ''} />
-              <DataRow label="Observaciones" value={formData.observaciones} />
+              <DataRow label="Observaciones" value={formData.observProyecto} />
               
               <div className={styles.buttonRow}>
                 <Button
@@ -135,14 +135,21 @@ const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
                     {getBooleanText(formData.instalacionTermomecanica).toUpperCase()}
                   </span>
                 </div>
-              </div>
-              
-                <div className={styles.observacionesBox}>
-                  <strong>Observaciones:</strong>
-                  <p>{formData.observacionesTareas}</p>
+
+                <div className={styles.tareaItem}>
+                  <span className={styles.tareaLabel}>Documentación ejecutiva</span>
+                  <span className={getBooleanText(formData.documentacionEjecutiva) === 'Sí' ? styles.tareaYes : styles.tareaNo}>
+                    {getBooleanText(formData.documentacionEjecutiva).toUpperCase()}
+                  </span>
                 </div>
-              
-              
+
+                <div className={styles.tareaItem}>
+                  <span className={styles.tareaLabel}>Supervisión de obra</span>
+                  <span className={getBooleanText(formData.supervisionObra) === 'Sí' ? styles.tareaYes : styles.tareaNo}>
+                    {getBooleanText(formData.supervisionObra).toUpperCase()}
+                  </span>
+                </div>
+
               <div className={styles.buttonRow}>
                 <Button
                   size="small"
@@ -151,6 +158,15 @@ const RevisionBasico = ({ formData, onEditStep, stepTitle }) => {
                   Editar
                 </Button>
               </div>
+
+              </div>
+              
+                <div className={styles.observacionesBox}>
+                  <strong>Observaciones:</strong>
+                  <p>{formData.observTareas}</p>
+                </div>
+              
+              
             </div>
           </div>
         </div>

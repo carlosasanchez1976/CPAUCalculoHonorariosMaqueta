@@ -67,3 +67,10 @@ alter table Calculos add column calc_valor_str1 varchar(255) null after calc_val
 alter table Calculos add column calc_valor_str2 varchar(255) null after calc_valor_str1;
 
 
+alter table Calculos add column proyecto_observ varchar(200) null after proyecto_cliente;
+alter table Calculos add column obra_cotiz_Dolar decimal(15,2) null after obra_superficie;
+alter table Calculos add column tarea_documentacion_ejecutiva boolean null after tarea_proyecto_estructuras;
+alter table Calculos add column tarea_supervision_obra boolean null after tarea_documentacion_ejecutiva;
+alter table Calculos add column tarea_observaciones varchar(200) null after tarea_supervision_obra;
+
+

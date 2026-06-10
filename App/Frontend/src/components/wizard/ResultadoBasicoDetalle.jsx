@@ -7,6 +7,7 @@ import { ROUTES } from '../../utils/constants';
 import DetalleItemsModal from './DetalleItemsModal';
 import { PDF_NOTAS } from '../../utils/pdfConstants';
 import styles from './ResultadoBasicoDetalle.module.css';
+import sharedStyles from './steps/SharedStepStyles.module.css';
 
 /**
  * Paso 5 - Resultado del Cálculo
@@ -355,7 +356,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
   const honorariosAgrupados = agruparHonorariosPorTarea(formData.detalleHonorarios);
 
   return (
-    <div className={styles.container}>
+    <div className={sharedStyles.container}>
       {/* Contenido para PDF y visualización en pantalla */}
       <div ref={pdfRef}>
         {/* PÁGINA 1: Datos del cálculo */}
@@ -413,6 +414,14 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                 <span className={styles.resumenLabel}>Costo estimado de obra (ARS):</span>
                 <span className={styles.resumenValue}>{formatCurrencyARS(formData.valorObra)}</span>
               </div>
+              <div className={styles.resumenItem}>
+                <span className={styles.resumenLabel}>Costo estimado de obra (USD):</span>
+                {/* solo mostrar si cotizDolar es mayor a 0 para evitar división por cero */}
+                {formData.cotizDolar > 0 && (
+                  <span className={styles.resumenValue}>{formatCurrencyARS(formData.valorObra / formData.cotizDolar)}</span>
+                )}
+              </div>
+
             </div>
           </div>
 
@@ -430,6 +439,46 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
               <span>Base de cálculo: arancel sugerido CPAU (versión 2026)</span>
             </p>
           </div>
+          {/* Checkbox de Términos - Visible en pantalla, oculto en PDF */}
+          <div className={styles.termsCheckbox}>
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={termsAccepted}
+                onChange={(e) => onAcceptTerms(e.target.checked)}
+                className={styles.checkbox}
+              />
+              <span>He leído y acepto las condiciones del cálculo</span>
+            </label>
+          </div>
+
+          {/* Botón de descarga - Visible en pantalla, oculto en PDF */}
+          <div className={styles.footerContainer}>
+            <table className={styles.table}>
+              <tfoot>
+                <tr className={styles.table}>
+                  <td colSpan={2} className={styles.alignedCell}>
+                    <div className={styles.noteBox}>
+                      <strong>Recomendamos leer las notas anexas al PDF descargable</strong>
+                    </div>
+                  </td>
+                  <td colSpan={2} className={styles.alignedCell}>
+                    <Button
+                      className={styles.downloadButton}
+                      disabled={!termsAccepted}
+                      onClick={handleDescargarPDF}
+                    >
+                      Descargar PDF
+                    </Button>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+
+
+
         </div>
 
         {/* COLUMNA DERECHA */}
@@ -499,42 +548,6 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
             </p>
           </div>
 
-          {/* Checkbox de Términos - Visible en pantalla, oculto en PDF */}
-          <div className={styles.termsCheckbox}>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={termsAccepted}
-                onChange={(e) => onAcceptTerms(e.target.checked)}
-                className={styles.checkbox}
-              />
-              <span>He leído y acepto las condiciones del cálculo</span>
-            </label>
-          </div>
-
-          {/* Botón de descarga - Visible en pantalla, oculto en PDF */}
-          <div className={styles.footerContainer}>
-            <table className={styles.table}>
-              <tfoot>
-                <tr className={styles.table}>
-                  <td colSpan={2} className={styles.alignedCell}>
-                    <div className={styles.noteBox}>
-                      <strong>Recomendamos leer las notas anexas al PDF descargable</strong>
-                    </div>
-                  </td>
-                  <td colSpan={2} className={styles.alignedCell}>
-                    <Button
-                      className={styles.downloadButton}
-                      disabled={!termsAccepted}
-                      onClick={handleDescargarPDF}
-                    >
-                      Descargar PDF
-                    </Button>
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
 
         </div>
       </div>

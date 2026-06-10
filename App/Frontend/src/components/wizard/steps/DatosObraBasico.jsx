@@ -47,43 +47,59 @@ const DatosObraBasico = ({ formData, onChange, stepTitle }) => {
       <div className={sharedStyles.formGrid}>
         {/* Row 1: 2 inputs + campo calculado (3 columnas) */}
         <div className={sharedStyles.inputRow}>
-          <Input
-            label={<span className={sharedStyles.required}>*</span>}
-            name="superficieTotal"
-            type="number"
-            value={formData.superficieTotal}
-            onChange={onChange}
-            placeholder="Superficie total"
-            required
-            min="0"
-            step="0.01"
-          />
-
-          <Input
-            label={<span className={sharedStyles.required}>*</span>}
-            name="valorMetro2"
-            type="number"
-            value={formData.valorMetro2}
-            onChange={onChange}
-            placeholder="Costo por m² (ARS)"
-            required
-            min="0"
-            step="0.01"
-          />
 
           {/* Campo calculado que se ve como input */}
           <div className={styles.inputWrapper}>
             <label className={sharedStyles.label}>
-              Costo estimado de obra (ARS)
+              Superficie total*
             </label>
-            <div className={styles.calculatedInput}>
-              {formData.superficieTotal && formData.valorMetro2 ? (
-                `$ ${formatCurrencyARS(valorObraCalculado, false)}`
-              ) : (
-                '$ 0'
-              )}
-            </div>
+          <Input
+            name="superficieTotal"
+            type="number"
+            value={formData.superficieTotal}
+            onChange={onChange}
+            placeholder="m²"
+            required
+            min="0"
+          />
           </div>
+
+          {/* Campo calculado que se ve como input */}
+          <div className={styles.inputWrapper}>
+            <label className={sharedStyles.label}>
+              Costo por m² (ARS)*
+            </label>
+          <Input
+            
+            name="valorMetro2"
+            type="number"
+            value={formData.valorMetro2}
+            onChange={onChange}
+            placeholder="ARS / m²"
+            required
+            min="0"
+          />
+
+          </div>
+
+          {/* Campo calculado que se ve como input */}
+          <div className={styles.inputWrapper}>
+            <label className={sharedStyles.label}>
+              Tipo de Cambio USD
+            </label>
+          <Input
+            
+            name="cotizDolar"
+            type="number"
+            value={formData.cotizDolar}
+            onChange={onChange}
+            placeholder="$"
+            required
+            min="0"
+          />
+          </div>
+
+
         </div>
 
         {/* Row 2: 3 notas, una por columna */}
@@ -108,12 +124,29 @@ const DatosObraBasico = ({ formData, onChange, stepTitle }) => {
           </div>
 
           {/* Nota columna 3 - Costo total */}
-          <div className={styles.noteItem}>
+          {/* Campo calculado que se ve como input */}
+          <div className={styles.inputWrapper}>
+            <label className={sharedStyles.label}>
+              Costo estimado de obra (ARS)
+            </label>
+            <div className={styles.calculatedInput}>
+              {formData.superficieTotal && formData.valorMetro2 ? (
+                `$ ${formatCurrencyARS(valorObraCalculado, false)}`
+              ) : (
+                '$ 0'
+              )}
+            </div>
+            <p>
+              <br />
+            </p>
+            <div className={styles.noteItem}>
             {!camposCompletos && (
               <p>
                 Completá los campos para ver el cálculo
               </p>
             )}
+          </div>
+
           </div>
         </div>
       </div>

@@ -32,9 +32,11 @@ function normalizarIdEntero(calculoId) {
  * @param {string} datosCompletos.datosProyecto.nombre - Nombre del proyecto
  * @param {string} datosCompletos.datosProyecto.ubicacion - Ubicación del proyecto
  * @param {string} datosCompletos.datosProyecto.cliente - Cliente del proyecto
- * @param {Object} datosCompletos.datosObra - Datos de la obra
+ * @param {string} datosCompletos.datosProyecto.observProyecto - Observaciones generales sobre el proyecto
+ *  * @param {Object} datosCompletos.datosObra - Datos de la obra
  * @param {number} datosCompletos.datosObra.valorObra - Valor de la obra
  * @param {number} datosCompletos.datosObra.superficie - Superficie en m²
+ * @param {number} datosCompletos.datosObra.cotizDolar - Cotización del dólar
  * @param {string} datosCompletos.datosObra.tipologia - Tipología de la obra
  * @param {string} datosCompletos.datosObra.complejidad - Complejidad de la obra
  * @param {Object} datosCompletos.tareasProfesionales - Tareas seleccionadas
@@ -45,6 +47,9 @@ function normalizarIdEntero(calculoId) {
  * @param {boolean} datosCompletos.tareasProfesionales.instalacionContraIncendio - Instalación contra incendio
  * @param {boolean} datosCompletos.tareasProfesionales.instalacionTermomecanica - Instalación termomecánica
  * @param {boolean} datosCompletos.tareasProfesionales.proyectoEstructuras - Proyecto de estructuras
+ * @param {boolean} datosCompletos.tareasProfesionales.documentacionEjecutiva - Documentación ejecutiva
+ * @param {boolean} datosCompletos.tareasProfesionales.supervisionObra - Supervisión de obra
+ * @param {string} datosCompletos.tareasProfesionales.observTareas - Observaciones generales sobre las tareas
  * 
  * @returns {Promise<Object>} Resultado del SP con status, calculoId y datos calculados
  * @throws {Object} Error estructurado con code, message, detail
@@ -76,8 +81,10 @@ async function grabarCalculo(datosCompletos) {
         datosProyecto.nombre || null,
         datosProyecto.ubicacion || null,
         datosProyecto.cliente || null,
+        datosProyecto.observProyecto || null,
         datosObra.valorObra,
         datosObra.superficie || null,
+        datosObra.cotizDolar || null,
         datosObra.tipologia || null,
         datosObra.complejidad || null,
         tareasProfesionales.obraProyecto || false,
@@ -86,7 +93,10 @@ async function grabarCalculo(datosCompletos) {
         tareasProfesionales.instalacionElectrica || false,
         tareasProfesionales.instalacionContraIncendio || false,
         tareasProfesionales.instalacionTermomecanica || false,
-        tareasProfesionales.proyectoEstructuras || false
+        tareasProfesionales.proyectoEstructuras || false,
+        tareasProfesionales.documentacionEjecutiva || false,
+        tareasProfesionales.supervisionObra || false,
+        tareasProfesionales.observTareas || null
     ];
 
     try {

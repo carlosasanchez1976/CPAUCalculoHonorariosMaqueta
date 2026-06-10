@@ -110,8 +110,8 @@ const DatosPrincipalesBasico = ({ formData, onChange, stepTitle }) => {
             Observaciones
           </label>
           <textarea
-            name="observaciones"
-            value={formData.observaciones}
+            name="observProyecto"
+            value={formData.observProyecto}
             onChange={onChange}
             className="textarea"
             placeholder="Ingrese cualquier observación adicional sobre el proyecto"

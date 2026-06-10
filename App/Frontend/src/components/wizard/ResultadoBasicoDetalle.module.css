@@ -1,7 +1,7 @@
 .container {
-  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 10px 0 104px 0;
   overflow-x: hidden;
 }
 
@@ -95,7 +95,7 @@
   border: 1px solid var(--color-gris);
   border-radius: 12px;
   padding: 1.5rem;
-  margin-bottom: 2rem;
+  /* margin-bottom: 2rem; */
   /* box-shadow: 0 1px 3px var(--color-text-no-sel); */
   
 }
@@ -436,10 +436,6 @@
   .twoColumnLayout {
     gap: 1.5rem;
   }
-
-  .container {
-    padding: 1.5rem 1rem;
-  }
 }
 
 /* Para escalas 150%+ o tablets (viewport ~1000px - 1280px) */
@@ -522,7 +518,7 @@
   }
 
   .container {
-    padding: 1.5rem 1rem;
+    padding: 0;
   }
 }
 

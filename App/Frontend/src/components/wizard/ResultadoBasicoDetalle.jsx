@@ -353,7 +353,77 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
     return agrupado;
   };
 
+  /**
+   * Categoriza honorarios en 3 grupos según nombre de tarea
+   * @param {Array} detalleHonorarios - Array de objetos { tareaProfesional, importe }
+   * @returns {Object} { obra: [], adicionales: [], especialidades: [] }
+   */
+  const categorizarHonorarios = (detalleHonorarios) => {
+    const obra = [];
+    const adicionales = [];
+    const especialidades = [];
+
+    detalleHonorarios.forEach((item, index) => {
+      const nombreTarea = item.tareaProfesional.toLowerCase();
+      
+      if (nombreTarea.includes('proyecto de obra') || nombreTarea.includes('dirección de obra')) {
+        obra.push({ ...item, indice: index + 1 });
+      } else if (nombreTarea.includes('documentación ejecutiva') || nombreTarea.includes('supervisión de obra')) {
+        adicionales.push({ ...item, indice: index + 1 });
+      } else {
+        especialidades.push({ ...item, indice: index + 1 });
+      }
+    });
+
+    return { obra, adicionales, especialidades };
+  };
+
+  /**
+   * Calcula importe en USD
+   * @param {number} importeARS - Importe en pesos argentinos
+   * @param {number} cotizDolar - Tipo de cambio ARS/USD
+   * @returns {number|null} Importe en USD o null si cotizDolar es 0
+   */
+  const calcularImporteUSD = (importeARS, cotizDolar) => {
+    if (!cotizDolar || cotizDolar === 0) return null;
+    return importeARS / cotizDolar;
+  };
+
+  /**
+   * Calcula subtotal de una categoría
+   * @param {Array} items - Array de honorarios de la categoría
+   * @param {number} cotizDolar - Tipo de cambio ARS/USD
+   * @param {number} valorObra - Valor de obra en ARS
+   * @returns {Object} { totalARS, totalUSD, totalPorcentaje }
+   */
+  const calcularSubtotal = (items, cotizDolar, valorObra) => {
+    const totalARS = items.reduce((sum, item) => sum + item.importe, 0);
+    const totalUSD = calcularImporteUSD(totalARS, cotizDolar);
+    const totalPorcentaje = (totalARS / valorObra) * 100;
+    
+    return { totalARS, totalUSD, totalPorcentaje };
+  };
+
   const honorariosAgrupados = agruparHonorariosPorTarea(formData.detalleHonorarios);
+
+  // Categorizar honorarios y calcular subtotales
+  const { obra, adicionales, especialidades } = categorizarHonorarios(honorariosAgrupados);
+  
+  const subtotalObra = calcularSubtotal(obra, formData.cotizDolar, formData.valorObra);
+  const subtotalAdicionales = calcularSubtotal(adicionales, formData.cotizDolar, formData.valorObra);
+  const subtotalEspecialidades = calcularSubtotal(especialidades, formData.cotizDolar, formData.valorObra);
+
+  // Calcular total general
+  const totalGeneral = {
+    totalARS: subtotalObra.totalARS + subtotalAdicionales.totalARS + subtotalEspecialidades.totalARS,
+    totalUSD: 
+      (subtotalObra.totalUSD !== null && 
+       subtotalAdicionales.totalUSD !== null && 
+       subtotalEspecialidades.totalUSD !== null)
+        ? subtotalObra.totalUSD + subtotalAdicionales.totalUSD + subtotalEspecialidades.totalUSD
+        : null,
+    totalPorcentaje: subtotalObra.totalPorcentaje + subtotalAdicionales.totalPorcentaje + subtotalEspecialidades.totalPorcentaje
+  };
 
   return (
     <div className={sharedStyles.container}>
@@ -416,10 +486,11 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
               </div>
               <div className={styles.resumenItem}>
                 <span className={styles.resumenLabel}>Costo estimado de obra (USD):</span>
-                {/* solo mostrar si cotizDolar es mayor a 0 para evitar división por cero */}
-                {formData.cotizDolar > 0 && (
-                  <span className={styles.resumenValue}>{formatCurrencyARS(formData.valorObra / formData.cotizDolar)}</span>
-                )}
+                <span className={styles.resumenValue}>
+                  {formData.cotizDolar && formData.cotizDolar > 0 
+                    ? formatCurrencyARS(formData.valorObra / formData.cotizDolar)
+                    : 'N/A'}
+                </span>
               </div>
 
             </div>
@@ -486,59 +557,209 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
           {/* Tabla de Resultados */}
           <h4 className={styles.sectionTitle}>Detalle de honorarios</h4>
           {formData.detalleHonorarios && formData.detalleHonorarios.length > 0 && (
-            <div className={styles.resultsSection}>
-              
-              
-              <div className={styles.tableContainer}>
-                <table className={styles.table}>
-                  <thead>
-                    <tr>
-                      <th colSpan={1}>Ítem</th>
-                      <th colSpan={2}>Tarea Profesional</th>
-                      <th colSpan={3} className={styles.rightAlign}>Importe</th>
-                      <th colSpan={2} className={styles.centered}>% sobre costo de obra</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {honorariosAgrupados.map((grupo, index) => (
-                      <tr key={grupo.tareaProfesional}>
-                        <td colSpan={1} className={styles.centered}>{index + 1}</td>
-                        <td colSpan={2}>{grupo.tareaProfesional}</td>
-                        <td colSpan={3} className={styles.rightAlign}>{formatCurrencyARS(grupo.importe)}</td>
-                        {/* mostrar porcentaje solo si valorObra es mayor a 0 para evitar división por cero */}
-                        <td colSpan={2} className={styles.centered}>
-                          {formData.valorObra > 0 ? ((grupo.importe / formData.valorObra) * 100).toFixed(2) + '%' : 'N/A'}
+            <>
+              {/* SECCIÓN: Honorarios Obra */}
+              {obra.length > 0 && (
+                <div className={styles.resultsSection}>
+                  <div className={styles.tableContainer}>
+                    <table className={styles.table}>
+                      <thead>
+                        <tr>
+                          <th className={styles.centered}>Ítem</th>
+                          <th>Tarea Profesional</th>
+                          <th className={styles.rightAlign}>Importe ARS</th>
+                          <th className={styles.rightAlign}>Importe USD</th>
+                          <th className={styles.centered}>% sobre costo</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {obra.map((item) => (
+                          <tr key={`obra-${item.indice}`}>
+                            <td className={styles.centered}>{item.indice}</td>
+                            <td>{item.tareaProfesional}</td>
+                            <td className={styles.rightAlign}>{formatCurrencyARS(item.importe)}</td>
+                            <td className={styles.rightAlign}>
+                              {calcularImporteUSD(item.importe, formData.cotizDolar) !== null
+                                ? formatCurrencyARS(calcularImporteUSD(item.importe, formData.cotizDolar))
+                                : 'N/A'}
+                            </td>
+                            <td className={styles.centered}>
+                              {((item.importe / formData.valorObra) * 100).toFixed(2)}%
+                            </td>
+                          </tr>
+                        ))}
+                        
+                        {/* Subtotal Obra */}
+                        <tr className={styles.totalRow}>
+                          <td colSpan={2}>
+                            <strong>Total honorarios obra</strong>
+                          </td>
+                          <td className={styles.rightAlign}>
+                            <strong>{formatCurrencyARS(subtotalObra.totalARS)}</strong>
+                          </td>
+                          <td className={styles.rightAlign}>
+                            <strong>
+                              {subtotalObra.totalUSD !== null
+                                ? formatCurrencyARS(subtotalObra.totalUSD)
+                                : 'N/A'}
+                            </strong>
+                          </td>
+                          <td className={styles.centered}>
+                            <strong>{subtotalObra.totalPorcentaje.toFixed(2)}%</strong>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* SECCIÓN: Honorarios Adicionales */}
+              {adicionales.length > 0 && (
+                <div className={styles.resultsSection}>
+                  <div className={styles.tableContainer}>
+                    <table className={styles.table}>
+                      <thead>
+                        <tr>
+                          <th className={styles.centered}>Ítem</th>
+                          <th>Tarea Profesional</th>
+                          <th className={styles.rightAlign}>Importe ARS</th>
+                          <th className={styles.rightAlign}>Importe USD</th>
+                          <th className={styles.centered}>% sobre costo</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {adicionales.map((item) => (
+                          <tr key={`adic-${item.indice}`}>
+                            <td className={styles.centered}>{item.indice}</td>
+                            <td>{item.tareaProfesional}</td>
+                            <td className={styles.rightAlign}>{formatCurrencyARS(item.importe)}</td>
+                            <td className={styles.rightAlign}>
+                              {calcularImporteUSD(item.importe, formData.cotizDolar) !== null
+                                ? formatCurrencyARS(calcularImporteUSD(item.importe, formData.cotizDolar))
+                                : 'N/A'}
+                            </td>
+                            <td className={styles.centered}>
+                              {((item.importe / formData.valorObra) * 100).toFixed(2)}%
+                            </td>
+                          </tr>
+                        ))}
+                        
+                        {/* Subtotal Adicionales */}
+                        <tr className={styles.totalRow}>
+                          <td colSpan={2}>
+                            <strong>Total honorarios adicionales</strong>
+                          </td>
+                          <td className={styles.rightAlign}>
+                            <strong>{formatCurrencyARS(subtotalAdicionales.totalARS)}</strong>
+                          </td>
+                          <td className={styles.rightAlign}>
+                            <strong>
+                              {subtotalAdicionales.totalUSD !== null
+                                ? formatCurrencyARS(subtotalAdicionales.totalUSD)
+                                : 'N/A'}
+                            </strong>
+                          </td>
+                          <td className={styles.centered}>
+                            <strong>{subtotalAdicionales.totalPorcentaje.toFixed(2)}%</strong>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* SECCIÓN: Honorarios Especialidades */}
+              {especialidades.length > 0 && (
+                <div className={styles.resultsSection}>
+                  <div className={styles.tableContainer}>
+                    <table className={styles.table}>
+                      <thead>
+                        <tr>
+                          <th className={styles.centered}>Ítem</th>
+                          <th>Tarea Profesional</th>
+                          <th className={styles.rightAlign}>Importe ARS</th>
+                          <th className={styles.rightAlign}>Importe USD</th>
+                          <th className={styles.centered}>% sobre costo</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {especialidades.map((item) => (
+                          <tr key={`esp-${item.indice}`}>
+                            <td className={styles.centered}>{item.indice}</td>
+                            <td>{item.tareaProfesional}</td>
+                            <td className={styles.rightAlign}>{formatCurrencyARS(item.importe)}</td>
+                            <td className={styles.rightAlign}>
+                              {calcularImporteUSD(item.importe, formData.cotizDolar) !== null
+                                ? formatCurrencyARS(calcularImporteUSD(item.importe, formData.cotizDolar))
+                                : 'N/A'}
+                            </td>
+                            <td className={styles.centered}>
+                              {((item.importe / formData.valorObra) * 100).toFixed(2)}%
+                            </td>
+                          </tr>
+                        ))}
+                        
+                        {/* Subtotal Especialidades */}
+                        <tr className={styles.totalRow}>
+                          <td colSpan={2}>
+                            <strong>Total honorarios especialidades</strong>
+                          </td>
+                          <td className={styles.rightAlign}>
+                            <strong>{formatCurrencyARS(subtotalEspecialidades.totalARS)}</strong>
+                          </td>
+                          <td className={styles.rightAlign}>
+                            <strong>
+                              {subtotalEspecialidades.totalUSD !== null
+                                ? formatCurrencyARS(subtotalEspecialidades.totalUSD)
+                                : 'N/A'}
+                            </strong>
+                          </td>
+                          <td className={styles.centered}>
+                            <strong>{subtotalEspecialidades.totalPorcentaje.toFixed(2)}%</strong>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* TOTAL GENERAL */}
+              <div className={styles.resultsSection}>
+                <div className={styles.tableContainer}>
+                  <table className={styles.table}>
+                    <tbody>
+                      <tr className={styles.totalRow}>
+                        <td colSpan={2}>
+                          <strong>TOTAL GENERAL</strong>
+                        </td>
+                        <td className={styles.rightAlign}>
+                          <strong>{formatCurrencyARS(totalGeneral.totalARS)}</strong>
+                        </td>
+                        <td className={styles.rightAlign}>
+                          <strong>
+                            {totalGeneral.totalUSD !== null
+                              ? formatCurrencyARS(totalGeneral.totalUSD)
+                              : 'N/A'}
+                          </strong>
+                        </td>
+                        {/* necesito que lo siguiente ocupe lugar pero no lo vea el usuario, para que el porcentaje quede centrado respecto a los importes */}
+                        <td className={styles.centered} style={{ visibility: 'hidden' }}>
+                          <strong>{totalGeneral.totalPorcentaje.toFixed(2)}%</strong>
                         </td>
                       </tr>
-                    ))}
-                  </tbody>
-                  <tfoot>
-                    <tr className={styles.totalRow}>
-                      <td colSpan={3}><strong>Total honorarios profesionales</strong></td>
-                      <td 
-                        colSpan={3} 
-                        className={styles.rightAlign}
-                        onDoubleClick={mostrarDetalleItems}
-                        title="Doble click para ver detalle completo"
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <strong className={styles.totalAmount}>
-                          {formatCurrencyARS(
-                            honorariosAgrupados.reduce((sum, grupo) => sum + grupo.importe, 0)
-                          )}
-                        </strong>
-                      </td>
-                      <td colSpan={2} className={styles.centered}>
-                        <strong>
-                          {formData.valorObra > 0 ? ((honorariosAgrupados.reduce((sum, grupo) => sum + grupo.importe, 0) / formData.valorObra) * 100).toFixed(2) + '%' : 'N/A'}
-                        </strong>
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
+                      <tr className={styles.totalRow}>
+                        <td colSpan={5}>
+                          <strong>Plazo estimado de ejecución: {formData.plazoEjecucion} meses</strong>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-              
-            </div>
+            </>
             
           )}
 

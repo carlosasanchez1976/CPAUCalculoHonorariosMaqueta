@@ -753,7 +753,12 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                 <div className={styles.tableContainer}>
                   <table className={styles.table}>
                     <tbody>
-                      <tr className={styles.totalRow}>
+                      <tr 
+                        className={styles.totalRow}
+                        onDoubleClick={mostrarDetalleItems}
+                        style={{ cursor: 'pointer' }}
+                        title="Doble click para ver detalle de ítems"
+                      >
                         <td colSpan={2}>
                           <strong>TOTAL GENERAL</strong>
                         </td>

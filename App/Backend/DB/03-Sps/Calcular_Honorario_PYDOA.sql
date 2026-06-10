@@ -28,6 +28,8 @@ DROP PROCEDURE IF EXISTS Calcular_Honorario_PYDOA$$
  ******************************************************************************
  * - 2026-05-22: Spec008 - Implementacion de arrastre progresivo para proyecto y dirección (CPAU)
  ******************************************************************************
+ * - 2026-06-10: Spec011 - Agregado de tareas de supervisión y documentación (CPAU)
+ ******************************************************************************
  *
  * PARAMETROS:
  * @param p_calculo_id INT - ID del cálculo en tabla Calculos
@@ -51,6 +53,8 @@ BEGIN
   DECLARE v_tarea_instalacion_contra_incendio BOOLEAN;
   DECLARE v_tarea_instalacion_termomecanica BOOLEAN;
   DECLARE v_tarea_proyecto_estructuras BOOLEAN;
+  DECLARE v_tarea_supervision_obra BOOLEAN;
+  DECLARE v_tarea_documentacion_ejecutiva BOOLEAN;
   
   -- Constantes de cálculo (CPAU 2026 - SPEC-CALC-002)
   DECLARE v_valor_k DECIMAL(15,2);
@@ -89,6 +93,9 @@ BEGIN
   DECLARE v_tarea_profesional VARCHAR(200);
   DECLARE v_porcentaje_tarea DECIMAL(4,2);
   
+  DECLARE v_tot_direccion DECIMAL(15,2) DEFAULT 0;
+  DECLARE v_tot_proyecto DECIMAL(15,2) DEFAULT 0;
+
   -- Acumulador de totales
   DECLARE v_total_honorarios DECIMAL(15,2) DEFAULT 0;
   
@@ -105,7 +112,9 @@ BEGIN
     tarea_instalacion_electrica,
     tarea_instalacion_contra_incendio,
     tarea_instalacion_termomecanica,
-    tarea_proyecto_estructuras
+    tarea_proyecto_estructuras,
+    tarea_supervision_obra,
+    tarea_documentacion_ejecutiva
   INTO
     v_valor_obra,
     v_obra_tipologia,
@@ -115,7 +124,9 @@ BEGIN
     v_tarea_instalacion_electrica,
     v_tarea_instalacion_contra_incendio,
     v_tarea_instalacion_termomecanica,
-    v_tarea_proyecto_estructuras
+    v_tarea_proyecto_estructuras,
+    v_tarea_supervision_obra,
+    v_tarea_documentacion_ejecutiva
   FROM Calculos
   WHERE calculo_id = p_calculo_id;
   
@@ -269,6 +280,7 @@ BEGIN
         SET v_rango_actual = v_rango_actual + 1; -- Continuar al siguiente rango
       END IF;
     END WHILE;
+
   END IF;
   
   -- -----------------------------------------------------------------------
@@ -276,7 +288,7 @@ BEGIN
   -- SPEC-CALC-003: Arrastre progresivo entre rangos
   -- -----------------------------------------------------------------------
   
-  IF v_tarea_obra_direccion THEN
+  IF v_tarea_obra_direccion OR v_tarea_supervision_obra THEN
     SET v_tarea_profesional = 'Dirección de obra de arquitectura';
     SET v_porcentaje_tarea = 0.40;
     
@@ -325,39 +337,57 @@ BEGIN
         
         -- Ítem por coeficiente de obra (porción que cae en este rango)
         IF v_coef_obra > 0 THEN
-          SET v_item_numero = v_item_numero + 1;
+          
           SET v_importe_item = ROUND(v_coef_obra * v_monto_afectado * v_porcentaje_tarea);
-          SET v_descripcion = CONCAT('Rango ', v_rango_nombre, 
-                                      ' (coef ', CAST((v_coef_obra * 100) AS CHAR), '%)');
           
-          CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+          IF v_tarea_obra_direccion THEN
+            SET v_item_numero = v_item_numero + 1;
+            SET v_descripcion = CONCAT('Rango ', v_rango_nombre, ' (coef ', CAST((v_coef_obra * 100) AS CHAR), '%)');
+            
+            CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+            SET v_total_honorarios = v_total_honorarios + v_importe_item;
+          END IF;
           
-          SET v_total_honorarios = v_total_honorarios + v_importe_item;
+          SET v_tot_direccion = v_tot_direccion + v_importe_item;
+          
           
           -- Adicional por Remodelación (se aplica sobre cada ítem de rango)
           IF v_obra_tipologia = 'Remodelación' THEN
-            SET v_item_numero = v_item_numero + 1;
+            
             SET v_importe_adicional_remodelacion = ROUND(v_coef_remodelacion * v_importe_item);
-            SET v_descripcion = CONCAT('Adicional por Remodelación Art. 3.18 (coef ', 
-                                        CAST((v_coef_remodelacion * 100) AS CHAR), '%)');
+
+            IF v_tarea_obra_direccion THEN
+              SET v_item_numero = v_item_numero + 1;
+              SET v_descripcion = CONCAT('Adicional por Remodelación Art. 3.18 (coef ', 
+                                          CAST((v_coef_remodelacion * 100) AS CHAR), '%)');
+              
+              CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, 
+                                          v_descripcion, v_importe_adicional_remodelacion);
+              SET v_total_honorarios = v_total_honorarios + v_importe_adicional_remodelacion;
+            END IF;
+
+            SET v_tot_direccion = v_tot_direccion + v_importe_adicional_remodelacion;
             
-            CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, 
-                                        v_descripcion, v_importe_adicional_remodelacion);
-            
-            SET v_total_honorarios = v_total_honorarios + v_importe_adicional_remodelacion;
           END IF;
         END IF;
         
         -- Ítem por coeficiente K (solo en rango final)
         IF v_coef_k > 0 AND v_rango_actual = v_rango_final_numero THEN
-          SET v_item_numero = v_item_numero + 1;
+          
           SET v_importe_item = ROUND(v_coef_k * v_valor_k * v_porcentaje_tarea);
-          SET v_descripcion = CONCAT('Rango ', v_rango_nombre, 
-                                      ' (coef K ', CAST((v_coef_k * 100) AS CHAR), '%)');
+
+
+          IF v_tarea_obra_direccion THEN
+            SET v_item_numero = v_item_numero + 1;
+            SET v_descripcion = CONCAT('Rango ', v_rango_nombre, 
+                                        ' (coef K ', CAST((v_coef_k * 100) AS CHAR), '%)');
+            
+            CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+            SET v_total_honorarios = v_total_honorarios + v_importe_item;
+          END IF;
+
+          SET v_tot_direccion = v_tot_direccion + v_importe_item;
           
-          CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-          
-          SET v_total_honorarios = v_total_honorarios + v_importe_item;
         END IF;
       END IF;
       
@@ -369,6 +399,20 @@ BEGIN
       END IF;
     END WHILE;
   END IF;
+
+  IF v_tarea_supervision_obra THEN
+
+      SET v_tarea_profesional = 'Supervisión de obra';
+      SET v_descripcion = CONCAT('Sobre total de Honorarios de Dirección de Obra: ', CAST(v_tot_direccion AS CHAR), ' (25%)');
+      SET v_item_numero = v_item_numero + 1;
+      SET v_importe_item = ROUND(v_tot_direccion * 0.25);
+
+      CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+      SET v_total_honorarios = v_total_honorarios + v_importe_item;
+      SET v_tot_direccion = v_importe_item; -- Para posible uso en Documentación ejecutiva
+
+  END IF;
+
   
   -- -----------------------------------------------------------------------
   -- 4.3 INSTALACIÓN SANITARIA (100%) - ARRASTRE PROGRESIVO
@@ -683,6 +727,24 @@ BEGIN
         SET v_rango_actual = v_rango_actual + 1;
       END IF;
     END WHILE;
+  END IF;
+
+  IF v_tarea_documentacion_ejecutiva THEN
+
+      SET v_tot_proyecto = v_total_honorarios - v_tot_direccion; -- Restar total a dirección para base de cálculo de documentación ejecutiva
+
+      IF v_tot_proyecto > 0 THEN
+
+        SET v_tarea_profesional = 'Documentación ejecutiva';
+        SET v_descripcion = CONCAT('Sobre total de Honorarios de Proyecto de Obra: ', CAST(v_tot_proyecto AS CHAR), ' (20%)');
+        SET v_item_numero = v_item_numero + 1;
+        SET v_importe_item = ROUND(v_tot_proyecto * 0.20);
+
+        CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
+        SET v_total_honorarios = v_total_honorarios + v_importe_item;
+
+      END IF;
+
   END IF;
   
   -- ========================================================================

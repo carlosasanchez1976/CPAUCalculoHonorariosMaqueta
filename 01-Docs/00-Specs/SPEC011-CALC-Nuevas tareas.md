@@ -2,7 +2,7 @@
 
 **Fecha de creación:** 2026-06-09  
 **Autor:** Charly  
-**Estado:** ✅ En desarrollo  
+**Estado:** ✅IMPLEMENTADA EN DEV Y QA!!!!!!!!!!!!!!!!!  
 **Prioridad:** Alta  
 **Sprint:** 2026-06  
 

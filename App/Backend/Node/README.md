@@ -12,7 +12,7 @@ API RESTful desarrollada con Node.js y Express, diseñada para ejecutarse en AWS
 - **Framework**: Express.js
 - **Database**: MySQL 8.0 (AWS RDS)
 - **Driver DB**: mysql2 (con connection pooling)
-- **Deployment**: AWS Lambda via Serverless Framework
+- **Deployment**: AWS Lambda (deployment manual con ZIP)
 - **Secrets**: AWS Secrets Manager
 - **Logging**: AWS CloudWatch
 - **Testing**: Jest + Supertest
@@ -47,8 +47,9 @@ App/Backend/Node/
 ├── app.js                        # Express app principal
 ├── index.js                      # Servidor local
 ├── lambda.js                     # Handler para AWS Lambda
+├── create-deployment-package.js  # Script para generar ZIP de deployment
+├── DEPLOY-MANUAL.md              # Guía de deployment manual
 ├── package.json
-├── serverless.yml                # Configuración Serverless Framework
 └── README.md
 ```
 
@@ -191,19 +192,18 @@ npm run test:coverage # Tests con reporte de cobertura
 
 ### Deployment
 ```bash
-npm run deploy:dev   # Deploy a ambiente DEV (AWS Lambda)
-npm run deploy:qa    # Deploy a ambiente QA (AWS Lambda)
+npm run package      # Generar ZIP de deployment
+npm run upload:qa    # Subir ZIP a Lambda QA (requiere AWS CLI configurado)
+npm run upload:prod  # Subir ZIP a Lambda PROD (requiere AWS CLI configurado)
 ```
+
+> **Nota:** Ver `DEPLOY-MANUAL.md` para el flujo completo de deployment (incluye opción manual vía AWS Console).
 
 ### Logs
 ```bash
-npm run logs:dev     # Ver logs de Lambda DEV (tail)
-npm run logs:qa      # Ver logs de Lambda QA (tail)
-```
-
-### Serverless
-```bash
-npm run invoke:local # Invocar Lambda localmente
+# Ver logs en AWS CloudWatch:
+# https://console.aws.amazon.com/cloudwatch/
+# Log Groups: /aws/lambda/ch2026-backend-api-qa
 ```
 
 ## 🌍 Ambientes

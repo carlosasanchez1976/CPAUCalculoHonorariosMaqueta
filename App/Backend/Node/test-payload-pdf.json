@@ -1,0 +1,20 @@
+{
+  "tipoCalculo": "basico-proyecto-direccion",
+  "calculationNumber": "20260611-001",
+  "formData": {
+    "nombreProyecto": "Edificio Residencial San Martín",
+    "cliente": "Constructora ABC S.A.",
+    "superficieTotal": 1500,
+    "valorObra": 150000000,
+    "cotizDolar": 1050
+  },
+  "calculationResult": {
+    "totalGeneral": 8250000,
+    "tareas": [
+      {
+        "nombre": "Proyecto y Dirección de Obra",
+        "importe": 8250000
+      }
+    ]
+  }
+}

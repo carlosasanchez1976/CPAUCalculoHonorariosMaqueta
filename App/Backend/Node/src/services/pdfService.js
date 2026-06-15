@@ -72,10 +72,10 @@ async function generarCertificado(datos) {
       format: 'A4',
       printBackground: true,
       margin: {
-        top: '20mm',
-        right: '15mm',
-        bottom: '20mm',
-        left: '15mm'
+        top: '15mm',    // ← De 20mm a 15mm
+        right: '12mm',  // ← De 15mm a 12mm
+        bottom: '15mm', // ← De 20mm a 15mm
+        left: '12mm'    // ← De 15mm a 12mm
       },
       preferCSSPageSize: false // Forzar formato A4
     });

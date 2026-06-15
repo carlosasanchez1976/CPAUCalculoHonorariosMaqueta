@@ -29,12 +29,12 @@
     .page {
       width: 210mm;
       min-height: 297mm;
-      padding: 20mm 15mm;
+      padding: 0;  /* ← Cambiar de "20mm 15mm" a "0" */
       page-break-after: always;
       page-break-inside: avoid;
       background: white;
-    }
-    
+    }    
+
     .page:last-child {
       page-break-after: auto;
     }
@@ -67,7 +67,7 @@
       align-items: center;
       justify-content: center;
       width: 140px;
-      background: linear-gradient(135deg, #5c4a8d 0%, #7a6ba8 100%);
+      background: #5c4a8d;
       border-radius: 8px;
       padding: 15px;
       flex-shrink: 0;
@@ -81,7 +81,7 @@
     .header-right {
       flex: 1;
       padding: 15px 20px;
-      background: linear-gradient(135deg, #90dede 0%, #b8e6e6 100%);
+      background: #90dede;
       border-radius: 8px;
       display: flex;
       flex-direction: column;
@@ -173,11 +173,14 @@
        ============================================================ */
     table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
       margin-bottom: 20px;
       font-size: 9pt;
       background: white;
       border: 1px solid #ddd;
+      border-radius: 12px;
+      overflow: hidden;
     }
     
     thead th {
@@ -189,9 +192,29 @@
       color: #333;
     }
     
+    thead th:first-child {
+      border-top-left-radius: 12px;
+    }
+    
+    thead th:last-child {
+      border-top-right-radius: 12px;
+    }
+    
     tbody td {
       padding: 8px;
       border-bottom: 1px solid #eee;
+    }
+    
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+    
+    tbody tr:last-child td:first-child {
+      border-bottom-left-radius: 12px;
+    }
+    
+    tbody tr:last-child td:last-child {
+      border-bottom-right-radius: 12px;
     }
     
     /* tbody tr:hover {
@@ -207,8 +230,8 @@
     }
     
     .subtotal-row {
-      background: #4682b4 !important;
-      color: white !important;
+      
+      color: #4682b4;
       font-weight: 600;
     }
     
@@ -217,9 +240,16 @@
       border-bottom: none;
     }
     
+    .subtotal-row td:first-child {
+      border-bottom-left-radius: 12px;
+    }
+    
+    .subtotal-row td:last-child {
+      border-bottom-right-radius: 12px;
+    }
+    
     .total-row {
-      background: #5c4a8d !important;
-      color: white !important;
+      color: #4682b4;
       font-weight: 700;
       font-size: 10pt;
     }
@@ -227,6 +257,14 @@
     .total-row td {
       padding: 12px 8px;
       border-bottom: none;
+    }
+    
+    .total-row td:first-child {
+      border-bottom-left-radius: 12px;
+    }
+    
+    .total-row td:last-child {
+      border-bottom-right-radius: 12px;
     }
     
     /* Separación entre secciones de tablas */
@@ -490,7 +528,7 @@
             <td colspan="2"><strong>TOTAL GENERAL</strong></td>
             <td class="right-align"><strong>{{totalGeneralARS}}</strong></td>
             <td class="right-align"><strong>{{totalGeneralUSD}}</strong></td>
-            <td class="centered" style="visibility: hidden;"><strong>00.00%</strong></td>
+            <td class="centered"><strong>{{totalGeneralPorcentaje}}%</strong></td>
           </tr>
           <tr class="total-row">
             <td colspan="5"><strong>Plazo estimado de ejecución: {{plazoEjecucion}} meses</strong></td>

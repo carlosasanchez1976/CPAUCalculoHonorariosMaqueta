@@ -519,7 +519,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                           </strong>
                         </td>
                         {/* necesito que lo siguiente ocupe lugar pero no lo vea el usuario, para que el porcentaje quede centrado respecto a los importes */}
-                        <td className={styles.centered} style={{ visibility: 'hidden' }}>
+                        <td className={styles.centered}>
                           <strong>{totalGeneral.totalPorcentaje.toFixed(2)}%</strong>
                         </td>
                       </tr>

@@ -178,8 +178,36 @@ function prepararDatosPlantilla(datos, plantilla) {
   
   console.log(`[PDF] Procesando ${detalleHonorarios.length} items de detalleHonorarios`);
   
-  if (Array.isArray(detalleHonorarios) && detalleHonorarios.length > 0) {
-    detalleHonorarios.forEach((tarea, index) => {
+  // AGRUPAR POR TAREA PROFESIONAL (igual que en el frontend)
+  const agruparHonorariosPorTarea = (items) => {
+    const agrupado = {};
+    
+    items.forEach((item) => {
+      const { tareaProfesional, importe, descripcion } = item;
+      const key = tareaProfesional;
+      
+      if (!agrupado[key]) {
+        agrupado[key] = {
+          tareaProfesional: tareaProfesional,
+          importe: 0,
+          descripcion: descripcion || null,
+          conteo: 0
+        };
+      }
+      
+      agrupado[key].importe += parseFloat(importe) || 0;
+      agrupado[key].conteo += 1;
+    });
+    
+    return Object.values(agrupado);
+  };
+  
+  const honorariosAgrupados = agruparHonorariosPorTarea(detalleHonorarios);
+  
+  console.log(`[PDF] Después de agrupar: ${honorariosAgrupados.length} tareas únicas`);
+  
+  if (Array.isArray(honorariosAgrupados) && honorariosAgrupados.length > 0) {
+    honorariosAgrupados.forEach((tarea, index) => {
       const importeARS = tarea.importe || 0;
       const importeUSD = importeARS / (formData.cotizDolar || 1);
       const porcentaje = formData.valorObra > 0 
@@ -222,7 +250,7 @@ function prepararDatosPlantilla(datos, plantilla) {
   
   const subtotalObraARS = honorariosObra.length > 0 
     ? calcularSubtotalCategoria(honorariosObra)
-    : (detalleHonorarios.reduce((sum, t) => sum + (t.importe || 0), 0));
+    : (honorariosAgrupados.reduce((sum, t) => sum + (t.importe || 0), 0));
   const subtotalAdicionalesARS = calcularSubtotalCategoria(honorariosAdicionales);
   const subtotalEspecialidadesARS = calcularSubtotalCategoria(honorariosEspecialidades);
   
@@ -232,6 +260,7 @@ function prepararDatosPlantilla(datos, plantilla) {
   const subtotalObraPorcentaje = formData.valorObra > 0 ? (subtotalObraARS / formData.valorObra * 100).toFixed(2) : '0.00';
   const subtotalAdicionalesPorcentaje = formData.valorObra > 0 ? (subtotalAdicionalesARS / formData.valorObra * 100).toFixed(2) : '0.00';
   const subtotalEspecialidadesPorcentaje = formData.valorObra > 0 ? (subtotalEspecialidadesARS / formData.valorObra * 100).toFixed(2) : '0.00';
+  const totalGeneralPorcentaje = formData.valorObra > 0 ? (totalGeneralARS / formData.valorObra * 100).toFixed(2) : '0.00';
   
   // Retornar objeto APLANADO (todos los campos en el nivel raíz)
   return {
@@ -271,6 +300,7 @@ function prepararDatosPlantilla(datos, plantilla) {
     // Totales
     totalGeneralARS: formatCurrency(totalGeneralARS),
     totalGeneralUSD: formatCurrency(totalGeneralUSD),
+    totalGeneralPorcentaje,
     plazoEjecucion: formData.plazoEjecucion || 12
   };
 }

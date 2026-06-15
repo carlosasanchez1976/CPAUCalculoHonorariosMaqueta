@@ -145,6 +145,9 @@ function prepararDatosPlantilla(datos, plantilla) {
     year: 'numeric'
   });
   
+  // Función auxiliar para redondear
+  const redondear = (valor) => Math.round(valor);
+
   // Parsear assets (logo CPAU)
   let logoCPAU = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwIiBoZWlnaHQ9IjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjx0ZXh0IHg9IjEwIiB5PSIyNSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCI+Q1BBVTWV4dD48L3N2Zz4=';
   
@@ -208,8 +211,8 @@ function prepararDatosPlantilla(datos, plantilla) {
   
   if (Array.isArray(honorariosAgrupados) && honorariosAgrupados.length > 0) {
     honorariosAgrupados.forEach((tarea, index) => {
-      const importeARS = tarea.importe || 0;
-      const importeUSD = importeARS / (formData.cotizDolar || 1);
+      const importeARS = redondear(tarea.importe || 0);
+      const importeUSD = redondear(importeARS / (formData.cotizDolar || 1));
       const porcentaje = formData.valorObra > 0 
         ? (importeARS / formData.valorObra * 100).toFixed(2)
         : '0.00';
@@ -248,14 +251,14 @@ function prepararDatosPlantilla(datos, plantilla) {
     }, 0);
   };
   
-  const subtotalObraARS = honorariosObra.length > 0 
+  const subtotalObraARS = redondear(honorariosObra.length > 0 
     ? calcularSubtotalCategoria(honorariosObra)
-    : (honorariosAgrupados.reduce((sum, t) => sum + (t.importe || 0), 0));
-  const subtotalAdicionalesARS = calcularSubtotalCategoria(honorariosAdicionales);
-  const subtotalEspecialidadesARS = calcularSubtotalCategoria(honorariosEspecialidades);
+    : (honorariosAgrupados.reduce((sum, t) => sum + (t.importe || 0), 0)));
+  const subtotalAdicionalesARS = redondear(calcularSubtotalCategoria(honorariosAdicionales));
+  const subtotalEspecialidadesARS = redondear(calcularSubtotalCategoria(honorariosEspecialidades));
   
-  const totalGeneralARS = subtotalObraARS + subtotalAdicionalesARS + subtotalEspecialidadesARS;
-  const totalGeneralUSD = totalGeneralARS / (formData.cotizDolar || 1);
+  const totalGeneralARS = redondear(subtotalObraARS + subtotalAdicionalesARS + subtotalEspecialidadesARS);
+  const totalGeneralUSD = redondear(totalGeneralARS / (formData.cotizDolar || 1));
   
   const subtotalObraPorcentaje = formData.valorObra > 0 ? (subtotalObraARS / formData.valorObra * 100).toFixed(2) : '0.00';
   const subtotalAdicionalesPorcentaje = formData.valorObra > 0 ? (subtotalAdicionalesARS / formData.valorObra * 100).toFixed(2) : '0.00';
@@ -690,13 +693,14 @@ function generarFilasTabla(calculationResult) {
 }
 
 /**
- * Formatea número como moneda ARS
+ * Formatea número como moneda ARS sin decimales
  */
 function formatCurrency(value) {
   return new Intl.NumberFormat('es-AR', {
     style: 'currency',
     currency: 'ARS',
-    minimumFractionDigits: 2
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
   }).format(value);
 }
 

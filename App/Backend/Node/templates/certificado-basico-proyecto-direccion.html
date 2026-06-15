@@ -114,24 +114,58 @@
     /* ============================================================
        RESUMEN DEL PROYECTO
        ============================================================ */
-    .section-title {
+    .section-title-sin-linea, .section-title {
       font-size: 11pt;
       font-weight: 600;
       color: #333;
       margin-bottom: 15px;
       margin-top: 20px;
       padding-bottom: 6px;
+    }
+
+
+       .section-title {
       border-bottom: 2px solid #e0e0e0;
     }
-    
+
+
+
     .resumen-grid {
       display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 8px;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0;
       margin-bottom: 20px;
-      
-      padding: 15px;
-      border-radius: 6px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
+    }
+    
+    .resumen-item {
+      display: flex;
+      gap: 10px;
+      padding: 12px 15px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .resumen-item:nth-child(1),
+    .resumen-item:nth-child(2) {
+      /* Fila 1: 2 items de 3 columnas */
+      grid-column: span 3;
+    }
+    
+    .resumen-item:nth-child(3),
+    .resumen-item:nth-child(4),
+    .resumen-item:nth-child(5) {
+      /* Fila 2: 3 items de 2 columnas */
+      grid-column: span 2;
+    }
+    
+    .resumen-item:nth-child(6),
+    .resumen-item:nth-child(7) {
+      /* Fila 3: 2 items de 3 columnas */
+      grid-column: span 3;
+      border-bottom: none;
     }
     
     .resumen-label {
@@ -149,8 +183,8 @@
        ============================================================ */
     .disclaimer {
       
-      border: 2px solid #ffd966;
-      border-radius: 6px;
+      border: 2px solid #4682b4;
+      border-radius: 12px;
       padding: 15px;
       margin: 20px 0;
     }
@@ -158,7 +192,7 @@
     .disclaimer-title {
       font-size: 11pt;
       font-weight: 700;
-      color: #856404;
+      
       margin-bottom: 10px;
     }
     
@@ -192,6 +226,37 @@
       color: #333;
     }
     
+    /* Anchos específicos para cada columna (solo tablas de honorarios) */
+    table:not(.etapas-table) thead th:nth-child(1),
+    table:not(.etapas-table) tbody td:nth-child(1) {
+      width: 50px;
+      text-align: center;
+    }
+    
+    table:not(.etapas-table) thead th:nth-child(2),
+    table:not(.etapas-table) tbody td:nth-child(2) {
+      width: auto;
+      min-width: 200px;
+    }
+    
+    table:not(.etapas-table) thead th:nth-child(3),
+    table:not(.etapas-table) tbody td:nth-child(3) {
+      width: 140px;
+      text-align: right;
+    }
+    
+    table:not(.etapas-table) thead th:nth-child(4),
+    table:not(.etapas-table) tbody td:nth-child(4) {
+      width: 120px;
+      text-align: right;
+    }
+    
+    table:not(.etapas-table) thead th:nth-child(5),
+    table:not(.etapas-table) tbody td:nth-child(5) {
+      width: 90px;
+      text-align: center;
+    }
+    
     thead th:first-child {
       border-top-left-radius: 12px;
     }
@@ -217,9 +282,6 @@
       border-bottom-right-radius: 12px;
     }
     
-    /* tbody tr:hover {
-      background: #f9f9f9;
-    } */
     
     .centered {
       text-align: center;
@@ -233,6 +295,7 @@
       
       color: #4682b4;
       font-weight: 600;
+      
     }
     
     .subtotal-row td {
@@ -241,10 +304,12 @@
     }
     
     .subtotal-row td:first-child {
+      text-align: left !important;
       border-bottom-left-radius: 12px;
     }
     
     .subtotal-row td:last-child {
+      text-align: center !important;
       border-bottom-right-radius: 12px;
     }
     
@@ -252,6 +317,7 @@
       color: #4682b4;
       font-weight: 700;
       font-size: 10pt;
+      border-bottom: 1px solid #4682b4;
     }
     
     .total-row td {
@@ -260,73 +326,65 @@
     }
     
     .total-row td:first-child {
+      text-align: left !important;
       border-bottom-left-radius: 12px;
     }
     
     .total-row td:last-child {
       border-bottom-right-radius: 12px;
+      text-align: center !important;
     }
     
     /* Separación entre secciones de tablas */
     .table-section {
-      margin-bottom: 25px;
+      margin-bottom: 10px;
     }
     
     /* ============================================================
        NOTA FINAL
        ============================================================ */
     .nota-final {
-      margin-top: 15px;
+      margin-top: 5px;
       padding: 10px;
       
-      border-left: 4px solid #5c4a8d;
       font-size: 9pt;
-      font-style: italic;
     }
     
     /* ============================================================
        PÁGINA 2 - NOTAS
        ============================================================ */
     .notas-section {
-      margin-top: 20px;
+      margin-top: 1px;
     }
-    
-    .nota-block {
-      margin-bottom: 20px;
-    }
-    
+        
     .nota-block h4 {
-      font-size: 10pt;
+      font-size: 11pt;
+       line-height: 1.6;
       font-weight: 600;
-      color: #5c4a8d;
-      margin-bottom: 8px;
+      margin-top: 8px;
+      
+      /* margin-bottom: 8px; */
     }
     
     .nota-block p {
-      font-size: 9pt;
+      font-size: 11pt;
       line-height: 1.6;
       text-align: justify;
-      margin-bottom: 8px;
+      /* margin-bottom: 8px; */
     }
     
     .etapas-table {
-      width: 100%;
+      width: auto;
       margin: 10px 0;
       border-collapse: collapse;
-      font-size: 9pt;
+      font-size: 11pt;
     }
     
     .etapas-table td {
       padding: 6px 10px;
-      border: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
     }
     
-    .etapas-nota {
-      font-size: 8pt;
-      font-style: italic;
-      color: #666;
-      margin-top: 8px;
-    }
   </style>
 </head>
 <body>
@@ -357,26 +415,39 @@
     <!-- Resumen del Proyecto -->
     <h4 class="section-title">Resumen del Proyecto</h4>
     <div class="resumen-grid">
-      <span class="resumen-label">Nombre del Proyecto:</span>
-      <span class="resumen-value">{{nombreProyecto}}</span>
+      <!-- Fila 1: Nombre del Proyecto | Comitente -->
+      <div class="resumen-item">
+        <span class="resumen-label">Nombre del Proyecto:</span>
+        <span class="resumen-value">{{nombreProyecto}}</span>
+      </div>
+      <div class="resumen-item">
+        <span class="resumen-label">Comitente:</span>
+        <span class="resumen-value">{{cliente}}</span>
+      </div>
       
-      <span class="resumen-label">Comitente:</span>
-      <span class="resumen-value">{{cliente}}</span>
+      <!-- Fila 2: Tipo de obra | Destino/Uso | Superficie -->
+      <div class="resumen-item">
+        <span class="resumen-label">Tipo de obra:</span>
+        <span class="resumen-value">{{tipoObra}}</span>
+      </div>
+      <div class="resumen-item">
+        <span class="resumen-label">Destino/Uso:</span>
+        <span class="resumen-value">{{destinoUso}}</span>
+      </div>
+      <div class="resumen-item">
+        <span class="resumen-label">Superficie total:</span>
+        <span class="resumen-value">{{superficieTotal}} m²</span>
+      </div>
       
-      <span class="resumen-label">Tipo de obra:</span>
-      <span class="resumen-value">{{tipoObra}}</span>
-      
-      <span class="resumen-label">Destino/Uso:</span>
-      <span class="resumen-value">{{destinoUso}}</span>
-      
-      <span class="resumen-label">Superficie total:</span>
-      <span class="resumen-value">{{superficieTotal}} m²</span>
-      
-      <span class="resumen-label">Costo estimado de obra (ARS):</span>
-      <span class="resumen-value">{{valorObraARS}}</span>
-      
-      <span class="resumen-label">Costo estimado de obra (USD):</span>
-      <span class="resumen-value">{{valorObraUSD}}</span>
+      <!-- Fila 3: Costo ARS | Costo USD -->
+      <div class="resumen-item">
+        <span class="resumen-label">Costo estimado de obra (ARS):</span>
+        <span class="resumen-value">{{valorObraARS}}</span>
+      </div>
+      <div class="resumen-item">
+        <span class="resumen-label">Costo estimado de obra (USD):</span>
+        <span class="resumen-value">{{valorObraUSD}}</span>
+      </div>
     </div>
 
     <!-- Disclaimer Legal -->
@@ -395,12 +466,13 @@
     </div>
 
     <!-- Detalle de Honorarios -->
-    <h4 class="section-title">Detalle de honorarios</h4>
+    <h4 class="section-title-sin-linea">Detalle de honorarios</h4>
 
     <!-- SECCIÓN: Honorarios Obra -->
     {{#if honorariosObra}}
     <div class="table-section">
       <table>
+        <!-- Encabezado: siempre se muestra en la primera sección -->
         <thead>
           <tr>
             <th class="centered">Ítem</th>
@@ -439,6 +511,8 @@
     {{#if honorariosAdicionales}}
     <div class="table-section">
       <table>
+        <!-- Encabezado: solo si NO existe honorariosObra -->
+        {{#unless honorariosObra}}
         <thead>
           <tr>
             <th class="centered">Ítem</th>
@@ -448,6 +522,7 @@
             <th class="centered">% sobre costo</th>
           </tr>
         </thead>
+        {{/unless}}
         <tbody>
           {{#each honorariosAdicionales}}
           <tr>
@@ -477,15 +552,20 @@
     {{#if honorariosEspecialidades}}
     <div class="table-section">
       <table>
-        <thead>
-          <tr>
-            <th class="centered">Ítem</th>
-            <th>Tarea Profesional</th>
-            <th class="right-align">Importe ARS</th>
-            <th class="right-align">Importe USD</th>
-            <th class="centered">% sobre costo</th>
-          </tr>
-        </thead>
+        <!-- Encabezado: solo si NO existe honorariosObra NI honorariosAdicionales -->
+        {{#unless honorariosObra}}
+          {{#unless honorariosAdicionales}}
+          <thead>
+            <tr>
+              <th class="centered">Ítem</th>
+              <th>Tarea Profesional</th>
+              <th class="right-align">Importe ARS</th>
+              <th class="right-align">Importe USD</th>
+              <th class="centered">% sobre costo</th>
+            </tr>
+          </thead>
+          {{/unless}}
+        {{/unless}}
         <tbody>
           {{#each honorariosEspecialidades}}
           <tr>
@@ -522,7 +602,11 @@
             <td class="centered"><strong>{{totalGeneralPorcentaje}}%</strong></td>
           </tr>
           <tr class="total-row">
-            <td colspan="5"><strong>Plazo estimado de ejecución: {{plazoEjecucion}} meses</strong></td>
+            <td colspan="3"><strong>Plazo estimado de ejecución: {{plazoEjecucion}} meses</strong></td>
+            <td class="right-align"></td>
+            <td class="centered"></td>
+
+            <!-- <td colspan="5"><strong>Plazo estimado de ejecución: {{plazoEjecucion}} meses</strong></td> -->
           </tr>
         </tbody>
       </table>
@@ -561,7 +645,7 @@
 
     <!-- Contenido de Notas -->
     <div class="notas-section">
-      <h2 class="section-title">Notas</h2>
+      <h2 class="section-title-sin-linea">Notas</h2>
       
       <!-- Alcance y carácter del cálculo -->
       <section class="nota-block">
@@ -593,7 +677,7 @@ quedando a criterio del/la profesional y del comitente seleccionar el valor que 
             <tr><td>Dirección de obra</td><td>40%</td></tr>
           </tbody>
         </table>
-        <p class="etapas-nota">A fin de conocer el contenido y alcance de cada una de las etapas del proyecto, se recomienda consultar el MEPAU.</p>
+        <p>A fin de conocer el contenido y alcance de cada una de las etapas del proyecto, se recomienda consultar el MEPAU.</p>
       </section>
 
       <!-- Alcance de los honorarios sugeridos -->
@@ -625,6 +709,8 @@ Cualquier otro concepto que no esté expresado en el cálculo.</p>
 según lo acordado por las partes, y considerando las etapas de proyecto previamente mencionadas en este documento.</p>
         <p>En caso de rescisión unilateral por parte del comitente, se deberá convenir un resarcimiento en favor del profesional por las tareas encomendadas y no ejecutadas, 
 de acuerdo a la normativa vigente.</p>
+      <p><br></p>
+      <p><br></p>
         <p>Para ampliar la información consultar al MEPAU, capítulo 02 Honorarios, o ponerse en contacto con tecnica@cpau.org</p>
       </section>
     </div>

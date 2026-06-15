@@ -12,14 +12,15 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || '';
  * Descarga el PDF del certificado de honorarios desde el backend
  * @param {Object} datos - Datos del cálculo
  * @param {string} datos.tipoCalculo - Tipo de cálculo (ej: 'basico-proyecto-direccion')
- * @param {Object} datos.formData - Datos del formulario
+ * @param {Object} datos.formData - Datos del formulario (incluye formData.calculoId para el nombre del archivo)
  * @param {Object} datos.calculationResult - Resultado del cálculo
- * @param {string} datos.calculationNumber - Número de cálculo
  * @returns {Promise<Blob>} Blob del PDF
  * @throws {Error} Si el backend responde con error
  */
 export async function descargarCertificadoPDF(datos) {
   try {
+    console.log('📄 [PDF Export] Body request:', JSON.stringify(datos, null, 2));
+    
     const response = await fetch(`${API_BASE_URL}/calculos/exportar-pdf`, {
       method: 'POST',
       headers: {

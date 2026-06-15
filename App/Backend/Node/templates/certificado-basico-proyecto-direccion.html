@@ -360,7 +360,7 @@
     <h4 class="section-title">Detalle de honorarios</h4>
 
     <!-- SECCIÓN: Honorarios Obra -->
-    {{#if honariosObra}}
+    {{#if honorariosObra}}
     <div class="table-section">
       <table>
         <thead>
@@ -376,7 +376,12 @@
           {{#each honorariosObra}}
           <tr>
             <td class="centered">{{this.indice}}</td>
-            <td>{{this.tareaProfesional}}</td>
+            <td>
+              <strong>{{this.tareaProfesional}}</strong>
+              {{#if this.descripcion}}
+              <br /><small style="color: #666;">{{this.descripcion}}</small>
+              {{/if}}
+            </td>
             <td class="right-align">{{this.importeARS}}</td>
             <td class="right-align">{{this.importeUSD}}</td>
             <td class="centered">{{this.porcentaje}}%</td>
@@ -412,7 +417,12 @@
           {{#each honorariosAdicionales}}
           <tr>
             <td class="centered">{{this.indice}}</td>
-            <td>{{this.tareaProfesional}}</td>
+            <td>
+              <strong>{{this.tareaProfesional}}</strong>
+              {{#if this.descripcion}}
+              <br /><small style="color: #666;">{{this.descripcion}}</small>
+              {{/if}}
+            </td>
             <td class="right-align">{{this.importeARS}}</td>
             <td class="right-align">{{this.importeUSD}}</td>
             <td class="centered">{{this.porcentaje}}%</td>
@@ -448,7 +458,12 @@
           {{#each honorariosEspecialidades}}
           <tr>
             <td class="centered">{{this.indice}}</td>
-            <td>{{this.tareaProfesional}}</td>
+            <td>
+              <strong>{{this.tareaProfesional}}</strong>
+              {{#if this.descripcion}}
+              <br /><small style="color: #666;">{{this.descripcion}}</small>
+              {{/if}}
+            </td>
             <td class="right-align">{{this.importeARS}}</td>
             <td class="right-align">{{this.importeUSD}}</td>
             <td class="centered">{{this.porcentaje}}%</td>

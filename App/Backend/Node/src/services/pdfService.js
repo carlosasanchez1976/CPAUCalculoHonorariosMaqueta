@@ -14,7 +14,7 @@ const isLambda = !!process.env.AWS_LAMBDA_FUNCTION_NAME;
 
 /**
  * Genera un certificado PDF con Puppeteer
- * @param {Object} datos - { tipoCalculo, formData, calculationResult, calculationNumber }
+ * @param {Object} datos - { tipoCalculo, formData, calculationResult }
  * @returns {Buffer} Buffer del PDF generado
  */
 async function generarCertificado(datos) {
@@ -97,11 +97,11 @@ async function generarCertificado(datos) {
 /**
  * Renderiza la plantilla del certificado desde la base de datos usando Handlebars
  * FASE 2: T010-002
- * @param {Object} datos - { tipoCalculo, formData, calculationResult, calculationNumber }
+ * @param {Object} datos - { tipoCalculo, formData, calculationResult }
  * @returns {string} HTML renderizado
  */
 async function renderizarPlantillaDB(datos) {
-  const { tipoCalculo, formData, calculationResult, calculationNumber } = datos;
+  const { tipoCalculo, formData, calculationResult } = datos;
   
   // Resolver plantilla desde DB por código
   const plantilla = await entregablesService.resolverPlantillaPorCodigo(tipoCalculo);
@@ -131,7 +131,12 @@ async function renderizarPlantillaDB(datos) {
  * @returns {Object} Datos formateados para Handlebars (aplanados para el template)
  */
 function prepararDatosPlantilla(datos, plantilla) {
-  const { formData, calculationResult, calculationNumber } = datos;
+  const { formData, calculationResult } = datos;
+  
+  // Generar número de cálculo formateado desde formData.calculoId
+  const calculationNumber = formData.calculoId 
+    ? String(formData.calculoId).padStart(6, '0')
+    : '000000';
   
   // Fecha actual formateada
   const currentDate = new Date().toLocaleDateString('es-AR', {
@@ -166,10 +171,15 @@ function prepararDatosPlantilla(datos, plantilla) {
   const honorariosAdicionales = [];
   const honorariosEspecialidades = [];
   
-  // Por ahora, usar el array de tareas simple del calculationResult
-  // TODO: Cuando tengamos categorización real en el backend, usar eso
-  if (calculationResult?.tareas && Array.isArray(calculationResult.tareas)) {
-    calculationResult.tareas.forEach((tarea, index) => {
+  console.log('[PDF] calculationResult recibido:', JSON.stringify(calculationResult, null, 2));
+  
+  // Usar detalleHonorarios de calculationResult (enviado desde frontend)
+  const detalleHonorarios = calculationResult?.detalleHonorarios || formData?.detalleHonorarios || [];
+  
+  console.log(`[PDF] Procesando ${detalleHonorarios.length} items de detalleHonorarios`);
+  
+  if (Array.isArray(detalleHonorarios) && detalleHonorarios.length > 0) {
+    detalleHonorarios.forEach((tarea, index) => {
       const importeARS = tarea.importe || 0;
       const importeUSD = importeARS / (formData.cotizDolar || 1);
       const porcentaje = formData.valorObra > 0 
@@ -178,26 +188,50 @@ function prepararDatosPlantilla(datos, plantilla) {
       
       const item = {
         indice: index + 1,
-        tareaProfesional: tarea.nombre || 'Tarea sin nombre',
+        tareaProfesional: tarea.tareaProfesional || 'Tarea sin nombre',
+        descripcion: tarea.descripcion || '',
         importeARS: formatCurrency(importeARS),
         importeUSD: formatCurrency(importeUSD),
         porcentaje
       };
       
-      // Por ahora, todo va a "obra"
-      honorariosObra.push(item);
+      // Categorizar según el nombre de la tarea
+      const nombreTarea = (tarea.tareaProfesional || '').toLowerCase();
+      
+      if (nombreTarea.includes('proyecto de obra') || nombreTarea.includes('dirección de obra')) {
+        honorariosObra.push(item);
+      } else if (nombreTarea.includes('documentación ejecutiva') || nombreTarea.includes('supervisión de obra')) {
+        honorariosAdicionales.push(item);
+      } else {
+        honorariosEspecialidades.push(item);
+      }
     });
+    
+    console.log(`[PDF] Categorizado: ${honorariosObra.length} obra, ${honorariosAdicionales.length} adicionales, ${honorariosEspecialidades.length} especialidades`);
+  } else {
+    console.warn('[PDF] No se encontraron tareas en calculationResult.detalleHonorarios ni en formData.detalleHonorarios');
   }
   
-  // Calcular subtotales (sumar los importes parseados)
-  const subtotalObraARS = calculationResult?.tareas?.reduce((sum, t) => sum + (t.importe || 0), 0) || 0;
-  const subtotalAdicionalesARS = 0;
-  const subtotalEspecialidadesARS = 0;
+  // Calcular subtotales desde los arrays categorizados
+  const calcularSubtotalCategoria = (items) => {
+    return items.reduce((sum, item) => {
+      const valorStr = item.importeARS.replace(/[$.]/g, '').replace(',', '.');
+      return sum + (parseFloat(valorStr) || 0);
+    }, 0);
+  };
+  
+  const subtotalObraARS = honorariosObra.length > 0 
+    ? calcularSubtotalCategoria(honorariosObra)
+    : (detalleHonorarios.reduce((sum, t) => sum + (t.importe || 0), 0));
+  const subtotalAdicionalesARS = calcularSubtotalCategoria(honorariosAdicionales);
+  const subtotalEspecialidadesARS = calcularSubtotalCategoria(honorariosEspecialidades);
   
   const totalGeneralARS = subtotalObraARS + subtotalAdicionalesARS + subtotalEspecialidadesARS;
   const totalGeneralUSD = totalGeneralARS / (formData.cotizDolar || 1);
   
   const subtotalObraPorcentaje = formData.valorObra > 0 ? (subtotalObraARS / formData.valorObra * 100).toFixed(2) : '0.00';
+  const subtotalAdicionalesPorcentaje = formData.valorObra > 0 ? (subtotalAdicionalesARS / formData.valorObra * 100).toFixed(2) : '0.00';
+  const subtotalEspecialidadesPorcentaje = formData.valorObra > 0 ? (subtotalEspecialidadesARS / formData.valorObra * 100).toFixed(2) : '0.00';
   
   // Retornar objeto APLANADO (todos los campos en el nivel raíz)
   return {
@@ -226,13 +260,13 @@ function prepararDatosPlantilla(datos, plantilla) {
     subtotalObraUSD: formatCurrency(subtotalObraARS / (formData.cotizDolar || 1)),
     subtotalObraPorcentaje,
     
-    subtotalAdicionalesARS: formatCurrency(0),
-    subtotalAdicionalesUSD: formatCurrency(0),
-    subtotalAdicionalesPorcentaje: '0.00',
+    subtotalAdicionalesARS: formatCurrency(subtotalAdicionalesARS),
+    subtotalAdicionalesUSD: formatCurrency(subtotalAdicionalesARS / (formData.cotizDolar || 1)),
+    subtotalAdicionalesPorcentaje,
     
-    subtotalEspecialidadesARS: formatCurrency(0),
-    subtotalEspecialidadesUSD: formatCurrency(0),
-    subtotalEspecialidadesPorcentaje: '0.00',
+    subtotalEspecialidadesARS: formatCurrency(subtotalEspecialidadesARS),
+    subtotalEspecialidadesUSD: formatCurrency(subtotalEspecialidadesARS / (formData.cotizDolar || 1)),
+    subtotalEspecialidadesPorcentaje,
     
     // Totales
     totalGeneralARS: formatCurrency(totalGeneralARS),
@@ -263,7 +297,13 @@ function obtenerNombreTipoCalculo(tipoCalculo) {
  * FASE 1 FALLBACK: Se mantiene para compatibilidad si no hay plantilla en DB
  */
 function construirHTMLCertificado(datos) {
-  const { formData, calculationResult, calculationNumber } = datos;
+  const { formData, calculationResult } = datos;
+  
+  // Generar número de cálculo formateado desde formData.calculoId
+  const calculationNumber = formData.calculoId 
+    ? String(formData.calculoId).padStart(6, '0')
+    : '000000';
+  
   const currentDate = new Date().toLocaleDateString('es-AR', {
     day: '2-digit',
     month: '2-digit',

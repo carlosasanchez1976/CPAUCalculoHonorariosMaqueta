@@ -84,11 +84,3 @@ export const formatDate = (date) => {
 
   return `${day}/${month}/${year}`;
 };
-
-/**
- * Genera un número de cálculo mock de 6 dígitos
- * @returns {string} - Número de cálculo
- */
-export const generateCalculationNumber = () => {
-  return String(Math.floor(100000 + Math.random() * 900000));
-};

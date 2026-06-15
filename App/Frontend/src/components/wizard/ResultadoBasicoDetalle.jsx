@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaDownload, FaSpinner } from 'react-icons/fa';
 
-import { formatCurrencyARS, formatDate, generateCalculationNumber } from '../../utils/formatters';
+import { formatCurrencyARS, formatDate } from '../../utils/formatters';
 import { descargarCertificadoPDF } from '../../services/pdfService';
 import Button from '../common/Button';
 import { ROUTES } from '../../utils/constants';
@@ -16,8 +16,7 @@ import sharedStyles from './steps/SharedStepStyles.module.css';
  */
 const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, termsAccepted }) => {
   const navigate = useNavigate();
-  const [calculationNumber] = useState(generateCalculationNumber());
-  const [modalDetalleAbierto, setModalDetalleAbierto] = useState(false);
+    const [modalDetalleAbierto, setModalDetalleAbierto] = useState(false);
   const [loadingPDF, setLoadingPDF] = useState(false);
   const [errorPDF, setErrorPDF] = useState(null);
   const currentDate = formatDate(new Date());
@@ -51,8 +50,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
       const blob = await descargarCertificadoPDF({
         tipoCalculo: 'basico-proyecto-direccion',
         formData,
-        calculationResult,
-        calculationNumber
+        calculationResult
       });
 
       // Crear URL temporal del blob
@@ -61,10 +59,14 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
       // Crear elemento <a> temporal para disparar descarga
       const link = document.createElement('a');
       link.href = url;
-      link.download = `Honorarios-CPAU-${calculationNumber}.pdf`;
+      //transformar formdata.calculoId a un string tipo 000275 para usar en el nombre del archivo
+      const calculoIdStr = String(formData.calculoId).padStart(6, '0');
+      link.download = `Honorarios-CPAU-${calculoIdStr}.pdf`;
       document.body.appendChild(link);
       link.click();
       
+
+
       // Cleanup
       document.body.removeChild(link);
       URL.revokeObjectURL(url);

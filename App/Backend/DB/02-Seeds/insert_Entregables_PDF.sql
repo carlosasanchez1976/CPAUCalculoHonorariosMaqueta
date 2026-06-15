@@ -17,19 +17,18 @@ INSERT INTO Entregables_PDF (
   codigo, 
   descripcion, 
   version, 
-  version_activa,
   html_template, 
   css_styles, 
   pdf_config, 
   template_engine, 
   placeholders,
   assets
+
 ) VALUES (
   'Certificado Proyecto y Dirección Básico',
   'basico-proyecto-direccion',
   'Plantilla para certificado de cálculo de honorarios - Proyecto y Dirección de Obra (2 páginas: datos + notas)',
   '1.0.0',
-  TRUE,
   '<!DOCTYPE html>
 <html lang="es">
 <head>

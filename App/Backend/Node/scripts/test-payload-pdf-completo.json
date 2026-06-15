@@ -1,0 +1,73 @@
+{
+  "tipoCalculo": "basico-proyecto-direccion",
+  "calculationNumber": "20260611-001",
+  "formData": {
+    "nombreProyecto": "Vivienda Unifamiliar en Zona Norte",
+    "cliente": "Juan Pérez",
+    "tipoObra": "Obra nueva",
+    "tipoNombre": "Básico - Proyecto y Dirección",
+    "destinoUso": "Vivienda unifamiliar",
+    "superficieTotal": 250,
+    "valorObra": 300000000,
+    "cotizDolar": 1050,
+    "plazoEjecucion": 18,
+    "detalleHonorarios": [
+      {
+        "indice": 1,
+        "tareaProfesional": "Proyecto - Documentación básica",
+        "importe": 15000000,
+        "categoria": "obra"
+      },
+      {
+        "indice": 2,
+        "tareaProfesional": "Dirección de obra",
+        "importe": 12000000,
+        "categoria": "obra"
+      },
+      {
+        "indice": 3,
+        "tareaProfesional": "Proyecto de paisajismo",
+        "importe": 3000000,
+        "categoria": "adicionales"
+      },
+      {
+        "indice": 4,
+        "tareaProfesional": "Proyecto de piscina y quincho",
+        "importe": 2500000,
+        "categoria": "adicionales"
+      },
+      {
+        "indice": 5,
+        "tareaProfesional": "Cálculo estructural",
+        "importe": 4500000,
+        "categoria": "especialidades"
+      },
+      {
+        "indice": 6,
+        "tareaProfesional": "Instalación eléctrica",
+        "importe": 2800000,
+        "categoria": "especialidades"
+      },
+      {
+        "indice": 7,
+        "tareaProfesional": "Instalación sanitaria",
+        "importe": 2200000,
+        "categoria": "especialidades"
+      },
+      {
+        "indice": 8,
+        "tareaProfesional": "Instalación de gas",
+        "importe": 1500000,
+        "categoria": "especialidades"
+      }
+    ]
+  },
+  "calculationResult": {
+    "totalGeneral": 43500000,
+    "desglose": {
+      "obra": 27000000,
+      "adicionales": 5500000,
+      "especialidades": 11000000
+    }
+  }
+}

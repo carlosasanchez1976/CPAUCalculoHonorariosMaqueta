@@ -263,3 +263,46 @@ AWS Console → CloudWatch → Log Groups → `/aws/lambda/ch2026-backend-api-qa
 ## 💡 Tip
 
 Si vas a deployar frecuentemente, considera usar Serverless Framework. Pero si ya tienes todo configurado y solo quieres actualizar código, el método ZIP es perfectamente válido.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Sí, lo tengo en el contexto. El proceso fue:
+
+## 📦 Deployment vía S3 (por tamaño > 50 MB)
+
+### Comandos que usamos:
+
+```powershell
+# 1. Empaquetar (genera ch2026-backend-api-lambda.zip ~80 MB)
+npm run package
+
+# 2. Subir a S3
+aws s3 cp ch2026-backend-api-lambda.zip s3://cpau-lambda-deployments/ --region us-east-1
+
+# 3. Actualizar Lambda desde S3
+aws lambda update-function-code --function-name cpau-ch2026-api-qa --s3-bucket cpau-lambda-deployments --s3-key ch2026-backend-api-lambda.zip --region us-east-1
+```
+
+### Configuración Lambda:
+- **Memoria:** 1024 MB (requerido para Puppeteer + Chromium)
+- **Timeout:** 30 segundos
+- **Runtime:** Node.js 24.x
+
+### Dependencias que aumentan el tamaño:
+- `puppeteer-core`: ^25.1.0
+- `@sparticuz/chromium`: ^149.0.0 (~50 MB del binario Chromium)
+- **Ahora con Handlebars:** añade ~500 KB más
+
+**Handlebars no debería cambiar mucho el tamaño del ZIP** (es liviano), así que seguís usando el mismo proceso S3.
+
+¿Ya generaste el nuevo ZIP con Handlebars incluido? ¿Necesitás ayuda con algún paso del deployment?

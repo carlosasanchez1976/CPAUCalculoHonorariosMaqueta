@@ -1,13 +1,12 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaExclamationTriangle } from 'react-icons/fa';
+import { FaDownload, FaSpinner } from 'react-icons/fa';
 
 import { formatCurrencyARS, formatDate, generateCalculationNumber } from '../../utils/formatters';
+import { descargarCertificadoPDF } from '../../services/pdfService';
 import Button from '../common/Button';
-import Modal from '../common/Modal';
 import { ROUTES } from '../../utils/constants';
 import DetalleItemsModal from './DetalleItemsModal';
-import { PDF_NOTAS } from '../../utils/pdfConstants';
 import styles from './ResultadoBasicoDetalle.module.css';
 import sharedStyles from './steps/SharedStepStyles.module.css';
 
@@ -17,10 +16,10 @@ import sharedStyles from './steps/SharedStepStyles.module.css';
  */
 const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, termsAccepted }) => {
   const navigate = useNavigate();
-  const pdfRef = useRef(null);
   const [calculationNumber] = useState(generateCalculationNumber());
   const [modalDetalleAbierto, setModalDetalleAbierto] = useState(false);
-  const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
+  const [loadingPDF, setLoadingPDF] = useState(false);
+  const [errorPDF, setErrorPDF] = useState(null);
   const currentDate = formatDate(new Date());
 
   const mostrarDetalleItems = () => {
@@ -40,310 +39,42 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
   };
 
   /**
-   * Abre ventana de previsualización del PDF
-   * Permite al usuario revisar el contenido antes de generar el PDF
+   * Handler para descargar PDF desde el backend
+   * Llama al endpoint /api/calculos/exportar-pdf y dispara la descarga
    */
-  const handleDescargarPDF = () => {
-    abrirVentanaPreview();
-  };
+  const handleDescargarPDF = async () => {
+    setLoadingPDF(true);
+    setErrorPDF(null);
 
-  /**
-   * Función expuesta globalmente para que la ventana de preview la pueda llamar
-   */
-  const mostrarModalMantenimiento = () => {
-    setShowMaintenanceModal(true);
-  };
-
-  /**
-   * Convierte rutas relativas de imágenes a rutas absolutas
-   */
-  const convertirRutasAAbsolutas = (elemento) => {
-    const imagenes = elemento.querySelectorAll('img');
-    imagenes.forEach(img => {
-      if (img.src && !img.src.startsWith('http')) {
-        const rutaAbsoluta = new URL(img.getAttribute('src'), window.location.origin).href;
-        img.src = rutaAbsoluta;
-      }
-    });
-  };
-
-  /**
-   * Copia todos los estilos CSS del documento principal a la ventana de previsualización
-   * Retorna una Promise que se resuelve cuando todos los estilos están cargados
-   */
-  const copiarEstilosAVentana = (ventanaDestino) => {
-    return new Promise((resolve) => {
-      const promesasCSS = [];
-      
-      // Copiar todos los <link> de CSS
-      const linksCSS = document.querySelectorAll('link[rel="stylesheet"]');
-      linksCSS.forEach(link => {
-        const promesa = new Promise((resolveLink) => {
-          const nuevoLink = ventanaDestino.document.createElement('link');
-          nuevoLink.rel = 'stylesheet';
-          nuevoLink.href = link.href;
-          nuevoLink.onload = () => resolveLink();
-          nuevoLink.onerror = () => resolveLink(); // Continuar aunque falle
-          ventanaDestino.document.head.appendChild(nuevoLink);
-        });
-        promesasCSS.push(promesa);
+    try {
+      // Llamar al backend para generar el PDF
+      const blob = await descargarCertificadoPDF({
+        tipoCalculo: 'basico-proyecto-direccion',
+        formData,
+        calculationResult,
+        calculationNumber
       });
+
+      // Crear URL temporal del blob
+      const url = URL.createObjectURL(blob);
       
-      // Copiar todos los <style> inline
-      const stylesInline = document.querySelectorAll('style');
-      stylesInline.forEach(style => {
-        const nuevoStyle = ventanaDestino.document.createElement('style');
-        nuevoStyle.textContent = style.textContent;
-        ventanaDestino.document.head.appendChild(nuevoStyle);
-      });
+      // Crear elemento <a> temporal para disparar descarga
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Honorarios-CPAU-${calculationNumber}.pdf`;
+      document.body.appendChild(link);
+      link.click();
       
-      // Agregar estilos específicos para la ventana de preview
-      const stylePreview = ventanaDestino.document.createElement('style');
-      stylePreview.textContent = `
-        body {
-          margin: 0;
-          padding: 0 0 80px 0;
-          font-family: system-ui, -apple-system, sans-serif;
-          background: #f5f5f5;
-        }
-        #preview-container {
-          max-width: 900px;
-          margin: 20px auto;
-          background: white;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .preview-actions {
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: white;
-          border-top: 2px solid #ddd;
-          padding: 15px;
-          text-align: center;
-          box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-          z-index: 1000;
-        }
-        .preview-actions button {
-          padding: 12px 30px;
-          font-size: 16px;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          margin: 0 10px;
-          transition: background-color 0.2s;
-        }
-        .btnCerrar {
-          background: #6c757d;
-          color: white;
-        }
-        .btnCerrar:hover {
-          background: #5a6268;
-        }
-        .btnGenerarPDF {
-          background: #007bff;
-          color: white;
-        }
-        .btnGenerarPDF:hover {
-          background: #0056b3;
-        }
-        .btnGenerarPDF:disabled {
-          background: #ccc;
-          cursor: not-allowed;
-        }
+      // Cleanup
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
 
-        /* CRÍTICO: Estilos de impresión SOLO para esta ventana */
-        @media print {
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
-
-          @page {
-            size: A4 portrait;
-            margin: 10mm;
-          }
-
-          body {
-            padding: 0 !important;
-            background: white !important;
-            width: 100% !important;
-          }
-
-          #preview-container {
-            margin: 0 !important;
-            box-shadow: none !important;
-            max-width: 100% !important;
-            width: 100% !important;
-          }
-
-          .preview-actions {
-            display: none !important;
-          }
-
-          /* ============================================
-             FIX HEADER: Forzar tamaños fijos en impresión
-             Usa [class*="..."] para matchear clases hasheadas de CSS Modules
-             ============================================ */
-          [class*="certificateHeader"] {
-            display: grid !important;
-            grid-template-columns: 180px 1fr !important;
-            gap: 0.5rem !important;
-            align-items: stretch !important;
-          }
-
-          [class*="headerLeft"] {
-            width: 180px !important;
-            min-width: 180px !important;
-            max-width: 180px !important;
-            min-height: 100px !important;
-            height: auto !important;
-            padding: 1.2rem !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            border-radius: 8px !important;
-          }
-
-          [class*="headerRight"] {
-            padding: 1rem 1.2rem !important;
-            border-radius: 8px !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: center !important;
-          }
-
-          [class*="logo"]:not([class*="logoPlaceholder"]) {
-            width: 130px !important;
-            max-width: 130px !important;
-            max-height: 65px !important;
-            height: auto !important;
-            object-fit: contain !important;
-            display: block !important;
-          }
-
-          [class*="title"] {
-            font-size: 1.4rem !important;
-            margin: 0 !important;
-            padding-bottom: 0.5rem !important;
-            letter-spacing: 0.05rem !important;
-          }
-
-          [class*="metadata"]:not([class*="metadataItem"]):not([class*="metadataLabel"]):not([class*="metadataValue"]) {
-            font-size: 0.9rem !important;
-            gap: 1rem !important;
-            margin-top: 0.5rem !important;
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            flex-wrap: wrap !important;
-          }
-
-          [class*="metadataItem"] {
-            font-size: 0.9rem !important;
-            display: flex !important;
-            gap: 0.5rem !important;
-          }
-        }
-      `;
-      ventanaDestino.document.head.appendChild(stylePreview);
-      
-      // Esperar a que todos los CSS se carguen
-      Promise.all(promesasCSS).then(() => {
-        // Dar un poco más de tiempo para asegurar que los estilos se apliquen
-        setTimeout(resolve, 200);
-      });
-    });
-  };
-
-  /**
-   * Abre ventana de previsualización con el contenido del PDF
-   */
-  const abrirVentanaPreview = async () => {
-    // Aplicar clase temporal para estilos de PDF
-    const element = pdfRef.current;
-    element.classList.add(styles.pdfExport);
-    
-    // Clonar el elemento
-    const clonado = element.cloneNode(true);
-    
-    // Convertir rutas de imágenes a absolutas
-    convertirRutasAAbsolutas(clonado);
-    
-    // Abrir nueva ventana
-    const ventana = window.open('', '_blank', 'width=950,height=1200,scrollbars=yes');
-    
-    // Verificar si fue bloqueada por popup blocker
-    if (!ventana || ventana.closed || typeof ventana.closed === 'undefined') {
-      alert(
-        'Por favor, habilita las ventanas emergentes para ver la previsualización del PDF.\n\n' +
-        'Instrucciones:\n' +
-        '1. Haz clic en el ícono de configuración en la barra de direcciones\n' +
-        '2. Permite ventanas emergentes para este sitio\n' +
-        '3. Intenta nuevamente'
-      );
-      element.classList.remove(styles.pdfExport);
-      return;
+    } catch (error) {
+      console.error('Error descargando PDF:', error);
+      setErrorPDF(error.message || 'Error al generar el PDF');
+    } finally {
+      setLoadingPDF(false);
     }
-    
-    // Construir estructura HTML de la ventana
-    ventana.document.open();
-    ventana.document.write(`
-      <!DOCTYPE html>
-      <html lang="es">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Previsualización - Honorarios CPAU ${calculationNumber}</title>
-      </head>
-      <body>
-        <div id="preview-container"></div>
-        
-        <div class="preview-actions">
-          <button class="btnCerrar" onclick="window.close()">
-            ✕ Cerrar
-          </button>
-          <button class="btnGenerarPDF" id="btn-generar" onclick="generarPDFDesdeVentana()">
-            📄 Generar PDF
-          </button>
-        </div>
-        
-        <script>
-          function generarPDFDesdeVentana() {
-            // Llamar a la función del padre para mostrar el modal
-            if (window.opener && window.opener.mostrarModalMantenimiento) {
-              window.opener.mostrarModalMantenimiento();
-              // Cerrar la ventana de preview para que no tape el modal
-              window.close();
-            } else {
-              alert(
-                'Funcionalidad en mantenimiento\\n\\n' +
-                'La generación de PDF no se encuentra disponible en este momento.\\n\\n' +
-                'Por favor, intente más tarde o contacte al administrador.'
-              );
-            }
-          }
-        </script>
-      </body>
-      </html>
-    `);
-    ventana.document.close();
-    
-    // Copiar estilos y esperar a que se carguen
-    await copiarEstilosAVentana(ventana);
-    
-    // Insertar contenido clonado DESPUÉS de que los estilos estén cargados
-    ventana.document.getElementById('preview-container').appendChild(clonado);
-    
-    // Exponer función al objeto window para que la ventana de preview pueda accederla
-    window.mostrarModalMantenimiento = mostrarModalMantenimiento;
-    
-    // Remover clase temporal del original
-    element.classList.remove(styles.pdfExport);
-    
-    // Dar foco a la nueva ventana
-    ventana.focus();
   };
 
   // Agrupar y totalizar honorarios por tarea profesional
@@ -449,10 +180,8 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
 
   return (
     <div className={sharedStyles.container}>
-      {/* Contenido para PDF y visualización en pantalla */}
-      <div ref={pdfRef}>
-        {/* PÁGINA 1: Datos del cálculo */}
-        <div className={styles.page}>
+      {/* PÁGINA 1: Datos del cálculo */}
+      <div className={styles.page}>
           {/* Header del Certificado */}
           <div className={styles.certificateHeader}>
             <div className={styles.headerLeft}>
@@ -558,11 +287,26 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                   <td colSpan={2} className={styles.alignedCell}>
                     <Button
                       className={styles.downloadButton}
-                      disabled={!termsAccepted}
+                      disabled={!termsAccepted || loadingPDF}
                       onClick={handleDescargarPDF}
                     >
-                      Descargar PDF
+                      {loadingPDF ? (
+                        <>
+                          <FaSpinner className={styles.spinner} />
+                          Generando PDF...
+                        </>
+                      ) : (
+                        <>
+                          <FaDownload />
+                          Descargar PDF
+                        </>
+                      )}
                     </Button>
+                    {errorPDF && (
+                      <div className={styles.errorMessage} role="alert">
+                        {errorPDF}
+                      </div>
+                    )}
                   </td>
                 </tr>
               </tfoot>
@@ -796,91 +540,12 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
             </p>
           </div>
 
-
         </div>
+        {/* Fin rightColumn */}
       </div>
-        </div>
-        {/* Fin página 1 */}
-
-        {/* ========================================
-            PÁGINA 2: SOLO EN PDF (oculta en pantalla)
-            ======================================== */}
-        <div className={`${styles.page} ${styles.pageBreak}`}>
-          {/* Header (repetido para PDF) */}
-          <div className={styles.certificateHeader}>
-            <div className={styles.headerLeft}>
-              <img src="/assets/icons/logoBlanco.svg" alt="CPAU Logo" className={styles.logo} />
-            </div>
-            <div className={styles.headerRight}>
-              <h3 className={styles.title}>Cálculo de honorarios profesionales</h3>
-              <div className={styles.metadata}>
-                <div className={styles.metadataItem}>
-                  <span className={styles.metadataLabel}>Tipo:</span>
-                  <span className={styles.metadataValue}>{formData.tipoNombre}</span>
-                </div>
-                <div className={styles.metadataItem}>
-                  <span>Fecha:</span>
-                  <span>{currentDate}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Contenido de Notas */}
-          <div className={styles.notasSection}>
-            <h2 className={styles.notasTitle}>Notas</h2>
-            
-            {/* Alcance y carácter del cálculo */}
-            <section className={styles.notaBlock}>
-              <h4>{PDF_NOTAS.alcance.titulo}</h4>
-              <p>{PDF_NOTAS.alcance.contenido}</p>
-            </section>
-
-            {/* Costo de obra considerado */}
-            <section className={styles.notaBlock}>
-              <h4>{PDF_NOTAS.costo.titulo}</h4>
-              <p>{PDF_NOTAS.costo.contenido}</p>
-            </section>
-
-            {/* Etapas del proyecto */}
-            <section className={styles.notaBlock}>
-              <h4>{PDF_NOTAS.etapas.titulo}</h4>
-              <table className={styles.etapasTable}>
-                <tbody>
-                  {PDF_NOTAS.etapas.items.map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.etapa}</td>
-                      <td>{item.porcentaje}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <p className={styles.etapasNota}>{PDF_NOTAS.etapas.nota}</p>
-            </section>
-
-            {/* Alcance de los honorarios sugeridos */}
-            <section className={styles.notaBlock}>
-              <h4>{PDF_NOTAS.alcanceHonorarios.titulo}</h4>
-              <p>{PDF_NOTAS.alcanceHonorarios.contenido}</p>
-            </section>
-
-            {/* Conceptos no incluidos */}
-            <section className={styles.notaBlock}>
-              <h4>{PDF_NOTAS.noIncluidos.titulo}</h4>
-              <p>{PDF_NOTAS.noIncluidos.contenido}</p>
-            </section>
-
-            {/* Resolución de los honorarios */}
-            <section className={styles.notaBlock}>
-              <h4>{PDF_NOTAS.resolucion.titulo}</h4>
-              <p>{PDF_NOTAS.resolucion.contenido}</p>
-            </section>
-          </div>
-        </div>
-        {/* Fin página 2 - Solo en PDF */}
-
+      {/* Fin twoColumnLayout */}
       </div>
-      {/* Fin contenido para PDF */}
+      {/* Fin página 1 */}
 
       {/* Modal de detalle de items */}
       {formData.detalleHonorarios && formData.detalleHonorarios.length > 0 && (
@@ -890,32 +555,6 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
           detalleHonorarios={formData.detalleHonorarios}
         />
       )}
-
-      {/* Modal de funcionalidad en mantenimiento */}
-      <Modal
-        isOpen={showMaintenanceModal}
-        onClose={() => setShowMaintenanceModal(false)}
-        title="Funcionalidad en mantenimiento"
-        footer={
-          <Button
-            variant="primary"
-            onClick={() => setShowMaintenanceModal(false)}
-          >
-            Aceptar
-          </Button>
-        }
-      >
-        <div style={{ textAlign: 'center', padding: '1rem' }}>
-          <div style={{ fontSize: '3rem', color: '#f59e0b', marginBottom: '1rem' }}>
-            <FaExclamationTriangle />
-          </div>
-          <p style={{ fontSize: '1rem', lineHeight: '1.6' }}>
-            La generación de PDF no se encuentra disponible en este momento.
-            <br /><br />
-            Por favor, intente más tarde o contacte al administrador.
-          </p>
-        </div>
-      </Modal>
 
     </div>
   );

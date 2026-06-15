@@ -2,11 +2,12 @@
  * pdfService.js
  * Servicio para generar certificados PDF con Puppeteer
  * Proyecto: CH2026 - CPAU Cálculo de Honorarios
- * SPEC: SPEC010-CALC-Entregables (T010-003)
+ * SPEC: SPEC010-CALC-Entregables (T010-003, T010-002)
  */
 
-const puppeteer = require('puppeteer-core');
-const chromium = require('@sparticuz/chromium');
+// Importar Handlebars con helpers registrados
+const Handlebars = require('../utils/handlebarsHelpers');
+const entregablesService = require('./entregablesService');
 
 // Detectar si estamos en Lambda o local
 const isLambda = !!process.env.AWS_LAMBDA_FUNCTION_NAME;
@@ -21,17 +22,30 @@ async function generarCertificado(datos) {
   
   try {
     console.log('[PDF] Iniciando generación de certificado...');
+    console.log('[PDF] Tipo de cálculo:', datos.tipoCalculo);
     
-    // Construir HTML del certificado (hardcodeado en Fase 1)
-    const htmlContent = construirHTMLCertificado(datos);
+    // Dynamic imports de módulos ESM
+    const puppeteer = await import('puppeteer-core');
+    const chromium = await import('@sparticuz/chromium');
+    
+    // FASE 2: Intentar cargar plantilla desde DB
+    let htmlContent;
+    try {
+      htmlContent = await renderizarPlantillaDB(datos);
+      console.log('[PDF] Plantilla cargada desde DB');
+    } catch (error) {
+      console.warn('[PDF] No se pudo cargar plantilla desde DB, usando fallback hardcodeado:', error.message);
+      // FALLBACK: Usar plantilla hardcodeada (Fase 1)
+      htmlContent = construirHTMLCertificado(datos);
+    }
 
     // Configuración de Puppeteer según entorno
     const launchOptions = isLambda
       ? {
-          args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
-          executablePath: await chromium.executablePath(),
-          headless: chromium.headless,
+          args: chromium.default.args,
+          defaultViewport: chromium.default.defaultViewport,
+          executablePath: await chromium.default.executablePath(),
+          headless: chromium.default.headless,
         }
       : {
           // Configuración local (Windows)
@@ -42,8 +56,8 @@ async function generarCertificado(datos) {
 
     console.log(`[PDF] Entorno: ${isLambda ? 'Lambda' : 'Local'}`);
 
-    // Lanzar navegador
-    browser = await puppeteer.launch(launchOptions);
+    // Lanzar navegador (usar .default para ESM)
+    browser = await puppeteer.default.launch(launchOptions);
     const page = await browser.newPage();
 
     // Setear contenido HTML
@@ -81,8 +95,172 @@ async function generarCertificado(datos) {
 }
 
 /**
+ * Renderiza la plantilla del certificado desde la base de datos usando Handlebars
+ * FASE 2: T010-002
+ * @param {Object} datos - { tipoCalculo, formData, calculationResult, calculationNumber }
+ * @returns {string} HTML renderizado
+ */
+async function renderizarPlantillaDB(datos) {
+  const { tipoCalculo, formData, calculationResult, calculationNumber } = datos;
+  
+  // Resolver plantilla desde DB por código
+  const plantilla = await entregablesService.resolverPlantillaPorCodigo(tipoCalculo);
+  
+  if (!plantilla) {
+    throw new Error(`No se encontró plantilla para tipoCalculo: ${tipoCalculo}`);
+  }
+  
+  console.log(`[PDF] Plantilla encontrada: ${plantilla.nombre} (v${plantilla.version})`);
+  
+  // Compilar plantilla Handlebars
+  const template = Handlebars.compile(plantilla.html_template);
+  
+  // Preparar datos para la plantilla
+  const templateData = prepararDatosPlantilla(datos, plantilla);
+  
+  // Renderizar
+  const htmlRenderizado = template(templateData);
+  
+  return htmlRenderizado;
+}
+
+/**
+ * Prepara los datos en el formato esperado por la plantilla Handlebars
+ * @param {Object} datos - Datos originales del request
+ * @param {Object} plantilla - Plantilla de la DB
+ * @returns {Object} Datos formateados para Handlebars (aplanados para el template)
+ */
+function prepararDatosPlantilla(datos, plantilla) {
+  const { formData, calculationResult, calculationNumber } = datos;
+  
+  // Fecha actual formateada
+  const currentDate = new Date().toLocaleDateString('es-AR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+  
+  // Parsear assets (logo CPAU)
+  let logoCPAU = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwIiBoZWlnaHQ9IjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjx0ZXh0IHg9IjEwIiB5PSIyNSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCI+Q1BBVTWV4dD48L3N2Zz4=';
+  
+  try {
+    if (plantilla.assets) {
+      const assets = typeof plantilla.assets === 'string' 
+        ? JSON.parse(plantilla.assets) 
+        : plantilla.assets;
+      
+      if (assets.logoCPAU) {
+        logoCPAU = assets.logoCPAU;
+      }
+    }
+  } catch (error) {
+    console.warn('[PDF] Error parseando assets, usando logo placeholder');
+  }
+  
+  // Formatear valores monetarios
+  const valorObraARS = formatCurrency(formData.valorObra || 0);
+  const valorObraUSD = formatCurrency((formData.valorObra || 0) / (formData.cotizDolar || 1));
+  
+  // Organizar tareas por categoría
+  const honorariosObra = [];
+  const honorariosAdicionales = [];
+  const honorariosEspecialidades = [];
+  
+  // Por ahora, usar el array de tareas simple del calculationResult
+  // TODO: Cuando tengamos categorización real en el backend, usar eso
+  if (calculationResult?.tareas && Array.isArray(calculationResult.tareas)) {
+    calculationResult.tareas.forEach((tarea, index) => {
+      const importeARS = tarea.importe || 0;
+      const importeUSD = importeARS / (formData.cotizDolar || 1);
+      const porcentaje = formData.valorObra > 0 
+        ? (importeARS / formData.valorObra * 100).toFixed(2)
+        : '0.00';
+      
+      const item = {
+        indice: index + 1,
+        tareaProfesional: tarea.nombre || 'Tarea sin nombre',
+        importeARS: formatCurrency(importeARS),
+        importeUSD: formatCurrency(importeUSD),
+        porcentaje
+      };
+      
+      // Por ahora, todo va a "obra"
+      honorariosObra.push(item);
+    });
+  }
+  
+  // Calcular subtotales (sumar los importes parseados)
+  const subtotalObraARS = calculationResult?.tareas?.reduce((sum, t) => sum + (t.importe || 0), 0) || 0;
+  const subtotalAdicionalesARS = 0;
+  const subtotalEspecialidadesARS = 0;
+  
+  const totalGeneralARS = subtotalObraARS + subtotalAdicionalesARS + subtotalEspecialidadesARS;
+  const totalGeneralUSD = totalGeneralARS / (formData.cotizDolar || 1);
+  
+  const subtotalObraPorcentaje = formData.valorObra > 0 ? (subtotalObraARS / formData.valorObra * 100).toFixed(2) : '0.00';
+  
+  // Retornar objeto APLANADO (todos los campos en el nivel raíz)
+  return {
+    // Metadatos
+    calculationNumber,
+    currentDate,
+    tipoNombre: obtenerNombreTipoCalculo(datos.tipoCalculo),
+    logoCPAU,
+    
+    // Datos del proyecto (del formData)
+    nombreProyecto: formData.nombreProyecto || 'Sin nombre',
+    cliente: formData.cliente || 'Sin especificar',
+    tipoObra: formData.tipoObra || 'Sin especificar',
+    destinoUso: formData.destinoUso || 'Sin especificar',
+    superficieTotal: formData.superficieTotal || 0,
+    valorObraARS,
+    valorObraUSD,
+    
+    // Arrays de honorarios (null si están vacíos para que {{#if}} funcione)
+    honorariosObra: honorariosObra.length > 0 ? honorariosObra : null,
+    honorariosAdicionales: honorariosAdicionales.length > 0 ? honorariosAdicionales : null,
+    honorariosEspecialidades: honorariosEspecialidades.length > 0 ? honorariosEspecialidades : null,
+    
+    // Subtotales
+    subtotalObraARS: formatCurrency(subtotalObraARS),
+    subtotalObraUSD: formatCurrency(subtotalObraARS / (formData.cotizDolar || 1)),
+    subtotalObraPorcentaje,
+    
+    subtotalAdicionalesARS: formatCurrency(0),
+    subtotalAdicionalesUSD: formatCurrency(0),
+    subtotalAdicionalesPorcentaje: '0.00',
+    
+    subtotalEspecialidadesARS: formatCurrency(0),
+    subtotalEspecialidadesUSD: formatCurrency(0),
+    subtotalEspecialidadesPorcentaje: '0.00',
+    
+    // Totales
+    totalGeneralARS: formatCurrency(totalGeneralARS),
+    totalGeneralUSD: formatCurrency(totalGeneralUSD),
+    plazoEjecucion: formData.plazoEjecucion || 12
+  };
+}
+
+/**
+ * Obtiene el nombre descriptivo del tipo de cálculo
+ * @param {string} tipoCalculo - Código del tipo de cálculo
+ * @returns {string} Nombre descriptivo
+ */
+function obtenerNombreTipoCalculo(tipoCalculo) {
+  const tiposNombres = {
+    'basico-proyecto-direccion': 'Proyecto y Dirección - Básico',
+    'completo-proyecto-direccion': 'Proyecto y Dirección - Completo',
+    'relevamiento': 'Relevamiento',
+    'tasacion': 'Tasación',
+    'mensura': 'Mensura'
+  };
+  
+  return tiposNombres[tipoCalculo] || 'Cálculo de Honorarios';
+}
+
+/**
  * Construye el HTML del certificado (plantilla hardcodeada)
- * TODO: Migrar a tabla Entregables_PDF en Fase 2 (T010-002)
+ * FASE 1 FALLBACK: Se mantiene para compatibilidad si no hay plantilla en DB
  */
 function construirHTMLCertificado(datos) {
   const { formData, calculationResult, calculationNumber } = datos;
@@ -130,11 +308,25 @@ function construirHTMLCertificado(datos) {
           min-height: 297mm;
           padding: 20mm 15mm;
           page-break-after: always;
+          page-break-inside: avoid;
           background: white;
         }
         
         .page:last-child {
           page-break-after: auto;
+        }
+        
+        /* Evitar cortes de página en elementos */
+        table, .section-title, .resumen-item, .certificate-header {
+          page-break-inside: avoid;
+        }
+        
+        thead {
+          display: table-header-group;
+        }
+        
+        tr {
+          page-break-inside: avoid;
         }
         
         /* ============================================================
@@ -381,8 +573,26 @@ function construirHTMLCertificado(datos) {
       
       <!-- PÁGINA 2: Notas -->
       <div class="page">
+        <div class="certificate-header">
+          <div class="header-left">
+            <img src="${logoCPAU}" alt="CPAU Logo" class="logo">
+          </div>
+          <div class="header-right">
+            <div class="header-title">Cálculo de honorarios profesionales</div>
+            <div class="header-metadata">
+              <span class="metadata-item">Fecha: ${currentDate}</span>
+              <span class="metadata-item">Nº: ${calculationNumber}</span>
+            </div>
+          </div>
+        </div>
+        
         <h3 class="section-title">Notas sobre el Cálculo de Honorarios</h3>
         <div class="notas-content">${getNotasPDF()}</div>
+        
+        <div class="footer">
+          <p>Consejo Profesional de Arquitectura y Urbanismo</p>
+          <p>www.cpau.org | Cálculo generado automáticamente por sistema CH2026</p>
+        </div>
       </div>
     </body>
     </html>

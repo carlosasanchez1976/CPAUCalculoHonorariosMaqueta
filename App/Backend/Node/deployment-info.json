@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-06-10T03:55:58.508Z",
+  "timestamp": "2026-06-15T00:18:31.352Z",
   "version": "1.0.0",
   "zipFile": "ch2026-backend-api-lambda.zip",
-  "zipSizeMB": "6.68",
-  "sha256": "91069bf2326c8386728906659f240b552f25de22e3885059f88ff0c12f14d94c",
+  "zipSizeMB": "79.60",
+  "sha256": "1d514aaa756462a060b382499f764e425d2566624e92e505eddd3bb18ec29fd5",
   "files": [
     "lambda.js",
     "app.js",

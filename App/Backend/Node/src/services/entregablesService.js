@@ -13,8 +13,7 @@ const { executeQuery , executeStoredProcedure } = require('../config/db');
  * @returns {Object|null} Datos del entregable (html_template, css_styles, pdf_config, etc.)
  */
 async function resolverPlantillaEntregable(tareaId) {
-  
-  const rows = await executeStoredProcedure('Entregables_PDF_BuscarXTareaID', [tareaId]);
+  const [rows] = await executeStoredProcedure('Entregables_PDF_BuscarXTareaID', [tareaId]);
   return rows.length > 0 ? rows[0] : null;
 }
 
@@ -24,8 +23,7 @@ async function resolverPlantillaEntregable(tareaId) {
  * @returns {Object|null} Datos del entregable
  */
 async function resolverPlantillaPorCodigo(codigo) {
- 
-  const rows = await executeStoredProcedure('Entregables_PDF_BuscarXCodigo', [codigo]);
+  const [rows] = await executeStoredProcedure('Entregables_PDF_BuscarXCodigo', [codigo]);
   return rows.length > 0 ? rows[0] : null;
 }
 
@@ -36,7 +34,7 @@ async function resolverPlantillaPorCodigo(codigo) {
  * @returns {Object|null} Datos del entregable
  */
 async function obtenerEntregable(entregableId) {
-  const rows = await executeStoredProcedure('Entregables_PDF_Buscar', [entregableId]);
+  const [rows] = await executeStoredProcedure('Entregables_PDF_Buscar', [entregableId]);
   return rows.length > 0 ? rows[0] : null;
 }
 

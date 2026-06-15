@@ -453,6 +453,128 @@ const handleDescargarPDF = async () => {
   • A futuro permitirá cargar nuevas plantillas (Relevamiento, Tasación, Mensura,
     etc.) sin tocar código del backend, solo insertando registros en la DB.
 
+📄 TEMPLATE HTML - CERTIFICADO BÁSICO PROYECTO Y DIRECCIÓN
+  
+  UBICACIÓN DEL ARCHIVO:
+    App/Backend/Node/templates/certificado-basico-proyecto-direccion.html
+
+  DESCRIPCIÓN DEL DISEÑO:
+    ✅ Página 1: Datos del cálculo
+       - Header CPAU (logo morado + banda celeste con título y fecha)
+       - Grid de Resumen del Proyecto (8 campos)
+       - Cuadro IMPORTANTE (disclaimer con fondo amarillo)
+       - Detalle de honorarios en 3 secciones separadas:
+         * Tabla "Honorarios obra" → Subtotal azul
+         * Tabla "Honorarios adicionales" → Subtotal azul
+         * Tabla "Especialidades" → Subtotal azul
+       - Total general (fondo morado, destacado)
+       - Plazo de ejecución
+       - Nota sobre IVA
+
+    ✅ Página 2: Notas institucionales CPAU
+       - Header CPAU (repetido)
+       - 6 secciones de texto con formato:
+         * Alcance y carácter del cálculo
+         * Costo de obra considerado
+         * Etapas del proyecto (con tabla de porcentajes)
+         * Alcance de los honorarios sugeridos
+         * Conceptos no incluidos
+         * Resolución de los honorarios
+
+  MOTOR DE TEMPLATING: Handlebars
+  
+  PLACEHOLDERS PRINCIPALES:
+    Variables simples:
+      {{calculationNumber}}         - Número del cálculo (ej: 20260611-001)
+      {{logoCPAU}}                  - Logo en base64 (data:image/png;base64,...)
+      {{tipoNombre}}                - Tipo de cálculo
+      {{currentDate}}               - Fecha actual formato DD/MM/YYYY
+      {{nombreProyecto}}            - Nombre del proyecto
+      {{cliente}}                   - Comitente
+      {{tipoObra}}                  - Tipo de obra
+      {{destinoUso}}                - Destino/Uso
+      {{superficieTotal}}           - Superficie total
+      {{valorObraARS}}              - Valor obra formateado ARS
+      {{valorObraUSD}}              - Valor obra formateado USD
+      {{plazoEjecucion}}            - Plazo en meses
+      {{totalGeneralARS}}           - Total general ARS formateado
+      {{totalGeneralUSD}}           - Total general USD formateado
+
+    Bloques condicionales:
+      {{#if honorariosObra}}...{{/if}}
+      {{#if honorariosAdicionales}}...{{/if}}
+      {{#if honorariosEspecialidades}}...{{/if}}
+
+    Iteradores:
+      {{#each honorariosObra}}
+        {{this.indice}}
+        {{this.tareaProfesional}}
+        {{this.importeARS}}
+        {{this.importeUSD}}
+        {{this.porcentaje}}
+      {{/each}}
+
+    Subtotales:
+      {{subtotalObraARS}}
+      {{subtotalObraUSD}}
+      {{subtotalObraPorcentaje}}
+      (igual para Adicionales y Especialidades)
+
+  HELPERS DE FORMATO REQUERIDOS:
+    formatCurrency(value)      - Formato ARS: $ 1.234.567,89
+    formatDate(date)           - Formato: DD/MM/YYYY
+    formatPercentage(value)    - Formato: 7.75%
+
+  COLORES DEL DISEÑO:
+    - Morado CPAU header:      #5c4a8d (gradiente con #7a6ba8)
+    - Celeste CPAU título:     #90dede (gradiente con #b8e6e6)
+    - Azul subtotales:         #4682b4
+    - Morado total general:    #5c4a8d
+    - Amarillo disclaimer:     #ffd966 (fondo #fffbf0)
+    - Gris backgrounds:        #f9f9f9, #f0f0f0
+
+  TAMAÑO Y MÁRGENES:
+    - Formato: A4 (210mm x 297mm)
+    - Márgenes: 20mm arriba/abajo, 15mm izq/der
+    - Font base: 10pt
+    - Títulos: 11pt
+    - Tablas: 9pt
+
+  CARGA EN BASE DE DATOS (entregable_id = 1):
+    
+    -- Leer el contenido del archivo HTML
+    -- y ejecutar el siguiente INSERT:
+
+    INSERT INTO Entregables_PDF (
+      entregable_id,
+      tarea_profesional_id,
+      nombre_plantilla,
+      descripcion,
+      html_template,
+      css_inline,
+      version,
+      activo,
+      fecha_creacion,
+      creado_por
+    ) VALUES (
+      1,
+      1,  -- Ajustar según ID de "Proyecto y Dirección Básico"
+      'Certificado Básico - Proyecto y Dirección',
+      'Plantilla HTML para certificado PDF de honorarios profesionales - Cálculo Básico Proyecto y Dirección',
+      LOAD_FILE('/path/to/certificado-basico-proyecto-direccion.html'),  -- Ajustar ruta
+      NULL,  -- CSS está inline en el HTML
+      '1.0',
+      1,
+      NOW(),
+      'SYSTEM'
+    );
+
+  VALIDACIÓN POST-INSERCIÓN:
+    ☐ Verificar que el registro existe: SELECT * FROM Entregables_PDF WHERE entregable_id = 1
+    ☐ Verificar que html_template no es NULL
+    ☐ Probar hidratación con datos de prueba
+    ☐ Generar PDF de prueba y comparar visualmente con el diseño aprobado
+
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ 🔄 FLUJO DE TRABAJO SUGERIDO                                                │

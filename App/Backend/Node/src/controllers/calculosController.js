@@ -184,3 +184,55 @@ exports.obtenerItems = async (req, res) => {
         });
     }
 };
+
+/**
+ * Exportar certificado PDF con Puppeteer
+ * POST /api/calculos/exportar-pdf
+ * SPEC: SPEC010-CALC-Entregables (T010-003)
+ */
+exports.exportarPdf = async (req, res) => {
+    const pdfService = require('../services/pdfService');
+    const startTime = Date.now();
+    
+    try {
+        const { tipoCalculo, formData, calculationResult, calculationNumber } = req.body;
+
+        // Validación de payload
+        if (!formData || !calculationResult || !calculationNumber) {
+            return res.status(400).json({
+                success: false,
+                error: 'Datos incompletos: se requiere formData, calculationResult y calculationNumber',
+                version: '1.0'
+            });
+        }
+
+        // Generar PDF
+        const pdfBuffer = await pdfService.generarCertificado({
+            tipoCalculo,
+            formData,
+            calculationResult,
+            calculationNumber
+        });
+
+        const duration = Date.now() - startTime;
+        console.log(`[PDF] Generado en ${duration}ms, tamaño: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
+
+        // Responder con PDF binario
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="Honorarios-CPAU-${calculationNumber}.pdf"`);
+        res.setHeader('Content-Length', pdfBuffer.length);
+        
+        return res.send(pdfBuffer);
+
+    } catch (error) {
+        const mensaje = obtenerMensajeError(error, 'Error generando el certificado PDF');
+        console.error('[PDF] Error generando certificado:', error?.message || error);
+        
+        return res.status(500).json({
+            success: false,
+            error: mensaje,
+            details: process.env.NODE_ENV !== 'production' ? error.message : undefined,
+            version: '1.0'
+        });
+    }
+};

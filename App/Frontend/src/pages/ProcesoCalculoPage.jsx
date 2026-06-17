@@ -117,7 +117,16 @@ const ProcesoCalculoPage = () => {
     ValorBol1: false,
     ValorBol2: false,
     ValorStr1: '',
-    ValorStr2: ''
+    ValorStr2: '',
+
+    //Ajustar Rótulo de campo valorObra según tipo de cálculo
+    valorObraLabel: '',
+    valorObraPlaceHolder: '',
+
+    labelTipoDeObra: '',
+    textoTipoDeObra: ''
+
+
 
   });
 
@@ -395,8 +404,9 @@ const ProcesoCalculoPage = () => {
     }
 
     if (formData.tipoCalculo === 'HABI') {
-      return <REPTECRevision formData={formData} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
+      return <REPTECRevision formData={formData} onEditStep={(step) => setCurrentStep(step)} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
     }
+
 
         // Mostrar modal de tarea en desarrollo y retornar null
     if (!showUnderConstructionModal) {
@@ -414,7 +424,7 @@ const ProcesoCalculoPage = () => {
 
     // Si es Cálculo REPTEC, usar componente específico
     if (formData.tipoCalculo === 'REPTEC') {
-      return <REPTECRevision formData={formData} onEditStep={(step) => setCurrentStep(step)} stepTitle={steps[currentStep]} />;
+      return <REPTECRevision formData={formData} onEditStep={(step) => setCurrentStep(step)} onChange={handleInputChange} stepTitle={steps[currentStep]} />;
     }
 
     if (formData.tipoCalculo === 'HABI') {

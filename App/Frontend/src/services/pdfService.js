@@ -6,6 +6,8 @@
  * @module services/pdfService
  */
 
+import { procesarErrorApi } from '../utils/apiErrorHandler.js';
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 /**
@@ -31,18 +33,28 @@ export async function descargarCertificadoPDF(datos) {
 
     if (!response.ok) {
       // Intentar extraer mensaje de error del backend
-      const error = await response.json().catch(() => ({ 
-        error: `Error ${response.status}: ${response.statusText}` 
-      }));
-      throw new Error(error.error || error.message || 'Error generando el PDF');
+      const error = await response.json().catch(() => null);
+      
+      // Si el backend devuelve un mensaje específico, usarlo
+      if (error?.error || error?.message) {
+        throw new Error(error.error || error.message);
+      }
+      
+      // Si no, usar el manejador centralizado
+      throw procesarErrorApi(new Error(`HTTP ${response.status}`), response, 'al generar el PDF');
     }
 
     return response.blob();
   } catch (error) {
-    // Re-throw para que el componente maneje el error
-    if (error.message.includes('Failed to fetch')) {
-      throw new Error('No se pudo conectar con el servidor. Verifique su conexión.');
+    // Si ya es un error procesado, re-lanzarlo
+    if (error.type) {
+      console.error('Error en descargarCertificadoPDF:', error.message, error.type);
+      throw error;
     }
-    throw error;
+    
+    // Si es error de red/CORS, procesarlo
+    const errorProcesado = procesarErrorApi(error, null, 'al generar el PDF');
+    console.error('Error en descargarCertificadoPDF:', errorProcesado.message, errorProcesado.type);
+    throw errorProcesado;
   }
 }

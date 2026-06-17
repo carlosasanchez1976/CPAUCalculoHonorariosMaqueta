@@ -8,6 +8,8 @@
  * Fecha: 24/04/2026
  */
 
+import { procesarErrorApi } from '../utils/apiErrorHandler.js';
+
 // Configuración de API - Backend Node.js
 // DESA: http://localhost:3000/api
 // QA: https://api-ch2026-qa.neosisweb.ar/api
@@ -42,15 +44,17 @@ export async function calcularHonorarios(datosCompletos) {
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
       
-      // Extraer mensaje de error
-      const errorMessage = errorData?.error || 
-                          errorData?.message || 
-                          `Error ${response.status}: ${response.statusText}`;
+      // Si el backend devuelve un mensaje específico, usarlo
+      if (errorData?.error || errorData?.message) {
+        const errorMessage = errorData.error || errorData.message;
+        const error = new Error(errorMessage);
+        error.status = response.status;
+        error.details = errorData?.details;
+        throw error;
+      }
       
-      const error = new Error(errorMessage);
-      error.status = response.status;
-      error.details = errorData?.details;
-      throw error;
+      // Si no, usar el manejador centralizado
+      throw procesarErrorApi(new Error(`HTTP ${response.status}`), response, 'al calcular honorarios');
     }
 
     // Parsear respuesta exitosa
@@ -64,15 +68,16 @@ export async function calcularHonorarios(datosCompletos) {
     return resultado.data;
 
   } catch (error) {
-    // Si es error de red
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      console.error('Error de red al calcular honorarios:', error);
-      throw new Error('No se pudo conectar con el servidor. Verifique su conexión a internet.');
+    // Si ya es un error procesado, re-lanzarlo
+    if (error.status || error.type) {
+      console.error('Error en calcularHonorarios:', error.message, error.type || error.status);
+      throw error;
     }
-
-    // Re-lanzar otros errores
-    console.error('Error en calcularHonorarios:', error);
-    throw error;
+    
+    // Si es error de red/CORS, procesarlo
+    const errorProcesado = procesarErrorApi(error, null, 'al calcular honorarios');
+    console.error('Error en calcularHonorarios:', errorProcesado.message, errorProcesado.type);
+    throw errorProcesado;
   }
 }
 

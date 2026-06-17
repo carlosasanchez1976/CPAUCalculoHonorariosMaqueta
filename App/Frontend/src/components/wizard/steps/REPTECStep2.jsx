@@ -7,6 +7,43 @@ import styles from './DatosPrincipalesBasico.module.css';
  * Específico para el cálculo REPTEC, pero puede ser adaptado para otros cálculos que requieran información detallada sobre la obra.
  */
 const REPTECStep2 = ({ formData, onChange, stepTitle }) => {
+
+
+  // Handler personalizado para el cambio de tipo de obra
+  const handleTipoObraChange = (e) => {
+    const tipoObraSeleccionado = e.target.value;
+    
+    // Determinar los valores según el tipo de obra
+    let valorObraLabel, valorObraPlaceHolder;
+    
+    if (tipoObraSeleccionado === 'IEC' || tipoObraSeleccionado === 'RTE') {
+      valorObraLabel = 'Capacidad de contratación de la empresa constructora';
+      valorObraPlaceHolder = '(ARS) *';
+    } else {
+      valorObraLabel = 'Monto de la obra';
+      valorObraPlaceHolder = '(ARS) *';
+    }
+    
+    // Actualizar todos los valores usando onChange
+    onChange(e); // Actualizar tipoObra
+    
+    onChange({ 
+      target: { 
+        name: 'valorObraLabel', 
+        value: valorObraLabel 
+      } 
+    });
+    
+    onChange({ 
+      target: { 
+        name: 'valorObraPlaceHolder', 
+        value: valorObraPlaceHolder 
+      } 
+    });
+  };
+  
+
+
   return (
     <div className={sharedStyles.container}>
       <h2 className="stepTitle">{stepTitle}</h2>
@@ -23,7 +60,7 @@ const REPTECStep2 = ({ formData, onChange, stepTitle }) => {
             <select
               name="tipoObra"
               value={formData.tipoObra}
-              onChange={onChange}
+              onChange={handleTipoObraChange}
               className={styles.select}
             >
               <option value="">Seleccioná...</option>

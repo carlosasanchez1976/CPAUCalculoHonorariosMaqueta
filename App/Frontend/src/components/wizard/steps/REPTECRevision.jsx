@@ -1,35 +1,41 @@
+import { useEffect } from 'react';
 import { formatCurrencyARS } from '../../../utils/formatters';
+import { getServicioText } from '../../../utils/tareasHelper';
 import Button from '../../common/Button';
 import sharedStyles from './SharedStepStyles.module.css';
 import styles from './RevisionBasico.module.css';
 
 /**
- * Paso 3 - Revisión de DatosetTipoTareaTextH100CEP">Locales hasta 100 m2 con ejecución de plano</option>
-
+ * Paso 3 - Revisión de Datos
  * Específico para el cálculo REPTEC (Representación técnica)
  */
-const REPTECRevision = ({ formData, onEditStep, stepTitle }) => {
+const REPTECRevision = ({ formData, onEditStep, onChange, stepTitle }) => {
+  
+  // Setear labels dinámicos para usar en ResultadoBasicoDetalle
+  useEffect(() => {
+    if (formData.tipoObra) {
+      // Setear labelTipoDeObra y textoTipoDeObra basados en el servicio seleccionado
+      onChange({ 
+        target: { 
+          name: 'labelTipoDeObra', 
+          value: 'Tipo de servicio' 
+        } 
+      });
+      
+      onChange({ 
+        target: { 
+          name: 'textoTipoDeObra', 
+          value: getServicioText(formData.tipoObra)
+        } 
+      });
+    }
+  }, [formData.tipoObra, onChange]);
   const DataRow = ({ label, value }) => (
     <div className={styles.dataRow}>
       <span className={styles.dataLabel}>{label}:</span>
       <span className={styles.dataValue}>{value || 'No especificado'}</span>
     </div>
   );
-
-  // Mapeo de códigos a textos legibles
-  const getServicioText = (codigo) => {
-    const servicios = {
-      'IEC': 'Inscripción de Empresa Constructora',
-      'POL': 'Presentación de ofertas y licitaciones',
-      'RTE': 'Representación técnica',
-      'H100SEP':'Locales hasta 100 m2',
-      'H100CEP' : 'Locales hasta 100 m2 con ejecución de plano',
-      'H500SEP' : 'Locales hasta 500 m2',
-      'H500CEP' : 'Locales hasta 500 m2 con ejecución de plano',
-      'M500CEP' : 'Locales de más de 500 m2 con ejecución de plano'
-    };
-    return servicios[codigo] || codigo;
-  };
   
   return (
     <div className={sharedStyles.container}>
@@ -65,12 +71,12 @@ const REPTECRevision = ({ formData, onEditStep, stepTitle }) => {
         <div className={styles.column}>
           {/* Servicio a prestar */}
           <h3 className={styles.sectionTitle}>Servicio a prestar</h3>
-          
-          <div className={styles.section}>
+
+         <div className={styles.section}>
             <div className={styles.sectionContent}>
               <DataRow 
-                label="Tipo de servicio" 
-                value={getServicioText(formData.tipoObra)} 
+                label={formData.labelTipoDeObra}
+                value={formData.textoTipoDeObra}
               />
               
               <div className={styles.buttonRow}>
@@ -92,34 +98,18 @@ const REPTECRevision = ({ formData, onEditStep, stepTitle }) => {
               
               <div className={styles.section}>
                 <div className={styles.sectionContent}>
-                  {/* Si es IEC */}
-                  {formData.tipoObra === 'IEC' && (
                     <>
                       <DataRow 
-                        label="Capacidad de contratación (ARS)" 
+                        label={formData.valorObraLabel || "Valor de la obra (ARS)"}
                         value={formData.valorObra ? `$ ${formatCurrencyARS(formData.valorObra, false)}` : 'No especificado'} 
                       />
                     </>
-                  )}
 
-                  {/* Si es RTE */}
-                  {formData.tipoObra === 'RTE' && (
-                    <>
-                      <DataRow 
-                        label="Monto de obra estimado (ARS):" 
-                        value={formData.valorObra ? `$ ${formatCurrencyARS(formData.valorObra, false)}` : 'No especificado'} 
-                      />
-                    </>
-                  )}
+
 
                   {/* Si es POL */}
                   {formData.tipoObra === 'POL' && (
                     <>
-                      <DataRow 
-                        label="Monto de obra estimado (ARS)" 
-                        value={formData.valorObra ? `$ ${formatCurrencyARS(formData.valorObra, false)}` : 'No especificado'} 
-                      />
-
                       <DataRow 
                         label="Tipo de tarea profesional" 
                         value={formData.obraProyecto ? 'La empresa ha designado otro profesional' : 'La oferta de licitación no fué adjudicada'}

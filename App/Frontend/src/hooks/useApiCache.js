@@ -100,7 +100,8 @@ export const useApiCache = (cacheKey, fetchFn, options = {}) => {
     if (autoFetch) {
       fetchData();
     }
-  }, [fetchData, autoFetch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoFetch]); // Solo ejecutar cuando cambie autoFetch o al montar
   
   return {
     data,

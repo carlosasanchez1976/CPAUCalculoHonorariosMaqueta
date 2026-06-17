@@ -94,3 +94,31 @@ export function ajustarVigenciaPorRol(tareas, rolUsuario) {
     return tarea;
   });
 }
+
+/**
+ * Mapeo de códigos de servicios a textos legibles
+ * 
+ * Convierte códigos internos de tipos de servicio a descripciones legibles
+ * para mostrar en la interfaz de usuario.
+ * 
+ * @param {string} codigo - Código del servicio (ej: 'IEC', 'RTE', 'H100CEP')
+ * @returns {string} Texto descriptivo del servicio o el código original si no se encuentra
+ * 
+ * @example
+ * getServicioText('IEC') // 'Inscripción de Empresa Constructora'
+ * getServicioText('H100CEP') // 'Locales hasta 100 m2 con ejecución de plano'
+ * getServicioText('CODIGO_DESCONOCIDO') // 'CODIGO_DESCONOCIDO'
+ */
+export function getServicioText(codigo) {
+  const servicios = {
+    'IEC': 'Inscripción de Empresa Constructora',
+    'POL': 'Presentación de ofertas y licitaciones',
+    'RTE': 'Representación técnica',
+    'H100SEP': 'Locales hasta 100 m2',
+    'H100CEP': 'Locales hasta 100 m2 con ejecución de plano',
+    'H500SEP': 'Locales hasta 500 m2',
+    'H500CEP': 'Locales hasta 500 m2 con ejecución de plano',
+    'M500CEP': 'Locales de más de 500 m2 con ejecución de plano'
+  };
+  return servicios[codigo] || codigo;
+}

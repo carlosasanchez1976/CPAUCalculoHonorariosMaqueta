@@ -179,6 +179,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
         : null,
     totalPorcentaje: subtotalObra.totalPorcentaje + subtotalAdicionales.totalPorcentaje + subtotalEspecialidades.totalPorcentaje
   };
+ 
 
   return (
     <div className={sharedStyles.container}>
@@ -221,30 +222,44 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                 <span className={styles.resumenLabel}>Comitente:</span>
                 <span className={styles.resumenValue}>{formData.cliente}</span>
               </div>
-              <div className={styles.resumenItem}>
-                <span className={styles.resumenLabel}>Tipo de obra:</span>
-                <span className={styles.resumenValue}>{formData.tipoObra}</span>
-              </div>
-              <div className={styles.resumenItem}>
-                <span className={styles.resumenLabel}>Destino/Uso:</span>
-                <span className={styles.resumenValue}>{formData.destinoUso}</span>
-              </div>
-              <div className={styles.resumenItem}>
-                <span className={styles.resumenLabel}>Superficie total:</span>
-                <span className={styles.resumenValue}>{formData.superficieTotal} m²</span>
-              </div>
-              <div className={styles.resumenItem}>
-                <span className={styles.resumenLabel}>Costo estimado de obra (ARS):</span>
-                <span className={styles.resumenValue}>{formatCurrencyARS(formData.valorObra)}</span>
-              </div>
-              <div className={styles.resumenItem}>
-                <span className={styles.resumenLabel}>Costo estimado de obra (USD):</span>
-                <span className={styles.resumenValue}>
-                  {formData.cotizDolar && formData.cotizDolar > 0 
-                    ? formatCurrencyARS(formData.valorObra / formData.cotizDolar)
-                    : 'N/A'}
-                </span>
-              </div>
+
+              {/* Aquí se deben mostrar los datos que tengan valores */}
+              {formData.tipoObra !== '' && (
+                <div className={styles.resumenItem}>
+                  <span className={styles.resumenLabel}>{formData.labelTipoDeObra !== '' ? formData.labelTipoDeObra : 'Tipo de obra'}:</span>
+                  <span className={styles.resumenValue}>{formData.textoTipoDeObra !== '' ? formData.textoTipoDeObra : formData.tipoObra}</span>
+                </div>
+              )}
+
+              {formData.destinoUso !== '' && (
+                 <div className={styles.resumenItem}>
+                   <span className={styles.resumenLabel}>Destino/Uso:</span>
+                   <span className={styles.resumenValue}>{formData.destinoUso}</span>
+                 </div>
+              )}
+              {formData.superficieTotal !== '' && (
+                <div className={styles.resumenItem}>
+                  <span className={styles.resumenLabel}>Superficie total:</span>
+                  <span className={styles.resumenValue}>{formData.superficieTotal} m²</span>
+                </div>
+              )}
+
+              {formData.valorObra > 0 && (
+                <div className={styles.resumenItem}>
+                  <span className={styles.resumenLabel}>{formData.valorObraLabel !== '' ? formData.valorObraLabel : 'Monto de la obra'} (ARS):</span>
+                  <span className={styles.resumenValue}>{formatCurrencyARS(formData.valorObra)}</span>
+                </div>
+              )}
+              {formData.cotizDolar > 0 && (
+                <div className={styles.resumenItem}>
+                  <span className={styles.resumenLabel}>Costo estimado de obra (USD):</span>
+                  <span className={styles.resumenValue}>
+                    {formData.cotizDolar && formData.cotizDolar > 0 
+                      ? formatCurrencyARS(formData.valorObra / formData.cotizDolar)
+                      : 'N/A'}
+                  </span>
+                </div>
+              )}
 
             </div>
           </div>
@@ -351,9 +366,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                                 ? formatCurrencyARS(calcularImporteUSD(item.importe, formData.cotizDolar))
                                 : 'N/A'}
                             </td>
-                            <td className={styles.centered}>
-                              {((item.importe / formData.valorObra) * 100).toFixed(2)}%
-                            </td>
+                            <td className={styles.centered}>{formData.valorObra > 0 ? ((item.importe / formData.valorObra) * 100).toFixed(2) : 'N/A'}%</td>
                           </tr>
                         ))}
                         
@@ -408,7 +421,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                                 : 'N/A'}
                             </td>
                             <td className={styles.centered}>
-                              {((item.importe / formData.valorObra) * 100).toFixed(2)}%
+                              {formData.valorObra > 0 ? ((item.importe / formData.valorObra) * 100).toFixed(2) : 'N/A'}%
                             </td>
                           </tr>
                         ))}
@@ -464,7 +477,7 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                                 : 'N/A'}
                             </td>
                             <td className={styles.centered}>
-                              {((item.importe / formData.valorObra) * 100).toFixed(2)}%
+                              {formData.valorObra > 0 ? ((item.importe / formData.valorObra) * 100).toFixed(2) + '%' : 'N/A'}
                             </td>
                           </tr>
                         ))}
@@ -485,7 +498,11 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                             </strong>
                           </td>
                           <td className={styles.centered}>
-                            <strong>{subtotalEspecialidades.totalPorcentaje.toFixed(2)}%</strong>
+                            {formData.valorObra > 0 ? (
+                              <strong>{subtotalEspecialidades.totalPorcentaje.toFixed(2)}%</strong>
+                            ) : (
+                              <strong>N/A</strong>
+                            )}
                           </td>
                         </tr>
                       </tbody>
@@ -520,12 +537,14 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
                         </td>
                         {/* necesito que lo siguiente ocupe lugar pero no lo vea el usuario, para que el porcentaje quede centrado respecto a los importes */}
                         <td className={styles.centered}>
-                          <strong>{totalGeneral.totalPorcentaje.toFixed(2)}%</strong>
+                          <strong>{formData.valorObra > 0 ? totalGeneral.totalPorcentaje.toFixed(2) + '%' : 'N/A'}</strong>
                         </td>
                       </tr>
                       <tr className={styles.totalRow}>
                         <td colSpan={5}>
-                          <strong>Plazo estimado de ejecución: {formData.plazoEjecucion} meses</strong>
+                          {formData.plazoEjecucion > 0
+                            ? <strong>Plazo estimado de ejecución: {formData.plazoEjecucion} meses</strong>
+                            : null}
                         </td>
                       </tr>
                     </tbody>

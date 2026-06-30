@@ -14,7 +14,7 @@ const isLambda = !!process.env.AWS_LAMBDA_FUNCTION_NAME;
 
 /**
  * Genera un certificado PDF con Puppeteer
- * @param {Object} datos - { tipoCalculo, formData, calculationResult }
+ * @param {Object} datos - { tipoCalculo, tipoNombre, formData, calculationResult }
  * @returns {Buffer} Buffer del PDF generado
  */
 async function generarCertificado(datos) {
@@ -23,6 +23,8 @@ async function generarCertificado(datos) {
   try {
     console.log('[PDF] Iniciando generación de certificado...');
     console.log('[PDF] Tipo de cálculo:', datos.tipoCalculo);
+    console.log('[PDF] Tipo nombre:', datos.tipoNombre);
+    console.log('[PDF] Tarea ID:', datos.formData?.tareaId);
     
     // Dynamic imports de módulos ESM
     const puppeteer = await import('puppeteer-core');
@@ -97,17 +99,17 @@ async function generarCertificado(datos) {
 /**
  * Renderiza la plantilla del certificado desde la base de datos usando Handlebars
  * FASE 2: T010-002
- * @param {Object} datos - { tipoCalculo, formData, calculationResult }
+ * @param {Object} datos - { tipoCalculo, tipoNombre, formData, calculationResult }
  * @returns {string} HTML renderizado
  */
 async function renderizarPlantillaDB(datos) {
-  const { tipoCalculo, formData, calculationResult } = datos;
+  const { tipoCalculo, tipoNombre, formData, calculationResult } = datos;
   
-  // Resolver plantilla desde DB por código
-  const plantilla = await entregablesService.resolverPlantillaPorCodigo(tipoCalculo);
+  // Resolver plantilla desde DB por tareaId (relación con Tareas_Profesionales)
+  const plantilla = await entregablesService.resolverPlantillaEntregable(formData.tareaId);
   
   if (!plantilla) {
-    throw new Error(`No se encontró plantilla para tipoCalculo: ${tipoCalculo}`);
+    throw new Error(`No se encontró plantilla para tareaId: ${formData.tareaId} (${tipoCalculo} - ${tipoNombre})`);
   }
   
   console.log(`[PDF] Plantilla encontrada: ${plantilla.nombre} (v${plantilla.version})`);
@@ -270,7 +272,7 @@ function prepararDatosPlantilla(datos, plantilla) {
     // Metadatos
     calculationNumber,
     currentDate,
-    tipoNombre: obtenerNombreTipoCalculo(datos.tipoCalculo),
+    tipoNombre: datos.tipoNombre || obtenerNombreTipoCalculo(datos.tipoCalculo), // Preferir el nombre del frontend
     logoCPAU,
     
     // Datos del proyecto (del formData)
@@ -310,11 +312,32 @@ function prepararDatosPlantilla(datos, plantilla) {
 
 /**
  * Obtiene el nombre descriptivo del tipo de cálculo
- * @param {string} tipoCalculo - Código del tipo de cálculo
+ * FALLBACK: Solo se usa si no viene tipoNombre desde el frontend
+ * @param {string} tipoCalculo - Código del tipo de cálculo desde la DB
  * @returns {string} Nombre descriptivo
  */
 function obtenerNombreTipoCalculo(tipoCalculo) {
   const tiposNombres = {
+    // Códigos reales de la tabla Tareas_Profesionales
+    'PYDOA': 'Proyecto y Dirección de obras de arquitectura',
+    'DEMO': 'Demoliciones',
+    'GPYC': 'Gerencia de proyectos y construcciones',
+    'HABI': 'Habilitaciones',
+    'CONFAC': 'Conservación de fachadas',
+    'CONSULT': 'Consultas y otras tareas por tiempo empleado',
+    'MEDPLAN': 'Medición y ejecución de planos',
+    'IMPAMB': 'Impacto ambiental',
+    'PERI': 'Peritajes',
+    'HYS': 'Higiene y Seguridad',
+    'SAUTO': 'Sistemas de autoprotección',
+    'ARBI': 'Arbitraje',
+    'TASA': 'Tasación',
+    'REPTEC': 'Representación técnica',
+    'URBA': 'Urbanismo',
+    'DISINT': 'Diseño de interiores',
+    'DISPAI': 'Diseño de paisaje',
+    
+    // Códigos legacy (por compatibilidad)
     'basico-proyecto-direccion': 'Proyecto y Dirección - Básico',
     'completo-proyecto-direccion': 'Proyecto y Dirección - Completo',
     'relevamiento': 'Relevamiento',

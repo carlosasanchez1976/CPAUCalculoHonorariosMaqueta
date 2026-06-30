@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Leer el HTML
-const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-basico-proyecto-direccion.html');
+const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-otras-tareas.html');
 const html = fs.readFileSync(htmlPath, 'utf8');
 
 // Convertir a hexadecimal (método más seguro para MySQL)
@@ -11,48 +11,43 @@ const hex = Buffer.from(html, 'utf8').toString('hex');
 // Generar SQL
 const sql = `-- ============================================================================
 -- SCRIPT: Cargar template PDF en Entregables_PDF
--- Template: Certificado Básico - Proyecto y Dirección
--- entregable_id: 1
+-- Template: Certificado Otras Tareas
+-- entregable_id: 2
 -- Fecha: 2026-06-11
 -- ============================================================================
 
 -- IMPORTANTE: Este archivo contiene el HTML en formato hexadecimal
 -- para evitar problemas con comillas simples/dobles.
 
--- OPCIÓN 1: INSERT (si NO existe el registro)
+-- UPSERT: inserta el registro si no existe, o actualiza el html_template si ya existe.
+-- Una sola ejecución aplica el template tanto en alta como en actualización.
 INSERT INTO Entregables_PDF (
   entregable_id,
-  tarea_profesional_id,
-  nombre_plantilla,
+  nombre,
+  codigo,
   descripcion,
-  html_template,
-  css_inline,
   version,
-  activo,
-  fecha_creacion,
-  creado_por
+  html_template,
+  css_styles,
+  pdf_config,
+  template_engine,
+  placeholders,
+  user_id
 ) VALUES (
-  1,
-  1,
-  'Certificado Básico - Proyecto y Dirección',
-  'Plantilla HTML completa para certificado PDF de honorarios profesionales - Cálculo Básico Proyecto y Dirección. Motor: Handlebars. Páginas: 2 (datos + notas institucionales CPAU)',
-  0x${hex},
-  NULL,
+  2,
+  'Certificado Otras Tareas',
+  'otras-tareas',
+  'Plantilla HTML completa para certificado PDF de honorarios profesionales - Cálculo Otras Tareas. Motor: Handlebars. Páginas: 2 (datos + notas institucionales CPAU)',
   '1.0',
-  1,
-  NOW(),
-  'SYSTEM'
-);
-
--- OPCIÓN 2: UPDATE (si YA EXISTE el registro)
--- Descomenta si ya existe entregable_id = 1
-/*
-UPDATE Entregables_PDF 
-SET 
-  html_template = 0x${hex},
-  version = '1.0'
-WHERE entregable_id = 1;
-*/
+  0x${hex},
+  '/* CSS embebido en html_template */',
+  '{"format": "A4", "margin": {"top": "20mm", "left": "15mm", "right": "15mm", "bottom": "20mm"}, "printBackground": true, "preferCSSPageSize": false}',
+  'handlebars',
+  '{"formData": {"cliente": "string", "tipoObra": "string", "valorObra": "number", "nombreProyecto": "string", "superficieCubierta": "number", "superficieSemicubierta": "number"}, "currentDate": "string", "calculationNumber": "string", "calculationResult": {"moneda": "string", "honorarioTotal": "number"}}',
+  1
+)
+ON DUPLICATE KEY UPDATE
+  html_template = VALUES(html_template);
 
 -- ============================================================================
 -- VERIFICACIÓN
@@ -83,8 +78,7 @@ console.log('');
 console.log('📋 Instrucciones:');
 console.log('   1. Abrí el archivo insert-template-pdf.sql en MySQL Workbench');
 console.log('   2. Ejecutá TODO el contenido');
-console.log('   3. Si el registro NO existe, usa la OPCIÓN 1 (INSERT)');
-console.log('   4. Si el registro YA existe, descomentá y usá la OPCIÓN 2 (UPDATE)');
+console.log('   3. El UPSERT inserta el registro o actualiza el html_template si ya existe');
 console.log('');
 console.log('⚠️  NOTA: El HTML está en formato hexadecimal (0x...)');
 console.log('   Esto evita problemas con comillas simples y dobles.');

@@ -13,7 +13,8 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 /**
  * Descarga el PDF del certificado de honorarios desde el backend
  * @param {Object} datos - Datos del cálculo
- * @param {string} datos.tipoCalculo - Tipo de cálculo (ej: 'basico-proyecto-direccion')
+ * @param {string} datos.tipoCalculo - Código del tipo de cálculo (ej: 'PYDOA', 'REPTEC', 'HABI')
+ * @param {string} datos.tipoNombre - Nombre descriptivo del tipo de cálculo (ej: 'Proyecto y Dirección de Obras de Arquitectura')
  * @param {Object} datos.formData - Datos del formulario (incluye formData.calculoId para el nombre del archivo)
  * @param {Object} datos.calculationResult - Resultado del cálculo
  * @returns {Promise<Blob>} Blob del PDF

@@ -48,7 +48,8 @@ const ResultadoBasicoDetalle = ({ formData, calculationResult, onAcceptTerms, te
     try {
       // Llamar al backend para generar el PDF
       const blob = await descargarCertificadoPDF({
-        tipoCalculo: 'basico-proyecto-direccion',
+        tipoCalculo: formData.tipoCalculo,      // Código del tipo (ej: PYDOA, REPTEC, HABI)
+        tipoNombre: formData.tipoNombre,        // Nombre descriptivo completo
         formData,
         calculationResult
       });

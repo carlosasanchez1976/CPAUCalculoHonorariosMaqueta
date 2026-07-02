@@ -26,6 +26,9 @@ case v_Tarea_codi
   when 'HABI' then
     -- Lógica para calcular honorarios de habilitación
     call Calcular_Honorario_HABI(p_calculo_id);
+  when 'ARBI' then
+    -- Lógica para calcular honorarios de arbitraje
+    call Calcular_Honorario_ARBI(p_calculo_id);
 
   else
     select concat('Tarea profesional con código erróneo: ', v_Tarea_codi) as mensaje_error;

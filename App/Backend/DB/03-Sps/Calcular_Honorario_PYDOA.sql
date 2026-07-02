@@ -35,6 +35,12 @@ DROP PROCEDURE IF EXISTS Calcular_Honorario_PYDOA$$
  * - 2026-06-30: Cambio de lógica en Documentación Ejecutiva: ahora se calcula sobre el total de Proyecto de Obra (CPAU)
  *               Generaba error al calcular documentación ejecutiva cuando no había proyecto de obra tildado
  ******************************************************************************
+ * - 2026-07-01: Ajustes solicitados en coeficientoes de proyecto y dirección (CPAU) según email del día 01/07/2026
+ * -             Rango A: 0.14 (sin cambios)
+ * -             Rango B: 0.095  y Coef K: 0.03 -> Rango B: 0.095 y Coef K: 0.00
+ * -             Rango C: 0.06  y Coef K: 0.03 -> Rango C: 0.06 y Coef K: 0.00
+ * -             Rango D: 0.03  y Coef K: 0.03 -> Rango D: 0.025 y Coef K: 0.00
+ ******************************************************************************
  *
  * PARAMETROS:
  * @param p_calculo_id INT - ID del cálculo en tabla Calculos
@@ -216,21 +222,21 @@ BEGIN
           SET v_lim_inferior = v_limite_b_inf;
           SET v_lim_superior = v_limite_b_sup;
           SET v_coef_obra = 0.095;
-          SET v_coef_k = 0.03;
+          SET v_coef_k = 0.00;
           SET v_coef_remodelacion = 0.3;
         WHEN 3 THEN -- Rango C
           SET v_rango_nombre = 'C';
           SET v_lim_inferior = v_limite_c_inf;
           SET v_lim_superior = v_limite_c_sup;
           SET v_coef_obra = 0.06;
-          SET v_coef_k = 0.13;
+          SET v_coef_k = 0.00;
           SET v_coef_remodelacion = 0.25;
         WHEN 4 THEN -- Rango D
           SET v_rango_nombre = 'D';
           SET v_lim_inferior = v_limite_d_inf;
           SET v_lim_superior = 999999999999.99;
           SET v_coef_obra = 0.025;
-          SET v_coef_k = 0.4;
+          SET v_coef_k = 0.00;
           SET v_coef_remodelacion = 0.2;
       END CASE;
       
@@ -337,21 +343,21 @@ BEGIN
           SET v_lim_inferior = v_limite_b_inf;
           SET v_lim_superior = v_limite_b_sup;
           SET v_coef_obra = 0.095;
-          SET v_coef_k = 0.03;
+          SET v_coef_k = 0.00;
           SET v_coef_remodelacion = 0.3;
         WHEN 3 THEN -- Rango C
           SET v_rango_nombre = 'C';
           SET v_lim_inferior = v_limite_c_inf;
           SET v_lim_superior = v_limite_c_sup;
           SET v_coef_obra = 0.06;
-          SET v_coef_k = 0.13;
+          SET v_coef_k = 0.00;
           SET v_coef_remodelacion = 0.25;
         WHEN 4 THEN -- Rango D
           SET v_rango_nombre = 'D';
           SET v_lim_inferior = v_limite_d_inf;
           SET v_lim_superior = 999999999999.99;
           SET v_coef_obra = 0.025;
-          SET v_coef_k = 0.4;
+          SET v_coef_k = 0.00;
           SET v_coef_remodelacion = 0.2;
       END CASE;
       

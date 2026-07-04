@@ -36,4 +36,11 @@ ADD COLUMN calc_valor_str2_des VARCHAR(100) NULL AFTER calc_valor_str1_des;
 ALTER TABLE Tareas_Profesionales
 ADD COLUMN orden tinyint NULL AFTER tarea_id;
 
+ALTER TABLE Tareas_Profesionales
+ADD COLUMN calc_obra_valor_obra_des VARCHAR(100) NULL AFTER vigente
+
+ALTER TABLE Tareas_Profesionales
+ADD COLUMN calc_obra_valor_obra_des VARCHAR(100) NULL AFTER vigente;
+
+
 

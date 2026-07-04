@@ -74,3 +74,5 @@ alter table Calculos add column tarea_supervision_obra boolean null after tarea_
 alter table Calculos add column tarea_observaciones varchar(200) null after tarea_supervision_obra;
 
 
+alter table Calculos add column horas decimal(6,2) null after obra_complejidad;
+alter table Calculos add column hasta_60_km boolean null after horas;

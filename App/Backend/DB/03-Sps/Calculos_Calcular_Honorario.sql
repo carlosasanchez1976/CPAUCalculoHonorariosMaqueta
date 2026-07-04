@@ -29,7 +29,12 @@ case v_Tarea_codi
   when 'ARBI' then
     -- Lógica para calcular honorarios de arbitraje
     call Calcular_Honorario_ARBI(p_calculo_id);
-
+  when 'CONSULT' then
+    -- Lógica para calcular honorarios de consultoría
+    call Calcular_Honorario_CONSULT(p_calculo_id);
+  when 'GPYC' then
+    -- Lógica para calcular honorarios de gerencia de proyectos y construcciones
+    call Calcular_Honorario_GPYC(p_calculo_id);
   else
     select concat('Tarea profesional con código erróneo: ', v_Tarea_codi) as mensaje_error;
 end case;

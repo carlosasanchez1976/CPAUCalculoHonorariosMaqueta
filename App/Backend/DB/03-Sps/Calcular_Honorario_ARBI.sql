@@ -61,9 +61,9 @@ bloque_principal: BEGIN
   -- ========================================================================
 
   SELECT 
-    obra_superficie,
+    horas,
     obra_tipologia,
-    tarea_obra_proyecto,
+    hasta_60_km,
     obra_complejidad
   INTO
     v_cant_horas,

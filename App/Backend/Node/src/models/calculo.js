@@ -33,7 +33,9 @@ function normalizarIdEntero(calculoId) {
  * @param {string} datosCompletos.datosProyecto.ubicacion - Ubicación del proyecto
  * @param {string} datosCompletos.datosProyecto.cliente - Cliente del proyecto
  * @param {string} datosCompletos.datosProyecto.observProyecto - Observaciones generales sobre el proyecto
- *  * @param {Object} datosCompletos.datosObra - Datos de la obra
+ * @param {number} datosCompletos.datosProyecto.horas - Horas del proyecto
+ * @param {boolean} datosCompletos.datosProyecto.hasta60km - Indica si el proyecto está dentro de los 60 km del titular
+ * @param {Object} datosCompletos.datosObra - Datos de la obra
  * @param {number} datosCompletos.datosObra.valorObra - Valor de la obra
  * @param {number} datosCompletos.datosObra.superficie - Superficie en m²
  * @param {number} datosCompletos.datosObra.cotizDolar - Cotización del dólar
@@ -82,6 +84,12 @@ async function grabarCalculo(datosCompletos) {
         datosProyecto.ubicacion || null,
         datosProyecto.cliente || null,
         datosProyecto.observProyecto || null,
+        datosProyecto.horas || null,
+        datosProyecto.hasta60km || false,
+        datosProyecto.valorbol1 || false,
+        datosProyecto.valornum1 || null,
+        datosProyecto.valornum2 || null,
+        datosProyecto.valornum3 || null,
         datosObra.valorObra,
         datosObra.superficie || null,
         datosObra.cotizDolar || null,

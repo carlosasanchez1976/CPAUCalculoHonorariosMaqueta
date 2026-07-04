@@ -1,6 +1,8 @@
+
 DROP PROCEDURE IF EXISTS Tareas_Profesionales_Entregables_Grabar;
 
 DELIMITER $$
+
 CREATE PROCEDURE Tareas_Profesionales_Entregables_Grabar(
   IN p_taen_id INT,
   IN p_tarea_id INT,
@@ -11,14 +13,11 @@ CREATE PROCEDURE Tareas_Profesionales_Entregables_Grabar(
 BEGIN
 
   IF  p_taen_id IS NULL THEN
-	BEGIN
-		-- Insertar un nuevo registro
-		INSERT INTO Tareas_Profesionales_Entregables_PDF (tarea_id, entregable_id, orden, user_id)
-		VALUES (p_tarea_id, p_entregable_id, p_orden, p_user_id);
-        
-		set p_taen_id := LAST_INSERT_ID();
-        
-	END;
+    -- Insertar un nuevo registro
+    INSERT INTO Tareas_Profesionales_Entregables_PDF (tarea_id, entregable_id, orden, user_id)
+    VALUES (p_tarea_id, p_entregable_id, p_orden, p_user_id);
+
+    set p_taen_id = LAST_INSERT_ID();
     
   ELSE
 
@@ -37,6 +36,6 @@ BEGIN
 
   select p_taen_id as taen_id;
 
-END$$
+END;
 
 DELIMITER ;

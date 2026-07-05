@@ -44,7 +44,7 @@ bloque_principal: BEGIN
   DECLARE v_obra_tipologia VARCHAR(50);
   DECLARE v_descripcion_servicio VARCHAR(200);
   DECLARE v_total_honor_gerenciados DECIMAL(15,2);
-  DECLARE v_incluye_trabajos_adm DECIMAL(15,2);
+  DECLARE v_incluye_trabajos_adm BOOLEAN;
   DECLARE v_total_honor_proy_manager DECIMAL(15,2);
   DECLARE v_total_honor_proy_direccion DECIMAL(15,2);
   DECLARE v_total_trabajos_adm DECIMAL(15,2);
@@ -67,14 +67,15 @@ bloque_principal: BEGIN
   -- PASO 1: LEER DATOS DEL CÁLCULO
   -- ========================================================================
 
+
   SELECT
       obra_tipologia,
       calc_valor_str1,
-      obra_valor_obra,
+      COALESCE(obra_valor_obra, 0),
       calc_valor_bol1,
-      calc_valor_num1,
-      calc_valor_num2,
-      calc_valor_num3
+      COALESCE(calc_valor_num1, 0),
+      COALESCE(calc_valor_num2, 0),
+      COALESCE(calc_valor_num3, 0)
     INTO
       v_obra_tipologia,
       v_descripcion_servicio,
@@ -95,7 +96,7 @@ bloque_principal: BEGIN
   END IF;
 
 
-
+ 
 
 
   -- ========================================================================
@@ -156,7 +157,6 @@ bloque_principal: BEGIN
       END IF;
 
   END IF;
-
  
   -- ========================================================================
   -- PASO 5: ACTUALIZAR METADATA EN MASTER

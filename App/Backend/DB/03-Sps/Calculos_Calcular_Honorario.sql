@@ -35,6 +35,9 @@ case v_Tarea_codi
   when 'GPYC' then
     -- Lógica para calcular honorarios de gerencia de proyectos y construcciones
     call Calcular_Honorario_GPYC(p_calculo_id);
+  when 'PERI' then
+    -- Lógica para calcular honorarios de peritajes
+    call Calcular_Honorario_PERI(p_calculo_id);
   else
     select concat('Tarea profesional con código erróneo: ', v_Tarea_codi) as mensaje_error;
 end case;

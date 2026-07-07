@@ -15,5 +15,15 @@ update Tareas_Profesionales set calc_valor_num1_des = 'Monto del Valor en juego'
 call Tareas_Profesionales_Entregables_Grabar(null,9,2,1,1);
 
 
+-- HYS Higiene y Seguridad
+update Tareas_Profesionales set vigente = 1 where codi = 'HYS';
+call Tareas_Profesionales_Entregables_Grabar(null,10,2,1,1);
+update Tareas_Profesionales set calc_valor_bol1_des = 'Existe monto convenido para las tareas' where codi = 'HYS';
+update Tareas_Profesionales set calc_valor_bol2_des = 'Agrega tareas adicionales(hs)' where codi = 'HYS';
+update Tareas_Profesionales set calc_valor_num1_des = 'Monto convenido para las tareas' where codi = 'HYS';
+
+
+
+
 
 

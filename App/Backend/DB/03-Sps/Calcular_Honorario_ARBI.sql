@@ -20,7 +20,7 @@ DROP PROCEDURE IF EXISTS Calcular_Honorario_ARBI$$
  * - 2026-07-02: Creación del procedimiento para cálculo de honorarios de arbitraje (ARBI)
  ******************************************************************************
  * MODIFICACIONES:
- * - 2026-05-22: 
+ * - 2026-07-05: Se agregan parametros INOUT p_descripcion, p_item_numero y p_total_importe en sp Artículo 1.13 para mantener consistencia en la generación de ítems y descripción de los mismos
  ******************************************************************************
  * - 2026-05-22: 
  ******************************************************************************
@@ -95,7 +95,11 @@ bloque_principal: BEGIN
     v_tarea_profesional,
     v_cant_horas, -- Cantidad de horas (no aplica para arbitraje)
     v_hasta_60_km, -- Hasta 60 km (no aplica para arbitraje)
-    v_valor_k
+    v_valor_k,
+    v_descripcion,
+    false, -- No es solo cálculo, se generan ítems
+    v_item_numero,
+    v_total_honorarios
   );
 
   -- ========================================================================
@@ -109,14 +113,8 @@ bloque_principal: BEGIN
     WHERE
       calculo_id = p_calculo_id;
 
-  SELECT
-      COUNT(importe) + 1 INTO v_item_numero
-    FROM
-      Calculos_Items
-    WHERE
-      calculo_id = p_calculo_id;
 
-
+  SET v_item_numero = v_item_numero + 1;
   SET v_coef_arbitraje = 2; -- Coeficiente para honorarios de arbitraje según Art. 10.9
 
   IF v_tipo_arbitraje = 'JUICARBI' THEN

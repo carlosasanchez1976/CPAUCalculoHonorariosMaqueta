@@ -38,6 +38,9 @@ case v_Tarea_codi
   when 'PERI' then
     -- Lógica para calcular honorarios de peritajes
     call Calcular_Honorario_PERI(p_calculo_id);
+  when 'HYS' then
+    -- Lógica para calcular honorarios de Higiene y Seguridad
+    call Calcular_Honorario_HYS(p_calculo_id);
   else
     select concat('Tarea profesional con código erróneo: ', v_Tarea_codi) as mensaje_error;
 end case;

@@ -21,7 +21,8 @@ DROP PROCEDURE IF EXISTS Calcular_Honorario_PERI$$
  * - 2026-07-04: 
  ******************************************************************************
  * MODIFICACIONES:
- * - 2026-05-22: 
+ * - 2026-07-05: Se agregan parametros INOUT p_descripcion, p_item_numero y p_total_importe en sp Artículo 1.13
+ *               para mantener consistencia en la generación de ítems y descripción de los mismos
  ******************************************************************************
  * - 2026-05-22: 
  ******************************************************************************
@@ -107,13 +108,18 @@ bloque_principal: BEGIN
   IF v_desconoce_valor_en_juego THEN
 
       -- Lógica específica para Cálculo de Honorarios de Peritajes cuando NO se conoce el valor en juego
+    SET v_descripcion = 'Según Art. 10.7.2 - sin valor en juego definido';
 
     CALL Calcular_Hon_Art_1_13(
       p_calculo_id,
       v_tarea_profesional,
       v_cant_horas, -- Cantidad de horas
       v_hasta_60_km, -- Hasta 60 km
-      v_valor_k
+      v_valor_k,
+      v_descripcion,
+      false, -- No es solo cálculo, se generan ítems
+      v_item_numero,
+      v_total_honorarios
     );
 
 

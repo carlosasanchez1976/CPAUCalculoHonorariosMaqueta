@@ -87,6 +87,7 @@ async function grabarCalculo(datosCompletos) {
         datosProyecto.horas || null,
         datosProyecto.hasta60km || false,
         datosProyecto.valorbol1 || false,
+        datosProyecto.valorbol2 || false,
         datosProyecto.valornum1 || null,
         datosProyecto.valornum2 || null,
         datosProyecto.valornum3 || null,

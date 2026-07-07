@@ -26,7 +26,7 @@ DROP PROCEDURE IF EXISTS Calcular_Honorario_CONSULT$$
  * - 2026-07-02: Creación del procedimiento para cálculo de honorarios de consultoría (CONSULT)
  ******************************************************************************
  * MODIFICACIONES:
- * - 2026-05-22: 
+ * - 2026-07-05: Se agregan parametros INOUT p_descripcion, p_item_numero y p_total_importe en sp Artículo 1.13 para mantener consistencia en la generación de ítems y descripción de los mismos
  ******************************************************************************
  * - 2026-05-22: 
  ******************************************************************************
@@ -100,82 +100,34 @@ bloque_principal: BEGIN
   -- ========================================================================
 
   IF v_tipo_consulta != 'CONSU' THEN
-    CALL Calcular_Hon_Art_1_13(
+
+
+    CALL Calcular_Hon_Art_10_3(
       p_calculo_id,
       v_tarea_profesional,
       v_cant_horas, -- Cantidad de horas
       v_hasta_60_km, -- Hasta 60 km
-      v_valor_k
+      v_valor_k,
+      'Art 10',
+      v_tipo_consulta,
+      v_item_numero,
+      v_total_honorarios
     );
-
-    -- ========================================================================
-    -- PASO 3: GENERAR ADICIONALES POR TIPO DE CONSULTA
-    -- ========================================================================
-
-    SELECT
-        SUM(importe) INTO v_total_honorarios
-      FROM
-        Calculos_Items
-      WHERE
-        calculo_id = p_calculo_id;
-
-    SELECT
-        COUNT(importe) + 1 INTO v_item_numero
-      FROM
-        Calculos_Items
-      WHERE
-        calculo_id = p_calculo_id;
-
-
-    SET v_coef_consulta = 1.5; -- Coeficiente para honorarios de ESTUD y ASESOR según Art. 10.3 y 10.4
-
-    IF v_tipo_consulta = 'ESTUD' THEN
-      SET v_descripcion = 'Adicional por Estudios según Art. 10.3';
-    END IF;
-
-    IF v_tipo_consulta = 'ASESO' THEN
-      SET v_descripcion = 'Adicional por Asesor según Art. 10.4';
-    END IF;
-
-    IF v_tipo_consulta = 'LIQME' THEN
-      SET v_descripcion = 'Adicional por Liquidación de medianería según Art. 10.6';
-      SET v_coef_consulta = 2; -- Coeficiente para honorarios de LIQME según Art. 10.6
-    END IF;
-
-    SET v_descripcion = CONCAT(v_descripcion, ' (coef. ', (v_coef_consulta-1) * 100, '%)');
-    
-    SET v_coef_consulta = v_coef_consulta - 1; -- Convertir para cálculo
-
-    SET v_importe_item = ROUND(v_total_honorarios * v_coef_consulta);
-   
-    CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-
-    SET v_total_honorarios = v_total_honorarios + v_importe_item;
-
 
   ELSE
 
     
-    SET v_coef_10_2_cant = 0.0001; -- Coeficiente para honorarios de CONSULT según Art. 10.2 por cantidad de horas
-    SET v_coef_10_2_h60 = 0.0003; -- Coeficiente para honorarios de CONSULT según Art. 10.2 por distancia hasta 60 km
-
-    
-    SET v_item_numero = 1; -- Primer ítem para CONSULT
-
-    SET v_importe_item = ROUND(v_cant_horas * v_coef_10_2_cant * v_valor_k);
-    SET v_descripcion = CONCAT('Honorarios por Consultas según Art. 10.2 (', ROUND(v_cant_horas, 0), ' consultas, coef. ', v_coef_10_2_cant, ' K)');
-    CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-    SET v_total_honorarios = v_total_honorarios + v_importe_item;
-
-    IF v_hasta_60_km THEN
-      
-      SET v_item_numero = v_item_numero + 1; -- Segundo ítem para CONSULT
-      SET v_importe_item = ROUND(v_cant_horas * v_coef_10_2_h60 * v_valor_k);
-      SET v_descripcion = CONCAT('Adicional por inspección ocular hasta 60 km según Art. 10.2 (', ROUND(v_cant_horas, 0), ' consultas, coef. ', v_coef_10_2_h60, ' K)');
-      CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-      SET v_total_honorarios = v_total_honorarios + v_importe_item;
-    END IF;
-
+    call Calcular_Hon_Art_10_2(
+      p_calculo_id,
+      v_tarea_profesional,
+      v_cant_horas, -- Cantidad de consultas
+      v_hasta_60_km, -- Hasta 60 km
+      v_valor_k,
+      NULL, -- No se envía descripción adicional
+      v_item_numero,
+      v_total_honorarios
+    );
+   
 
   END IF;
   

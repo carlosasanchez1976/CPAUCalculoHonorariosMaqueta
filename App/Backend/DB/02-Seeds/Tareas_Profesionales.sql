@@ -23,6 +23,19 @@ update Tareas_Profesionales set calc_valor_bol2_des = 'Agrega tareas adicionales
 update Tareas_Profesionales set calc_valor_num1_des = 'Monto convenido para las tareas' where codi = 'HYS';
 
 
+-- MEDPLAN - Medición y ejecución de Planos
+update Tareas_Profesionales set vigente = 1 where codi = 'MEDPLAN';
+call Tareas_Profesionales_Entregables_Grabar(null,7,2,1,1);
+update Tareas_Profesionales set calc_valor_bol1_des = 'Medición de construcción existente para determinar la superficie cubierta' where codi = 'MEDPLAN';
+update Tareas_Profesionales set calc_valor_bol2_des = 'Med. de construcciones poco compartimentadas c/ejec. de planos inc/locales, muros, vanos, etc.' where codi = 'MEDPLAN';
+update Tareas_Profesionales set calc_valor_bol3_des = 'Med. de construcciones muy compartimentadas c/ejec. de planos inc/locales, muros, vanos, etc.' where codi = 'MEDPLAN';
+update Tareas_Profesionales set calc_valor_num1_des = 'Superficie m2' where codi = 'MEDPLAN';
+update Tareas_Profesionales set calc_valor_num2_des = 'Superficie m2' where codi = 'MEDPLAN';
+update Tareas_Profesionales set calc_valor_num3_des = 'Superficie m2' where codi = 'MEDPLAN';
+
+
+
+
 
 
 

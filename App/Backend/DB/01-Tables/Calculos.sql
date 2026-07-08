@@ -76,3 +76,5 @@ alter table Calculos add column tarea_observaciones varchar(200) null after tare
 
 alter table Calculos add column horas decimal(6,2) null after obra_complejidad;
 alter table Calculos add column hasta_60_km boolean null after horas;
+
+alter table Calculos add column calc_valor_bol3 boolean null after calc_valor_bol2;

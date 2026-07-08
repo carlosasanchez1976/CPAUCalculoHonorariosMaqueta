@@ -42,5 +42,6 @@ ADD COLUMN calc_obra_valor_obra_des VARCHAR(100) NULL AFTER vigente
 ALTER TABLE Tareas_Profesionales
 ADD COLUMN calc_obra_valor_obra_des VARCHAR(100) NULL AFTER vigente;
 
-
+ALTER TABLE Tareas_Profesionales ADD COLUMN calc_valor_bol3_des VARCHAR(100) NULL AFTER calc_valor_bol2_des;
+ALTER TABLE Tareas_Profesionales ADD COLUMN calc_valor_str3_des VARCHAR(100) NULL AFTER calc_valor_str2_des;
 

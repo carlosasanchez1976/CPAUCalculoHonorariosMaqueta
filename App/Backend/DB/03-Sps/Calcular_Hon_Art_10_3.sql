@@ -60,6 +60,7 @@ bloque_principal: BEGIN
     p_hasta_60_km, -- Hasta 60 km
     p_valor_k,
     p_descripcion,
+    false,
     p_item_numero,
     p_total_importe
   );

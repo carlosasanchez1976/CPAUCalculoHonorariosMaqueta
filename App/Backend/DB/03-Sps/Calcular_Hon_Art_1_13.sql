@@ -24,6 +24,8 @@ DROP PROCEDURE IF EXISTS Calcular_Hon_Art_1_13$$
  * - 2026-07-05: Se agrega parámetro IN p_descripcion para enviar la descripción del ítem (opcional).
  * -             Se CONCATENA la descripción proporcionada con la descripción generada automáticamente.
  ******************************************************************************
+ * - 2026-07-08: Se agrega parámetro IN p_solo_calculo para permitir calcular el total sin generar movimientos en la tabla Calculos_Items. 
+ ******************************************************************************
  * - 2026-05-22: 
  ******************************************************************************
  *

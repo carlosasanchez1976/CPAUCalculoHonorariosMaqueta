@@ -44,6 +44,9 @@ case v_Tarea_codi
   when 'MEDPLAN' then
     -- Lógica para calcular honorarios de Medición y ejecución de Planos
     call Calcular_Honorario_MEDPLAN(p_calculo_id);
+  when 'CONFAC' then
+    -- Lógica para calcular honorarios de confección de planos
+    call Calcular_Honorario_CONFAC(p_calculo_id);
   else
     select concat('Tarea profesional con código erróneo: ', v_Tarea_codi) as mensaje_error;
 end case;

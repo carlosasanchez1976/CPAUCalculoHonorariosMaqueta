@@ -235,7 +235,7 @@ bloque_principal: BEGIN
         SET v_importe_item = v_sup2 * v_coef_sup_k_a_afec * v_valor_k;
         IF v_importe_item  > 0 THEN
           SET v_item_numero = v_item_numero + 1;
-          SET v_descripcion = CONCAT(v_descripcion, '- coef. sup. ', CAST(ROUND(v_coef_sup_k_a_afec * 100, 4) AS CHAR), ' por m2 (', v_sup1, ' m2) por valorK');
+          SET v_descripcion = CONCAT(v_descripcion, '- coef. sup. ', CAST(ROUND(v_coef_sup_k_a_afec * 100, 4) AS CHAR), ' por m2 (', v_sup2, ' m2) por valorK');
           CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
           SET v_total_honorarios = v_importe_item; -- Actualizar el total de honorarios
         END IF;
@@ -272,7 +272,7 @@ bloque_principal: BEGIN
         SET v_importe_item = v_sup3 * v_coef_sup_k_a_afec * v_valor_k;
         IF v_importe_item  > 0 THEN
           SET v_item_numero = v_item_numero + 1;
-          SET v_descripcion = CONCAT(v_descripcion, '- coef. sup. ', CAST(ROUND(v_coef_sup_k_a_afec * 100, 4) AS CHAR), ' por m2 (', v_sup1, ' m2) por valorK');
+          SET v_descripcion = CONCAT(v_descripcion, '- coef. sup. ', CAST(ROUND(v_coef_sup_k_a_afec * 100, 4) AS CHAR), ' por m2 (', v_sup3, ' m2) por valorK');
           CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
           SET v_total_honorarios = v_importe_item; -- Actualizar el total de honorarios
         END IF;

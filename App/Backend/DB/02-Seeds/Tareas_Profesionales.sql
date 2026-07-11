@@ -33,6 +33,14 @@ update Tareas_Profesionales set calc_valor_num1_des = 'Superficie m2' where codi
 update Tareas_Profesionales set calc_valor_num2_des = 'Superficie m2' where codi = 'MEDPLAN';
 update Tareas_Profesionales set calc_valor_num3_des = 'Superficie m2' where codi = 'MEDPLAN';
 
+-- DISPAI - Diseño de paisajes
+update Tareas_Profesionales set vigente = 1 where codi = 'DISPAI';
+call Tareas_Profesionales_Entregables_Grabar(null,17,2,1,1);
+
+-- CONFAC - Conservación de fachadas
+update Tareas_Profesionales set vigente = 1 where codi = 'CONFAC';
+call Tareas_Profesionales_Entregables_Grabar(null,5,2,1,1);
+
 
 
 

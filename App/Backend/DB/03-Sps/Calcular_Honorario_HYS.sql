@@ -118,7 +118,7 @@ bloque_principal: BEGIN
   -- HYS 
   -- ========================================================================
 
-  SET v_coef_a_afectar = 0.15;
+  SET v_total_honorarios = 0; -- Inicializar total de honorarios
 
 
   -- CALCULAR PARA 'HYSCONLEGT'

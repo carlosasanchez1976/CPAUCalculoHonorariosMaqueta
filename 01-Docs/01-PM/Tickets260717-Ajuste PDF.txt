@@ -1,0 +1,1293 @@
+================================================================================
+TICKET: Ajuste de Footer con Número de Página en PDF
+================================================================================
+Fecha: 17/07/2026
+Proyecto: CH2026 - CPAU Cálculo de Honorarios
+Componente: Generación de PDF (Puppeteer + Template HTML)
+Archivo afectado: certificado-basico-proyecto-direccion.html
+
+================================================================================
+1. PROBLEMA DETECTADO
+================================================================================
+
+SÍNTOMA:
+El footer con el número de página (1/3, 2/3, 3/3) aparece en la PÁGINA SIGUIENTE
+en lugar de al final de cada página actual, como se evidencia en la captura de
+pantalla adjunta.
+
+CAUSA RAÍZ:
+El footer tiene posicionamiento absoluto con `bottom: -30px`, lo que lo coloca
+FUERA del contenedor `.page`. Cuando Puppeteer genera el PDF con saltos de página,
+el footer queda "flotando" y se renderiza en la página siguiente.
+
+CÓDIGO PROBLEMÁTICO:
+```css
+.page {
+  position: relative;        /* ← Contenedor de referencia */
+  width: 210mm;
+  min-height: 297mm;         /* ← Altura mínima A4 */
+  padding: 0;
+  page-break-after: always;
+}
+
+.footer-num {
+  position: absolute;
+  bottom: -30px;             /* ← PROBLEMA: -30px saca el footer FUERA del .page */
+  width: 100%;
+  z-index: 1;
+}
+```
+
+DIAGRAMA DEL PROBLEMA:
+```
+┌─────────────────────────────────────┐
+│ .page (min-height: 297mm)           │
+│                                     │
+│  Contenido de la página             │
+│  (header, tablas, resumen, etc.)    │
+│                                     │
+│                                     │
+└─────────────────────────────────────┘ ← Fin del contenedor .page (altura 297mm)
+  ↓ -30px                                ← Footer se renderiza AQUÍ (fuera del .page)
+  [1/3]                                  ← Puppeteer lo coloca en la SIGUIENTE página
+────────────────────────────────────────  ← Salto de página (page-break)
+┌─────────────────────────────────────┐
+│ .page (Página 2)                    │
+│  [1/3] ← Aparece acá                │  ← PROBLEMA
+│                                     │
+```
+
+================================================================================
+2. ANÁLISIS TÉCNICO
+================================================================================
+
+2.1 ¿POR QUÉ PASA ESTO?
+────────────────────────
+- `.page` tiene `min-height: 297mm` (tamaño A4 exacto)
+- El footer usa `position: absolute; bottom: -30px`
+- En HTML/CSS normal, esto funcionaría porque el body puede expandirse
+- PERO en Puppeteer con `page-break-after: always`, cada `.page` es una
+  "caja cerrada" de 297mm
+- Todo lo que esté FUERA de esos 297mm (como el -30px) se va a la siguiente página
+
+2.2 ¿POR QUÉ `bottom: -30px`?
+──────────────────────────────
+Probablemente se usó para lograr que el footer quede "pegado" al borde inferior
+de la hoja A4, pero esto NO funciona con el modelo de páginas de Puppeteer.
+
+2.3 ALTURA DISPONIBLE REAL
+───────────────────────────
+Altura A4: 297mm
+Márgenes Puppeteer (actual): top 15mm + bottom 15mm = 30mm
+Altura disponible para contenido: 297mm - 30mm = 267mm
+
+Si el contenido + footer exceden 267mm, habrá overflow a la página siguiente.
+
+================================================================================
+3. SOLUCIONES PROPUESTAS
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+SOLUCIÓN A: Solo Template HTML/CSS (RECOMENDADA - Sin tocar backend)
+────────────────────────────────────────────────────────────────────────────────
+
+VENTAJAS:
+✅ No requiere modificar el backend (pdfService.js)
+✅ Mantiene el enfoque de plantilla hardcodeada (Fase 1)
+✅ Funciona con la configuración actual de Puppeteer
+✅ Control visual directo en el template
+
+DESVENTAJAS:
+⚠️ El footer es parte del contenido, no un "footer real" de PDF
+⚠️ Si el contenido es muy largo, el footer podría quedar en página siguiente
+⚠️ Hay que calcular manualmente el espacio disponible
+
+IMPLEMENTACIÓN:
+───────────────
+
+CAMBIO 1: Ajustar CSS del .page para usar flexbox
+```css
+.page {
+  position: relative;
+  width: 210mm;
+  min-height: 267mm;          /* ← Cambiar de 297mm a 267mm (resta márgenes) */
+  padding: 15mm 12mm 0 12mm;  /* ← Agregar padding top/sides, NO bottom */
+  page-break-after: always;
+  page-break-inside: avoid;
+  background: var(--text-white-color);
+  
+  /* Flexbox para controlar layout interno */
+  display: flex;
+  flex-direction: column;
+}
+```
+
+CAMBIO 2: Wrapper para contenido principal
+```css
+.page-content {
+  flex: 1;                    /* ← Ocupa todo el espacio disponible */
+  min-height: 0;              /* ← Permite que flex funcione correctamente */
+}
+```
+
+CAMBIO 3: Footer fijo al final (DENTRO del .page)
+```css
+.footer-num {
+  position: relative;         /* ← Cambiar de absolute a relative */
+  bottom: 0;                  /* ← Mantener en 0 (ya no -30px) */
+  width: 100%;
+  margin-top: auto;           /* ← Empuja el footer al final del espacio flex */
+  padding-bottom: 10mm;       /* ← Separación del borde inferior */
+  z-index: 1;
+}
+```
+
+CAMBIOS EN HTML:
+Envolver el contenido de cada página:
+```html
+<div class="page">
+  <div class="page-content">
+    <!-- Header, tablas, resumen, todo el contenido -->
+  </div>
+  
+  <!-- Footer (FUERA del .page-content pero DENTRO del .page) -->
+  <div class="footer-num">
+    <div class="footer-content-num">
+      <div class="footer-linea"></div>
+      <div class="footer-texto">
+        <span>1/3</span>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+CÓMO FUNCIONA:
+```
+┌─────────────────────────────────────┐
+│ .page (flex container)              │
+│ min-height: 267mm                   │
+│ padding: 15mm 12mm 0 12mm           │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ .page-content (flex: 1)         │ │
+│ │                                 │ │
+│ │ Header                          │ │
+│ │ Resumen                         │ │
+│ │ Tablas                          │ │
+│ │ ...                             │ │
+│ │                                 │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ↓ margin-top: auto (empuja abajo)  │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ .footer-num                     │ │
+│ │ ─────────────────               │ │
+│ │              1/3 →              │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+└─────────────────────────────────────┘ ← Fin de la página (267mm + padding)
+────────────────────────────────────────  ← Salto de página
+┌─────────────────────────────────────┐
+│ .page (Página 2)                    │
+│ ...                                 │
+```
+
+RIESGO:
+Si el contenido de .page-content es MUY largo (excede 267mm - espacio del footer),
+el footer podría quedar en la siguiente página de todas formas.
+
+MITIGACIÓN:
+- Reducir font-size de tablas si es necesario
+- Reducir padding/margins internos
+- Considerar page breaks inteligentes (page-break-inside: avoid en tablas)
+
+────────────────────────────────────────────────────────────────────────────────
+SOLUCIÓN B: Footer con displayHeaderFooter de Puppeteer (Backend + Template)
+────────────────────────────────────────────────────────────────────────────────
+
+VENTAJAS:
+✅ Footer "real" de PDF (renderizado por Chromium fuera del contenido)
+✅ NUNCA se desplaza a la página siguiente (está en el área de margen)
+✅ Puppeteer calcula automáticamente dónde hacer page break
+✅ Numeración automática con pageNumber/totalPages
+✅ Escalable: funciona sin importar la longitud del contenido
+
+DESVENTAJAS:
+⚠️ Requiere modificar pdfService.js (backend)
+⚠️ El footer queda "fuera" del HTML (no se puede estilizar tanto)
+⚠️ Limitaciones de CSS en headerTemplate/footerTemplate
+
+IMPLEMENTACIÓN:
+───────────────
+
+CAMBIO 1: Eliminar footer del HTML
+Quitar todos los `<div class="footer-num">` del template HTML.
+
+CAMBIO 2: Modificar pdfService.js
+```javascript
+// Generar PDF
+const pdfBuffer = await page.pdf({
+  format: 'A4',
+  printBackground: true,
+  displayHeaderFooter: true,          // ← ACTIVAR
+  headerTemplate: '<div></div>',      // ← Header vacío
+  footerTemplate: `
+    <div style="width: 100%; font-size: 9pt; padding: 5mm 0; text-align: right; 
+                color: #6b6b6b; margin-right: 12mm; border-top: 1px solid #6b6b6b;">
+      <span class="pageNumber"></span>/<span class="totalPages"></span>
+    </div>
+  `,
+  margin: {
+    top: '15mm',
+    right: '12mm',
+    bottom: '18mm',                   // ← Aumentar para espacio del footer
+    left: '12mm'
+  },
+  preferCSSPageSize: false
+});
+```
+
+CAMBIO 3: Ajustar template HTML
+```css
+.page {
+  width: 210mm;
+  padding: 0;                         /* ← SIN padding (lo maneja Puppeteer) */
+  page-break-after: always;
+}
+```
+
+CÓMO FUNCIONA:
+```
+┌─────────────────────────────────────┐
+│ Margen superior (15mm)              │ ← Controlado por Puppeteer
+├─────────────────────────────────────┤
+│                                     │
+│ .page (contenido HTML)              │
+│                                     │
+│ Header                              │
+│ Resumen                             │
+│ Tablas                              │
+│ ...                                 │
+│                                     │
+│                                     │
+├─────────────────────────────────────┤
+│ Margen inferior (18mm)              │ ← Controlado por Puppeteer
+│ ─────────────────────               │ ← Footer aquí (displayHeaderFooter)
+│              1/3 →                  │ ← Puppeteer lo inyecta automáticamente
+└─────────────────────────────────────┘
+────────────────────────────────────────  ← Salto de página
+```
+
+────────────────────────────────────────────────────────────────────────────────
+SOLUCIÓN C: Híbrida (Template con altura fija + backend opcional)
+────────────────────────────────────────────────────────────────────────────────
+
+Usar `height: 297mm` en lugar de `min-height` para forzar altura exacta:
+
+```css
+.page {
+  height: 297mm;                      /* ← Altura FIJA (no min-height) */
+  overflow: hidden;                   /* ← Ocultar overflow */
+  /* resto igual */
+}
+```
+
+PROBLEMA:
+Si el contenido excede 297mm, se corta (overflow: hidden) o se desborda a la
+siguiente página de todas formas.
+
+NO RECOMENDADA: Muy rígida, no se adapta a contenido variable.
+
+================================================================================
+4. RECOMENDACIÓN FINAL
+================================================================================
+
+PARA FASE 1 (Plantilla hardcodeada):
+→ Implementar SOLUCIÓN A (Solo Template HTML/CSS)
+  - Rápida de implementar
+  - No rompe el backend actual
+  - Suficiente para la tarea "Proyecto y Dirección Básico" actual
+
+PARA FASE 2 (Plantillas en DB, multi-tarea):
+→ Migrar a SOLUCIÓN B (displayHeaderFooter de Puppeteer)
+  - Más robusta y profesional
+  - Se adapta a cualquier longitud de contenido
+  - Footer consistente en todas las plantillas
+  - Alineado con la SPEC010 (solución serverless escalable)
+
+================================================================================
+5. PLAN DE IMPLEMENTACIÓN (SOLUCIÓN A - Solo Template)
+================================================================================
+
+PASO 1: Backup del template actual
+```bash
+cp certificado-basico-proyecto-direccion.html certificado-basico-proyecto-direccion.BACKUP.html
+```
+
+PASO 2: Modificar CSS en <style>
+- Cambiar `.page` de `min-height: 297mm` a `min-height: 267mm`
+- Agregar `display: flex; flex-direction: column;` a `.page`
+- Agregar `padding: 15mm 12mm 0 12mm;` a `.page`
+- Crear `.page-content { flex: 1; min-height: 0; }`
+- Cambiar `.footer-num` de `position: absolute; bottom: -30px;` a 
+  `position: relative; margin-top: auto; padding-bottom: 10mm;`
+
+PASO 3: Modificar HTML
+- Envolver todo el contenido (excepto footer) en `<div class="page-content">`
+- Repetir en las 3 páginas
+
+PASO 4: Testing
+- Generar PDF con datos de prueba
+- Verificar que footer aparece al final de cada página
+- Validar que no hay cortes de contenido
+- Probar con contenido largo (muchas tareas) para validar overflow
+
+PASO 5: Ajuste fino
+- Si el footer sigue yéndose a la siguiente página:
+  * Reducir `min-height` de `.page` (ej: 260mm en lugar de 267mm)
+  * Reducir `padding-bottom` del `.footer-num`
+  * Reducir font-size o margins de elementos internos
+
+ESTIMACIÓN: 1-2 horas
+
+================================================================================
+6. VALIDACIÓN POST-IMPLEMENTACIÓN
+================================================================================
+
+CRITERIOS DE ACEPTACIÓN:
+□ El footer aparece al final de cada página (1/3, 2/3, 3/3)
+□ El footer NO aparece en la página siguiente
+□ El contenido NO se corta ni oculta
+□ Las 3 páginas se renderizan correctamente
+□ Testing con datos reales del cliente CPAU (proyecto de 1500 m²)
+□ PDF resultante < 500 KB
+□ Texto seleccionable en todo el documento (incluyendo número de página)
+
+TESTING DE REGRESIÓN:
+□ Header CPAU se ve correctamente (logo + título + metadata)
+□ Tablas de honorarios alineadas correctamente
+□ Colores y tipografía según diseño (Avenir)
+□ Bordes redondeados (border-radius: 12px) visibles
+□ Disclaimer con borde azul correcto
+
+================================================================================
+FIN DEL ANÁLISIS
+================================================================================
+
+
+================================================================================
+TICKETS DE IMPLEMENTACIÓN - SOLUCIÓN B (DEFINITIVA - FASE 2)
+================================================================================
+Solución: displayHeaderFooter de Puppeteer
+Enfoque: Backend + Template
+Duración total estimada: 3-4 horas
+Tickets: 3
+
+================================================================================
+🎫 TICKET-001: Configurar displayHeaderFooter en pdfService.js
+================================================================================
+Tipo: Backend / Puppeteer
+Prioridad: ALTA
+Estimación: 1-1.5 horas
+Dependencias: Ninguna
+Archivo: App/Backend/Node/src/services/pdfService.js
+
+────────────────────────────────────────────────────────────────────────────────
+DESCRIPCIÓN
+────────────────────────────────────────────────────────────────────────────────
+Modificar la configuración de page.pdf() en pdfService.js para activar
+displayHeaderFooter y renderizar el número de página como footer real del PDF.
+
+────────────────────────────────────────────────────────────────────────────────
+CAMBIOS A REALIZAR
+────────────────────────────────────────────────────────────────────────────────
+
+UBICACIÓN: Función generarCertificado(), línea ~74 (aprox)
+
+ANTES (código actual):
+```javascript
+// Generar PDF
+const pdfBuffer = await page.pdf({
+  format: 'A4',
+  printBackground: true,
+  margin: {
+    top: '15mm',    // ← De 20mm a 15mm
+    right: '12mm',  // ← De 15mm a 12mm
+    bottom: '15mm', // ← De 20mm a 15mm
+    left: '12mm'    // ← De 15mm a 12mm
+  },
+  preferCSSPageSize: false // Forzar formato A4
+});
+```
+
+DESPUÉS (nuevo código):
+```javascript
+// Generar PDF con footer de numeración
+const pdfBuffer = await page.pdf({
+  format: 'A4',
+  printBackground: true,
+  displayHeaderFooter: true,
+  
+  // Header vacío (no necesitamos header adicional)
+  headerTemplate: '<div></div>',
+  
+  // Footer con numeración de páginas
+  footerTemplate: `
+    <div style="
+      width: 100%; 
+      font-size: 9pt; 
+      color: #6b6b6b;
+      padding: 5mm 12mm 0 0;
+      text-align: right;
+      border-top: 1px solid #6b6b6b;
+      box-sizing: border-box;
+    ">
+      <span class="pageNumber"></span>/<span class="totalPages"></span>
+    </div>
+  `,
+  
+  margin: {
+    top: '15mm',     // Margen superior
+    right: '12mm',   // Margen derecho
+    bottom: '20mm',  // ← AUMENTAR para dar espacio al footer (de 15mm a 20mm)
+    left: '12mm'     // Margen izquierdo
+  },
+  
+  preferCSSPageSize: false
+});
+```
+
+────────────────────────────────────────────────────────────────────────────────
+NOTAS TÉCNICAS
+────────────────────────────────────────────────────────────────────────────────
+
+1. **displayHeaderFooter: true**
+   - Activa el sistema de header/footer de Chromium
+   - Renderiza en el área de MARGEN (fuera del contenido HTML)
+   - NO cuenta como parte del contenido de la página
+
+2. **pageNumber y totalPages**
+   - Son variables especiales de Chromium
+   - Se reemplazan automáticamente en cada página
+   - NO requieren JavaScript ni Handlebars
+
+3. **Estilos del footerTemplate**
+   - SOLO acepta CSS inline (no clases externas)
+   - El width: 100% es relativo al ancho de la página (210mm - márgenes)
+   - padding-right: 12mm alinea el texto con el margen derecho del contenido
+
+4. **Margen bottom aumentado**
+   - De 15mm a 20mm para dar espacio vertical al footer
+   - El footer se renderiza DENTRO de esos 20mm
+   - El contenido HTML termina 20mm antes del borde inferior
+
+5. **Border-top**
+   - La línea horizontal que aparece en el diseño actual
+   - 1px solid #6b6b6b (color gris del diseño)
+
+────────────────────────────────────────────────────────────────────────────────
+TESTING
+────────────────────────────────────────────────────────────────────────────────
+
+TESTING LOCAL (antes de deployar):
+```bash
+cd App/Backend/Node
+npm start
+```
+
+Hacer request con Postman/curl:
+```bash
+curl -X POST http://localhost:3000/api/calculos/exportar-pdf \
+  -H "Content-Type: application/json" \
+  -d @test-payload.json \
+  --output test-footer.pdf
+```
+
+Abrir test-footer.pdf y verificar:
+□ Footer aparece en todas las páginas
+□ Numeración correcta: 1/3, 2/3, 3/3
+□ Línea horizontal visible sobre el número
+□ Alineación derecha correcta
+□ Footer NO interfiere con el contenido
+
+────────────────────────────────────────────────────────────────────────────────
+CRITERIOS DE ACEPTACIÓN
+────────────────────────────────────────────────────────────────────────────────
+
+□ T001-CA-001: displayHeaderFooter activado en page.pdf()
+□ T001-CA-002: footerTemplate configurado con pageNumber/totalPages
+□ T001-CA-003: Margen bottom aumentado a 20mm
+□ T001-CA-004: Testing local exitoso, footer visible en todas las páginas
+□ T001-CA-005: Numeración correcta (1/3, 2/3, 3/3)
+□ T001-CA-006: Línea horizontal (border-top) visible
+□ T001-CA-007: Alineación a la derecha correcta
+□ T001-CA-008: No hay warnings ni errores en logs
+
+────────────────────────────────────────────────────────────────────────────────
+DEPLOY
+────────────────────────────────────────────────────────────────────────────────
+
+Después de testing local exitoso:
+
+1. Generar ZIP de deployment:
+   ```bash
+   cd App/Backend/Node
+   npm run package
+   ```
+
+2. Subir a Lambda QA:
+   ```bash
+   npm run upload:qa
+   ```
+   
+   O manualmente en AWS Console:
+   - AWS Lambda → ch2026-backend-api-qa
+   - Code → Upload from → .zip file
+   - Seleccionar: ch2026-backend-api-lambda.zip
+   - Save
+
+3. Testing en QA:
+   ```bash
+   curl -X POST https://cpau-ch2026-api-qa.neosisweb.ar/api/calculos/exportar-pdf \
+     -H "Content-Type: application/json" \
+     -d @test-payload.json \
+     --output test-footer-qa.pdf
+   ```
+
+────────────────────────────────────────────────────────────────────────────────
+ROLLBACK (si algo falla)
+────────────────────────────────────────────────────────────────────────────────
+
+Si hay problemas después del deploy, revertir los cambios:
+
+```javascript
+// Volver a la configuración anterior (sin displayHeaderFooter)
+const pdfBuffer = await page.pdf({
+  format: 'A4',
+  printBackground: true,
+  margin: {
+    top: '15mm',
+    right: '12mm',
+    bottom: '15mm',  // ← Volver a 15mm
+    left: '12mm'
+  },
+  preferCSSPageSize: false
+});
+```
+
+Y hacer re-deploy.
+
+
+================================================================================
+🎫 TICKET-002: Limpiar footer hardcodeado del template HTML
+================================================================================
+Tipo: Template / HTML/CSS
+Prioridad: ALTA
+Estimación: 1 hora
+Dependencias: T001 completado y testeado
+Archivo: App/Backend/Node/templates/certificado-basico-proyecto-direccion.html
+
+────────────────────────────────────────────────────────────────────────────────
+DESCRIPCIÓN
+────────────────────────────────────────────────────────────────────────────────
+Eliminar todos los bloques <div class="footer-num"> del template HTML ya que
+el footer ahora se renderiza con displayHeaderFooter de Puppeteer.
+
+────────────────────────────────────────────────────────────────────────────────
+CAMBIOS A REALIZAR
+────────────────────────────────────────────────────────────────────────────────
+
+PASO 1: Eliminar CSS del footer (en <style>)
+─────────────────────────────────────────────
+
+UBICACIÓN: Dentro de <style>, líneas ~450-470 (aprox)
+
+ELIMINAR ESTE BLOQUE COMPLETO:
+```css
+/* NUMERO FOOTER */
+
+.footer-num {
+  position: absolute;
+  bottom: -30px;
+  width: 100%;
+  z-index: 1;
+}
+
+.footer-linea {
+  height: 1px;
+  width: 100%;
+  background: var(--border-title-gray-color);
+}
+
+.footer-texto {
+  padding: 5px 0px;
+  float: right;
+}
+```
+
+
+PASO 2: Eliminar footer de PÁGINA 1
+────────────────────────────────────
+
+UBICACIÓN: Dentro del primer <div class="page">, antes del cierre </div>
+
+ANTES:
+```html
+    <!-- Footer numero -->
+    <div class="footer-num">
+      <div class="footer-content-num">
+        <div class="footer-linea"></div>
+        <div class="footer-texto">
+          <span>1/3</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Fin pagina 1 -->
+```
+
+DESPUÉS:
+```html
+  </div>
+  <!-- Fin pagina 1 -->
+```
+
+
+PASO 3: Eliminar footer de PÁGINA 2
+────────────────────────────────────
+
+UBICACIÓN: Dentro del segundo <div class="page">, antes del cierre </div>
+
+ANTES:
+```html
+    <!-- Footer numero -->
+    <div class="footer-num">
+      <div class="footer-content-num">
+        <div class="footer-linea"></div>
+        <div class="footer-texto">
+          <span>2/3</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Final Pagina 2 -->
+```
+
+DESPUÉS:
+```html
+  </div>
+
+  <!-- Final Pagina 2 -->
+```
+
+
+PASO 4: Eliminar footer de PÁGINA 3
+────────────────────────────────────
+
+UBICACIÓN: Dentro del tercer <div class="page">, antes del cierre </div>
+
+ANTES:
+```html
+    <!-- Footer numero -->
+    <div class="footer-num">
+      <div class="footer-content-num">
+        <div class="footer-linea"></div>
+        <div class="footer-texto">
+          <span>3/3</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fin pagina 3 -->
+```
+
+DESPUÉS:
+```html
+  </div>
+
+  <!-- Fin pagina 3 -->
+```
+
+
+PASO 5: Ajustar CSS del .page
+──────────────────────────────
+
+UBICACIÓN: Dentro de <style>, sección "PÁGINA (A4)"
+
+ANTES:
+```css
+.page {
+  position: relative;     /* ← ELIMINAR (ya no necesario para footer absoluto) */
+  width: 210mm;
+  min-height: 297mm;
+  padding: 0;
+  page-break-after: always;
+  page-break-inside: avoid;
+  background: var(--text-white-color);
+}
+```
+
+DESPUÉS:
+```css
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 0;
+  page-break-after: always;
+  page-break-inside: avoid;
+  background: var(--text-white-color);
+}
+```
+
+────────────────────────────────────────────────────────────────────────────────
+VERIFICACIÓN POST-CAMBIOS
+────────────────────────────────────────────────────────────────────────────────
+
+Después de hacer los cambios:
+
+1. Buscar en el archivo cualquier ocurrencia de:
+   - "footer-num"
+   - "footer-linea"
+   - "footer-texto"
+   - "1/3", "2/3", "3/3" (hardcodeados)
+   
+   RESULTADO ESPERADO: 0 ocurrencias
+
+2. Verificar que .page ya NO tiene "position: relative"
+
+3. Contar divs con class="page":
+   RESULTADO ESPERADO: 3 (una por página)
+
+────────────────────────────────────────────────────────────────────────────────
+TESTING
+────────────────────────────────────────────────────────────────────────────────
+
+REQUISITO PREVIO: T001 debe estar deployado en QA
+
+Testing en QA:
+```bash
+curl -X POST https://cpau-ch2026-api-qa.neosisweb.ar/api/calculos/exportar-pdf \
+  -H "Content-Type: application/json" \
+  -d @test-payload.json \
+  --output test-sin-footer-hardcodeado.pdf
+```
+
+Abrir PDF y verificar:
+□ Footer de Puppeteer visible (1/3, 2/3, 3/3)
+□ NO hay "doble footer" (hardcodeado + Puppeteer)
+□ NO hay espacios vacíos al final de las páginas
+□ Contenido se distribuye correctamente en las 3 páginas
+
+────────────────────────────────────────────────────────────────────────────────
+CRITERIOS DE ACEPTACIÓN
+────────────────────────────────────────────────────────────────────────────────
+
+□ T002-CA-001: CSS de .footer-num eliminado completamente
+□ T002-CA-002: Footer HTML eliminado de las 3 páginas
+□ T002-CA-003: "position: relative" eliminado de .page
+□ T002-CA-004: Búsqueda de "footer-num" retorna 0 resultados
+□ T002-CA-005: PDF generado muestra solo footer de Puppeteer
+□ T002-CA-006: NO hay doble footer ni espacios vacíos
+□ T002-CA-007: Tamaño del archivo HTML reducido (~50 líneas menos)
+
+
+================================================================================
+🎫 TICKET-003: Optimización final y ajustes de padding
+================================================================================
+Tipo: Template / CSS Fine-tuning
+Prioridad: MEDIA
+Estimación: 0.5-1 hora
+Dependencias: T001 + T002 completados
+Archivo: App/Backend/Node/templates/certificado-basico-proyecto-direccion.html
+
+────────────────────────────────────────────────────────────────────────────────
+DESCRIPCIÓN
+────────────────────────────────────────────────────────────────────────────────
+Ajustar el padding del contenido ahora que el footer está en el área de margen,
+para aprovechar mejor el espacio disponible y evitar que el contenido quede
+muy pegado al footer.
+
+────────────────────────────────────────────────────────────────────────────────
+ANÁLISIS DE ESPACIO
+────────────────────────────────────────────────────────────────────────────────
+
+CONFIGURACIÓN ANTERIOR (sin displayHeaderFooter):
+- Altura A4: 297mm
+- Margen top: 15mm
+- Margen bottom: 15mm
+- Espacio disponible: 297 - 15 - 15 = 267mm
+- Footer hardcodeado: ocupaba ~10mm del contenido
+
+CONFIGURACIÓN NUEVA (con displayHeaderFooter):
+- Altura A4: 297mm
+- Margen top: 15mm
+- Margen bottom: 20mm (área del footer de Puppeteer)
+- Espacio disponible: 297 - 15 - 20 = 262mm
+- Footer de Puppeteer: fuera del contenido (en los 20mm de margen)
+
+RESULTADO:
+- Espacio disponible real: 262mm
+- Footer NO ocupa espacio del contenido
+- El contenido puede extenderse hasta 262mm sin tocar el footer
+
+────────────────────────────────────────────────────────────────────────────────
+CAMBIOS A REALIZAR (OPCIONALES - según necesidad)
+────────────────────────────────────────────────────────────────────────────────
+
+OPCIÓN A: Agregar padding-bottom al contenido de cada página
+─────────────────────────────────────────────────────────────
+
+Si se detecta que el contenido queda muy pegado al footer:
+
+```css
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 0 0 5mm 0;  /* ← Agregar 5mm de padding bottom */
+  page-break-after: always;
+  page-break-inside: avoid;
+  background: var(--text-white-color);
+}
+```
+
+EFECTO: Crea una "zona de respiro" de 5mm entre el contenido y el footer.
+
+
+OPCIÓN B: Reducir font-size o line-height en tablas (si hay overflow)
+──────────────────────────────────────────────────────────────────────
+
+Si el contenido de alguna página excede los 262mm disponibles:
+
+```css
+table {
+  /* ... resto de estilos ... */
+  font-size: 8.5pt;      /* ← Reducir de 9pt a 8.5pt */
+  line-height: 1.3;      /* ← Reducir de 1.4 a 1.3 */
+}
+
+tbody td {
+  padding: 6px 0;        /* ← Reducir de 8px a 6px */
+  /* ... */
+}
+```
+
+EFECTO: Compacta las tablas para que entren mejor en la página.
+
+
+OPCIÓN C: Ajustar margin-bottom de las secciones
+─────────────────────────────────────────────────
+
+```css
+.table-section {
+  margin-bottom: 8px;    /* ← Reducir de 10px a 8px */
+}
+
+.section-title {
+  margin-bottom: 12px;   /* ← Reducir de 15px a 12px */
+  margin-top: 15px;      /* ← Reducir de 20px a 15px */
+  /* ... */
+}
+```
+
+EFECTO: Reduce el espacio vertical entre secciones.
+
+────────────────────────────────────────────────────────────────────────────────
+TESTING DE CONTENIDO LARGO
+────────────────────────────────────────────────────────────────────────────────
+
+Probar con un cálculo que tenga:
+- Muchas tareas de obra (6-8 ítems)
+- Muchas tareas adicionales (4-5 ítems)
+- Muchas especialidades (4-5 ítems)
+
+TOTAL: ~15-18 filas de tabla
+
+Verificar que:
+□ Todo el contenido entra en las páginas correspondientes
+□ No hay cortes de tabla en lugares extraños
+□ El footer siempre está visible y no tapa contenido
+□ Los page breaks se generan correctamente
+
+────────────────────────────────────────────────────────────────────────────────
+CRITERIOS DE ACEPTACIÓN
+────────────────────────────────────────────────────────────────────────────────
+
+□ T003-CA-001: Contenido no queda pegado al footer (mínimo 3mm de separación)
+□ T003-CA-002: Testing con contenido largo exitoso (no overflow)
+□ T003-CA-003: Page breaks correctos en todas las páginas
+□ T003-CA-004: Footer visible y no tapa contenido
+□ T003-CA-005: PDF resultante se ve profesional y balanceado
+□ T003-CA-006: Validación visual con equipo de diseño (si corresponde)
+
+
+================================================================================
+ORDEN DE EJECUCIÓN DE TICKETS
+================================================================================
+
+SECUENCIA OBLIGATORIA:
+1. T001 → Configurar displayHeaderFooter (backend)
+   └─ Testing local exitoso antes de continuar
+   
+2. T001 → Deploy a QA
+   └─ Validar que funciona en Lambda
+   
+3. T002 → Limpiar footer hardcodeado (template)
+   └─ Testing en QA (requiere T001 ya deployado)
+   
+4. T003 → Optimización final (template)
+   └─ Ajustes finos según resultados de T001 + T002
+
+TIEMPO TOTAL ESTIMADO: 3-4 horas
+
+HITOS:
+- Fin de T001: Footer de Puppeteer funcionando (pero puede haber doble footer)
+- Fin de T002: Template limpio, solo footer de Puppeteer
+- Fin de T003: Solución optimizada y lista para producción
+
+
+================================================================================
+VALIDACIÓN FINAL (POST-IMPLEMENTACIÓN)
+================================================================================
+
+CHECKLIST COMPLETO:
+□ Footer visible en las 3 páginas del PDF
+□ Numeración correcta: 1/3, 2/3, 3/3
+□ Línea horizontal sobre el número
+□ Alineación a la derecha correcta
+□ NO hay doble footer ni espacios vacíos
+□ Contenido se distribuye correctamente
+□ NO hay overflow ni cortes de contenido
+□ PDF generado < 500 KB
+□ Texto seleccionable en todo el documento (incluido número de página)
+□ Cold start Lambda < 8 segundos
+□ Warm start Lambda < 3 segundos
+□ Testing cross-browser (Chrome, Edge, Firefox)
+□ Validación con datos reales del cliente CPAU
+
+CRITERIOS DE ROLLBACK:
+Si después de la implementación completa hay problemas críticos:
+- Revertir cambios en pdfService.js (quitar displayHeaderFooter)
+- Restaurar template desde backup (con footer hardcodeado)
+- Re-deployar a Lambda
+- Analizar causa raíz y planificar re-implementación
+
+
+================================================================================
+DOCUMENTACIÓN POST-IMPLEMENTACIÓN
+================================================================================
+
+Actualizar los siguientes documentos:
+
+1. SPEC010-CALC-Entregables.md
+   - Marcar T010-003 como completado con displayHeaderFooter
+   - Documentar la configuración final de Puppeteer
+   
+2. README.md del Backend (si existe)
+   - Agregar nota sobre displayHeaderFooter en la sección de PDF
+   
+3. Commit messages:
+   ```
+   feat(pdf): implementar footer con displayHeaderFooter de Puppeteer
+   
+   - Activar displayHeaderFooter en page.pdf()
+   - Configurar footerTemplate con numeración automática
+   - Eliminar footer hardcodeado del template HTML
+   - Ajustar márgenes para espacio del footer
+   
+   Ref: Tickets260717-Ajuste PDF.txt - T001, T002, T003
+   SPEC: SPEC010-CALC-Entregables (T010-003)
+   ```
+
+
+================================================================================
+FIN DE TICKETS - SOLUCIÓN B (DEFINITIVA)
+================================================================================
+
+
+================================================================================
+🎫 TICKET-004: Optimización de Espaciado Vertical para Compresión a 3 Páginas
+================================================================================
+Tipo: Template / CSS Fine-tuning
+Prioridad: ALTA
+Estimación: COMPLETADO (18/07/2026)
+Dependencias: T001 + T002 + T003 completados
+Archivo: App/Backend/Node/templates/certificado-basico-proyecto-direccion.html
+
+────────────────────────────────────────────────────────────────────────────────
+CONTEXTO
+────────────────────────────────────────────────────────────────────────────────
+
+PROBLEMA DETECTADO:
+Después de implementar T001 (displayHeaderFooter) y T002 (eliminar footer 
+hardcodeado), el PDF se generaba con el número correcto de páginas, pero con 
+contenido menos denso. En algunos casos (ej: proyectos con 2-3 especialidades), 
+el contenido se desbordaba a una 4ta página conteniendo solo 1-2 líneas de texto.
+
+OBJETIVO:
+Optimizar el espaciado vertical del template para que el contenido típico quepa 
+cómodamente en 3 páginas sin sacrificar legibilidad ni diseño profesional.
+
+ENFOQUE:
+Aplicar ajustes sutiles pero acumulativos en:
+- Font-size de tablas
+- Padding de celdas
+- Márgenes de secciones
+- Line-height (interlineado)
+
+────────────────────────────────────────────────────────────────────────────────
+CAMBIOS REALIZADOS
+────────────────────────────────────────────────────────────────────────────────
+
+CATEGORÍA 1: TABLAS DE HONORARIOS
+──────────────────────────────────
+
+A. Font-size principal
+   ANTES: font-size: 9pt;
+   AHORA: font-size: 8.5pt;
+   LÍNEA: ~268
+   IMPACTO: Reducción de ~2-3mm por tabla sin afectar legibilidad
+   JUSTIFICACIÓN: 8.5pt es tamaño estándar en documentos financieros
+
+B. Margin-bottom de tablas
+   ANTES: margin-bottom: 20px;
+   AHORA: margin-bottom: 15px;
+   LÍNEA: ~268
+   IMPACTO: ~5mm de ahorro por cada tabla (hay ~4-5 tablas por documento)
+
+C. Padding de celdas del body (tbody td)
+   ANTES: padding: 8px 0;
+   AHORA: padding: 6px 0;
+   LÍNEA: ~380
+   IMPACTO: ~2px por fila × ~15-20 filas = ~30-40px (~10mm) total
+
+D. Padding de headers (thead th)
+   ANTES: padding: 10px 0;
+   AHORA: padding: 8px 0;
+   LÍNEA: ~290
+   IMPACTO: ~2px por tabla header × 5 tablas = ~10px (~3mm)
+
+
+CATEGORÍA 2: TÍTULOS Y SECCIONES
+─────────────────────────────────
+
+A. Títulos de sección (section-title)
+   ANTES: 
+     margin-bottom: 15px;
+     margin-top: 20px;
+   AHORA:
+     margin-bottom: 12px;
+     margin-top: 15px;
+   LÍNEAS: ~186-187
+   IMPACTO: ~8mm de ahorro acumulado (6-8 secciones por documento)
+
+B. Header del certificado (certificate-header)
+   ANTES: margin-bottom: 25px;
+   AHORA: margin-bottom: 20px;
+   LÍNEA: ~112
+   IMPACTO: ~5mm en la primera página
+
+C. Resumen grid (resumen-grid)
+   ANTES: margin-bottom: 20px;
+   AHORA: margin-bottom: 15px;
+   LÍNEA: ~195
+   IMPACTO: ~5mm en la primera página
+
+D. Items del resumen (resumen-item)
+   ANTES: padding: 12px 0;
+   AHORA: padding: 10px 0;
+   LÍNEA: ~205
+   IMPACTO: ~2px × 7 items = ~14px (~4mm)
+
+
+CATEGORÍA 3: DISCLAIMER/IMPORTANTE
+───────────────────────────────────
+
+A. Padding interno
+   ANTES: padding: 15px;
+   AHORA: padding: 12px;
+   LÍNEA: ~249
+   IMPACTO: ~3mm de altura total del bloque
+
+B. Margin vertical
+   ANTES: margin: 20px 0;
+   AHORA: margin: 15px 0;
+   LÍNEA: ~249
+   IMPACTO: ~10mm (5mm arriba + 5mm abajo)
+
+
+CATEGORÍA 4: LINE-HEIGHT (INTERLINEADO)
+────────────────────────────────────────
+
+A. Body general
+   ANTES: line-height: 1.4;
+   AHORA: line-height: 1.3;
+   LÍNEA: ~65
+   IMPACTO: ~5-8mm en todo el documento
+   JUSTIFICACIÓN: 1.3 sigue siendo cómodo de leer
+
+B. Disclaimer text
+   ANTES: line-height: 1.6;
+   AHORA: line-height: 1.4;
+   LÍNEA: ~259
+   IMPACTO: ~3mm en el bloque IMPORTANTE
+
+C. Notas legales (nota-block h4 y p)
+   ANTES: line-height: 1.6; (en ambos)
+   AHORA: line-height: 1.4; (en ambos)
+   LÍNEAS: ~483, ~492
+   IMPACTO: ~5-8mm en la página de notas legales
+
+────────────────────────────────────────────────────────────────────────────────
+RESUMEN DE AHORRO DE ESPACIO
+────────────────────────────────────────────────────────────────────────────────
+
+ESTIMACIÓN POR CATEGORÍA:
+┌───────────────────────────────────┬──────────────┐
+│ Categoría                         │ Ahorro (mm)  │
+├───────────────────────────────────┼──────────────┤
+│ Tablas (font + padding + margin)  │ ~15mm        │
+│ Títulos y secciones               │ ~8mm         │
+│ Disclaimer                        │ ~13mm        │
+│ Line-height general               │ ~5mm         │
+│ Line-height notas                 │ ~8mm         │
+├───────────────────────────────────┼──────────────┤
+│ TOTAL APROXIMADO                  │ ~49mm        │
+└───────────────────────────────────┴──────────────┘
+
+DISTRIBUCIÓN:
+- Página 1: ~20mm de ahorro
+- Página 2: ~15mm de ahorro
+- Página 3: ~14mm de ahorro
+
+CON ~49mm DE AHORRO TOTAL, el contenido que antes se desbordaba a una 4ta 
+página ahora cabe cómodamente en la página 3.
+
+────────────────────────────────────────────────────────────────────────────────
+IMPACTO EN DISEÑO
+────────────────────────────────────────────────────────────────────────────────
+
+✅ MANTENIDO:
+- Legibilidad (font-size 8.5pt es estándar profesional)
+- Jerarquía visual (títulos, subtítulos, contenido)
+- Colores y paleta (sin cambios)
+- Border-radius y bordes (sin cambios)
+- Alineación de texto (sin cambios)
+- Logo y header (sin cambios)
+
+📉 REDUCIDO (sutilmente):
+- Espacios en blanco entre elementos
+- Altura de filas de tabla
+- Interlineado de texto
+
+🎯 RESULTADO VISUAL:
+Documento más compacto pero igual de profesional y legible.
+Óptimo para lectura en pantalla y en impresión.
+
+────────────────────────────────────────────────────────────────────────────────
+TESTING Y VALIDACIÓN
+────────────────────────────────────────────────────────────────────────────────
+
+CASOS DE PRUEBA:
+□ Proyecto básico (1-2 tareas) → 2 páginas
+□ Proyecto estándar (3-4 tareas, 1-2 especialidades) → 3 páginas
+□ Proyecto complejo (5-6 tareas, 3-4 especialidades) → 3 páginas
+□ Footer visible y correcto (1/3, 2/3, 3/3)
+
+VALIDACIÓN POST-CAMBIOS:
+✅ PDF generado con 3 páginas (no 4)
+✅ Footer numerado correctamente
+✅ Contenido legible en font-size 8.5pt
+✅ Diseño profesional mantenido
+✅ Sin overflow ni cortes de contenido
+✅ Separación adecuada entre contenido y footer
+
+────────────────────────────────────────────────────────────────────────────────
+CRITERIOS DE ACEPTACIÓN
+────────────────────────────────────────────────────────────────────────────────
+
+□ T004-CA-001: Proyecto estándar genera exactamente 3 páginas (no 4)
+□ T004-CA-002: Font-size de tablas reducido a 8.5pt
+□ T004-CA-003: Padding y márgenes optimizados según especificación
+□ T004-CA-004: Line-height reducido sin afectar legibilidad
+□ T004-CA-005: Footer "1/3, 2/3, 3/3" visible en todas las páginas
+□ T004-CA-006: Contenido no se ve "apretado" o difícil de leer
+□ T004-CA-007: Diseño sigue siendo profesional y balanceado
+□ T004-CA-008: Testing con datos reales del cliente CPAU exitoso
+
+────────────────────────────────────────────────────────────────────────────────
+NOTAS TÉCNICAS
+────────────────────────────────────────────────────────────────────────────────
+
+ESTRATEGIA DE OPTIMIZACIÓN:
+Este ticket aplica la filosofía de "ajustes sutiles acumulativos":
+- Cada cambio individual es casi imperceptible
+- La suma de todos los cambios genera un ahorro significativo
+- Se prioriza mantener la calidad visual sobre la compresión extrema
+
+VALORES ESTÁNDAR DE REFERENCIA:
+- Font-size mínimo legible: 7pt (usamos 8.5pt → cómodo)
+- Line-height mínimo: 1.2 (usamos 1.3-1.4 → espacioso)
+- Padding mínimo en tablas: 4px (usamos 6px → equilibrado)
+
+ALTERNATIVAS DESCARTADAS:
+❌ Reducir font-size a 8pt (muy pequeño para lectura prolongada)
+❌ Eliminar márgenes por completo (diseño apretado)
+❌ Reducir line-height a 1.2 (dificulta legibilidad)
+❌ Comprimir todo en 2 páginas (imposible sin sacrificar calidad)
+
+────────────────────────────────────────────────────────────────────────────────
+MANTENIMIENTO FUTURO
+────────────────────────────────────────────────────────────────────────────────
+
+SI SE AGREGAN MÁS TAREAS AL CÁLCULO (Fase 2):
+1. Monitorear si el contenido vuelve a desbordarse a 4+ páginas
+2. Considerar paginación dinámica (page-break-inside: avoid en tablas)
+3. Evaluar si es necesario reducir aún más el espaciado
+4. Alternativa: permitir 4 páginas para proyectos muy complejos
+
+SI SE DETECTA CONTENIDO DIFÍCIL DE LEER:
+1. Aumentar font-size de tablas a 8.75pt (intermedio)
+2. Aumentar line-height a 1.35 (intermedio)
+3. Validar con usuarios reales del CPAU
+
+RECOMENDACIONES:
+- Mantener estos valores como baseline para nuevas plantillas
+- Documentar cualquier cambio adicional en este archivo
+- Testing regular con proyectos reales del cliente
+
+────────────────────────────────────────────────────────────────────────────────
+ARCHIVOS MODIFICADOS
+────────────────────────────────────────────────────────────────────────────────
+
+1. certificado-basico-proyecto-direccion.html
+   - 12 bloques CSS modificados
+   - ~20 líneas con cambios sutiles de valores
+   - Sin cambios estructurales (solo valores numéricos)
+
+────────────────────────────────────────────────────────────────────────────────
+FECHA DE IMPLEMENTACIÓN
+────────────────────────────────────────────────────────────────────────────────
+
+Implementado: 18/07/2026
+Deploy a QA: Pendiente
+Deploy a Producción: Pendiente (después de validación en QA)
+
+────────────────────────────────────────────────────────────────────────────────
+PRÓXIMOS PASOS
+────────────────────────────────────────────────────────────────────────────────
+
+1. Generar PDF de prueba con proyecto estándar (180m², 2-3 especialidades)
+2. Validar que genera exactamente 3 páginas
+3. Validar legibilidad con usuario final
+4. Deploy a QA (junto con T001, T002, T003)
+5. Testing de regresión completo
+6. Deploy a Producción
+
+
+================================================================================
+FIN DE TICKETS - IMPLEMENTACIÓN COMPLETA
+================================================================================

@@ -3,40 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Certificado de Honorarios CPAU - {{calculationNumber}}</title>
+  <title>Certificado de Honorarios CPAU - 397</title>
   
   <style>
     /* ============================================================
        ESTILOS BASE
        ============================================================ */
-
-      /* --- 1. AVENIR ROMAN --- */
-    @font-face {
-      font-family: 'Avenir';
-      src: url('Avenir_Roman.ttf') format('truetype'); /* Ver nombre archivo */
-      font-weight: 400; /* Peso medio */
-      font-style: normal;
-      font-display: swap;
-    }
-    
-    /* --- AVENIR NORMAL ( por defecto) --- */
-    @font-face {
-      font-family: 'Avenir';
-      src: url('Avenir.ttf') format('truetype'); /* Ver nombre archivo */
-      font-weight: 500; /* Peso medio */
-      font-style: normal;
-      font-display: swap;
-    }
-
-    /* --- AVENIR BLACK --- */
-    @font-face {
-      font-family: 'Avenir';
-      src: url('Avenir_Black.ttf') format('truetype'); /* Ver nombre archivo */
-      font-weight: 900;
-      font-style: normal;
-      font-display: swap;
-    }
-
     * {
       margin: 0;
       padding: 0;
@@ -60,36 +32,30 @@
     }
     
     body {
-      font-family: 'Avenir', 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       font-size: 10pt;
-      line-height: 1.3;  /* ← TICKET-003: Reducido de 1.4 a 1.3 */
-      font-weight: 400;
+      line-height: 1.4;
+      
       background: var(--text-white-color);
-    }
-
-    /* --- Títulos (Cargará Avenir Black) --- */
-    h1, h2, h3, h4, strong, .resumen-label, .section-title, .header-title {
-      font-family: 'Avenir', 'Segoe UI', sans-serif;
-      font-weight: 900;
     }
     
     /* ============================================================
-       PaGINA (A4)
+       PÁGINA (A4)
        ============================================================ */
     .page {
       width: 210mm;
-      min-height: 255mm;  /* ← AJUSTADO: 297mm - 35mm (márgenes Puppeteer) - 7mm (margen seguridad) */
-      padding: 0 0 5mm 0;  /* ← TICKET-003: Agregar 5mm padding bottom para separación del footer */
+      min-height: 297mm;
+      padding: 0;  /* ← Cambiar de "20mm 15mm" a "0" */
       page-break-after: always;
       page-break-inside: avoid;
       background: var(--text-white-color);
-    }
+    }    
 
     .page:last-child {
       page-break-after: auto;
     }
     
-    /* Evitar cortes de pagina en elementos */
+    /* Evitar cortes de página en elementos */
     table, .section-title, .resumen-item, .certificate-header, .disclaimer {
       page-break-inside: avoid;
     }
@@ -109,7 +75,7 @@
       display: flex;
       align-items: stretch;
       gap: 15px;
-      margin-bottom: 20px;  /* ← TICKET-003: Reducido de 25px a 20px */
+      margin-bottom: 25px;
     }
     
     .header-left {
@@ -169,22 +135,20 @@
     .metadata-item {
       display: inline-block;
     }
-
-    .metadata-item span { font-weight: 500; }
     
     .metadata-label {
-      font-weight: 500;
+      font-weight: 600;
     }
     
     /* ============================================================
        RESUMEN DEL PROYECTO
        ============================================================ */
     .section-title-sin-linea, .section-title {
-      font-size: 9pt;
-      font-weight: 900;
+      font-size: 11pt;
+      font-weight: bold;
       color: var(--text-black-color);
-      margin-bottom: 12px;  /* ← TICKET-003: Reducido de 15px a 12px */
-      margin-top: 15px;  /* ← TICKET-003: Reducido de 20px a 15px */
+      margin-bottom: 15px;
+      margin-top: 20px;
       padding-bottom: 6px;
     }
 
@@ -192,7 +156,7 @@
       display: grid;
       grid-template-columns: repeat(6, 1fr);
       gap: 0;
-      margin-bottom: 15px;  /* ← TICKET-003: Reducido de 20px a 15px */
+      margin-bottom: 20px;
       padding: 0 15px;  /* Padding horizontal para efecto de líneas flotantes */
       border: 1px solid var(--border-gray-color);
       border-radius: 12px;
@@ -203,7 +167,7 @@
     .resumen-item {
       display: flex;
       gap: 10px;
-      padding: 10px 0;  /* ← TICKET-003: Reducido de 12px a 10px */
+      padding: 12px 0;  /* Solo padding vertical, sin padding horizontal */
       border-bottom: 1px solid var(--border-gray-color);
     }
     
@@ -228,7 +192,7 @@
     }
     
     .resumen-label {
-      font-weight: 900;
+      font-weight: bold;
       color: var(--text-gray-color);
       white-space: nowrap;
     }
@@ -244,19 +208,19 @@
       
       border: 1px solid var(--blue-color);
       border-radius: 12px;
-      padding: 12px;  /* ← TICKET-003: Reducido de 15px a 12px */
+      padding: 15px;
       padding-right: 40px;
-      margin: 15px 0;  /* ← TICKET-003: Reducido de 20px a 15px */
+      margin: 20px 0;
     }
     
     .disclaimer-title {
       font-size: 12pt;
-      font-weight: 900;
+      font-weight: 700;
     }
     
     .disclaimer-text {
       font-size: 10pt;
-      line-height: 1.4;  /* ← TICKET-003: Reducido de 1.6 a 1.4 */
+      line-height: 1.6;
       color: var(--text-black-color);
     }
     /* ============================================================
@@ -265,9 +229,9 @@
     table {
       border-collapse: separate;
       border-spacing: 0;
-      margin-bottom: 15px;  /* ← TICKET-003: Reducido de 20px a 15px */
+      margin-bottom: 20px;
       padding: 0 15px;  /* Padding horizontal para efecto de líneas flotantes */
-      font-size: 8.5pt;  /* ← TICKET-003: Reducido de 9pt a 8.5pt */
+      font-size: 9pt;
       background: var(--text-white-color);
       border: 1px solid var(--border-gray-color);
       border-radius: 12px;
@@ -278,10 +242,6 @@
       margin-right: 1px;
     }
 
-    table:last-child {
-      margin-bottom: 0;
-    }
-
     table, .resumen-grid, .disclaimer
     {
       width: calc(100% - 3px);
@@ -289,10 +249,10 @@
     
     thead th {
       
-      padding: 8px 0;  /* ← TICKET-003: Reducido de 10px a 8px */
+      padding: 10px 0;  /* Solo padding vertical para efecto flotante */
       text-align: left;
       border-bottom: 1px solid var(--border-gray-color);
-      font-weight: 900;
+      font-weight: bold;
       color: var(--text-gray-color);
     }
     
@@ -379,7 +339,7 @@
     }*/
     
     tbody td {
-      padding: 6px 0;  /* ← TICKET-003: Reducido de 8px a 6px */
+      padding: 8px 0;  /* Solo padding vertical para efecto flotante */
       border-bottom: 1px solid var(--border-gray-color);
     }
     /*
@@ -407,7 +367,7 @@
     .subtotal-row {
       
       color: var(--blue-color);
-      font-weight: 900;
+      font-weight: 600;
       
     }
     
@@ -433,18 +393,14 @@
 
     .total-row {
       color: var(--blue-color);
-      font-weight: 900;
+      font-weight: 700;
       font-size: 10pt;
-      /*border-bottom: 1px solid var(--blue-color);*/
+      border-bottom: 1px solid var(--blue-color);
     }
     
     .total-row td {
       padding: 12px 0;  /* Solo padding vertical para efecto flotante */
       border-bottom: 1px solid var(--blue-color);
-    }
-
-    .total-row:last-child td {
-      border-bottom: none;
     }
     
     .total-row td:first-child {
@@ -457,7 +413,7 @@
       text-align: center !important;
     }
     
-    /* Separaci&oacute;n entre secciones de tablas */
+    /* Separación entre secciones de tablas */
     .table-section {
       margin-bottom: 10px;
     }
@@ -465,31 +421,32 @@
     /* ============================================================
        NOTA FINAL
        ============================================================ */
-     .nota-final {
-      padding: 0 10px;
+    .nota-final {
+      margin-top: 5px;
+      padding: 10px;
       
       font-size: 9pt;
     }
     
     /* ============================================================
-       PaGINA 2 - NOTAS
+       PÁGINA 2 - NOTAS
        ============================================================ */
     .notas-section {
       margin-top: 1px;
     }
         
     .nota-block h4 {
-      font-size: 9pt;
-      line-height: 1.4;  /* ← TICKET-003: Reducido de 1.6 a 1.4 */
-      font-weight: 900;
+      font-size: 11pt;
+      line-height: 1.6;
+      font-weight: bold;
       margin-top: 8px;
       
       /* margin-bottom: 8px; */
     }
     
     .nota-block p {
-      font-size: 9pt;
-      line-height: 1.4;  /* ← TICKET-003: Reducido de 1.6 a 1.4 */
+      font-size: 11pt;
+      line-height: 1.6;
       text-align: justify;
       /* margin-bottom: 8px; */
     }
@@ -517,24 +474,24 @@
 </head>
 <body>
   <!-- ========================================
-       PaGINA 1: DATOS DEL C&aacute;LCULO
+       PÁGINA 1: DATOS DEL CÁLCULO
        ======================================== -->
   <div class="page">
     <!-- Header del Certificado -->
     <div class="certificate-header">
       <div class="header-left">
-        <img src="{{logoCPAU}}" alt="CPAU Logo" class="logo" />
+        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwIiBoZWlnaHQ9IjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjx0ZXh0IHg9IjEwIiB5PSIyNSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCI+Q1BBVTWV4dD48L3N2Zz4&#x3D;" alt="CPAU Logo" class="logo" />
       </div>
       <div class="header-right">
-        <div class="header-title">C&aacute;lculo de honorarios profesionales</div>
+        <div class="header-title">Cálculo de honorarios profesionales</div>
         <div class="header-metadata">
           <div class="metadata-item">
             <span class="metadata-label">Tipo:</span>
-            <span>{{tipoNombre}}</span>
+            <span></span>
           </div>
           <div class="metadata-item">
             <span class="metadata-label">Fecha:</span>
-            <span>{{currentDate}}</span>
+            <span>14/7/2026</span>
           </div>
         </div>
       </div>
@@ -546,35 +503,35 @@
       <!-- Fila 1: Nombre del Proyecto | Comitente -->
       <div class="resumen-item">
         <span class="resumen-label">Nombre del Proyecto:</span>
-        <span class="resumen-value">{{nombreProyecto}}</span>
+        <span class="resumen-value">PRUEBA</span>
       </div>
       <div class="resumen-item">
         <span class="resumen-label">Comitente:</span>
-        <span class="resumen-value">{{cliente}}</span>
+        <span class="resumen-value">Inmobiliaria ABC SA</span>
       </div>
       
       <!-- Fila 2: Tipo de obra | Destino/Uso | Superficie -->
       <div class="resumen-item">
         <span class="resumen-label">Tipo de obra:</span>
-        <span class="resumen-value">{{tipoObra}}</span>
+        <span class="resumen-value">Nueva</span>
       </div>
       <div class="resumen-item">
         <span class="resumen-label">Destino/Uso:</span>
-        <span class="resumen-value">{{destinoUso}}</span>
+        <span class="resumen-value">Residencial multifamiliar</span>
       </div>
       <div class="resumen-item">
         <span class="resumen-label">Superficie total:</span>
-        <span class="resumen-value">{{superficieTotal}} m²</span>
+        <span class="resumen-value">2500 m²</span>
       </div>
       
       <!-- Fila 3: Costo ARS | Costo USD -->
       <div class="resumen-item">
         <span class="resumen-label">Costo estimado de obra (ARS):</span>
-        <span class="resumen-value">{{valorObraARS}}</span>
+        <span class="resumen-value">$ 500.000.000,00</span>
       </div>
       <div class="resumen-item">
         <span class="resumen-label">Costo estimado de obra (USD):</span>
-        <span class="resumen-value">{{valorObraUSD}}</span>
+        <span class="resumen-value">$ 344.625,56</span>
       </div>
     </div>
 
@@ -582,28 +539,27 @@
     <div class="disclaimer">
       <h4 class="disclaimer-title">IMPORTANTE</h4>
       <p class="disclaimer-text">
-        Este c&aacute;lculo es una <strong>estimaci&oacute;n de referencia</strong> basada en los datos proporcionados 
-        y factores est&aacute;ndar del mercado. Los valores finales pueden variar seg&uacute;n condiciones particulares 
-        de cada proyecto. <strong>No constituye una cotizaci&oacute;n formal ni un compromiso contractual.</strong>
+        Este cálculo es una <strong>estimación de referencia</strong> basada en los datos proporcionados 
+        y factores estándar del mercado. Los valores finales pueden variar según condiciones particulares 
+        de cada proyecto. <strong>No constituye una cotización formal ni un compromiso contractual.</strong>
         <br />
         <br />
-        <span>Vigencia de &iacute;ndices: Febrero 2026</span>
+        <span>Vigencia de índices: Febrero 2026</span>
         <br />
-        <span>Base de c&aacute;lculo: arancel sugerido CPAU (versi&oacute;n 2026)</span>
+        <span>Base de cálculo: arancel sugerido CPAU (versión 2026)</span>
       </p>
     </div>
 
     <!-- Detalle de Honorarios -->
     <h4 class="section-title-sin-linea">Detalle de honorarios</h4>
 
-    <!-- SECCIoN: Honorarios Obra -->
-    {{#if honorariosObra}}
+    <!-- SECCIÓN: Honorarios Obra -->
     <div class="table-section">
       <table>
-        <!-- Encabezado: siempre se muestra en la primera seccion -->
+        <!-- Encabezado: siempre se muestra en la primera sección -->
         <thead>
           <tr>
-            <th class="centered">&Iacute;tem</th>
+            <th class="centered">Ítem</th>
             <th>Tarea Profesional</th>
             <th class="right-align">Importe ARS</th>
             <th class="right-align">Importe USD</th>
@@ -611,142 +567,108 @@
           </tr>
         </thead>
         <tbody>
-          {{#each honorariosObra}}
           <tr>
-            <td class="centered">{{this.indice}}</td>
+            <td class="centered"></td>
             <td>
-              {{this.tareaProfesional}}
+              <strong></strong>
             </td>
-            <td class="right-align">{{this.importeARS}}</td>
-            <td class="right-align">{{this.importeUSD}}</td>
-            <td class="centered">{{this.porcentaje}}%</td>
+            <td class="right-align">$ 42.000.000,00</td>
+            <td class="right-align">$ 28.948,55</td>
+            <td class="centered">%</td>
           </tr>
-          {{/each}}
           
           <!-- Subtotal Obra -->
           <tr class="subtotal-row">
             <td colspan="2"><strong>Total honorarios obra</strong></td>
-            <td class="right-align"><strong>{{subtotalObraARS}}</strong></td>
-            <td class="right-align"><strong>{{subtotalObraUSD}}</strong></td>
-            <td class="centered"><strong>{{subtotalObraPorcentaje}}%</strong></td>
+            <td class="right-align"><strong>$ 42.000.000,00</strong></td>
+            <td class="right-align"><strong>$ 28.948,55</strong></td>
+            <td class="centered"><strong>%</strong></td>
           </tr>
         </tbody>
       </table>
     </div>
-    {{/if}}
 
-    <!-- SECCIoN: Honorarios Adicionales -->
-    {{#if honorariosAdicionales}}
+    <!-- SECCIÓN: Honorarios Adicionales -->
     <div class="table-section">
       <table>
         <!-- Encabezado: solo si NO existe honorariosObra -->
-        {{#unless honorariosObra}}
-        <thead>
-          <tr>
-            <th class="centered">&Iacute;tem</th>
-            <th>Tarea Profesional</th>
-            <th class="right-align">Importe ARS</th>
-            <th class="right-align">Importe USD</th>
-            <th class="centered">% sobre costo</th>
-          </tr>
-        </thead>
-        {{/unless}}
         <tbody>
-          {{#each honorariosAdicionales}}
           <tr>
-            <td class="centered">{{this.indice}}</td>
+            <td class="centered"></td>
             <td>
-              {{this.tareaProfesional}}
+              <strong></strong>
             </td>
-            <td class="right-align">{{this.importeARS}}</td>
-            <td class="right-align">{{this.importeUSD}}</td>
-            <td class="centered">{{this.porcentaje}}%</td>
+            <td class="right-align">$ 7.000.000,00</td>
+            <td class="right-align">$ 4.824,76</td>
+            <td class="centered">%</td>
           </tr>
-          {{/each}}
+          <tr>
+            <td class="centered"></td>
+            <td>
+              <strong></strong>
+            </td>
+            <td class="right-align">$ 3.500.000,00</td>
+            <td class="right-align">$ 2.412,38</td>
+            <td class="centered">%</td>
+          </tr>
+          <tr>
+            <td class="centered"></td>
+            <td>
+              <strong></strong>
+            </td>
+            <td class="right-align">$ 3.500.000,00</td>
+            <td class="right-align">$ 2.412,38</td>
+            <td class="centered">%</td>
+          </tr>
+          <tr>
+            <td class="centered"></td>
+            <td>
+              <strong></strong>
+            </td>
+            <td class="right-align">$ 2.500.000,00</td>
+            <td class="right-align">$ 1.723,13</td>
+            <td class="centered">%</td>
+          </tr>
+          <tr>
+            <td class="centered"></td>
+            <td>
+              <strong></strong>
+            </td>
+            <td class="right-align">$ 2.500.000,00</td>
+            <td class="right-align">$ 1.723,13</td>
+            <td class="centered">%</td>
+          </tr>
+          <tr>
+            <td class="centered"></td>
+            <td>
+              <strong></strong>
+            </td>
+            <td class="right-align">$ 4.500.000,00</td>
+            <td class="right-align">$ 3.101,63</td>
+            <td class="centered">%</td>
+          </tr>
+          <tr>
+            <td class="centered"></td>
+            <td>
+              <strong></strong>
+            </td>
+            <td class="right-align">$ 11.700.000,00</td>
+            <td class="right-align">$ 8.064,24</td>
+            <td class="centered">%</td>
+          </tr>
           
           <!-- Subtotal Adicionales -->
           <tr class="subtotal-row">
             <td colspan="2"><strong>Total honorarios adicionales</strong></td>
-            <td class="right-align"><strong>{{subtotalAdicionalesARS}}</strong></td>
-            <td class="right-align"><strong>{{subtotalAdicionalesUSD}}</strong></td>
-            <td class="centered"><strong>{{subtotalAdicionalesPorcentaje}}%</strong></td>
+            <td class="right-align"><strong>$ 35.200.000,00</strong></td>
+            <td class="right-align"><strong>$ 24.261,64</strong></td>
+            <td class="centered"><strong>%</strong></td>
           </tr>
         </tbody>
       </table>
     </div>
-    {{/if}}
-  </div>
-  <!-- Fin pagina 1 -->
 
-  <!-- ========================================
-       PaGINA 2: HONORARIOS Y TOTALES
-       ======================================== -->
-  <div class="page">
-    <!-- Header (repetido para PDF) -->
-    <div class="certificate-header">
-      <div class="header-left">
-        <img src="{{logoCPAU}}" alt="CPAU Logo" class="logo" />
-      </div>
-      <div class="header-right">
-        <div class="header-title">C&aacute;lculo de honorarios profesionales</div>
-        <div class="header-metadata">
-          <div class="metadata-item">
-            <span class="metadata-label">Tipo:</span>
-            <span>{{tipoNombre}}</span>
-          </div>
-          <div class="metadata-item">
-            <span class="metadata-label">Fecha:</span>
-            <span>{{currentDate}}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Detalle de Honorarios -->
-    <h4 class="section-title-sin-linea">Detalle de honorarios</h4>
-
-    <!-- SECCIoN: Honorarios Especialidades -->
-    {{#if honorariosEspecialidades}}
-    <div class="table-section">
-      <table>
-        <!-- Encabezado: solo si NO existe honorariosObra NI honorariosAdicionales -->
-        {{#unless honorariosObra}}
-          {{#unless honorariosAdicionales}}
-          <thead>
-            <tr>
-              <th class="centered">&Iacute;tem</th>
-              <th>Tarea Profesional</th>
-              <th class="right-align">Importe ARS</th>
-              <th class="right-align">Importe USD</th>
-              <th class="centered">% sobre costo</th>
-            </tr>
-          </thead>
-          {{/unless}}
-        {{/unless}}
-        <tbody>
-          {{#each honorariosEspecialidades}}
-          <tr>
-            <td class="centered">{{this.indice}}</td>
-            <td>
-              {{this.tareaProfesional}}
-            </td>
-            <td class="right-align">{{this.importeARS}}</td>
-            <td class="right-align">{{this.importeUSD}}</td>
-            <td class="centered">{{this.porcentaje}}%</td>
-          </tr>
-          {{/each}}
-          
-          <!-- Subtotal Especialidades -->
-          <tr class="subtotal-row">
-            <td colspan="2"><strong>Total honorarios especialidades</strong></td>
-            <td class="right-align"><strong>{{subtotalEspecialidadesARS}}</strong></td>
-            <td class="right-align"><strong>{{subtotalEspecialidadesUSD}}</strong></td>
-            <td class="centered"><strong>{{subtotalEspecialidadesPorcentaje}}%</strong></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    {{/if}}
+    <!-- SECCIÓN: Honorarios Especialidades -->
 
     <!-- TOTAL GENERAL -->
     <div class="table-section">
@@ -754,16 +676,16 @@
         <tbody>
           <tr class="total-row">
             <td colspan="2"><strong>TOTAL GENERAL</strong></td>
-            <td class="right-align"><strong>{{totalGeneralARS}}</strong></td>
-            <td class="right-align"><strong>{{totalGeneralUSD}}</strong></td>
-            <td class="centered"><strong>{{totalGeneralPorcentaje}}%</strong></td>
+            <td class="right-align"><strong>$ 77.200.000,00</strong></td>
+            <td class="right-align"><strong>$ 53.210,19</strong></td>
+            <td class="centered"><strong>%</strong></td>
           </tr>
           <tr class="total-row">
-            <td colspan="3"><strong>Plazo estimado de ejecuci&oacute;n: {{plazoEjecucion}} meses</strong></td>
+            <td colspan="3"><strong>Plazo estimado de ejecución: 18 meses</strong></td>
             <td class="right-align"></td>
             <td class="centered"></td>
 
-            <!-- <td colspan="5"><strong>Plazo estimado de ejecuci&oacute;n: {{plazoEjecucion}} meses</strong></td> -->
+            <!-- <td colspan="5"><strong>Plazo estimado de ejecución: 18 meses</strong></td> -->
           </tr>
         </tbody>
       </table>
@@ -771,31 +693,30 @@
 
     <!-- Nota Final -->
     <div class="nota-final">
-      <p>NOTA: Este honorario corresponde &uacute;nicamente a las tareas profesionales seleccionadas. NO incluye IVA.</p>
+      <p>NOTA: Este honorario corresponde únicamente a las tareas profesionales seleccionadas. NO incluye IVA.</p>
     </div>
   </div>
-
-  <!-- Final Pagina 2 -->
+  <!-- Fin página 1 -->
 
   <!-- ========================================
-       PaGINA 3: NOTAS
+       PÁGINA 2: NOTAS
        ======================================== -->
   <div class="page">
     <!-- Header (repetido para PDF) -->
     <div class="certificate-header">
       <div class="header-left">
-        <img src="{{logoCPAU}}" alt="CPAU Logo" class="logo" />
+        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwIiBoZWlnaHQ9IjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjx0ZXh0IHg9IjEwIiB5PSIyNSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCI+Q1BBVTWV4dD48L3N2Zz4&#x3D;" alt="CPAU Logo" class="logo" />
       </div>
       <div class="header-right">
-        <div class="header-title">C&aacute;lculo de honorarios profesionales</div>
+        <div class="header-title">Cálculo de honorarios profesionales</div>
         <div class="header-metadata">
           <div class="metadata-item">
             <span class="metadata-label">Tipo:</span>
-            <span>{{tipoNombre}}</span>
+            <span></span>
           </div>
           <div class="metadata-item">
             <span class="metadata-label">Fecha:</span>
-            <span>{{currentDate}}</span>
+            <span>14/7/2026</span>
           </div>
         </div>
       </div>
@@ -805,20 +726,20 @@
     <div class="notas-section">
       <h2 class="section-title-sin-linea">Notas</h2>
       
-      <!-- Alcance y car&aacute;cter del c&aacute;lculo -->
+      <!-- Alcance y carácter del cálculo -->
       <section class="nota-block">
-        <h4>Alcance y car&aacute;cter del c&aacute;lculo</h4>
-        <p>La presente calculadora de honorarios profesionales sugeridos, de car&aacute;cter orientativo, calculado a partir de las variables 
+        <h4>Alcance y carácter del cálculo</h4>
+        <p>La presente calculadora de honorarios profesionales sugeridos, de carácter orientativo, calculado a partir de las variables 
 ingresadas (tipo de obra, superficie, costo estimado por m2, alcance del encargo, entre otros), con el objetivo de obtener un honorario equitativo.</p>
-        <p>El monto resultante podr&aacute; pactarse como honorario fijo o ajustable seg&uacute;n lo que acuerden las partes.
-Tanto el cambio en el alcance de las tareas profesionales encomendadas, como cualquiera de las variables ingresadas habilita la revisi&oacute;n de los honorarios originalmente pactados.</p>
+        <p>El monto resultante podrá pactarse como honorario fijo o ajustable según lo que acuerden las partes.
+Tanto el cambio en el alcance de las tareas profesionales encomendadas, como cualquiera de las variables ingresadas habilita la revisión de los honorarios originalmente pactados.</p>
       </section>
 
       <!-- Costo de obra considerado -->
       <section class="nota-block">
         <h4>Costo de obra considerado</h4>
-        <p>El costo de obra por m2 utilizado en el c&aacute;lculo constituye una estimaci&oacute;n consensuada entre profesional y comitente. 
-El CPAU publica mensualmente índices de referencia de costos de construcci&oacute;n, elaborados por distintos organismos y/o medios, disponibles en la web institucional, 
+        <p>El costo de obra por m2 utilizado en el cálculo constituye una estimación consensuada entre profesional y comitente. 
+El CPAU publica mensualmente índices de referencia de costos de construcción, elaborados por distintos organismos y/o medios, disponibles en la web institucional, 
 quedando a criterio del/la profesional y del comitente seleccionar el valor que consideren adecuado.</p>
       </section>
 
@@ -829,10 +750,10 @@ quedando a criterio del/la profesional y del comitente seleccionar el valor que 
           <tbody>
             <tr><td>Croquis preliminar</td><td>10%</td></tr>
             <tr><td>Anteproyecto</td><td>15%</td></tr>
-            <tr><td>Proyecto b&aacute;sico</td><td>15%</td></tr>
-            <tr><td>Documentaci&oacute;n licitatoria</td><td>20%</td></tr>
+            <tr><td>Proyecto básico</td><td>15%</td></tr>
+            <tr><td>Documentación licitatoria</td><td>20%</td></tr>
             <tr><td>Total proyecto</td><td>60%</td></tr>
-            <tr><td>Direcci&oacute;n de obra</td><td>40%</td></tr>
+            <tr><td>Dirección de obra</td><td>40%</td></tr>
           </tbody>
         </table>
         <p>A fin de conocer el contenido y alcance de cada una de las etapas del proyecto, se recomienda consultar el MEPAU.</p>
@@ -843,37 +764,36 @@ quedando a criterio del/la profesional y del comitente seleccionar el valor que 
         <h4>Alcance de los honorarios sugeridos</h4>
         <p>Los honorarios resultantes de esta calculadora contemplan las tareas profesionales correspondientes a un encargo ordinario, 
 de acuerdo con los alcances definidos por la normativa y usos profesionales vigentes, ver MEPAU.</p>
-        <p>Para los encargos de Proyecto y Direcci&oacute;n, las tareas profesionales vinculadas al interiorismo, equipamiento no edilicio, mobiliario, 
-iluminaci&oacute;n, cortinas u otros elementos no habituales en una propiedad vacía del mercado inmobiliario no est&aacute;n incluidas y requerir&aacute;n honorarios adicionales a pactar.</p>
-        <p>Se recomienda a los profesionales acompañar la encomienda con el detalle de tareas, la modalidad de prestaci&oacute;n y la lista de documentos entregables, 
-pudiendo indicarse también su modo de ejecuci&oacute;n (AutoCAD, BIM), a fin de clarificar el alcance del encargo y evitar confusiones.</p>
+        <p>Para los encargos de Proyecto y Dirección, las tareas profesionales vinculadas al interiorismo, equipamiento no edilicio, mobiliario, 
+iluminación, cortinas u otros elementos no habituales en una propiedad vacía del mercado inmobiliario no están incluidas y requerirán honorarios adicionales a pactar.</p>
+        <p>Se recomienda a los profesionales acompañar la encomienda con el detalle de tareas, la modalidad de prestación y la lista de documentos entregables, 
+pudiendo indicarse también su modo de ejecución (AutoCAD, BIM), a fin de clarificar el alcance del encargo y evitar confusiones.</p>
       </section>
 
       <!-- Conceptos no incluidos -->
       <section class="nota-block">
         <h4>Conceptos no incluidos en los honorarios</h4>
         <p>IVA, en caso de corresponder.<br />
-Gesti&oacute;n municipal, derechos de construcci&oacute;n y/o cualquier tipo de grav&aacute;menes, tasas o derechos.<br />
-C&aacute;lculo estructural, salvo el caso que se encuentre específicamente agregado al c&aacute;lculo realizado.<br />
-Proyecto de instalaciones, salvo el caso que se encuentren específicamente agregados al c&aacute;lculo realizado.<br />
-Documentaci&oacute;n y planos comerciales, renders, maquetas, etc.<br />
-Cualquier otro concepto que no esté expresado en el c&aacute;lculo.</p>
+Gestión municipal, derechos de construcción y/o cualquier tipo de gravámenes, tasas o derechos.<br />
+Cálculo estructural, salvo el caso que se encuentre específicamente agregado al cálculo realizado.<br />
+Proyecto de instalaciones, salvo el caso que se encuentren específicamente agregados al cálculo realizado.<br />
+Documentación y planos comerciales, renders, maquetas, etc.<br />
+Cualquier otro concepto que no esté expresado en el cálculo.</p>
       </section>
 
-      <!-- Resoluci&oacute;n de los honorarios -->
+      <!-- Resolución de los honorarios -->
       <section class="nota-block">
-        <h4>Resoluci&oacute;n de los honorarios</h4>
-        <p>En caso de que alguna de las partes decida no continuar con la totalidad del encargo, deber&aacute;n abonarse los honorarios de las tareas efectivamente realizadas 
-seg&uacute;n lo acordado por las partes, y considerando las etapas de proyecto previamente mencionadas en este documento.</p>
-        <p>En caso de rescisi&oacute;n unilateral por parte del comitente, se deber&aacute; convenir un resarcimiento en favor del profesional por las tareas encomendadas y no ejecutadas, 
+        <h4>Resolución de los honorarios</h4>
+        <p>En caso de que alguna de las partes decida no continuar con la totalidad del encargo, deberán abonarse los honorarios de las tareas efectivamente realizadas 
+según lo acordado por las partes, y considerando las etapas de proyecto previamente mencionadas en este documento.</p>
+        <p>En caso de rescisión unilateral por parte del comitente, se deberá convenir un resarcimiento en favor del profesional por las tareas encomendadas y no ejecutadas, 
 de acuerdo a la normativa vigente.</p>
       <p><br></p>
       <p><br></p>
-        <p>Para ampliar la informaci&oacute;n consultar al MEPAU, capítulo 02 Honorarios, o ponerse en contacto con tecnica@cpau.org</p>
+        <p>Para ampliar la información consultar al MEPAU, capítulo 02 Honorarios, o ponerse en contacto con tecnica@cpau.org</p>
       </section>
     </div>
   </div>
-
-  <!-- Fin pagina 3 -->
+  <!-- Fin página 2 -->
 </body>
 </html>

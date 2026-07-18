@@ -38,8 +38,47 @@ async function obtenerEntregable(entregableId) {
   return rows.length > 0 ? rows[0] : null;
 }
 
+/**
+ * Actualiza el HTML template de un entregable
+ * SPEC: SPEC020-ADMIN-Template-Manager (T020-002)
+ * @param {number} entregableId - ID del entregable a actualizar
+ * @param {string} htmlTemplate - Contenido HTML nuevo
+ * @returns {Object} { filas_afectadas, mensaje }
+ */
+async function actualizarTemplate(entregableId, htmlTemplate) {
+  const [rows] = await executeStoredProcedure('Entregables_PDF_ActualizarTemplate', [
+    entregableId,
+    htmlTemplate
+  ]);
+  return rows[0];
+}
+
+/**
+ * Obtiene un entregable completo por ID (incluye template completo)
+ * SPEC: SPEC020-ADMIN-Template-Manager (T020-002)
+ * @param {number} entregableId - ID del entregable
+ * @returns {Object|null} Datos completos del entregable
+ */
+async function obtenerPorID(entregableId) {
+  const [rows] = await executeStoredProcedure('Entregables_PDF_ObtenerPorID', [entregableId]);
+  return rows.length > 0 ? rows[0] : null;
+}
+
+/**
+ * Lista todos los templates activos
+ * SPEC: SPEC020-ADMIN-Template-Manager (T020-002)
+ * @returns {Array} Lista de templates activos con campos básicos
+ */
+async function listarActivos() {
+  const [rows] = await executeStoredProcedure('Entregables_PDF_ListarActivos', []);
+  return rows;
+}
+
 module.exports = {
   resolverPlantillaEntregable,
   resolverPlantillaPorCodigo,
-  obtenerEntregable
+  obtenerEntregable,
+  actualizarTemplate,
+  obtenerPorID,
+  listarActivos
 };

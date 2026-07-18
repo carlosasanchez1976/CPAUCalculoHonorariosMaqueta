@@ -69,17 +69,38 @@ async function generarCertificado(datos) {
 
     console.log('[PDF] HTML cargado, generando PDF...');
 
-    // Generar PDF
+    // Generar PDF con footer de numeración
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
+      displayHeaderFooter: true,
+      
+      // Header vacío (no necesitamos header adicional)
+      headerTemplate: '<div></div>',
+      
+      // Footer con numeración de páginas
+      footerTemplate: `
+        <div style="
+          width: 100%; 
+          font-size: 9pt; 
+          color: #6b6b6b;
+          padding: 5mm 12mm 0 0;
+          text-align: right;
+          border-top: 1px solid #6b6b6b;
+          box-sizing: border-box;
+        ">
+          <span class="pageNumber"></span>/<span class="totalPages"></span>
+        </div>
+      `,
+      
       margin: {
-        top: '15mm',    // ← De 20mm a 15mm
-        right: '12mm',  // ← De 15mm a 12mm
-        bottom: '15mm', // ← De 20mm a 15mm
-        left: '12mm'    // ← De 15mm a 12mm
+        top: '15mm',     // Margen superior
+        right: '12mm',   // Margen derecho
+        bottom: '20mm',  // ← AUMENTAR para dar espacio al footer (de 15mm a 20mm)
+        left: '12mm'     // Margen izquierdo
       },
-      preferCSSPageSize: false // Forzar formato A4
+      
+      preferCSSPageSize: false
     });
 
     await browser.close();
@@ -757,5 +778,6 @@ Para consultas: www.cpau.org`;
 }
 
 module.exports = {
-  generarCertificado
+  generarCertificado,
+  prepararDatosPlantilla
 };

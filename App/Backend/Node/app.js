@@ -11,6 +11,7 @@ const usuariosRoutes = require('./src/routes/usuarios.js');
 const calculosRoutes = require('./src/routes/calculos.js');
 const tareasProfesionalesRoutes = require('./src/routes/tareasProfesionales.js');
 const parametrosRoutes = require('./src/routes/parametros.js');
+const adminTemplatesRoutes = require('./src/routes/adminTemplates.js');
 
 require('dotenv').config();
 
@@ -130,6 +131,7 @@ app.use('/api/calculos', calculosRoutes);
 app.use('/api/tareas', tareasProfesionalesRoutes);
 app.use('/api/tareasProfesionales', tareasProfesionalesRoutes);
 app.use('/api/parametros', parametrosRoutes);
+app.use('/api/admin/templates', adminTemplatesRoutes); // SPEC020-ADMIN-Template-Manager (T020-003)
 
 
 

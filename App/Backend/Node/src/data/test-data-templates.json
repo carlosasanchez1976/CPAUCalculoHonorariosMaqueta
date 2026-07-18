@@ -1,0 +1,131 @@
+{
+  "_metadata": {
+    "version": "1.0",
+    "description": "Datos de prueba para preview de templates PDF - Proyecto y Dirección de Obra",
+    "lastUpdate": "2026-07-14",
+    "basadoEn": "Cálculo real ID 397 - Proyecto PRUEBA",
+    "notas": [
+      "Este JSON simula el payload que se envía a POST /api/calculos/exportar-pdf",
+      "La estructura coincide con lo que espera pdfService.prepararDatosPlantilla()",
+      "Los valores son reales del cálculo de ejemplo proporcionado por Charly"
+    ]
+  },
+  "tipoCalculo": "PYDOA",
+  "tipoNombre": "Proyecto y Dirección de obras de arquitectura",
+  "formData": {
+    "calculoId": 397,
+    "tareaId": 1,
+    "tareaCodi": "PYDOA",
+    "nombreProyecto": "PRUEBA",
+    "cliente": "Inmobiliaria ABC SA",
+    "ubicacion": "CABA - Microcentro",
+    "tipoObra": "Nueva",
+    "destinoUso": "Residencial multifamiliar",
+    "complejidad": "alta",
+    "superficieTotal": 2500,
+    "valorObra": 500000000,
+    "cotizDolar": 1450.85,
+    "plazoEjecucion": 18,
+    "observProyecto": "Observ Proyecto",
+    "observTareas": "Observs Tareas"
+  },
+  "calculationResult": {
+    "calculoId": 397,
+    "status": "OK",
+    "totalHonorarios": 77200000,
+    "metadata": {
+      "rango": "A",
+      "numeroItems": 8,
+      "fechaCalculo": "2026-07-14T22:28:08.000Z",
+      "proyectoNombre": "PRUEBA",
+      "proyectoUbicacion": "CABA - Microcentro",
+      "valorObra": "500000000.00"
+    },
+    "detalleHonorarios": [
+      {
+        "calculoItemId": 3004,
+        "itemNumero": 1,
+        "tareaProfesional": "Proyecto de obra de arquitectura",
+        "descripcion": "Rango A (coef 14.00000%)",
+        "importe": 42000000,
+        "createdAt": "2026-07-14T22:28:08.000Z"
+      },
+      {
+        "calculoItemId": 3005,
+        "itemNumero": 2,
+        "tareaProfesional": "Supervisión de obra",
+        "descripcion": "Sobre total de Honorarios de Dirección de Obra: 28000000.00 (25%)",
+        "importe": 7000000,
+        "createdAt": "2026-07-14T22:28:08.000Z"
+      },
+      {
+        "calculoItemId": 3006,
+        "itemNumero": 3,
+        "tareaProfesional": "Instalación Sanitaria y gas",
+        "descripcion": "Rango A (coef 0.70000%)",
+        "importe": 3500000,
+        "createdAt": "2026-07-14T22:28:08.000Z"
+      },
+      {
+        "calculoItemId": 3007,
+        "itemNumero": 4,
+        "tareaProfesional": "Instalación Eléctrica",
+        "descripcion": "Rango A (coef 0.70000%)",
+        "importe": 3500000,
+        "createdAt": "2026-07-14T22:28:08.000Z"
+      },
+      {
+        "calculoItemId": 3008,
+        "itemNumero": 5,
+        "tareaProfesional": "Instalación Contra Incendio",
+        "descripcion": "Rango A (coef 0.50000%)",
+        "importe": 2500000,
+        "createdAt": "2026-07-14T22:28:08.000Z"
+      },
+      {
+        "calculoItemId": 3009,
+        "itemNumero": 6,
+        "tareaProfesional": "Instalación Termomecánica",
+        "descripcion": "Rango A (coef 0.50000%)",
+        "importe": 2500000,
+        "createdAt": "2026-07-14T22:28:08.000Z"
+      },
+      {
+        "calculoItemId": 3010,
+        "itemNumero": 7,
+        "tareaProfesional": "Proyecto de Estructuras",
+        "descripcion": "Rango A (coef 0.90000%)",
+        "importe": 4500000,
+        "createdAt": "2026-07-14T22:28:08.000Z"
+      },
+      {
+        "calculoItemId": 3011,
+        "itemNumero": 8,
+        "tareaProfesional": "Documentación ejecutiva",
+        "descripcion": "Sobre total de Honorarios de Proyecto de Obra: 58500000.00 (20%)",
+        "importe": 11700000,
+        "createdAt": "2026-07-14T22:28:08.000Z"
+      }
+    ]
+  },
+  "logoCPAU": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwIiBoZWlnaHQ9IjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjx0ZXh0IHg9IjEwIiB5PSIyNSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCI+Q1BBVTWV4dD48L3N2Zz4=",
+  "valorObraARS": "$ 500.000.000,00",
+  "valorObraUSD": "$ 344.533,10",
+  "superficieTotal": 2500,
+  "tipoObra": "Nueva",
+  "destinoUso": "Residencial multifamiliar",
+  "cliente": "Inmobiliaria ABC SA",
+  "nombreProyecto": "PRUEBA",
+  "ubicacion": "CABA - Microcentro",
+  "plazoEjecucion": 18,
+  "currentDate": "14/07/2026",
+  "calculationNumber": "397",
+  "totalGeneralARS": "$ 77.200.000,00",
+  "totalGeneralUSD": "$ 53.219,04",
+  "subtotalObraARS": "$ 42.000.000,00",
+  "subtotalObraUSD": "$ 28.949,63",
+  "subtotalAdicionalesARS": "$ 35.200.000,00",
+  "subtotalAdicionalesUSD": "$ 24.269,41",
+  "subtotalEspecialidadesARS": "$ 0,00",
+  "subtotalEspecialidadesUSD": "$ 0,00"
+}

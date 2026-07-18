@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CPAU - Template Manager</title>
+  
+  <style>
+    /* ============================================================
+       VARIABLES Y RESET
+       ============================================================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --color-primary: #2c5f2d;
+      --color-primary-dark: #1e4620;
+      --color-success: #28a745;
+      --color-error: #dc3545;
+      --color-warning: #ffc107;
+      --color-gray-light: #f8f9fa;
+      --color-gray-border: #dee2e6;
+      --color-text: #212529;
+      --spacing-unit: 8px;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-gray-light);
+      color: var(--color-text);
+      padding: calc(var(--spacing-unit) * 3);
+      line-height: 1.6;
+    }
+    
+    /* ============================================================
+       LAYOUT
+       ============================================================ */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: var(--color-primary);
+      color: white;
+      padding: calc(var(--spacing-unit) * 3);
+      border-bottom: 4px solid var(--color-primary-dark);
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: calc(var(--spacing-unit));
+    }
+    
+    .header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+    
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: calc(var(--spacing-unit) * 2);
+      padding: calc(var(--spacing-unit) * 3);
+      min-height: 600px;
+    }
+    
+    .panel {
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--spacing-unit) * 2);
+    }
+    
+    .panel-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: calc(var(--spacing-unit));
+    }
+    
+    /* ============================================================
+       FORMULARIO
+       ============================================================ */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--spacing-unit));
+    }
+    
+    label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    select, input {
+      padding: calc(var(--spacing-unit) * 1.5);
+      border: 1px solid var(--color-gray-border);
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(44, 95, 45, 0.1);
+    }
+    
+    textarea {
+      width: 100%;
+      min-height: 400px;
+      padding: calc(var(--spacing-unit) * 1.5);
+      border: 1px solid var(--color-gray-border);
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    
+    /* ============================================================
+       BOTONES
+       ============================================================ */
+    .button-group {
+      display: flex;
+      gap: calc(var(--spacing-unit) * 2);
+    }
+    
+    button {
+      padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 3);
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: calc(var(--spacing-unit));
+    }
+    
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+    
+    .btn-primary:hover:not(:disabled) {
+      background: var(--color-primary-dark);
+    }
+    
+    .btn-success {
+      background: var(--color-success);
+      color: white;
+    }
+    
+    /* ============================================================
+       PREVIEW
+       ============================================================ */
+    .preview-container {
+      border: 1px solid var(--color-gray-border);
+      border-radius: 4px;
+      background: white;
+      flex: 1;
+      min-height: 500px;
+      position: relative;
+    }
+    
+    .preview-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    .preview-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #6c757d;
+      font-style: italic;
+    }
+    
+    /* ============================================================
+       ALERTAS
+       ============================================================ */
+    .alert {
+      padding: calc(var(--spacing-unit) * 2);
+      border-radius: 4px;
+      margin-bottom: calc(var(--spacing-unit) * 2);
+      display: none;
+      align-items: center;
+      gap: calc(var(--spacing-unit));
+    }
+    
+    .alert.show {
+      display: flex;
+    }
+    
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .alert-warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+    
+    /* ============================================================
+       LOADING SPINNER
+       ============================================================ */
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 3px solid white;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 1024px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .preview-container {
+        min-height: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>🎨 CPAU Template Manager</h1>
+      <p>Herramienta para gestión de templates PDF - Entorno QA</p>
+    </div>
+    
+    <!-- Alertas -->
+    <div style="padding: calc(var(--spacing-unit) * 3) calc(var(--spacing-unit) * 3) 0;">
+      <div id="alert" class="alert"></div>
+    </div>
+    
+    <!-- Contenido Principal -->
+    <div class="main-content">
+      <!-- Panel Izquierdo: Editor -->
+      <div class="panel">
+        <h2 class="panel-title">📝 Editor de Template</h2>
+        
+        <div class="form-group">
+          <label for="templateSelect">Template a editar:</label>
+          <select id="templateSelect">
+            <option value="">Cargando templates...</option>
+          </select>
+        </div>
+        
+        <div class="form-group" style="flex: 1;">
+          <label for="htmlEditor">HTML Template (Handlebars):</label>
+          <textarea 
+            id="htmlEditor" 
+            placeholder="Pega aquí tu HTML con sintaxis Handlebars..."
+          ></textarea>
+        </div>
+        
+        <div class="button-group">
+          <button id="btnPreview" class="btn-primary">
+            <span>👁️</span>
+            <span>Preview</span>
+          </button>
+          <button id="btnUpload" class="btn-success">
+            <span>⬆️</span>
+            <span>Subir a QA</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Panel Derecho: Preview -->
+      <div class="panel">
+        <h2 class="panel-title">👀 Preview</h2>
+        
+        <div class="preview-container">
+          <div id="previewEmpty" class="preview-empty">
+            Click en "Preview" para ver el resultado con datos de prueba
+          </div>
+          <iframe id="previewFrame" style="display: none;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // ============================================================
+    // CONFIGURACIÓN
+    // ============================================================
+    const API_BASE_URL = 'https://cpau-ch2026-api-qa.neosisweb.ar/api/admin/templates';
+    
+    // ============================================================
+    // ELEMENTOS DEL DOM
+    // ============================================================
+    const $alert = document.getElementById('alert');
+    const $templateSelect = document.getElementById('templateSelect');
+    const $htmlEditor = document.getElementById('htmlEditor');
+    const $btnPreview = document.getElementById('btnPreview');
+    const $btnUpload = document.getElementById('btnUpload');
+    const $previewEmpty = document.getElementById('previewEmpty');
+    const $previewFrame = document.getElementById('previewFrame');
+    
+    // ============================================================
+    // FUNCIONES DE UI
+    // ============================================================
+    function showAlert(message, type = 'success') {
+      $alert.textContent = message;
+      $alert.className = `alert alert-${type} show`;
+      
+      if (type === 'success') {
+        setTimeout(() => {
+          $alert.classList.remove('show');
+        }, 5000);
+      }
+    }
+    
+    function hideAlert() {
+      $alert.classList.remove('show');
+    }
+    
+    function setLoading(button, isLoading) {
+      if (isLoading) {
+        button.disabled = true;
+        const spinner = document.createElement('div');
+        spinner.className = 'spinner';
+        spinner.id = 'spinner-temp';
+        button.insertBefore(spinner, button.firstChild);
+      } else {
+        button.disabled = false;
+        const spinner = document.getElementById('spinner-temp');
+        if (spinner) spinner.remove();
+      }
+    }
+    
+    // ============================================================
+    // FUNCIONES DE API
+    // ============================================================
+    async function cargarTemplates() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/list`);
+        const data = await response.json();
+        
+        if (!data.success) {
+          throw new Error(data.error || 'Error cargando templates');
+        }
+        
+        // Llenar selector
+        $templateSelect.innerHTML = '<option value="">Selecciona un template...</option>';
+        
+        data.data.forEach(template => {
+          const option = document.createElement('option');
+          option.value = template.entregable_id;
+          // Mostrar versión solo si existe
+          const versionText = template.version ? ` (v${template.version})` : '';
+          option.textContent = `${template.nombre}${versionText}`;
+          option.dataset.codigo = template.codigo;
+          $templateSelect.appendChild(option);
+        });
+        
+      } catch (error) {
+        console.error('Error cargando templates:', error);
+        showAlert(`Error cargando templates: ${error.message}`, 'error');
+        $templateSelect.innerHTML = '<option value="">Error al cargar</option>';
+      }
+    }
+    
+    async function cargarTemplate(templateId) {
+      try {
+        showAlert('Cargando template...', 'warning');
+        
+        const response = await fetch(`${API_BASE_URL}/${templateId}`);
+        const data = await response.json();
+        
+        if (!data.success) {
+          throw new Error(data.error || 'Template no encontrado');
+        }
+        
+        // Cargar HTML en el editor
+        $htmlEditor.value = data.data.html_template;
+        hideAlert();
+        
+      } catch (error) {
+        console.error('Error cargando template:', error);
+        showAlert(`Error: ${error.message}`, 'error');
+      }
+    }
+    
+    async function previewTemplate() {
+      const html = $htmlEditor.value.trim();
+      
+      if (!html) {
+        showAlert('El HTML no puede estar vacío', 'warning');
+        return;
+      }
+      
+      try {
+        setLoading($btnPreview, true);
+        hideAlert();
+        
+        const response = await fetch(`${API_BASE_URL}/preview`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ html })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Error en preview');
+        }
+        
+        // Obtener HTML renderizado
+        const htmlRendered = await response.text();
+        
+        // Mostrar en iframe
+        $previewEmpty.style.display = 'none';
+        $previewFrame.style.display = 'block';
+        $previewFrame.srcdoc = htmlRendered;
+        
+        showAlert('✅ Preview generado correctamente', 'success');
+        
+      } catch (error) {
+        console.error('Error en preview:', error);
+        showAlert(`Error: ${error.message}`, 'error');
+      } finally {
+        setLoading($btnPreview, false);
+      }
+    }
+    
+    async function subirTemplate() {
+      const templateId = $templateSelect.value;
+      const html = $htmlEditor.value.trim();
+      
+      if (!templateId) {
+        showAlert('Selecciona un template primero', 'warning');
+        return;
+      }
+      
+      if (!html) {
+        showAlert('El HTML no puede estar vacío', 'warning');
+        return;
+      }
+      
+      // Confirmar acción
+      if (!confirm('¿Estás seguro de actualizar este template en QA?')) {
+        return;
+      }
+      
+      try {
+        setLoading($btnUpload, true);
+        hideAlert();
+        
+        const response = await fetch(`${API_BASE_URL}/${templateId}/update`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ html })
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+          throw new Error(data.error || 'Error actualizando template');
+        }
+        
+        showAlert(
+          `✅ Template actualizado en QA (${data.htmlSize} KB) - ${data.timestamp}`,
+          'success'
+        );
+        
+      } catch (error) {
+        console.error('Error subiendo template:', error);
+        showAlert(`Error: ${error.message}`, 'error');
+      } finally {
+        setLoading($btnUpload, false);
+      }
+    }
+    
+    // ============================================================
+    // EVENT LISTENERS
+    // ============================================================
+    $templateSelect.addEventListener('change', (e) => {
+      const templateId = e.target.value;
+      if (templateId) {
+        cargarTemplate(templateId);
+      }
+    });
+    
+    $btnPreview.addEventListener('click', previewTemplate);
+    $btnUpload.addEventListener('click', subirTemplate);
+    
+    // Shortcut: Ctrl+Enter para preview
+    $htmlEditor.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        previewTemplate();
+      }
+    });
+    
+    // ============================================================
+    // INICIALIZACIÓN
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarTemplates();
+    });
+  </script>
+</body>
+</html>

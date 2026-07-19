@@ -47,6 +47,9 @@ case v_Tarea_codi
   when 'CONFAC' then
     -- Lógica para calcular honorarios de confección de planos
     call Calcular_Honorario_CONFAC(p_calculo_id);
+  when 'TASA' then
+    -- Lógica para calcular honorarios de Tasaciones
+    call Calcular_Honorario_TASA(p_calculo_id);
   else
     select concat('Tarea profesional con código erróneo: ', v_Tarea_codi) as mensaje_error;
 end case;

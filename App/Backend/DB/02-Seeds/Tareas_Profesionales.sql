@@ -41,6 +41,19 @@ call Tareas_Profesionales_Entregables_Grabar(null,17,2,1,1);
 update Tareas_Profesionales set vigente = 1 where codi = 'CONFAC';
 call Tareas_Profesionales_Entregables_Grabar(null,5,2,1,1);
 
+-- TASA - Tasaciones
+update Tareas_Profesionales set vigente = 1 where codi = 'TASA';
+update Tareas_Profesionales set calc_valor_bol1_des = 'Medición de construcción existente para determinar la superficie cubierta' where codi = 'TASA';
+update Tareas_Profesionales set calc_valor_bol2_des = 'Med. de construcciones poco compartimentadas c/ejec. de planos inc/locales, muros, vanos, etc.' where codi = 'TASA';
+update Tareas_Profesionales set calc_valor_bol3_des = 'Med. de construcciones muy compartimentadas c/ejec. de planos inc/locales, muros, vanos, etc.' where codi = 'TASA';
+update Tareas_Profesionales set calc_valor_num1_des = 'Superficie m2' where codi = 'TASA';
+update Tareas_Profesionales set calc_valor_num2_des = 'Superficie m2' where codi = 'TASA';
+update Tareas_Profesionales set calc_valor_num3_des = 'Superficie m2' where codi = 'TASA';
+update Tareas_Profesionales set calc_valor_bol4_des = 'Incluye tareas de ejecución de relevamientos y/o mediciones' where codi = 'TASA';
+update Tareas_Profesionales set calc_valor_bol5_des = 'Incluye tareas de confección de planos y/o cómputos y presup.' where codi = 'TASA';
+update Tareas_Profesionales set calc_valor_num4_des = 'Monto del Valor en juego' where codi = 'TASA';
+call Tareas_Profesionales_Entregables_Grabar(null,13,2,1,1);
+
 
 
 

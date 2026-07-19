@@ -128,6 +128,9 @@ bloque_principal: BEGIN
   -- CALCULAR PARA 'MPTER'
   -- Según Artículo 3.21.1 de la Resolución CPAU A115
 
+  SET v_total_honorarios = 0;
+  SET v_item_numero = 0;
+
   IF v_obra_tipologia = 'MPTER' or v_obra_tipologia = 'MPEST' THEN
       -- Lógica específica para MPTER
       -- Art 3.21.1 Terrenos y ejecución de Planos
@@ -173,119 +176,22 @@ bloque_principal: BEGIN
       -- Lógica específica para MPCON
       -- Art 3.21.2 Construcciones y ejecución de Planos
 
-      SET v_descripcion = 'Art. 3.21.2 ';
 
-      IF v_bol1 THEN
-        SET v_descripcion = CONCAT(v_descripcion, '- Medición de construcción existente para determinar la superficie cubierta');
+      -- Reutilizar la lógica de cálculo de honorarios para MPCON según Art. 3.21.2
+      CALL Calcular_Hon_Art_3_21_2(
+        p_calculo_id,
+        v_tarea_profesional,
+        v_valor_k,
+        v_bol1,
+        v_bol2,
+        v_bol3,
+        v_sup1,
+        v_sup2,
+        v_sup3,
+        v_item_numero,
+        v_total_honorarios
+      );
 
-        -- Determinar coeficiente de afectación según Art. 3.21.2 según rango de superficie
-        if v_sup1 <= 50 then
-          SET v_coef_sup_k_a_afec = 0.000006;
-          SET v_coef_k_a_afec = 0;
-          ELSEIF v_sup1 <= 500 then
-            SET v_coef_sup_k_a_afec = 0.000002;
-            SET v_coef_k_a_afec = 0.0002;
-          ELSEIF v_sup1 <= 2500 then
-            SET v_coef_sup_k_a_afec = 0.000001;
-            SET v_coef_k_a_afec = 0.0005;
-          ELSE
-            SET v_coef_sup_k_a_afec = 0.0000005;
-            SET v_coef_k_a_afec = 0.00195;
-        END IF;
-
-
-        SET v_importe_item = v_sup1 * v_coef_sup_k_a_afec * v_valor_k;
-        IF v_importe_item  > 0 THEN
-          SET v_item_numero = v_item_numero + 1;
-          SET v_descripcion = CONCAT(v_descripcion, '- coef. sup. ', CAST(ROUND(v_coef_sup_k_a_afec * 100, 4) AS CHAR), ' por m2 (', v_sup1, ' m2) por valorK');
-          CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-          SET v_total_honorarios = v_importe_item; -- Actualizar el total de honorarios
-        END IF;
-
-        set v_importe_item = ROUND(v_coef_k_a_afec * v_valor_k);
-        IF v_importe_item > 0 THEN
-          SET v_item_numero = v_item_numero + 1;
-          SET v_descripcion = CONCAT('coef. k ', CAST(ROUND(v_coef_k_a_afec * 100, 4) AS CHAR), '% sobre valorK');
-          CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-          SET v_total_honorarios = v_total_honorarios + v_importe_item; -- Actualizar el total de honorarios
-        END IF;
-
-      END IF;
- 
-
-      IF v_bol2 THEN
-        SET v_descripcion = CONCAT(v_descripcion, '- Medición de construcción existente POCO compartimentada c/ejec. de planos');
-
-        -- Determinar coeficiente de afectación según Art. 3.21.2 según rango de superficie
-        if v_sup1 <= 50 then
-          SET v_coef_sup_k_a_afec = 0.000010;
-          SET v_coef_k_a_afec = 0;
-          ELSEIF v_sup1 <= 500 then
-            SET v_coef_sup_k_a_afec = 0.000004;
-            SET v_coef_k_a_afec = 0.0003;
-          ELSEIF v_sup1 <= 2500 then
-            SET v_coef_sup_k_a_afec = 0.000002;
-            SET v_coef_k_a_afec = 0.0013;
-          ELSE
-            SET v_coef_sup_k_a_afec = 0.0000001;
-            SET v_coef_k_a_afec = 0.00038;
-        END IF;
-
-
-        SET v_importe_item = v_sup2 * v_coef_sup_k_a_afec * v_valor_k;
-        IF v_importe_item  > 0 THEN
-          SET v_item_numero = v_item_numero + 1;
-          SET v_descripcion = CONCAT(v_descripcion, '- coef. sup. ', CAST(ROUND(v_coef_sup_k_a_afec * 100, 4) AS CHAR), ' por m2 (', v_sup2, ' m2) por valorK');
-          CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-          SET v_total_honorarios = v_importe_item; -- Actualizar el total de honorarios
-        END IF;
-
-        set v_importe_item = ROUND(v_coef_k_a_afec * v_valor_k);
-        IF v_importe_item > 0 THEN
-          SET v_item_numero = v_item_numero + 1;
-          SET v_descripcion = CONCAT('coef. k ', CAST(ROUND(v_coef_k_a_afec * 100, 4) AS CHAR), '% sobre valorK');
-          CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-          SET v_total_honorarios = v_total_honorarios + v_importe_item; -- Actualizar el total de honorarios
-        END IF;
-
-      END IF;
-
-      IF v_bol3 THEN
-        SET v_descripcion = CONCAT(v_descripcion, '- Medición de construcción existente MUY compartimentada c/ejec. de planos');
-
-        -- Determinar coeficiente de afectación según Art. 3.21.2 según rango de superficie
-        if v_sup1 <= 50 then
-          SET v_coef_sup_k_a_afec = 0.000012;
-          SET v_coef_k_a_afec = 0;
-          ELSEIF v_sup1 <= 500 then
-            SET v_coef_sup_k_a_afec = 0.000006;
-            SET v_coef_k_a_afec = 0.0003;
-          ELSEIF v_sup1 <= 2500 then
-            SET v_coef_sup_k_a_afec = 0.000003;
-            SET v_coef_k_a_afec = 0.0018;
-          ELSE
-            SET v_coef_sup_k_a_afec = 0.00000015;
-            SET v_coef_k_a_afec = 0.00555;
-        END IF;
-
-
-        SET v_importe_item = v_sup3 * v_coef_sup_k_a_afec * v_valor_k;
-        IF v_importe_item  > 0 THEN
-          SET v_item_numero = v_item_numero + 1;
-          SET v_descripcion = CONCAT(v_descripcion, '- coef. sup. ', CAST(ROUND(v_coef_sup_k_a_afec * 100, 4) AS CHAR), ' por m2 (', v_sup3, ' m2) por valorK');
-          CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-          SET v_total_honorarios = v_importe_item; -- Actualizar el total de honorarios
-        END IF;
-
-        set v_importe_item = ROUND(v_coef_k_a_afec * v_valor_k);
-        IF v_importe_item > 0 THEN
-          SET v_item_numero = v_item_numero + 1;
-          SET v_descripcion = CONCAT('coef. k ', CAST(ROUND(v_coef_k_a_afec * 100, 4) AS CHAR), '% sobre valorK');
-          CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-          SET v_total_honorarios = v_total_honorarios + v_importe_item; -- Actualizar el total de honorarios
-        END IF;
-
-       END IF;
   END IF;
 
   -- ========================================================================

@@ -104,7 +104,9 @@ bloque_principal: BEGIN
   -- PASO 2: CALCULAR HONORARIOS
   -- ========================================================================
 
-  
+  SET v_total_honorarios = 0;
+  SET v_item_numero = 0;
+
   IF v_desconoce_valor_en_juego THEN
 
       -- Lógica específica para Cálculo de Honorarios de Peritajes cuando NO se conoce el valor en juego
@@ -125,40 +127,15 @@ bloque_principal: BEGIN
 
   ELSE
 
-    -- Lógica específica para Cálculo de Honorarios de Peritajes cuando se SI conoce el valor en juego
-
-      SET v_coef_k = v_valor_en_juego / v_valor_k;
-
-      -- Determinar el coeficiente a afectar según el coef V / K
-      IF v_coef_k <= 0.25 THEN
-        SET v_coef_K_a_afectar = 0;
-        SET v_coef_V_a_afectar = 0.012;
-      ELSEIF v_coef_k <= 1 THEN
-        SET v_coef_K_a_afectar = 0.002;
-        SET v_coef_V_a_afectar = 0.004;
-      ELSEIF v_coef_k <= 2 THEN
-        SET v_coef_K_a_afectar = 0.003;
-        SET v_coef_V_a_afectar = 0.003;
-      ELSE
-        SET v_coef_K_a_afectar = 0.009;
-        SET v_coef_V_a_afectar = 0.001;
-      END IF;
-             
-      
-      SET v_importe_item = ROUND(v_valor_en_juego * v_coef_V_a_afectar);
-      SET v_descripcion = CONCAT('Según Art. 10.7 s/valor en juego (coef ', CAST(ROUND(v_coef_V_a_afectar * 100, 2) AS CHAR), '%)'); 
-      SET v_item_numero = v_item_numero + 1;
-      CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-      SET v_total_honorarios = v_total_honorarios + v_importe_item;
-
-      if v_coef_K_a_afectar > 0 THEN
-        SET v_importe_item = ROUND(v_valor_k * v_coef_K_a_afectar);
-        SET v_descripcion = CONCAT('Según Art. 10.7 s/valor K (coef ', CAST(ROUND(v_coef_K_a_afectar * 100, 2) AS CHAR), '%)'); 
-        SET v_item_numero = v_item_numero + 1;
-        CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
-        SET v_total_honorarios = v_total_honorarios + v_importe_item;
-      END IF;
-
+    -- Llamar al procedimiento para calcular honorarios según Artículo 10.7 cuando se conoce el valor en juego
+    CALL Calcular_Hon_Art_10_7(
+      p_calculo_id,
+      v_valor_en_juego,
+      v_valor_k,
+      v_tarea_profesional,
+      v_item_numero,
+      v_total_honorarios
+    );
 
   END IF;
  

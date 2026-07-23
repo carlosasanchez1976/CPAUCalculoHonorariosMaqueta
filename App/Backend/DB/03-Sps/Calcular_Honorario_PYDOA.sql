@@ -452,7 +452,7 @@ BEGIN
   -- Coeficientes SPEC-CALC-001 (diferenciados por instalación)
   -- -----------------------------------------------------------------------
   IF v_tarea_instalacion_sanitaria THEN
-    SET v_tarea_profesional = 'Instalación Sanitaria y gas';
+    SET v_tarea_profesional = 'Proyecto de instalación sanitaria y gas';
     SET v_porcentaje_tarea = 1.0;
     
     SET v_rango_actual = 1;
@@ -518,7 +518,7 @@ BEGIN
   -- Coeficientes iguales a Sanitaria (SPEC-CALC-001)
   -- -----------------------------------------------------------------------
   IF v_tarea_instalacion_electrica THEN
-    SET v_tarea_profesional = 'Instalación Eléctrica';
+    SET v_tarea_profesional = 'Proyecto de instalación eléctrica';
     SET v_porcentaje_tarea = 1.0;
     
     SET v_rango_actual = 1;
@@ -584,7 +584,7 @@ BEGIN
   -- Coeficientes propios (SPEC-CALC-001)
   -- -----------------------------------------------------------------------
   IF v_tarea_instalacion_contra_incendio THEN
-    SET v_tarea_profesional = 'Instalación Contra Incendio';
+    SET v_tarea_profesional = 'Proyecto de instalación contra incendio';
     SET v_porcentaje_tarea = 1.0;
     
     SET v_rango_actual = 1;
@@ -648,7 +648,7 @@ BEGIN
   -- Coeficientes iguales a Contra Incendio (SPEC-CALC-001)
   -- -----------------------------------------------------------------------
   IF v_tarea_instalacion_termomecanica THEN
-    SET v_tarea_profesional = 'Instalación Termomecánica';
+    SET v_tarea_profesional = 'Proyecto de instalación termomecánica';
     SET v_porcentaje_tarea = 1.0;
     
     SET v_rango_actual = 1;
@@ -712,7 +712,7 @@ BEGIN
   -- Coeficientes específicos (SPEC-CALC-001)
   -- -----------------------------------------------------------------------
   IF v_tarea_proyecto_estructuras THEN
-    SET v_tarea_profesional = 'Proyecto de Estructuras';
+    SET v_tarea_profesional = 'Proyecto de estructuras';
     SET v_porcentaje_tarea = 1.0;
     
     SET v_rango_actual = 1;

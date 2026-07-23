@@ -78,18 +78,23 @@ async function generarCertificado(datos) {
       // Header vacío (no necesitamos header adicional)
       headerTemplate: '<div></div>',
       
-      // Footer con numeración de páginas
+      // Footer con numeración de páginas (línea respeta márgenes laterales)
       footerTemplate: `
         <div style="
-          width: 100%; 
-          font-size: 9pt; 
-          color: #6b6b6b;
-          padding: 5mm 12mm 0 0;
-          text-align: right;
-          border-top: 1px solid #6b6b6b;
+          width: 100%;
+          padding: 0 12mm;
           box-sizing: border-box;
         ">
-          <span class="pageNumber"></span>/<span class="totalPages"></span>
+          <div style="
+            width: 100%;
+            padding-top: 5mm;
+            font-size: 9pt; 
+            color: #6b6b6b;
+            text-align: right;
+            border-top: 1px solid #6b6b6b;
+          ">
+            <span class="pageNumber"></span>/<span class="totalPages"></span>
+          </div>
         </div>
       `,
       
@@ -295,6 +300,7 @@ function prepararDatosPlantilla(datos, plantilla) {
     currentDate,
     tipoNombre: datos.tipoNombre || obtenerNombreTipoCalculo(datos.tipoCalculo), // Preferir el nombre del frontend
     logoCPAU,
+    vigenciaFE: formData.vigenciaFE || '<span>Vigencia de índices: No especificada</span><br /><span>Base de cálculo: arancel sugerido CPAU</span>',
     
     // Datos del proyecto (del formData)
     nombreProyecto: formData.nombreProyecto || 'Sin nombre',
@@ -302,6 +308,7 @@ function prepararDatosPlantilla(datos, plantilla) {
     tipoObra: formData.tipoObra || 'Sin especificar',
     destinoUso: formData.destinoUso || 'Sin especificar',
     superficieTotal: formData.superficieTotal || 0,
+    valorMetro2ARS: formatCurrency(formData.valorMetro2 || 0),
     valorObraARS,
     valorObraUSD,
     

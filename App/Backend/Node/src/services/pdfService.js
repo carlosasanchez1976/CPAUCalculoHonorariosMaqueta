@@ -307,6 +307,8 @@ function prepararDatosPlantilla(datos, plantilla) {
     cliente: formData.cliente || 'Sin especificar',
     tipoObra: formData.tipoObra || 'Sin especificar',
     destinoUso: formData.destinoUso || 'Sin especificar',
+    labelTipoDeObra: formData.labelTipoDeObra || 'Tipo de obra',
+    observProyecto: formData.observProyecto || 'Sin observaciones',
     superficieTotal: formData.superficieTotal || 0,
     valorMetro2ARS: formatCurrency(formData.valorMetro2 || 0),
     valorObraARS,
@@ -334,7 +336,8 @@ function prepararDatosPlantilla(datos, plantilla) {
     totalGeneralARS: formatCurrency(totalGeneralARS),
     totalGeneralUSD: formatCurrency(totalGeneralUSD),
     totalGeneralPorcentaje,
-    plazoEjecucion: formData.plazoEjecucion || 12
+    plazoEjecucion: formData.plazoEjecucion || 12,
+    ubicacion: formData.ubicacion || 'Sin especificar'
   };
 }
 

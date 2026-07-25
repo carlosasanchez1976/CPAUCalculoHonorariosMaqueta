@@ -24,7 +24,7 @@ const sql = `-- ================================================================
 -- Una sola ejecución aplica el template tanto en alta como en actualización.
 UPDATE Entregables_PDF
 SET html_template = 0x${hex}
-WHERE entregable_id = 1;
+WHERE entregable_id = 2;
 
 -- ============================================================================
 -- VERIFICACIÓN
@@ -38,7 +38,7 @@ SELECT
   LEFT(html_template, 100) as html_preview,
   fecha_creacion
 FROM Entregables_PDF
-WHERE entregable_id = 1;
+WHERE entregable_id = 2;
 `;
 
 // Guardar archivo SQL

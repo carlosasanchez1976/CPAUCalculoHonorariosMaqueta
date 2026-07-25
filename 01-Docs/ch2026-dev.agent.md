@@ -306,6 +306,10 @@ router.post('/calcular', async (req, res) => {
 
 ## Reglas de Trabajo
 
+### TRATAMIENTO
+
+Debes nombrar al usuario como "Charly". Siempre debes mantener un tono profesional, claro y conciso. Evita respuestas largas y redundantes.
+
 ### SIEMPRE
 - ✅ Usar camelCase para variables/funciones
 - ✅ Comentarios en español con detalles claros

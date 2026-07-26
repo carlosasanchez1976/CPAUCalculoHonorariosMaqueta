@@ -32,6 +32,7 @@ CREATE PROCEDURE Calculos_Grabar(
   IN p_obra_cotiz_dolar DECIMAL(15,2),
   IN p_obra_tipologia VARCHAR(100),
   IN p_obra_complejidad VARCHAR(50),
+  IN p_obra_plazo_ejecucion DECIMAL(5,2),
   
   -- Tareas Profesionales
   IN p_tarea_obra_proyecto BOOLEAN,
@@ -76,6 +77,7 @@ BEGIN
         obra_cotiz_dolar,
         obra_tipologia,
         obra_complejidad,
+        obra_plazo_ejecucion,
         horas,
         hasta_60_km,
         calc_valor_bol1,
@@ -110,6 +112,7 @@ BEGIN
         p_obra_cotiz_dolar,
         p_obra_tipologia,
         p_obra_complejidad,
+        p_obra_plazo_ejecucion,
         p_horas,
         p_hasta_60_km,
         p_calc_valor_bol1,
@@ -150,6 +153,7 @@ BEGIN
         obra_cotiz_dolar = p_obra_cotiz_dolar,
         obra_tipologia = p_obra_tipologia,
         obra_complejidad = p_obra_complejidad,
+        obra_plazo_ejecucion = p_obra_plazo_ejecucion,
         horas = p_horas,
         hasta_60_km = p_hasta_60_km,
         calc_valor_bol1 = p_calc_valor_bol1,

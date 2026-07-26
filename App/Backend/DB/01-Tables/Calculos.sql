@@ -81,3 +81,5 @@ alter table Calculos add column calc_valor_bol3 boolean null after calc_valor_bo
 alter table Calculos add column calc_valor_bol4 boolean null after calc_valor_bol3;
 alter table Calculos add column calc_valor_bol5 boolean null after calc_valor_bol4;
 alter table Calculos add column calc_valor_num4 decimal(15,2) null after calc_valor_num3;
+
+alter table Calculos add column obra_plazo_ejecucion DECIMAL(5,2) null after obra_complejidad;

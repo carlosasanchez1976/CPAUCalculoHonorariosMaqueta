@@ -39,6 +39,7 @@ BEGIN
     cal.obra_superficie,
     cal.obra_tipologia,
     cal.obra_complejidad,
+    cal.obra_plazo_ejecucion,
     cal.horas,
     cal.hasta_60_km,
     cal.tarea_obra_proyecto,

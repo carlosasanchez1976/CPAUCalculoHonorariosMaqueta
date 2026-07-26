@@ -100,6 +100,7 @@ async function grabarCalculo(datosCompletos) {
         datosObra.cotizDolar || null,
         datosObra.tipologia || null,
         datosObra.complejidad || null,
+        datosObra.plazoEjecucion || null,
         tareasProfesionales.obraProyecto || false,
         tareasProfesionales.obraDireccion || false,
         tareasProfesionales.instalacionSanitaria || false,

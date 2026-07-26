@@ -336,7 +336,7 @@ function prepararDatosPlantilla(datos, plantilla) {
     totalGeneralARS: formatCurrency(totalGeneralARS),
     totalGeneralUSD: formatCurrency(totalGeneralUSD),
     totalGeneralPorcentaje,
-    plazoEjecucion: formData.plazoEjecucion || 12,
+    plazoEjecucion: formData.plazoEjecucion || 'Sin especificar',
     ubicacion: formData.ubicacion || 'Sin especificar'
   };
 }

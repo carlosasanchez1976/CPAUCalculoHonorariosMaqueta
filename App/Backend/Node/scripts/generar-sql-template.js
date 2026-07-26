@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 // Leer el HTML
-const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-otras-tareas.html');
-// const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-basico-proyecto-direccion.html');
+// const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-otras-tareas.html');
+const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-basico-proyecto-direccion.html');
 const html = fs.readFileSync(htmlPath, 'utf8');
 
 // Convertir a hexadecimal (método más seguro para MySQL)
@@ -24,7 +24,7 @@ const sql = `-- ================================================================
 -- Una sola ejecución aplica el template tanto en alta como en actualización.
 UPDATE Entregables_PDF
 SET html_template = 0x${hex}
-WHERE entregable_id = 2;
+WHERE entregable_id = 1;
 
 -- ============================================================================
 -- VERIFICACIÓN

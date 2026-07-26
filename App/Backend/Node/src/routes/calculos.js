@@ -8,5 +8,6 @@ const { verificarToken } = require('../middlewares/auth');
 router.post('/calcular', verificarToken, honorariosController.calcular);
 router.get('/:calculoId/items', verificarToken, honorariosController.obtenerItems);
 router.post('/exportar-pdf', verificarToken, honorariosController.exportarPdf);
+router.post('/:calculoId/experiencia', verificarToken, honorariosController.guardarExperiencia);
 
 module.exports = router;

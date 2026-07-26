@@ -223,8 +223,40 @@ async function obtenerCalculoPorId(calculoId) {
     }
 }
 
+/**
+ * Guarda la experiencia del usuario sobre un cálculo
+ * 
+ * @param {number} calculoId - ID del cálculo
+ * @param {number} puntaje - Valoración de 1 a 5
+ * @param {string|null} observaciones - Comentarios del usuario (máx. 255 chars)
+ * @returns {Promise<void>}
+ * @throws {Object} Error estructurado con code, message, detail
+ */
+async function guardarExperiencia(calculoId, puntaje, observaciones) {
+    try {
+        const calculoIdInt = normalizarIdEntero(calculoId);
+        
+        await db.executeStoredProcedure('Calculo_Experiencia', [
+            calculoIdInt,
+            puntaje,
+            observaciones
+        ]);
+
+        console.log(`✅ [Model] Experiencia guardada para cálculo ${calculoIdInt}: ${puntaje} estrellas`);
+        
+    } catch (error) {
+        console.error('❌ [Model] Error al guardar experiencia:', error.message);
+        throw {
+            code: 'DB_ERROR',
+            message: 'Error al guardar la experiencia en la base de datos',
+            detail: error.message
+        };
+    }
+}
+
 module.exports = {
     grabarCalculo,
     obtenerCalculoPorId,
-    existeTareaProfesional
+    existeTareaProfesional,
+    guardarExperiencia
 };

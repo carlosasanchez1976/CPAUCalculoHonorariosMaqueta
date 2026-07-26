@@ -240,3 +240,79 @@ exports.exportarPdf = async (req, res) => {
         });
     }
 };
+
+/**
+ * Guarda la experiencia del usuario sobre un cálculo
+ * POST /api/calculos/:calculoId/experiencia
+ * SPEC: SPEC025-CALC-Grabar experiencia de usuario
+ * 
+ * @param {Object} req.params.calculoId - ID del cálculo
+ * @param {Object} req.body.puntaje - Valoración de 1 a 5
+ * @param {Object} req.body.observaciones - Comentarios opcionales
+ */
+exports.guardarExperiencia = async (req, res) => {
+    try {
+        // 1. Validar y normalizar calculoId
+        const calculoId = normalizarCalculoId(req.params?.calculoId);
+        if (!calculoId) {
+            return res.status(400).json({
+                success: false,
+                error: 'calculoId debe ser un número entero positivo',
+                version: '1.0'
+            });
+        }
+
+        // 2. Validar puntaje
+        const { puntaje, observaciones } = req.body || {};
+        
+        if (!puntaje || !Number.isInteger(puntaje) || puntaje < 1 || puntaje > 5) {
+            return res.status(400).json({
+                success: false,
+                error: 'puntaje es requerido y debe ser un número entero entre 1 y 5',
+                version: '1.0'
+            });
+        }
+
+        // 3. Normalizar observaciones (truncar a 255 y trim)
+        let observacionesFinal = null;
+        if (observaciones !== null && observaciones !== undefined) {
+            const observStr = String(observaciones).trim();
+            observacionesFinal = observStr.length > 0 ? observStr.substring(0, 255) : null;
+        }
+
+        // 4. Verificar que el cálculo existe
+        const calculo = await calculoModel.obtenerCalculoPorId(calculoId);
+        if (!calculo) {
+            return res.status(404).json({
+                success: false,
+                error: 'Cálculo no encontrado',
+                version: '1.0'
+            });
+        }
+
+        // 5. Guardar experiencia
+        await calculoModel.guardarExperiencia(calculoId, puntaje, observacionesFinal);
+
+        // 6. Respuesta exitosa
+        return res.status(200).json({
+            success: true,
+            message: 'Experiencia guardada correctamente',
+            data: {
+                calculoId,
+                puntaje,
+                observaciones: observacionesFinal
+            },
+            version: '1.0'
+        });
+
+    } catch (error) {
+        const mensaje = obtenerMensajeError(error, 'Error interno al guardar la experiencia');
+        console.error('Error en calculosController.guardarExperiencia:', error?.detail || error?.message || error);
+
+        return res.status(500).json({
+            success: false,
+            error: mensaje,
+            version: '1.0'
+        });
+    }
+};

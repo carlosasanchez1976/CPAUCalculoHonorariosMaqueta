@@ -4,26 +4,26 @@ const { executeStoredProcedure } = require('../config/db');
 
 const Usuario = {
   async Listar() {
-    const [rows] = await executeStoredProcedure('usuarios_listar');
+    const [rows] = await executeStoredProcedure('Usuarios_Listar');
     return rows;
   },
   async Buscar(id) {
     console.log('Buscar usuario con id:', id);
-    const [rows] = await executeStoredProcedure('usuarios_buscar', [id]);
+    const [rows] = await executeStoredProcedure('Usuarios_Buscar', [id]);
     return rows[0];
   },
   async BuscarXEmail(email) {
     console.log('Buscar usuario con email:', email);
-    const [rows] = await executeStoredProcedure('usuarios_buscar_x_email', [email]);
+    const [rows] = await executeStoredProcedure('Usuarios_Buscar_X_Email', [email]);
     return rows[0];
   },
   async BuscarXIdMatricula(idMatricula) {
     console.log('Buscar usuario con id_matricula:', idMatricula);
-    const [rows] = await executeStoredProcedure('usuarios_buscar_x_id_matricula', [idMatricula]);
+    const [rows] = await executeStoredProcedure('Usuarios_Buscar_X_Id_Matricula', [idMatricula]);
     return rows[0];
   },
   async Borrar(params) {
-    const [rows] = await executeStoredProcedure('usuarios_borrar', [params.user_id, params.user_modi_id]);
+    const [rows] = await executeStoredProcedure('Usuarios_Borrar', [params.user_id, params.user_modi_id]);
     return rows[0];
   },
   async Grabar(data) {
@@ -53,7 +53,7 @@ const Usuario = {
     
     // Parámetros: user_id, user_mail, user_nombre, user_apellido, password, rol, modi_user_id,
     //             username_web, matricula, id_matricula, tipo_matricula
-    const [rows] = await executeStoredProcedure('usuarios_grabar', [
+    const [rows] = await executeStoredProcedure('Usuarios_Grabar', [
       user_id || null,
       user_mail,
       user_nombre,
@@ -111,7 +111,7 @@ const Usuario = {
     }
     
     // Actualizar solo el password (pasar todos los parámetros incluyendo los nuevos)
-    const [rows] = await executeStoredProcedure('usuarios_grabar', [
+    const [rows] = await executeStoredProcedure('Usuarios_Grabar', [
       user_id,
       usuarioActual.user_mail,
       usuarioActual.user_nombre,

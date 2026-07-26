@@ -1,7 +1,7 @@
-drop procedure if exists usuarios_buscar_x_email;
+DROP PROCEDURE IF EXISTS Usuarios_Buscar_X_Email;
 
 DELIMITER $$
-CREATE PROCEDURE `usuarios_buscar_x_email`
+CREATE PROCEDURE `Usuarios_Buscar_X_Email`
 (
 	IN p_user_mail varchar(150)
 )
@@ -9,19 +9,23 @@ CREATE PROCEDURE `usuarios_buscar_x_email`
 BEGIN
 
 	SELECT
-		`usuarios`.`user_id`,
-		`usuarios`.`user_nombre`,
-		`usuarios`.`user_apellido`,
-		`usuarios`.`fec_ult_act`,
-		`usuarios`.`baja_fecha`,
-        `usuarios`.`user_mail`,
-        usuarios.rol,
-		`usuarios`.`password`,
-		`usuarios`.`modi_user_id`
+		`Usuarios`.`user_id`,
+		`Usuarios`.`user_nombre`,
+		`Usuarios`.`user_apellido`,
+		`Usuarios`.`fec_ult_act`,
+		`Usuarios`.`baja_fecha`,
+        `Usuarios`.`user_mail`,
+        Usuarios.rol,
+		`Usuarios`.`password`,
+		`Usuarios`.`modi_user_id`,
+		`Usuarios`.`username_web`,
+		`Usuarios`.`matricula`,
+		`Usuarios`.`id_matricula`,
+		`Usuarios`.`tipo_matricula`
 	FROM
-		`usuarios`
+		`Usuarios`
 	WHERE
-		usuarios.user_mail = p_user_mail;
+		Usuarios.user_mail = p_user_mail;
 
 
 END$$

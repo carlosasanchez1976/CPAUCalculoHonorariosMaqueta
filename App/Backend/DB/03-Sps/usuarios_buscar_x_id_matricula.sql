@@ -1,7 +1,7 @@
-DROP PROCEDURE IF EXISTS usuarios_buscar_x_id_matricula;
+DROP PROCEDURE IF EXISTS Usuarios_Buscar_X_Id_Matricula;
 
 DELIMITER $$
-CREATE PROCEDURE `usuarios_buscar_x_id_matricula`(
+CREATE PROCEDURE `Usuarios_Buscar_X_Id_Matricula`(
     IN p_id_matricula NUMERIC(10,0)
 )
 BEGIN
@@ -17,7 +17,7 @@ BEGIN
         rol,
         baja_fecha,
         fec_ult_act
-    FROM usuarios
+    FROM Usuarios
     WHERE id_matricula = p_id_matricula
       AND (baja_fecha IS NULL OR baja_fecha > NOW());
 END$$

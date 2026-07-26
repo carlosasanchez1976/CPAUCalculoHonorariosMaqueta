@@ -1,7 +1,7 @@
-drop procedure if exists usuarios_grabar;
+DROP PROCEDURE IF EXISTS Usuarios_Grabar;
 
 DELIMITER $$
-CREATE PROCEDURE `usuarios_grabar`(
+CREATE PROCEDURE `Usuarios_Grabar`(
     IN p_user_id INT,
     IN p_user_mail VARCHAR(150),
     IN p_user_nombre VARCHAR(100),
@@ -17,9 +17,9 @@ CREATE PROCEDURE `usuarios_grabar`(
 )
 BEGIN
 
-IF EXISTS (SELECT 1 FROM usuarios WHERE user_id = p_user_id) THEN
+IF EXISTS (SELECT 1 FROM Usuarios WHERE user_id = p_user_id) THEN
     -- ACTUALIZAR USUARIO EXISTENTE
-    UPDATE usuarios
+    UPDATE Usuarios
     SET
         user_mail = p_user_mail,
         user_nombre = p_user_nombre,
@@ -38,7 +38,7 @@ IF EXISTS (SELECT 1 FROM usuarios WHERE user_id = p_user_id) THEN
 ELSE
     -- INSERTAR NUEVO USUARIO
     BEGIN
-        INSERT INTO usuarios (
+        INSERT INTO Usuarios (
             user_mail,
             user_nombre,
             user_apellido,

@@ -1,8 +1,8 @@
 DELIMITER $$
 
-DROP PROCEDURE IF EXISTS usuarios_listar$$
+DROP PROCEDURE IF EXISTS Usuarios_Listar$$
 
-CREATE PROCEDURE usuarios_listar()
+CREATE PROCEDURE Usuarios_Listar()
 BEGIN
     SELECT 
         user_id,
@@ -12,8 +12,12 @@ BEGIN
         rol,
         baja_fecha,
         modi_user_id,
-        fec_ult_act
-    FROM usuarios
+        fec_ult_act,
+        username_web,
+        matricula,
+        id_matricula,
+        tipo_matricula
+    FROM Usuarios
     WHERE baja_fecha IS NULL
     ORDER BY user_apellido, user_nombre;
 END$$

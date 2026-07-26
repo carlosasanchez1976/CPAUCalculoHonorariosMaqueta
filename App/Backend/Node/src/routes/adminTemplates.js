@@ -10,38 +10,39 @@
 const express = require('express');
 const router = express.Router();
 const adminTemplatesController = require('../controllers/adminTemplatesController');
+const { verificarToken, verificarRol } = require('../middlewares/auth');
 
-// ⚠️ NOTA: Sin middleware verificarToken (endpoints abiertos para desarrollo/QA)
-// Cuando se requiera en producción, agregar: verificarToken antes de cada handler
+// Todas las rutas protegidas (requieren autenticación)
+// TODO: En futuro, agregar verificarRol('admin') para restringir solo a administradores
 
 /**
  * POST /api/admin/templates/preview
  * Preview de template con datos de prueba
  */
-router.post('/preview', adminTemplatesController.preview);
+router.post('/preview', verificarToken, adminTemplatesController.preview);
 
 /**
  * POST /api/admin/templates/:id/update
  * Actualizar template en BD
  */
-router.post('/:id/update', adminTemplatesController.update);
+router.post('/:id/update', verificarToken, adminTemplatesController.update);
 
 /**
  * GET /api/admin/templates/test-data
  * Obtener datos de prueba para hidratar templates
  */
-router.get('/test-data', adminTemplatesController.getTestData);
+router.get('/test-data', verificarToken, adminTemplatesController.getTestData);
 
 /**
  * GET /api/admin/templates/list
  * Listar templates activos (para selector en tool)
  */
-router.get('/list', adminTemplatesController.list);
+router.get('/list', verificarToken, adminTemplatesController.list);
 
 /**
  * GET /api/admin/templates/:id
  * Obtener template específico por ID
  */
-router.get('/:id', adminTemplatesController.getById);
+router.get('/:id', verificarToken, adminTemplatesController.getById);
 
 module.exports = router;

@@ -13,51 +13,109 @@ exports.listar = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    // Validación básica
-    const { user_mail , password } = req.body;
-    if (!user_mail || !password) {
-      return res.status(400).json({ error: 'Faltan campos requeridos: user_mail, password' });
-    }
-    
-    const usuarioLogin = await Usuario.Login(req.body);
+    // 1. Validación de datos de entrada
+    const {
+      username_web,
+      matricula,
+      idmatricula,
+      tipoMatricula,
+      user_nombre_web,
+      user_apellido_web
+    } = req.body;
 
-    if (!usuarioLogin) {
-      return res.status(401).json({ error: 'Usuario no válido' });
-    } else {
-      const jwt = require('jsonwebtoken');
-      // Crear token JWT
-      const token = jwt.sign(
-          { 
-              id: usuarioLogin.user_id,
-              email: usuarioLogin.user_mail,
-              nombre: usuarioLogin.nombre,
-              role: usuarioLogin.rol || 'admin',
-          },
-          process.env.JWT_SECRET,
-          { expiresIn: '24h' }
-      );
-
-      // ✅ DEBUG: Verificar el token creado
-      console.log('=== TOKEN CREADO ===');
-      console.log('Token:', token);
-      console.log('===================');
-
-
-      res.json({
-          message: 'Login exitoso',
-          token: token,
-          usuario:  { 
-              id: usuarioLogin.user_id,
-              email: usuarioLogin.user_mail,
-              nombre: usuarioLogin.nombre,
-              role: usuarioLogin.rol || 'admin'
-          }
+    // Validar campos requeridos
+    if (!username_web || !idmatricula || !user_nombre_web || !user_apellido_web) {
+      return res.status(400).json({
+        error: 'Faltan campos requeridos',
+        campos_requeridos: ['username_web', 'idmatricula', 'user_nombre_web', 'user_apellido_web']
       });
     }
+
+    // Validar formato de idmatricula
+    if (!Number.isInteger(idmatricula) || idmatricula <= 0) {
+      return res.status(400).json({
+        error: 'idmatricula debe ser un número entero positivo'
+      });
+    }
+
+    // 2. Buscar usuario existente por id_matricula
+    let usuario = await Usuario.BuscarXIdMatricula(idmatricula);
+
+    // 3. Si no existe, crear nuevo usuario con role WEBUSER
+    if (!usuario) {
+      console.log('Usuario no encontrado - Creando nuevo usuario WEBUSER');
+
+      const nuevoUsuarioData = {
+        user_id: null,
+        user_mail: `${username_web}@cpau.web`, // Email generado
+        user_nombre: user_nombre_web,
+        user_apellido: user_apellido_web,
+        password: null, // Sin password para usuarios web
+        rol: 'WEBUSER',
+        username_web,
+        matricula,
+        id_matricula: idmatricula,
+        tipo_matricula: tipoMatricula
+      };
+
+      const resultado = await Usuario.Grabar(nuevoUsuarioData);
+
+      // Buscar el usuario recién creado para obtener todos sus datos
+      usuario = await Usuario.Buscar(resultado.user_id);
+    }
+
+    // 4. Verificar que el usuario esté activo
+    if (usuario.baja_fecha && new Date(usuario.baja_fecha) <= new Date()) {
+      throw new Error('Usuario dado de baja');
+    }
+
+    // 5. Generar token JWT
+    const jwt = require('jsonwebtoken');
+    const token = jwt.sign(
+      {
+        id: usuario.user_id,
+        email: usuario.user_mail,
+        nombre: usuario.user_nombre,
+        apellido: usuario.user_apellido,
+        role: usuario.rol,
+        username_web: usuario.username_web,
+        matricula: usuario.id_matricula
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
+    );
+
+    // 6. Log de auditoría
+    console.log('=== LOGIN EXITOSO ===');
+    console.log('Usuario:', usuario.username_web);
+    console.log('ID Matrícula:', usuario.id_matricula);
+    console.log('Role:', usuario.rol);
+    console.log('Token generado:', token.substring(0, 50) + '...');
+    console.log('=====================');
+
+    // 7. Devolver respuesta
+    res.json({
+      token: token,
+      usuario: {
+        id: usuario.user_id,
+        role: usuario.rol
+      }
+    });
+
   } catch (err) {
-    const errMessage = 'error: Error en login Usuario: ' + err.message || '';
-    console.error(errMessage);
-    res.status(500).json({errMessage});
+    console.error('Error en login:', err.message);
+
+    // Manejo específico de errores
+    if (err.message === 'Usuario dado de baja') {
+      return res.status(403).json({
+        error: 'Usuario inactivo. Contacte al administrador.'
+      });
+    }
+
+    res.status(500).json({
+      error: 'Error en el proceso de autenticación',
+      detalle: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 };
 

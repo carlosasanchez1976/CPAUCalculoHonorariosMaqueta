@@ -13,3 +13,14 @@ CREATE TABLE IF NOT EXISTS `Usuarios` (
   PRIMARY KEY (`user_id`))
 ENGINE = InnoDB;
 
+
+alter table Usuarios add column `username_web` VARCHAR(20) NULL after `user_apellido`;
+alter table Usuarios add column `matricula` numeric(10,0) NULL after `username_web`;
+alter table Usuarios add column `id_matricula` numeric(10,0) NULL after `matricula`;
+alter table Usuarios add column `tipo_matricula` varchar(20) NULL after `id_matricula`;
+
+
+alter table Usuarios modify column `password` VARCHAR(255) NULL;
+
+alter table Usuarios add unique index `idx_id_matricula` (`id_matricula`);
+

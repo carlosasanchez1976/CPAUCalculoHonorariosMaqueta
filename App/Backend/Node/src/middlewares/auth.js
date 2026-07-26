@@ -17,8 +17,17 @@ const verificarToken = (req, res, next) => {
     const requireJWT = process.env.REQUIRE_JWT === 'true';
     const authHeader = req.headers['authorization'];
     
+    // 🔍 DEBUG: Log de estado de autenticación
+    console.log('🔐 [AUTH DEBUG]', {
+      ruta: req.path,
+      requireJWT,
+      tieneAuthHeader: !!authHeader,
+      REQUIRE_JWT_ENV: process.env.REQUIRE_JWT
+    });
+    
     // MODO PERMISIVO (REQUIRE_JWT=false): Permitir acceso sin token
     if (!requireJWT && !authHeader) {
+      console.log('✅ [AUTH DEBUG] Modo permisivo: acceso sin token');
       req.usuario = {
         id: 2,
         email: 'temporal@cpau.com',
@@ -30,6 +39,7 @@ const verificarToken = (req, res, next) => {
 
     // MODO ESTRICTO (REQUIRE_JWT=true): Rechazar si no hay token
     if (requireJWT && !authHeader) {
+      console.log('❌ [AUTH DEBUG] Modo estricto: token no proporcionado');
       return res.status(401).json({ error: 'Token no proporcionado' });
     }
 
@@ -55,6 +65,12 @@ const verificarToken = (req, res, next) => {
     // Verificar el token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
+    console.log('✅ [AUTH DEBUG] Token verificado exitosamente:', {
+      userId: decoded.id,
+      email: decoded.email,
+      role: decoded.role
+    });
+    
     req.usuario = {
       id: decoded.id,
       email: decoded.email,
@@ -64,6 +80,7 @@ const verificarToken = (req, res, next) => {
 
     next();
   } catch (error) {
+    console.log('❌ [AUTH DEBUG] Error en verificación:', error.name, error.message);
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ error: 'Token expirado' });
     }

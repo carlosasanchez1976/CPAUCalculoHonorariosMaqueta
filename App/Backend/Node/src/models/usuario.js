@@ -17,25 +17,42 @@ const Usuario = {
     const [rows] = await executeStoredProcedure('usuarios_buscar_x_email', [email]);
     return rows[0];
   },
+  async BuscarXIdMatricula(idMatricula) {
+    console.log('Buscar usuario con id_matricula:', idMatricula);
+    const [rows] = await executeStoredProcedure('usuarios_buscar_x_id_matricula', [idMatricula]);
+    return rows[0];
+  },
   async Borrar(params) {
     const [rows] = await executeStoredProcedure('usuarios_borrar', [params.user_id, params.user_modi_id]);
     return rows[0];
   },
   async Grabar(data) {
-    const { user_id, user_mail, user_nombre, user_apellido, password, rol } = data;
+    const {
+      user_id,
+      user_mail,
+      user_nombre,
+      user_apellido,
+      password,
+      rol,
+      username_web,
+      matricula,
+      id_matricula,
+      tipo_matricula
+    } = data;
     
-    let hashedPassword;
+    let hashedPassword = null;
     
-    // Si es edición sin cambio de password, mantener el password actual
-    if (user_id && !password) {
+    // Hash de password solo si se proporciona
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    } else if (user_id) {
+      // Si es edición sin cambio de password, mantener el actual
       const usuarioActual = await this.Buscar(user_id);
       hashedPassword = usuarioActual.password;
-    } else {
-      // Hash del nuevo password
-      hashedPassword = await bcrypt.hash(password, 10);
     }
     
-    // Parámetros: user_id, user_mail, user_nombre, user_apellido, password, rol, modi_user_id
+    // Parámetros: user_id, user_mail, user_nombre, user_apellido, password, rol, modi_user_id,
+    //             username_web, matricula, id_matricula, tipo_matricula
     const [rows] = await executeStoredProcedure('usuarios_grabar', [
       user_id || null,
       user_mail,
@@ -43,12 +60,22 @@ const Usuario = {
       user_apellido,
       hashedPassword,
       rol,
-      user_id || 1 // modi_user_id
+      user_id || 1, // modi_user_id
+      username_web || null,
+      matricula || null,
+      id_matricula || null,
+      tipo_matricula || null
     ]);
     
     return { user_id: rows[0]?.user_id };
   },
 
+  // ==================================================================================
+  // MÉTODO OBSOLETO - Login con email/password deprecado
+  // ==================================================================================
+  // El login ahora se maneja en el controller usando BuscarXIdMatricula
+  // Este método se mantiene comentado por si se necesita en el futuro
+  /*
   async Login(data) {
     const { user_mail, password } = data;
 
@@ -69,6 +96,8 @@ const Usuario = {
     
     return usuarioBus;
   },
+  */
+  // ==================================================================================
 
   async CambiarPassword(data) {
     const { user_id, password } = data;
@@ -81,7 +110,7 @@ const Usuario = {
       throw new Error('Usuario no encontrado');
     }
     
-    // Actualizar solo el password
+    // Actualizar solo el password (pasar todos los parámetros incluyendo los nuevos)
     const [rows] = await executeStoredProcedure('usuarios_grabar', [
       user_id,
       usuarioActual.user_mail,
@@ -89,7 +118,11 @@ const Usuario = {
       usuarioActual.user_apellido,
       hashedPassword,
       usuarioActual.rol,
-      user_id // modi_user_id (el mismo usuario)
+      user_id, // modi_user_id (el mismo usuario)
+      usuarioActual.username_web || null,
+      usuarioActual.matricula || null,
+      usuarioActual.id_matricula || null,
+      usuarioActual.tipo_matricula || null
     ]);
     
     return { user_id: rows[0]?.user_id };

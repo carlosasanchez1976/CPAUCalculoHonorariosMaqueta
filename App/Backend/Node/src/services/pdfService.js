@@ -313,6 +313,8 @@ function prepararDatosPlantilla(datos, plantilla) {
     valorMetro2ARS: formatCurrency(formData.valorMetro2 || 0),
     valorObraARS,
     valorObraUSD,
+    horas: formData.horas || 'No especificadas',
+    proyectoLabel: formData.proyectoLabel || 'encargo',
     
     // Arrays de honorarios (null si están vacíos para que {{#if}} funcione)
     honorariosObra: honorariosObra.length > 0 ? honorariosObra : null,

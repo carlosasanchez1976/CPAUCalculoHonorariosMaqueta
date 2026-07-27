@@ -3,7 +3,9 @@ const path = require('path');
 
 // Leer el HTML
 // const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-otras-tareas.html');
-const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-basico-proyecto-direccion.html');
+//const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-basico-proyecto-direccion.html');
+//const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-conservacion-fachadas.html');
+const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-habilitaciones.html');
 const html = fs.readFileSync(htmlPath, 'utf8');
 
 // Convertir a hexadecimal (método más seguro para MySQL)
@@ -12,8 +14,8 @@ const hex = Buffer.from(html, 'utf8').toString('hex');
 // Generar SQL
 const sql = `-- ============================================================================
 -- SCRIPT: Cargar template PDF en Entregables_PDF
--- Template: Certificado Otras Tareas
--- entregable_id: 2
+-- Template: Certificado Habilitaciones
+-- entregable_id: 3
 -- Fecha: 2026-06-11
 -- ============================================================================
 
@@ -24,7 +26,7 @@ const sql = `-- ================================================================
 -- Una sola ejecución aplica el template tanto en alta como en actualización.
 UPDATE Entregables_PDF
 SET html_template = 0x${hex}
-WHERE entregable_id = 1;
+WHERE entregable_id = 3;
 
 -- ============================================================================
 -- VERIFICACIÓN

@@ -47,7 +47,7 @@ exports.login = async (req, res) => {
 
       const nuevoUsuarioData = {
         user_id: null,
-        user_mail: `${username_web}@cpau.web`, // Email generado
+        user_mail: null, // El frontend no envía email
         user_nombre: user_nombre_web,
         user_apellido: user_apellido_web,
         password: null, // Sin password para usuarios web

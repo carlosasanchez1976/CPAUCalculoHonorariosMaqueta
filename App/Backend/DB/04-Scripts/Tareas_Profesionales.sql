@@ -24,3 +24,6 @@ update tareas_profesionales set orden = 13 where codi = 'SAUTO';
 update tareas_profesionales set orden = 14 where codi = 'URBA';
 update tareas_profesionales set orden = 15 where codi = 'DISINT';
 update tareas_profesionales set orden = 16 where codi = 'DISPAI';
+
+
+update Usuarios set rol = 'ADMIN' where matricula = 28003;

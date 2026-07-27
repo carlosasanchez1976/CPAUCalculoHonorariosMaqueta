@@ -296,13 +296,7 @@ exports.guardarExperiencia = async (req, res) => {
         // 6. Respuesta exitosa
         return res.status(200).json({
             success: true,
-            message: 'Experiencia guardada correctamente',
-            data: {
-                calculoId,
-                puntaje,
-                observaciones: observacionesFinal
-            },
-            version: '1.0'
+            message: 'Experiencia guardada correctamente'
         });
 
     } catch (error) {
@@ -311,8 +305,7 @@ exports.guardarExperiencia = async (req, res) => {
 
         return res.status(500).json({
             success: false,
-            error: mensaje,
-            version: '1.0'
+            error: mensaje
         });
     }
 };

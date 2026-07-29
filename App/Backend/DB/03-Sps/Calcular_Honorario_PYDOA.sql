@@ -41,6 +41,10 @@ DROP PROCEDURE IF EXISTS Calcular_Honorario_PYDOA$$
  * -             Rango C: 0.06  y Coef K: 0.03 -> Rango C: 0.06 y Coef K: 0.00
  * -             Rango D: 0.03  y Coef K: 0.03 -> Rango D: 0.025 y Coef K: 0.00
  ******************************************************************************
+ * - 2026-07-27: Ajustes solicitados en coeficientes de tareas Incendio y termodinamica
+ * -             Rango A: 0.35 (sin cambios)
+ * -             Rango B: 0.090 
+ ******************************************************************************
  *
  * PARAMETROS:
  * @param p_calculo_id INT - ID del cálculo en tabla Calculos
@@ -595,13 +599,13 @@ BEGIN
           SET v_rango_nombre = 'A';
           SET v_lim_inferior = 0;
           SET v_lim_superior = v_limite_a_sup;
-          SET v_coef_obra = 0.0050; 
+          SET v_coef_obra = 0.0035; 
           SET v_coef_k = 0;
         WHEN 2 THEN
           SET v_rango_nombre = 'B';
           SET v_lim_inferior = v_limite_b_inf;
           SET v_lim_superior = v_limite_b_sup;
-          SET v_coef_obra = 0.0018;
+          SET v_coef_obra = 0.0009;
           SET v_coef_k = 0;
         WHEN 3 THEN
           SET v_rango_nombre = 'C';
@@ -659,13 +663,13 @@ BEGIN
           SET v_rango_nombre = 'A';
           SET v_lim_inferior = 0;
           SET v_lim_superior = v_limite_a_sup;
-          SET v_coef_obra = 0.0050;
+          SET v_coef_obra = 0.0035;
           SET v_coef_k = 0;
         WHEN 2 THEN
           SET v_rango_nombre = 'B';
           SET v_lim_inferior = v_limite_b_inf;
           SET v_lim_superior = v_limite_b_sup;
-          SET v_coef_obra = 0.0018;
+          SET v_coef_obra = 0.0009;
           SET v_coef_k = 0;
         WHEN 3 THEN
           SET v_rango_nombre = 'C';

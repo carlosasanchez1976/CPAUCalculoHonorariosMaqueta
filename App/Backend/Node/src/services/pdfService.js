@@ -315,6 +315,7 @@ function prepararDatosPlantilla(datos, plantilla) {
     valorObraUSD,
     horas: formData.horas || 'No especificadas',
     proyectoLabel: formData.proyectoLabel || 'encargo',
+    valorObraLabel: formData.valorObraLabel || 'Valor de la obra',
     
     // Arrays de honorarios (null si están vacíos para que {{#if}} funcione)
     honorariosObra: honorariosObra.length > 0 ? honorariosObra : null,

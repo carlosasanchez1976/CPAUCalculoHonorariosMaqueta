@@ -12,9 +12,9 @@ DROP PROCEDURE IF EXISTS Calcular_Honorario_REPTEC$$
  * 1. Según Artículo 7 de la Resolución CPAU A115
  * Ver Casos de uso 101 al 103 de la documentación funcional y técnica del esarrollo CH2019.
  * Tareas Profesionales posibles:
- * IEC: Inscripción de Empresa Contructora
- * POL: Presentación de Ofertas y Licitaciones
- * RTE: Representación Técnica
+ * RTE: Representación Técnica Art. 7.2
+ * IEC: Inscripción de Empresa Constructora Art. 7.3
+ * POL: Presentación de Ofertas y Licitaciones Art. 7.4
  *
  * 
  *
@@ -23,7 +23,8 @@ DROP PROCEDURE IF EXISTS Calcular_Honorario_REPTEC$$
  * - 2026-06-07: 
  ******************************************************************************
  * MODIFICACIONES:
- * - 2026-05-22: 
+ * - 2026-07-27: Replanteo de la lógica de cálculo de honorarios para REPTEC, incluyendo ajustes en los coeficientes y rangos según la nueva normativa.
+ *               en base a A115 Art. 7
  ******************************************************************************
  * - 2026-05-22: 
  ******************************************************************************
@@ -79,7 +80,7 @@ bloque_principal: BEGIN
   SELECT 
     obra_valor_obra,
     obra_tipologia,
-    calc_valor_str1,
+    obra_complejidad,
     tarea_obra_proyecto
   INTO
     v_valor_obra,
@@ -106,12 +107,14 @@ bloque_principal: BEGIN
 
   -- ========================================================================
   -- PASO 2: CALCULAR HONORARIOS POR TAREA PROFESIONAL
-  -- IEC Y POL SE CALCULAN CON EL MISMO ALGORITMO PERO SE DISTINGUEN EN LA DESCRIPCIÓN Y TAREA PROFESIONAL
+  -- RTE ART 7.2
   -- ========================================================================
-  -- CALCULAR PARA 'IEC' Y 'POL'
-  IF v_obra_tipologia = 'IEC' OR v_obra_tipologia = 'POL' THEN
+  -- CALCULAR PARA 'RTE'
+  -- Y USAR PARA POL (Art 7.4) - SE CALCULA EL HONORARIO PARA LUEGO AFECTAR COEFICIENTES DE POL
 
-      -- Lógica específica para (IEC y POL comparten algoritmo)
+  IF v_obra_tipologia = 'RTE' or v_obra_tipologia = 'POL' THEN
+
+      -- Lógica específica para RTE
 
     -- ========================================================================
       -- PASO 3: DETERMINAR RANGO FINAL (donde cae la obra)
@@ -135,15 +138,15 @@ bloque_principal: BEGIN
 
 
       
-      -- Para simplificar, asignamos una tarea profesional genérica para IEC
+      -- Para simplificar, asignamos una tarea profesional genérica para RTE
       SET v_tarea_profesional = CONCAT('Honorarios (', v_obra_tipologia, ') Art. 7.2 (Coef M)');
     
       
       SET v_importe_item = ROUND(v_coef_obra * v_valor_obra);
       SET v_descripcion = CONCAT('Honorarios por servicio de ', v_descripcion_servicio, ' (coef ', CAST((v_coef_obra * 100) AS CHAR), '%)');
       
-      -- Si es POL no se graba. Pero se tiene que calcular el total de honorarios para IEC y después afectarlo a coeficientes del Art 7.4
-      if v_obra_tipologia = 'IEC' THEN
+      -- Si es POL no se graba. Pero se tiene que calcular el total de honorarios para RTE y después afectarlo a coeficientes del Art 7.4
+      if v_obra_tipologia = 'RTE' THEN
         SET v_item_numero = v_item_numero + 1;
         CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
       END IF;
@@ -156,7 +159,7 @@ bloque_principal: BEGIN
         SET v_importe_item = ROUND(v_coef_k * v_valor_k);
         SET v_descripcion = CONCAT('Adicional por valor K (coef ', CAST((v_coef_k * 100) AS CHAR), '%)');
         
-        if v_obra_tipologia = 'IEC' THEN
+        if v_obra_tipologia = 'RTE' THEN
           SET v_item_numero = v_item_numero + 1;
           CALL Calculos_Items_Grabar(p_calculo_id, v_item_numero, v_tarea_profesional, v_descripcion, v_importe_item);
         END IF;
@@ -201,10 +204,10 @@ bloque_principal: BEGIN
   END IF;
 
 
--- CALCULAR PARA 'RTE'
-  IF v_obra_tipologia = 'RTE' THEN
+-- CALCULAR PARA 'IEC'
+  IF v_obra_tipologia = 'IEC' THEN
 
-      -- Lógica específica para RTE
+      -- Lógica específica para IEC
 
     -- ========================================================================
       -- PASO 3: DETERMINAR RANGO FINAL (donde cae la obra)
@@ -232,8 +235,6 @@ bloque_principal: BEGIN
       SET v_total_honorarios = v_total_honorarios + v_importe_item;
   END IF;
 
-  
-  
   -- ========================================================================
   -- PASO 5: ACTUALIZAR METADATA EN MASTER
   -- ========================================================================

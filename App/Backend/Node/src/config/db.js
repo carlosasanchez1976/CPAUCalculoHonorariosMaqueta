@@ -57,7 +57,7 @@ async function createPool() {
 
         // Charset y timezone
         charset: 'utf8mb4',
-        timezone: 'Z'                    // UTC
+        timezone: '-03:00'               // Argentina Time (UTC-3)
     });
 
     // Test de conexión inicial

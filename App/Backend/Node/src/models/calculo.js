@@ -79,7 +79,7 @@ async function grabarCalculo(datosCompletos) {
         calculoIdRequest,
         usuarioId,
         datosCompletos.tareaId,
-        new Date(),
+        null,  // fecha_calculo: NULL para que MySQL use CURDATE() con timezone Argentina
         datosProyecto.nombre || null,
         datosProyecto.ubicacion || null,
         datosProyecto.cliente || null,

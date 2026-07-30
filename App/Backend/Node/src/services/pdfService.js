@@ -166,12 +166,6 @@ function prepararDatosPlantilla(datos, plantilla) {
     ? String(formData.calculoId).padStart(6, '0')
     : '000000';
   
-  // Fecha actual formateada
-  const currentDate = new Date().toLocaleDateString('es-AR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
   
   // Función auxiliar para redondear
   const redondear = (valor) => Math.round(valor);
@@ -297,7 +291,7 @@ function prepararDatosPlantilla(datos, plantilla) {
   return {
     // Metadatos
     calculationNumber,
-    currentDate,
+    fechaCalculo: formData.fechaCalculo || 'Sin especificar',
     tipoNombre: datos.tipoNombre || obtenerNombreTipoCalculo(datos.tipoCalculo), // Preferir el nombre del frontend
     logoCPAU,
     vigenciaFE: formData.vigenciaFE || '<span>Vigencia de índices: No especificada</span><br /><span>Base de cálculo: arancel sugerido CPAU</span>',
@@ -394,11 +388,6 @@ function construirHTMLCertificado(datos) {
     ? String(formData.calculoId).padStart(6, '0')
     : '000000';
   
-  const currentDate = new Date().toLocaleDateString('es-AR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
 
   // Logo CPAU embebido en base64 (SVG del header verde)
   // TODO: Reemplazar con logo real convertido a base64
@@ -646,7 +635,7 @@ function construirHTMLCertificado(datos) {
           <div class="header-right">
             <div class="header-title">Cálculo de honorarios profesionales</div>
             <div class="header-metadata">
-              <span class="metadata-item">Fecha: ${currentDate}</span>
+              <span class="metadata-item">Fecha: </span>
               <span class="metadata-item">Nº: ${calculationNumber}</span>
             </div>
           </div>
@@ -710,7 +699,7 @@ function construirHTMLCertificado(datos) {
           <div class="header-right">
             <div class="header-title">Cálculo de honorarios profesionales</div>
             <div class="header-metadata">
-              <span class="metadata-item">Fecha: ${currentDate}</span>
+              <span class="metadata-item">Fecha: </span>
               <span class="metadata-item">Nº: ${calculationNumber}</span>
             </div>
           </div>

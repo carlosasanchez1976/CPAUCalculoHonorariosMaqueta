@@ -8,7 +8,7 @@ CREATE TABLE Calculos (
   calculo_id INT AUTO_INCREMENT PRIMARY KEY,
   usuario_id INT NOT NULL,
   tarea_id INT NOT NULL,
-  fecha_calculo DATETIME NOT NULL,
+  fecha_calculo DATE NOT NULL,
   
   -- Datos del Proyecto
   proyecto_nombre VARCHAR(200),
@@ -87,5 +87,8 @@ alter table Calculos add column obra_plazo_ejecucion DECIMAL(5,2) null after obr
 
 alter table Calculos add column app_exp_puntaje NUMERIC(1,0) null;
 alter table Calculos add column app_exp_observ VARCHAR(255) null after app_exp_puntaje;
+
+-- Cambiar tipo de dato de fecha_calculo de DATETIME a DATE
+alter table Calculos modify column fecha_calculo DATE NOT NULL;
 
 

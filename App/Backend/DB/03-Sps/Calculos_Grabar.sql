@@ -7,7 +7,7 @@ CREATE PROCEDURE Calculos_Grabar(
   IN p_calculo_id INT,
   IN p_usuario_id INT,
   IN p_tarea_id INT,
-  IN p_fecha_calculo DATETIME,
+  IN p_fecha_calculo DATE,
   
   -- Datos Proyecto
   IN p_proyecto_nombre VARCHAR(200),
@@ -102,7 +102,7 @@ BEGIN
       VALUES
         (p_usuario_id,
         p_tarea_id,
-        p_fecha_calculo,
+        COALESCE(p_fecha_calculo, CURDATE()),
         p_proyecto_nombre,
         p_proyecto_ubicacion,
         p_proyecto_cliente,
@@ -143,7 +143,7 @@ BEGIN
     UPDATE Calculos
     SET usuario_id = p_usuario_id,
         tarea_id = p_tarea_id,
-        fecha_calculo = p_fecha_calculo,
+        fecha_calculo = COALESCE(p_fecha_calculo, CURDATE()),
         proyecto_nombre = p_proyecto_nombre,
         proyecto_ubicacion = p_proyecto_ubicacion,
         proyecto_cliente = p_proyecto_cliente,

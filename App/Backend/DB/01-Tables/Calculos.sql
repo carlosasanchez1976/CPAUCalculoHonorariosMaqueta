@@ -91,4 +91,6 @@ alter table Calculos add column app_exp_observ VARCHAR(255) null after app_exp_p
 -- Cambiar tipo de dato de fecha_calculo de DATETIME a DATE
 alter table Calculos modify column fecha_calculo DATE NOT NULL;
 
+alter table Calculos modify column obra_complejidad VARCHAR(100) NULL;
+
 

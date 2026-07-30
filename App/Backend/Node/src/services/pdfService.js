@@ -149,6 +149,16 @@ async function renderizarPlantillaDB(datos) {
   // Renderizar
   const htmlRenderizado = template(templateData);
   
+  // Debug: Verificar si la fecha está en el HTML renderizado
+  if (htmlRenderizado.includes('{{fechaCalculo}}')) {
+    console.warn('[PDF] ⚠️ ALERTA: El template contiene {{fechaCalculo}} sin renderizar!');
+  }
+  const fechaEnHTML = htmlRenderizado.match(/<span>([^<]*)<\/span>/g);
+  console.log('[PDF] 🔍 Fragmento de HTML con fecha:', htmlRenderizado.substring(
+    htmlRenderizado.indexOf('Fecha:'),
+    htmlRenderizado.indexOf('Fecha:') + 100
+  ));
+  
   return htmlRenderizado;
 }
 
@@ -287,11 +297,37 @@ function prepararDatosPlantilla(datos, plantilla) {
   const subtotalEspecialidadesPorcentaje = formData.valorObra > 0 ? (subtotalEspecialidadesARS / formData.valorObra * 100).toFixed(2) : '0.00';
   const totalGeneralPorcentaje = formData.valorObra > 0 ? (totalGeneralARS / formData.valorObra * 100).toFixed(2) : '0.00';
   
+  // Formatear fecha del cálculo (viene como ISO string o Date desde MySQL)
+  // Buscar fecha en formData (si el frontend la envía) o en calculationResult.metadata (desde la DB)
+  const fechaCalculo = formData.fechaCalculo || calculationResult?.metadata?.fechaCalculo;
+  
+  let fechaCalculoFormateada = 'Sin especificar';
+  
+  if (fechaCalculo) {
+    try {
+      const fecha = new Date(fechaCalculo);
+      console.log('[PDF] 🔍 fecha parseada:', fecha);
+      console.log('[PDF] 🔍 fecha.getTime():', fecha.getTime());
+      if (!isNaN(fecha.getTime())) {
+        fechaCalculoFormateada = fecha.toLocaleDateString('es-AR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+        console.log('[PDF] ✅ fechaCalculoFormateada:', fechaCalculoFormateada);
+      }
+    } catch (error) {
+      console.warn('[PDF] Error formateando fecha:', error);
+    }
+  } else {
+    console.warn('[PDF] ⚠️ No se encontró fechaCalculo en ninguna fuente');
+  }
+  
   // Retornar objeto APLANADO (todos los campos en el nivel raíz)
-  return {
+  const datosTemplate = {
     // Metadatos
     calculationNumber,
-    fechaCalculo: formData.fechaCalculo || 'Sin especificar',
+    fechaCalculo: fechaCalculoFormateada || 'Sin especificar',
     tipoNombre: datos.tipoNombre || obtenerNombreTipoCalculo(datos.tipoCalculo), // Preferir el nombre del frontend
     logoCPAU,
     vigenciaFE: formData.vigenciaFE || '<span>Vigencia de índices: No especificada</span><br /><span>Base de cálculo: arancel sugerido CPAU</span>',
@@ -307,9 +343,16 @@ function prepararDatosPlantilla(datos, plantilla) {
     valorMetro2ARS: formatCurrency(formData.valorMetro2 || 0),
     valorObraARS,
     valorObraUSD,
-    horas: formData.horas || 'No especificadas',
+    horas: formData.horas || null,  // null para que {{#if horas}} funcione en el template
     proyectoLabel: formData.proyectoLabel || 'encargo',
     valorObraLabel: formData.valorObraLabel || 'Valor de la obra',
+
+    valorNum1: formData.valorNum1 || null,
+    valorNum2: formData.valorNum2 || null,
+    valorNum3: formData.valorNum3 || null,
+    valorStr1: formData.valorStr1 || null,
+    valorStr2: formData.valorStr2 || null,
+    valorStr3: formData.valorStr3 || null,
     
     // Arrays de honorarios (null si están vacíos para que {{#if}} funcione)
     honorariosObra: honorariosObra.length > 0 ? honorariosObra : null,
@@ -336,6 +379,9 @@ function prepararDatosPlantilla(datos, plantilla) {
     plazoEjecucion: formData.plazoEjecucion || 'Sin especificar',
     ubicacion: formData.ubicacion || 'Sin especificar'
   };
+  
+  
+  return datosTemplate;
 }
 
 /**

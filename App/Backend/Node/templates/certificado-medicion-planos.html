@@ -558,7 +558,7 @@
       <p class="disclaimer-text">
         Este c&aacute;lculo es una <strong>estimaci&oacute;n de referencia</strong> basada en los datos proporcionados 
         y factores est&aacute;ndar del mercado. Los valores finales pueden variar seg&uacute;n condiciones particulares 
-        de cada proyecto. <strong>No constituye una cotizaci&oacute;n formal ni un compromiso contractual.</strong>
+        de cada {{proyectoLabel}}. <strong>No constituye una cotizaci&oacute;n formal ni un compromiso contractual.</strong>
         <br />
         <br />
         {{{vigenciaFE}}}
@@ -567,149 +567,100 @@
 
 
     <!-- Resumen del Proyecto -->
-    <h4 class="section-title">Resumen del Proyecto - Informaci&oacute;n ingresada por el/la profesional</h4>
+    <h4 class="section-title">Resumen del {{proyectoLabel}} - Informaci&oacute;n ingresada por el/la profesional</h4>
     <div class="resumen-grid">
       <!-- Fila 1: Nombre del Proyecto | Comitente -->
       <div class="resumen-item-container">
 
         <div class="resumen-item">
-          <span class="resumen-label">Nombre del Proyecto:</span>
+          <span class="resumen-label">Nombre del {{proyectoLabel}}:</span>
           <span class="resumen-value">{{nombreProyecto}}</span>
         </div>
+
         <div class="resumen-item">
           <span class="resumen-label">Comitente:</span>
           <span class="resumen-value">{{cliente}}</span>
         </div>
-       
+
       </div>
-      <!-- Fila 2: Tipo de obra | Destino/Uso -->
+
+      <!-- Fila 2:-->
       <div class="resumen-item-container">
+
         <div class="resumen-item">
-          <span class="resumen-label">Tipo de obra:</span>
-          <span class="resumen-value">{{tipoObra}}</span>
+          <span class="resumen-label">Ubicación:</span>
+          <span class="resumen-value">{{ubicacion}}</span>
         </div>
+
+      </div>
+
+            <!-- Fila 3: -->
+      <div class="resumen-item-container">
+
         <div class="resumen-item">
-          <span class="resumen-label">Destino/Uso:</span>
+          <span class="resumen-label">{{labelTipoDeObra}}:</span>
           <span class="resumen-value">{{destinoUso}}</span>
-        </div> 
+        </div>
+
       </div>
 
-      <!-- Fila 3: Superficie total | Costo por metro cuadrado -->
+      <!-- Fila 4: -->
+       {{#if horas}}
       <div class="resumen-item-container">
-        <div class="resumen-item">
-          <span class="resumen-label">Superficie total:</span>
-          <span class="resumen-value">{{superficieTotal}} m²</span>
-        </div>
-        <div class="resumen-item">
-          <span class="resumen-label">Costo por metro cuadrado:</span>
-          <span class="resumen-value">{{valorMetro2ARS}}</span>
-        </div> 
-      </div>
 
-      <!-- Fila 4: Costo estimado por obra (ARS) | Costo estimado por obra (USD) -->
-      <div class="resumen-item-container">
-       <div class="resumen-item">
-          <span class="resumen-label">Costo estimado de obra (ARS):</span>
-          <span class="resumen-value">{{valorObraARS}}</span>
-        </div>
         <div class="resumen-item">
-          <span class="resumen-label">Costo estimado de obra (USD):</span>
-          <span class="resumen-value">{{valorObraUSD}}</span>
+          <span class="resumen-label">Horas insumidas por el titular:</span>
+          <span class="resumen-value">{{horas}}</span>
+        </div>
+
+      </div>
+      {{/if}}
+
+      <!-- Fila 5: -->
+       {{#if valorNum1}}
+      <div class="resumen-item-container">
+        <div class="resumen-item">
+          <span class="resumen-label">{{valorStr1}}:</span>
+          <span class="resumen-value">{{valorNum1}}</span>
         </div>
       </div>
+      {{/if}}
 
-      <!-- Fila 4: Plazo de ejecucion de las tareas encomendadas -->
+      <!-- Fila 6: -->
+       {{#if valorNum2}}
       <div class="resumen-item-container">
         <div class="resumen-item">
-          <span class="resumen-label">Plazo de ejecución de las tareas encomendadas:</span>
-          <span class="resumen-value">{{plazoEjecucion}} meses</span>
+          <span class="resumen-label">{{valorStr2}}:</span>
+          <span class="resumen-value">{{valorNum2}}</span>
         </div>
+      </div>
+      {{/if}}
+
+
+      <!-- Fila 7: -->
+       {{#if valorNum3}}
+      <div class="resumen-item-container">
+        <div class="resumen-item">
+          <span class="resumen-label">{{valorStr3}}:</span>
+          <span class="resumen-value">{{valorNum3}}</span>
+        </div>
+      </div>
+      {{/if}}
+
+
+      <!-- Fila 8: -->
+      <div class="resumen-item-container">
+
+        <div class="resumen-item">
+          <span class="resumen-label">Observaciones:</span>
+          <span class="resumen-value">{{observProyecto}}</span>
+        </div>
+
       </div>
     </div>
 
     <!-- Detalle de Honorarios -->
     <h4 class="section-title-sin-linea">Detalle de honorarios</h4>
-
-    <!-- SECCIoN: Honorarios Obra -->
-    {{#if honorariosObra}}
-    <div class="table-section">
-      <table>
-        <!-- Encabezado: siempre se muestra en la primera seccion -->
-        <thead>
-          <tr>
-            <th class="centered">&Iacute;tem</th>
-            <th>Tarea Profesional</th>
-            <th class="right-align">Importe ARS</th>
-            <th class="right-align">Importe USD</th>
-            <th class="centered">% sobre costo de obra</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each honorariosObra}}
-          <tr>
-            <td class="centered">{{this.indice}}</td>
-            <td>
-            
-              {{this.tareaProfesional}}
-            </td>
-            <td class="right-align">{{this.importeARS}}</td>
-            <td class="right-align">{{this.importeUSD}}</td>
-            <td class="centered">{{this.porcentaje}}%</td>
-          </tr>
-          {{/each}}
-          
-          <!-- Subtotal Obra -->
-          <tr class="subtotal-row">
-            <td colspan="2"><strong>Total honorarios obra</strong></td>
-            <td class="right-align"><strong>{{subtotalObraARS}}</strong></td>
-            <td class="right-align"><strong>{{subtotalObraUSD}}</strong></td>
-            <td class="centered"><strong>{{subtotalObraPorcentaje}}%</strong></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    {{/if}}
-
-    <!-- SECCIoN: Honorarios Adicionales -->
-    {{#if honorariosAdicionales}}
-    <div class="table-section">
-      <table>
-        <!-- Encabezado: solo si NO existe honorariosObra -->
-        {{#unless honorariosObra}}
-        <thead>
-          <tr>
-            <th class="centered">&Iacute;tem</th>
-            <th>Tarea Profesional</th>
-            <th class="right-align">Importe ARS</th>
-            <th class="right-align">Importe USD</th>
-            <th class="centered">% sobre costo de obra</th>
-          </tr>
-        </thead>
-        {{/unless}}
-        <tbody>
-          {{#each honorariosAdicionales}}
-          <tr>
-            <td class="centered">{{this.indice}}</td>
-            <td>
-              {{this.tareaProfesional}}
-            </td>
-            <td class="right-align">{{this.importeARS}}</td>
-            <td class="right-align">{{this.importeUSD}}</td>
-            <td class="centered">{{this.porcentaje}}%</td>
-          </tr>
-          {{/each}}
-          
-          <!-- Subtotal Adicionales -->
-          <tr class="subtotal-row">
-            <td colspan="2"><strong>Total honorarios adicionales</strong></td>
-            <td class="right-align"><strong>{{subtotalAdicionalesARS}}</strong></td>
-            <td class="right-align"><strong>{{subtotalAdicionalesUSD}}</strong></td>
-            <td class="centered"><strong>{{subtotalAdicionalesPorcentaje}}%</strong></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    {{/if}}
 
     <!-- SECCIoN: Honorarios Especialidades -->
     {{#if honorariosEspecialidades}}
@@ -723,8 +674,6 @@
               <th class="centered">&Iacute;tem</th>
               <th>Tarea Profesional</th>
               <th class="right-align">Importe ARS</th>
-              <th class="right-align">Importe USD</th>
-              <th class="centered">% sobre costo de obra</th>
             </tr>
           </thead>
           {{/unless}}
@@ -737,18 +686,14 @@
               {{this.tareaProfesional}}
             </td>
             <td class="right-align">{{this.importeARS}}</td>
-            <td class="right-align">{{this.importeUSD}}</td>
-            <td class="centered">{{this.porcentaje}}%</td>
           </tr>
           {{/each}}
           
           <!-- Subtotal Especialidades -->
-          <tr class="subtotal-row">
+          <!-- <tr class="subtotal-row">
             <td colspan="2"><strong>Total honorarios especialidades</strong></td>
             <td class="right-align"><strong>{{subtotalEspecialidadesARS}}</strong></td>
-            <td class="right-align"><strong>{{subtotalEspecialidadesUSD}}</strong></td>
-            <td class="centered"><strong>{{subtotalEspecialidadesPorcentaje}}%</strong></td>
-          </tr>
+          </tr> -->
         </tbody>
       </table>
     </div>
@@ -759,25 +704,21 @@
       <table class="totales-table">
         <tbody>
           <tr class="total-row">
-            <td colspan="2"><strong>TOTAL GENERAL</strong></td>
-            <td class="right-align"><strong>{{totalGeneralARS}}</strong></td>
-            <td class="right-align"><strong>{{totalGeneralUSD}}</strong></td>
-            <td class="centered"><strong>{{totalGeneralPorcentaje}}%</strong></td>
+            <td colspan="2"><strong>TOTAL HONORARIOS</strong></td>
+            <td class="right-align"><strong>{{subtotalEspecialidadesARS}}</strong></td>
           </tr>
-          <tr class="total-row">
+          <!-- <tr class="total-row">
             <td colspan="3"><strong>Plazo estimado de ejecuci&oacute;n: {{plazoEjecucion}} meses</strong></td>
             <td class="right-align"></td>
             <td class="centered"></td>
-
-            <!-- <td colspan="5"><strong>Plazo estimado de ejecuci&oacute;n: {{plazoEjecucion}} meses</strong></td> -->
-          </tr>
+          </tr> -->
         </tbody>
       </table>
     </div>
 
     <!-- Nota Final -->
     <div class="nota-final">
-      <p>NOTA: Este honorario corresponde &uacute;nicamente a las tareas profesionales seleccionadas. NO incluye IVA.</p>
+      <p>NOTA: Este honorario corresponde &uacute;nicamente a las tareas profesionales seleccionadas. NO incluye los costos de certificación de trámite. NO incluye IVA.</p>
     </div>
   </div>
   <!-- Fin pagina 1 -->
@@ -812,68 +753,42 @@
       
       <!-- Alcance y car&aacute;cter del c&aacute;lculo -->
       <section class="nota-block">
-        <h4>Alcance y car&aacute;cter del c&aacute;lculo</h4>
-        <p>Los c&aacute;lculos de honorarios profesionales que resultan del uso de esta calculadora tienen como finalidad orientar a las partes en los acuerdos de honorarios por las distintas tareas que los arquitectos llevan adelante.</p>
-        <p>El monto de honorarios se determina a partir de las variables ingresadas por el profesional (tipo de obra, superficie, costo estimado por m2, alcance del encargo y otros) y los porcentajes de honorarios sugeridos por el CPAU. El objetivo de este c&aacute;lculo es obtener un honorario equitativo.</p>
-        <p>El modo de pago, as&iacute; como el sistema de ajuste de los valores ser&aacute; el que acuerden las partes. Todo cambio en el alcance de las tareas profesionales encomendadas, as&iacute; como cualquiera de las variables ingresadas para el c&aacute;lculo deber&aacute; reflejarse en los honorarios.</p>
-      </section>
-
-      <!-- Costo de obra considerado -->
-      <section class="nota-block">
-        <h4>Costo de obra considerado</h4>
-        <p>El costo de obra por m2 a ser utilizado en el c&aacute;lculo debe ser consecuencia de una estimaci&oacute;n consensuada entre profesional y comitente.</p><p>El CPAU publica mensualmente índices de referencia de costos de construcci&oacute;n, elaborados por distintos organismos y/o medios, disponibles en la web institucional, quedando a criterio del/la profesional y del comitente seleccionar el valor que consideren adecuado.</p>
-      </section>
-
-      <!-- Etapas del proyecto -->
-      <section class="nota-block">
-        <h4>Etapas del proyecto y direcci&oacute;n de obra</h4>
-        <table class="etapas-table">
-          <tbody>
-            <tr><td>Croquis preliminar</td><td>10%</td></tr>
-            <tr><td>Anteproyecto</td><td>15%</td></tr>
-            <tr><td>Proyecto b&aacute;sico</td><td>15%</td></tr>
-            <tr><td>Documentaci&oacute;n licitatoria</td><td>20%</td></tr>
-            <tr><td>Total proyecto</td><td>60%</td></tr>
-            <tr><td>Direcci&oacute;n de obra</td><td>40%</td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <!-- Texto - documentacion -->
-      <section class="nota-block">
-        <p>La documentaci&oacute;n ejecutiva es complementaria de la documentaci&oacute;n licitatoria y comprende el desarrollo de procedimientos constructivos, la elaboraci&oacute;n de planos de taller, despieces para la fabricaci&oacute;n y montaje de elementos, y planos, c&aacute;lculos y detalles sobre procesos t&eacute;cnicos de construcci&oacute;n. Su contenido, alcance y necesidad de elaboraci&oacute;n de dicha documentaci&oacute;n depender&aacute;n de caracter&iacute;sticas del proyecto y ser&aacute;n definidos de com&uacute;n acuerdo entre el Comitente y el Profesional. Estas tareas se consideran adicionales a las etapas de proyecto anteriormente mencionadas.</p>
-      </section>
-
-      <section class="nota-block">
-        <h4></h4>
-        <p>La supervisi&oacute;n de la obra es una tarea de acompa&ntilde;amiento para la fiel interpretaci&oacute;n del proyecto por parte de la Direcci&oacute;n de obra.</p>
-        <p>No incluye firma profesional ni tareas ejecutivas, y no reemplaza la obligatoriedad de un Director/a de obra.</p>
-        <p>A fin de conocer el contenido y alcance de cada una de las etapas del proyecto, se recomienda consultar el MEPAU.</p>
+        <h4>Variables de cálculo</h4>
+        <p>Las expresiones que determinan honorarios están en función de un coeficiente “K” cuyo valor responde a las variaciones mensuales del Índice del Costo de la Construcción (ICC) del INDEC, que publica el CPAU todos los meses y cuya aplicación tiene por objeto preservar el valor del honorario y su carácter alimentario.
+          En aquellas tareas que se calculan en base a monto de obra, el valor por m2 utilizado en el cálculo constituye una estimación consensuada entre profesional y comitente.
+          El CPAU publica mensualmente índices de referencia de costos de construcción, elaborados por distintos organismos y/o medios, disponibles en la web institucional, quedando a criterio del/la profesional y del comitente seleccionar el valor que consideren adecuado. 
+        </p>
       </section>
 
       <!-- Alcance de los honorarios sugeridos -->
       <section class="nota-block">
         <h4>Alcance de los honorarios sugeridos</h4>
-        <p>Los honorarios resultantes de esta calculadora contemplan las tareas profesionales correspondientes a un encargo ordinario, de acuerdo con los alcances definidos por la normativa y usos profesionales vigentes, ver MEPAU.</p>
-        <p>Para los encargos de Proyecto y Direcci&oacute;n, las tareas profesionales vinculadas al interiorismo, equipamiento no edilicio, mobiliario, iluminaci&oacute;n, cortinas u otros elementos no habituales en una propiedad vacía del mercado inmobiliario no est&aacute;n incluidas y requerir&aacute;n honorarios adicionales a pactar.</p>
-        <p>Se recomienda a los profesionales acompañar la encomienda con el detalle de tareas, la modalidad de prestaci&oacute;n y la lista de documentos entregables, pudiendo indicarse también su modo de ejecuci&oacute;n (AutoCAD, BIM), a fin de clarificar el alcance del encargo y evitar confusiones.</p>
+        <p>Los honorarios resultantes de esta calculadora contemplan las tareas profesionales correspondientes a un encargo ordinario, de acuerdo con los alcances definidos por la normativa vigente y usos profesionales, ver MEPAU
+            Se recomienda a los profesionales acompañar la encomienda con el detalle de tareas, la modalidad de prestación y la lista de documentos entregables y etapas de pago a fin de clarificar el alcance del encargo y evitar reclamos innecesarios.
+        </p>
       </section>
 
       <!-- Conceptos no incluidos -->
       <section class="nota-block">
         <h4>Conceptos no incluidos en los honorarios</h4>
-        <p>IVA, en caso de corresponder.<br />Gesti&oacute;n municipal, derechos de construcci&oacute;n y/o cualquier tipo de grav&aacute;menes, tasas o derechos.<br />C&aacute;lculo estructural, salvo el caso que se encuentre específicamente agregado al c&aacute;lculo realizado.<br />Proyecto de instalaciones, salvo el caso que se encuentren específicamente agregados al c&aacute;lculo realizado.<br />Documentaci&oacute;n y planos comerciales, renders, maquetas, etc.<br />Cualquier otro concepto que no esté expresado en el c&aacute;lculo.</p>
+        <p>IVA, en caso de corresponder.<br />
+          Derechos de construcción y/o cualquier tipo de gravámenes, tasas o derechos.
+          Cualquier otro concepto que no esté expreso en el cálculo.
+        </p>
       </section>
 
-      <!-- Resoluci&oacute;n de los honorarios -->
+      <!-- Resolución de los honorarios -->
       <section class="nota-block">
-        <h4>Resoluci&oacute;n de los honorarios</h4>
-        <p>En caso de que alguna de las partes decida no continuar con la totalidad del encargo, deber&aacute;n abonarse los honorarios de las tareas efectivamente realizadas seg&uacute;n lo acordado por las partes, y considerando las etapas de proyecto previamente mencionadas en este documento.</p>
-        <p>En caso de rescisi&oacute;n unilateral por parte del comitente, se deber&aacute; convenir un resarcimiento en favor del profesional por las tareas encomendadas y no ejecutadas, de acuerdo a la normativa vigente.</p>
+        <h4>Resolución de los honorarios</h4>
+        <p>En caso de que alguna de las partes decida no continuar con la totalidad del encargo, deberán abonarse los honorarios de las tareas efectivamente realizadas 
+          según lo acordado por las partes, y considerando las etapas de proyecto previamente mencionadas en este documento.</p>
+        <p>En caso de rescisión unilateral por parte del comitente, se deberá convenir un resarcimiento en favor del profesional por las tareas encomendadas y no ejecutadas, 
+          de acuerdo a la normativa vigente.</p>
       <p><br></p>
       <p><br></p>
-        <p>Para ampliar la informaci&oacute;n consultar al MEPAU, capítulo 02 Honorarios, o ponerse en contacto con tecnica@cpau.org</p>
+        <p>Para ampliar la información consultar al MEPAU, capítulo 02 Honorarios, o ponerse en contacto con tecnica@cpau.org</p>
       </section>
+
     </div>
   </div>
 

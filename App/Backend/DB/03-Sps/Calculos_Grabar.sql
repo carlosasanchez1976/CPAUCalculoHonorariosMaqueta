@@ -31,7 +31,7 @@ CREATE PROCEDURE Calculos_Grabar(
   IN p_obra_superficie DECIMAL(10,2),
   IN p_obra_cotiz_dolar DECIMAL(15,2),
   IN p_obra_tipologia VARCHAR(100),
-  IN p_obra_complejidad VARCHAR(50),
+  IN p_obra_complejidad VARCHAR(100),
   IN p_obra_plazo_ejecucion DECIMAL(5,2),
   
   -- Tareas Profesionales

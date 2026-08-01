@@ -10,7 +10,7 @@ CREATE PROCEDURE `Usuarios_Grabar`(
     IN p_rol VARCHAR(10),
     IN p_modi_user_id INT,
     -- NUEVOS PARÁMETROS PARA AUTENTICACIÓN WEB
-    IN p_username_web VARCHAR(20),
+    IN p_username_web VARCHAR(255),
     IN p_matricula NUMERIC(10,0),
     IN p_id_matricula NUMERIC(10,0),
     IN p_tipo_matricula VARCHAR(20)

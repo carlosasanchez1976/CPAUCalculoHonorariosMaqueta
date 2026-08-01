@@ -24,3 +24,7 @@ alter table Usuarios modify column `password` VARCHAR(255) NULL;
 
 alter table Usuarios add unique index `idx_id_matricula` (`id_matricula`);
 
+alter table Usuarios modify column `username_web` VARCHAR(255) NULL;
+
+CREATE INDEX idx_usuarios_fec_ult_act ON Usuarios(fec_ult_act);
+

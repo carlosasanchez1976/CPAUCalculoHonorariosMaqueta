@@ -1,0 +1,139 @@
+{
+  "success": true,
+  "data": {
+    "periodo": {
+      "desde": "2026-07-01",
+      "hasta": "2026-07-31"
+    },
+    "resumen": {
+      "totalUsuariosNuevos": 28,
+      "totalCalculosNuevos": 187,
+      "totalCalculosConPuntaje": 89,
+      "promedioPuntaje": 4.3,
+      "usuariosActivos": 142,
+      "valorPromedioObra": 285750000
+    },
+    "serieTemporal": [
+      { "fecha": "2026-07-01", "usuariosNuevos": 2, "calculosNuevos": 8 },
+      { "fecha": "2026-07-02", "usuariosNuevos": 1, "calculosNuevos": 12 },
+      { "fecha": "2026-07-03", "usuariosNuevos": 0, "calculosNuevos": 5 },
+      { "fecha": "2026-07-04", "usuariosNuevos": 3, "calculosNuevos": 9 },
+      { "fecha": "2026-07-05", "usuariosNuevos": 0, "calculosNuevos": 3 },
+      { "fecha": "2026-07-06", "usuariosNuevos": 0, "calculosNuevos": 2 },
+      { "fecha": "2026-07-07", "usuariosNuevos": 1, "calculosNuevos": 7 },
+      { "fecha": "2026-07-08", "usuariosNuevos": 2, "calculosNuevos": 11 },
+      { "fecha": "2026-07-09", "usuariosNuevos": 1, "calculosNuevos": 9 },
+      { "fecha": "2026-07-10", "usuariosNuevos": 0, "calculosNuevos": 6 },
+      { "fecha": "2026-07-11", "usuariosNuevos": 3, "calculosNuevos": 13 },
+      { "fecha": "2026-07-12", "usuariosNuevos": 0, "calculosNuevos": 4 },
+      { "fecha": "2026-07-13", "usuariosNuevos": 0, "calculosNuevos": 1 },
+      { "fecha": "2026-07-14", "usuariosNuevos": 2, "calculosNuevos": 10 },
+      { "fecha": "2026-07-15", "usuariosNuevos": 1, "calculosNuevos": 8 },
+      { "fecha": "2026-07-16", "usuariosNuevos": 0, "calculosNuevos": 7 },
+      { "fecha": "2026-07-17", "usuariosNuevos": 2, "calculosNuevos": 12 },
+      { "fecha": "2026-07-18", "usuariosNuevos": 1, "calculosNuevos": 9 },
+      { "fecha": "2026-07-19", "usuariosNuevos": 0, "calculosNuevos": 5 },
+      { "fecha": "2026-07-20", "usuariosNuevos": 0, "calculosNuevos": 3 },
+      { "fecha": "2026-07-21", "usuariosNuevos": 3, "calculosNuevos": 11 },
+      { "fecha": "2026-07-22", "usuariosNuevos": 1, "calculosNuevos": 8 },
+      { "fecha": "2026-07-23", "usuariosNuevos": 0, "calculosNuevos": 6 },
+      { "fecha": "2026-07-24", "usuariosNuevos": 2, "calculosNuevos": 10 },
+      { "fecha": "2026-07-25", "usuariosNuevos": 1, "calculosNuevos": 7 },
+      { "fecha": "2026-07-26", "usuariosNuevos": 0, "calculosNuevos": 4 },
+      { "fecha": "2026-07-27", "usuariosNuevos": 0, "calculosNuevos": 2 },
+      { "fecha": "2026-07-28", "usuariosNuevos": 1, "calculosNuevos": 9 },
+      { "fecha": "2026-07-29", "usuariosNuevos": 2, "calculosNuevos": 11 },
+      { "fecha": "2026-07-30", "usuariosNuevos": 0, "calculosNuevos": 8 },
+      { "fecha": "2026-07-31", "usuariosNuevos": 1, "calculosNuevos": 6 }
+    ],
+    "distribucionTareas": [
+      {
+        "tareaCodigo": "PYDOA",
+        "tareaDescripcion": "Proyecto y Dirección de Obras de Arquitectura",
+        "totalCalculos": 68,
+        "porcentaje": 36.4
+      },
+      {
+        "tareaCodigo": "HABI",
+        "tareaDescripcion": "Habilitaciones",
+        "totalCalculos": 42,
+        "porcentaje": 22.5
+      },
+      {
+        "tareaCodigo": "PYDO",
+        "tareaDescripcion": "Proyecto y Dirección de Obra",
+        "totalCalculos": 31,
+        "porcentaje": 16.6
+      },
+      {
+        "tareaCodigo": "CONFAC",
+        "tareaDescripcion": "Conservación de Fachadas",
+        "totalCalculos": 18,
+        "porcentaje": 9.6
+      },
+      {
+        "tareaCodigo": "TASA",
+        "tareaDescripcion": "Tasaciones",
+        "totalCalculos": 14,
+        "porcentaje": 7.5
+      },
+      {
+        "tareaCodigo": "GPYC",
+        "tareaDescripcion": "Gerenciamiento de Proyectos y Construcción",
+        "totalCalculos": 8,
+        "porcentaje": 4.3
+      },
+      {
+        "tareaCodigo": "HYS",
+        "tareaDescripcion": "Higiene y Seguridad",
+        "totalCalculos": 6,
+        "porcentaje": 3.2
+      }
+    ],
+    "topUsuarios": [
+      {
+        "usuarioId": 142,
+        "nombreCompleto": "María Fernández",
+        "email": "mfernandez@estudio-arq.com.ar",
+        "totalCalculos": 23,
+        "ultimaActividad": "2026-07-31T18:45:22Z"
+      },
+      {
+        "usuarioId": 87,
+        "nombreCompleto": "Carlos Rodríguez",
+        "email": "crodriguez@cpau.org.ar",
+        "totalCalculos": 19,
+        "ultimaActividad": "2026-07-30T14:12:08Z"
+      },
+      {
+        "usuarioId": 215,
+        "nombreCompleto": "Ana López",
+        "email": "alopez@arquitectura.com",
+        "totalCalculos": 17,
+        "ultimaActividad": "2026-07-31T11:23:45Z"
+      },
+      {
+        "usuarioId": 53,
+        "nombreCompleto": "Jorge Martínez",
+        "email": "jmartinez@gmail.com",
+        "totalCalculos": 15,
+        "ultimaActividad": "2026-07-29T16:08:30Z"
+      },
+      {
+        "usuarioId": 198,
+        "nombreCompleto": "Laura González",
+        "email": "lgonzalez@estudio.com.ar",
+        "totalCalculos": 12,
+        "ultimaActividad": "2026-07-31T09:15:12Z"
+      }
+    ],
+    "distribucionPuntajes": [
+      { "puntaje": 1, "cantidad": 3 },
+      { "puntaje": 2, "cantidad": 8 },
+      { "puntaje": 3, "cantidad": 15 },
+      { "puntaje": 4, "cantidad": 38 },
+      { "puntaje": 5, "cantidad": 25 }
+    ]
+  },
+  "version": "1.0"
+}

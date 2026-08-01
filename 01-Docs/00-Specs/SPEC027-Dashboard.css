@@ -1,0 +1,400 @@
+/* ============================================================================
+   ESTILOS DASHBOARD - CH2026 CPAU
+   ============================================================================
+   Estilos para el componente Dashboard con diseño responsive mobile-first.
+   Colores: Paleta cyan/azul CPAU
+   ============================================================================ */
+
+/* Variables globales */
+:root {
+  --color-primary: #00a8e8;
+  --color-secondary: #0077b6;
+  --color-success: #06d6a0;
+  --color-warning: #ffd60a;
+  --color-danger: #ef476f;
+  --color-dark: #073b4c;
+  --color-gray-light: #f8f9fa;
+  --color-gray-medium: #dee2e6;
+  --color-gray-dark: #495057;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --border-radius: 8px;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================================================
+   CONTAINER PRINCIPAL
+   ============================================================================ */
+
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+.dashboard-container h1 {
+  color: var(--color-dark);
+  font-size: 2rem;
+  margin-bottom: var(--spacing-lg);
+  font-weight: 600;
+}
+
+/* ============================================================================
+   LOADING Y ERROR
+   ============================================================================ */
+
+.dashboard-loading,
+.dashboard-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--color-gray-medium);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.dashboard-error h3 {
+  color: var(--color-danger);
+  margin-bottom: var(--spacing-md);
+}
+
+.dashboard-error button {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.dashboard-error button:hover {
+  background-color: var(--color-secondary);
+}
+
+/* ============================================================================
+   FILTROS DE FECHA
+   ============================================================================ */
+
+.filtros-fecha {
+  background: white;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.periodo-actual {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-gray-dark);
+}
+
+.filtros-form {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.form-group label {
+  font-weight: 500;
+  color: var(--color-dark);
+  font-size: 0.875rem;
+}
+
+.form-group input[type="date"] {
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-gray-medium);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+}
+
+.filtros-form button {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.filtros-form button:hover {
+  background-color: var(--color-secondary);
+}
+
+.filtros-form button[type="button"] {
+  background-color: var(--color-gray-medium);
+  color: var(--color-dark);
+}
+
+.filtros-form button[type="button"]:hover {
+  background-color: var(--color-gray-dark);
+  color: white;
+}
+
+/* ============================================================================
+   TARJETAS DE RESUMEN
+   ============================================================================ */
+
+.resumen-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.metric-card {
+  background: white;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  border-top: 4px solid var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-content h3 {
+  font-size: 0.875rem;
+  color: var(--color-gray-dark);
+  margin: 0 0 var(--spacing-sm) 0;
+  font-weight: 500;
+}
+
+.card-content p {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-dark);
+  margin: 0;
+}
+
+.card-content p.small {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* ============================================================================
+   SECCIONES DE GRÁFICOS
+   ============================================================================ */
+
+.dashboard-charts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.chart-section {
+  background: white;
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-section h2 {
+  font-size: 1.25rem;
+  color: var(--color-dark);
+  margin: 0 0 var(--spacing-md) 0;
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: var(--spacing-sm);
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-lg);
+}
+
+@media (min-width: 768px) {
+  .chart-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.chart-half {
+  min-height: 350px;
+}
+
+/* ============================================================================
+   TABLA DE TOP USUARIOS
+   ============================================================================ */
+
+.top-usuarios-table {
+  overflow-x: auto;
+}
+
+.top-usuarios-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.top-usuarios-table th,
+.top-usuarios-table td {
+  padding: var(--spacing-md);
+  text-align: left;
+  border-bottom: 1px solid var(--color-gray-medium);
+}
+
+.top-usuarios-table th {
+  background-color: var(--color-gray-light);
+  color: var(--color-dark);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.top-usuarios-table tbody tr:hover {
+  background-color: var(--color-gray-light);
+}
+
+.top-usuarios-table .posicion {
+  font-size: 1.25rem;
+  text-align: center;
+  width: 80px;
+}
+
+.top-usuarios-table .total-calculos {
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+}
+
+/* ============================================================================
+   RESPONSIVE - MOBILE
+   ============================================================================ */
+
+@media (max-width: 767px) {
+  .dashboard-container {
+    padding: var(--spacing-md);
+  }
+
+  .dashboard-container h1 {
+    font-size: 1.5rem;
+  }
+
+  .resumen-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .filtros-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filtros-form button {
+    width: 100%;
+  }
+
+  .chart-section {
+    padding: var(--spacing-md);
+  }
+
+  .top-usuarios-table {
+    font-size: 0.875rem;
+  }
+
+  .top-usuarios-table th,
+  .top-usuarios-table td {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* ============================================================================
+   RECHARTS CUSTOMIZATION
+   ============================================================================ */
+
+.recharts-tooltip-wrapper {
+  outline: none;
+}
+
+.recharts-default-tooltip {
+  background: white !important;
+  border: 1px solid var(--color-gray-medium) !important;
+  border-radius: var(--border-radius) !important;
+  box-shadow: var(--shadow-md) !important;
+  padding: var(--spacing-sm) !important;
+}
+
+.recharts-legend-item-text {
+  color: var(--color-dark) !important;
+  font-weight: 500;
+}
+
+/* ============================================================================
+   UTILIDADES
+   ============================================================================ */
+
+.text-center {
+  text-align: center;
+}
+
+.mt-lg {
+  margin-top: var(--spacing-lg);
+}
+
+.mb-lg {
+  margin-bottom: var(--spacing-lg);
+}
+
+.empty-state {
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--color-gray-dark);
+  background: var(--color-gray-light);
+  border-radius: var(--border-radius);
+}
+
+.empty-state h3 {
+  color: var(--color-dark);
+  margin-bottom: var(--spacing-md);
+}

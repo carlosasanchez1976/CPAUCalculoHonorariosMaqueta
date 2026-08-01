@@ -1,0 +1,299 @@
+# ============================================================================
+# TICKETS - SPEC-027: Dashboard de Métricas de Cálculos
+# ============================================================================
+# Proyecto: CH2026 - CPAU
+# Fecha: 2026-07-31
+# Estimación Total: 13 horas (2 días)
+# ============================================================================
+
+## 🎫 T027-001: Crear Índices en Base de Datos
+├─ Prioridad: ALTA (prerequisito)
+├─ Estimación: 0.5 horas
+├─ Asignado: DBA / Backend Developer
+├─ Depende de: -
+└─ Archivo: App/Backend/DB/04-Indexes/dashboard_indexes.sql
+
+TAREAS:
+☐ Ejecutar script de índices en DB cpau_ch_dev
+☐ Ejecutar script de índices en DB cpau_ch_qa  
+☐ Validar índices con SHOW INDEX FROM Calculos
+☐ Validar índices con SHOW INDEX FROM Usuarios
+☐ Ejecutar ANALYZE TABLE en ambas tablas
+
+CRITERIOS DE ACEPTACIÓN:
+✅ Índices creados sin errores
+✅ EXPLAIN SELECT usa idx_calculos_created_at
+✅ EXPLAIN SELECT usa idx_usuarios_fec_ult_act
+
+
+## 🎫 T027-002: Actualizar Stored Procedure Calculos_Dashboard
+├─ Prioridad: ALTA
+├─ Estimación: 3 horas
+├─ Asignado: Backend Developer
+├─ Depende de: T027-001
+└─ Archivo: App/Backend/DB/03-Sps/Calculo_Dashboard.sql
+
+TAREAS:
+☐ Modificar SP para retornar 7 resultsets
+☐ SELECT 1: Resumen general (6 métricas)
+☐ SELECT 2: Serie temporal día a día
+☐ SELECT 3: Distribución por tareas (DESC)
+☐ SELECT 4: Top 5 usuarios activos
+☐ SELECT 5: Distribución de puntajes (1-5)
+☐ SELECT 6 y 7: Placeholders vacíos
+☐ Optimizar filtros usando BETWEEN
+☐ Testing manual con diferentes rangos
+
+QUERY DE PRUEBA:
+CALL Calculos_Dashboard('2026-07-01', '2026-07-31');
+
+CRITERIOS DE ACEPTACIÓN:
+✅ SP retorna exactamente 7 resultsets
+✅ Serie temporal sin gaps (todos los días)
+✅ Top usuarios limitado a 5
+✅ Distribución puntajes retorna 5 filas
+✅ Query ejecuta en <500ms (1 año de datos)
+
+
+## 🎫 T027-003: Implementar Modelo calculoModel.getDashboard()
+├─ Prioridad: ALTA
+├─ Estimación: 4 horas
+├─ Asignado: Backend Developer
+├─ Depende de: T027-002
+└─ Archivo: App/Backend/Node/src/models/calculo.js
+
+TAREAS:
+☐ Crear función getDashboard(fechaDesde, fechaHasta)
+☐ Implementar lógica de defaults (NULL → últimos 30 días)
+☐ Validar rango máximo 1 año
+☐ Validar fechaHasta <= hoy
+☐ Validar fechaDesde <= fechaHasta
+☐ Llamar SP Calculos_Dashboard
+☐ Parsear 7 resultsets del SP
+☐ Calcular porcentajes en distribucionTareas
+☐ Formatear fechas en ISO 8601
+☐ Estructurar JSON según SPEC sección 3.1
+☐ Manejar caso sin resultados (arrays vacíos)
+☐ Agregar logging de debug
+
+ESTRUCTURA DE CÓDIGO:
+```javascript
+async function getDashboard(fechaDesde, fechaHasta) {
+    // 1. Validaciones y defaults
+    // 2. Llamar SP
+    const result = await db.executeStoredProcedure('Calculos_Dashboard', [...]);
+    // 3. Parsear resultsets
+    const [resumenRaw, serieTemporal, distribucionRaw, topUsuarios, puntajes] = result;
+    // 4. Calcular porcentajes
+    // 5. Estructurar response
+    return { periodo, resumen, serieTemporal, ... };
+}
+```
+
+CRITERIOS DE ACEPTACIÓN:
+✅ Retorna JSON con estructura SPEC 3.1
+✅ Validaciones arrojan errores descriptivos
+✅ Defaults aplicados correctamente
+✅ Porcentajes de tareas suman ~100%
+✅ Serie temporal sin gaps
+✅ Fechas en formato ISO 8601
+
+
+## 🎫 T027-004: Implementar Controller calculosController.getDashboard()
+├─ Prioridad: ALTA
+├─ Estimación: 2 horas
+├─ Asignado: Backend Developer
+├─ Depende de: T027-003
+└─ Archivo: App/Backend/Node/src/controllers/calculosController.js
+
+TAREAS:
+☐ Crear función getDashboard(req, res)
+☐ Validar query params fechaDesde y fechaHasta (ISO 8601)
+☐ Llamar a calculoModel.getDashboard()
+☐ Manejar errores de validación (400)
+☐ Manejar errores internos (500)
+☐ Retornar response { success, data, version }
+☐ Agregar logging de acceso y errores
+
+ESTRUCTURA DE CÓDIGO:
+```javascript
+exports.getDashboard = async (req, res) => {
+    try {
+        const { fechaDesde, fechaHasta } = req.query;
+        
+        // Validar formatos
+        if (fechaDesde && !isValidISODate(fechaDesde)) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Formato de fecha inválido' 
+            });
+        }
+        
+        const data = await calculoModel.getDashboard(fechaDesde, fechaHasta);
+        
+        return res.status(200).json({
+            success: true,
+            data,
+            version: '1.0'
+        });
+    } catch (error) {
+        // Manejar errores
+    }
+};
+```
+
+CRITERIOS DE ACEPTACIÓN:
+✅ Endpoint 200 con datos válidos
+✅ Endpoint 400 con mensaje descriptivo
+✅ Endpoint 500 en errores internos
+✅ Response { success, data, version }
+✅ Logs registran accesos y errores
+
+
+## 🎫 T027-005: Registrar Ruta GET /api/calculos/dashboard
+├─ Prioridad: ALTA
+├─ Estimación: 0.5 horas
+├─ Asignado: Backend Developer
+├─ Depende de: T027-004
+└─ Archivo: App/Backend/Node/src/app.js
+
+TAREAS:
+☐ Agregar ruta en app.js o router
+☐ Aplicar middleware authenticateToken (JWT obligatorio)
+☐ NO aplicar requireAdmin (acceso para todos autenticados)
+☐ Documentar ruta en comentarios
+
+CÓDIGO:
+```javascript
+// Dashboard de métricas de cálculos (SPEC-027)
+router.get('/api/calculos/dashboard', 
+    authenticateToken, 
+    calculosController.getDashboard
+);
+```
+
+CRITERIOS DE ACEPTACIÓN:
+✅ Ruta accesible con token JWT
+✅ Ruta retorna 401 sin token
+✅ Ruta NO retorna 403 para no-admin
+
+
+## 🎫 T027-006: Testing Manual y Ajustes
+├─ Prioridad: MEDIA
+├─ Estimación: 2 horas
+├─ Asignado: Backend Developer + QA
+├─ Depende de: T027-005
+└─ Herramientas: Postman, MySQL Workbench
+
+TAREAS:
+☐ Test TC-001: Sin parámetros (últimos 30 días)
+☐ Test TC-002: Solo fechaDesde
+☐ Test TC-003: Solo fechaHasta
+☐ Test TC-004: Ambas fechas (semestre)
+☐ Test TC-005: Rango > 1 año (debe fallar 400)
+☐ Test TC-006: Fecha futura (debe fallar 400)
+☐ Test TC-007: Fechas invertidas (debe fallar 400)
+☐ Test TC-008: Formato inválido (debe fallar 400)
+☐ Verificar performance con EXPLAIN
+☐ Verificar logs de debug
+☐ Ajustar mensajes de error
+☐ Documentar ejemplos de request/response
+
+CRITERIOS DE ACEPTACIÓN:
+✅ Todos los test cases pasan
+✅ Response time < 500ms (1 año)
+✅ Mensajes de error en español
+✅ Logs útiles para debugging
+
+
+## 🎫 T027-007: Documentación de API
+├─ Prioridad: BAJA
+├─ Estimación: 1 hora
+├─ Asignado: Backend Developer
+├─ Depende de: T027-006
+└─ Archivo: 01-Docs/API-Documentation.md
+
+TAREAS:
+☐ Documentar endpoint en README/API docs
+☐ Incluir ejemplos de request con curl
+☐ Incluir ejemplos de response exitoso
+☐ Incluir ejemplos de errores comunes
+☐ Documentar estructura de response
+☐ Documentar casos de uso recomendados
+
+CRITERIOS DE ACEPTACIÓN:
+✅ Documentación completa y clara
+✅ Ejemplos ejecutables
+✅ Casos de uso documentados
+
+
+# ============================================================================
+# ORDEN DE EJECUCIÓN RECOMENDADO
+# ============================================================================
+
+DÍA 1:
+  08:00 - 08:30  → T027-001 (Índices)
+  08:30 - 11:30  → T027-002 (SP Dashboard)
+  11:30 - 15:30  → T027-003 (Modelo getDashboard)
+
+DÍA 2:
+  08:00 - 10:00  → T027-004 (Controller)
+  10:00 - 10:30  → T027-005 (Ruta)
+  10:30 - 12:30  → T027-006 (Testing)
+  12:30 - 13:30  → T027-007 (Documentación)
+
+
+# ============================================================================
+# CHECKLIST DE ENTREGA
+# ============================================================================
+
+CÓDIGO:
+☐ SP Calculos_Dashboard retorna 7 resultsets
+☐ Índices creados y validados
+☐ Modelo calculoModel.getDashboard() implementado
+☐ Controller calculosController.getDashboard() implementado
+☐ Ruta registrada con autenticación
+
+TESTING:
+☐ 8 test cases manuales pasados
+☐ Performance < 500ms verificado
+☐ EXPLAIN queries revisado
+
+DOCUMENTACIÓN:
+☐ SPEC-027 completada
+☐ API documentation actualizada
+☐ Comentarios en código
+
+DEPLOYMENT:
+☐ Scripts SQL ejecutados en DEV
+☐ Scripts SQL ejecutados en QA
+☐ Backend desplegado en QA
+☐ Testing en QA pasado
+☐ Aprobación de Product Owner
+
+
+# ============================================================================
+# NOTAS IMPORTANTES
+# ============================================================================
+
+⚠️ PREREQUISITOS:
+- JWT authentication ya implementado
+- Tabla Calculos con campo app_exp_puntaje
+- Tabla Usuarios con campo fec_ult_act
+
+⚠️ DECISIONES DE DISEÑO:
+- Sin paginación (datos ya agregados)
+- Sin cache (datos cambian frecuentemente)
+- Sin rol ADMIN requerido (control en frontend)
+- Límite 1 año para prevenir queries lentos
+
+⚠️ EXTENSIONES FUTURAS:
+- Filtros adicionales (por tarea, por usuario)
+- Exportación a CSV/Excel
+- Comparación con período anterior
+- Notificaciones de alertas (ej: puntajes bajos)
+
+
+# ============================================================================
+# FIN DE TICKETS - SPEC-027
+# ============================================================================

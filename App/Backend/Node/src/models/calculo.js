@@ -254,9 +254,242 @@ async function guardarExperiencia(calculoId, puntaje, observaciones) {
     }
 }
 
+/**
+ * Obtiene métricas agregadas para el dashboard de administración
+ * SPEC-027: Dashboard de Métricas de Cálculos
+ * 
+ * @param {string|null} fechaDesde - Fecha inicio en formato ISO 8601 (YYYY-MM-DD) o null
+ * @param {string|null} fechaHasta - Fecha fin en formato ISO 8601 (YYYY-MM-DD) o null
+ * @returns {Promise<Object>} Objeto con todas las métricas del dashboard
+ * @throws {Object} Error estructurado con code, message, detail
+ */
+async function getDashboard(fechaDesde, fechaHasta) {
+    try {
+        // ====================================================================
+        // 1. APLICAR DEFAULTS Y VALIDACIONES
+        // ====================================================================
+        
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0); // Normalizar a medianoche
+        
+        let desde = null;
+        let hasta = null;
+        
+        // Comportamiento por defecto según SPEC
+        if (!fechaDesde && !fechaHasta) {
+            // Sin parámetros → últimos 30 días
+            hasta = new Date(hoy);
+            desde = new Date(hoy);
+            desde.setDate(desde.getDate() - 30);
+        } else if (fechaDesde && !fechaHasta) {
+            // Solo fechaDesde → desde esa fecha hasta hoy
+            desde = new Date(fechaDesde);
+            hasta = new Date(hoy);
+        } else if (!fechaDesde && fechaHasta) {
+            // Solo fechaHasta → desde 30 días antes hasta fechaHasta
+            hasta = new Date(fechaHasta);
+            desde = new Date(hasta);
+            desde.setDate(desde.getDate() - 30);
+        } else {
+            // Ambas fechas provistas
+            desde = new Date(fechaDesde);
+            hasta = new Date(fechaHasta);
+        }
+        
+        // Validar que las fechas sean válidas
+        if (isNaN(desde.getTime()) || isNaN(hasta.getTime())) {
+            throw {
+                code: 'VALIDATION_ERROR',
+                message: 'Formato de fecha inválido. Use YYYY-MM-DD',
+                detail: 'Las fechas deben estar en formato ISO 8601'
+            };
+        }
+        
+        // Validar que fechaHasta no sea mayor a hoy
+        if (hasta > hoy) {
+            throw {
+                code: 'VALIDATION_ERROR',
+                message: 'fechaHasta no puede ser mayor a la fecha actual',
+                detail: `fechaHasta: ${hasta.toISOString().split('T')[0]}, hoy: ${hoy.toISOString().split('T')[0]}`
+            };
+        }
+        
+        // Validar que fechaDesde no sea mayor a fechaHasta
+        if (desde > hasta) {
+            throw {
+                code: 'VALIDATION_ERROR',
+                message: 'fechaDesde no puede ser mayor a fechaHasta',
+                detail: `fechaDesde: ${desde.toISOString().split('T')[0]}, fechaHasta: ${hasta.toISOString().split('T')[0]}`
+            };
+        }
+        
+        // Validar rango máximo de 1 año
+        const unAnioEnMs = 365 * 24 * 60 * 60 * 1000;
+        const rangoMs = hasta - desde;
+        if (rangoMs > unAnioEnMs) {
+            throw {
+                code: 'VALIDATION_ERROR',
+                message: 'Rango de fechas excede el máximo permitido de 1 año',
+                detail: `Rango solicitado: ${Math.ceil(rangoMs / (24 * 60 * 60 * 1000))} días`
+            };
+        }
+        
+        // Convertir a formato MySQL (YYYY-MM-DD)
+        const fechaDesdeSQL = desde.toISOString().split('T')[0];
+        const fechaHastaSQL = hasta.toISOString().split('T')[0];
+        
+        console.log(`📊 [Model] Generando dashboard: ${fechaDesdeSQL} → ${fechaHastaSQL}`);
+        
+        // ====================================================================
+        // 2. LLAMAR AL STORED PROCEDURE
+        // ====================================================================
+        
+        const result = await db.executeStoredProcedure('Calculos_Dashboard', [
+            fechaDesdeSQL,
+            fechaHastaSQL
+        ]);
+        
+        // El SP retorna 7 resultsets
+        if (!Array.isArray(result) || result.length < 7) {
+            throw new Error('SP Calculos_Dashboard no retornó los 7 resultsets esperados');
+        }
+        
+        const [
+            resumenRows,
+            serieTemporalRows,
+            distribucionTareasRows,
+            topUsuariosRows,
+            distribucionPuntajesRows,
+            placeholder1Rows,
+            placeholder2Rows
+        ] = result;
+        
+        // ====================================================================
+        // 3. PARSEAR RESULTSET 1: RESUMEN GENERAL
+        // ====================================================================
+        
+        const resumenRaw = Array.isArray(resumenRows) && resumenRows.length > 0
+            ? resumenRows[0]
+            : {};
+        
+        const resumen = {
+            totalUsuariosNuevos: Number(resumenRaw.totalUsuariosNuevos) || 0,
+            totalCalculosNuevos: Number(resumenRaw.totalCalculosNuevos) || 0,
+            totalCalculosConPuntaje: Number(resumenRaw.totalCalculosConPuntaje) || 0,
+            promedioPuntaje: resumenRaw.promedioPuntaje !== null && resumenRaw.promedioPuntaje !== undefined
+                ? Number(parseFloat(resumenRaw.promedioPuntaje).toFixed(1))
+                : null,
+            usuariosActivos: Number(resumenRaw.usuariosActivos) || 0,
+            valorPromedioObra: resumenRaw.valorPromedioObra !== null && resumenRaw.valorPromedioObra !== undefined
+                ? Number(parseFloat(resumenRaw.valorPromedioObra).toFixed(2))
+                : null
+        };
+        
+        // ====================================================================
+        // 4. PARSEAR RESULTSET 2: SERIE TEMPORAL
+        // ====================================================================
+        
+        const serieTemporal = Array.isArray(serieTemporalRows)
+            ? serieTemporalRows.map(row => ({
+                fecha: row.fecha instanceof Date
+                    ? row.fecha.toISOString().split('T')[0]
+                    : row.fecha,
+                usuariosNuevos: Number(row.usuariosNuevos) || 0,
+                calculosNuevos: Number(row.calculosNuevos) || 0
+            }))
+            : [];
+        
+        // ====================================================================
+        // 5. PARSEAR RESULTSET 3: DISTRIBUCIÓN POR TAREAS
+        // ====================================================================
+        
+        const totalCalculosDistribucion = Array.isArray(distribucionTareasRows)
+            ? distribucionTareasRows.reduce((sum, row) => sum + (Number(row.totalCalculos) || 0), 0)
+            : 0;
+        
+        const distribucionTareas = Array.isArray(distribucionTareasRows)
+            ? distribucionTareasRows.map(row => {
+                const totalCalculos = Number(row.totalCalculos) || 0;
+                const porcentaje = totalCalculosDistribucion > 0
+                    ? parseFloat(((totalCalculos / totalCalculosDistribucion) * 100).toFixed(1))
+                    : 0;
+                
+                return {
+                    tareaCodigo: row.tareaCodigo || '',
+                    tareaDescripcion: row.tareaDescripcion || '',
+                    totalCalculos,
+                    porcentaje
+                };
+            })
+            : [];
+        
+        // ====================================================================
+        // 6. PARSEAR RESULTSET 4: TOP USUARIOS
+        // ====================================================================
+        
+        const topUsuarios = Array.isArray(topUsuariosRows)
+            ? topUsuariosRows.slice(0, 5).map(row => ({
+                usuarioId: Number(row.usuarioId) || 0,
+                nombreCompleto: row.nombreCompleto || '',
+                email: row.email || '',
+                totalCalculos: Number(row.totalCalculos) || 0,
+                ultimaActividad: row.ultimaActividad instanceof Date
+                    ? row.ultimaActividad.toISOString()
+                    : row.ultimaActividad
+            }))
+            : [];
+        
+        // ====================================================================
+        // 7. PARSEAR RESULTSET 5: DISTRIBUCIÓN DE PUNTAJES
+        // ====================================================================
+        
+        const distribucionPuntajes = Array.isArray(distribucionPuntajesRows)
+            ? distribucionPuntajesRows.map(row => ({
+                puntaje: Number(row.puntaje) || 0,
+                cantidad: Number(row.cantidad) || 0
+            }))
+            : [];
+        
+        // ====================================================================
+        // 8. ESTRUCTURAR RESPONSE FINAL
+        // ====================================================================
+        
+        const dashboardData = {
+            periodo: {
+                desde: fechaDesdeSQL,
+                hasta: fechaHastaSQL
+            },
+            resumen,
+            serieTemporal,
+            distribucionTareas,
+            topUsuarios,
+            distribucionPuntajes
+        };
+        
+        console.log(`✅ [Model] Dashboard generado exitosamente (${serieTemporal.length} días, ${distribucionTareas.length} tareas)`);
+        
+        return dashboardData;
+        
+    } catch (error) {
+        // Si es un error estructurado ya, propagarlo
+        if (error.code) {
+            throw error;
+        }
+        
+        // Si no, envolverlo
+        console.error('❌ [Model] Error al generar dashboard:', error.message);
+        throw {
+            code: 'DB_ERROR',
+            message: 'Error al generar el dashboard',
+            detail: error.message
+        };
+    }
+}
+
 module.exports = {
     grabarCalculo,
     obtenerCalculoPorId,
     existeTareaProfesional,
-    guardarExperiencia
+    guardarExperiencia,
+    getDashboard
 };

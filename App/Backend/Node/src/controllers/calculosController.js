@@ -309,3 +309,81 @@ exports.guardarExperiencia = async (req, res) => {
         });
     }
 };
+
+/**
+ * Obtiene métricas agregadas para el dashboard de administración
+ * GET /api/calculos/dashboard
+ * SPEC: SPEC027-CALC-Dashboard
+ * 
+ * Query params:
+ * @param {string} [req.query.fechaDesde] - Fecha inicio en formato ISO 8601 (YYYY-MM-DD)
+ * @param {string} [req.query.fechaHasta] - Fecha fin en formato ISO 8601 (YYYY-MM-DD)
+ * 
+ * Comportamiento por defecto:
+ * - Sin params → últimos 30 días
+ * - Solo fechaDesde → desde esa fecha hasta hoy
+ * - Solo fechaHasta → desde 30 días antes hasta fechaHasta
+ */
+exports.getDashboard = async (req, res) => {
+    try {
+        // 1. Extraer query params
+        const { fechaDesde, fechaHasta } = req.query || {};
+        
+        // 2. Validar formato de fechas (si se proveen)
+        const regexISO8601 = /^\d{4}-\d{2}-\d{2}$/;
+        
+        if (fechaDesde !== undefined && fechaDesde !== null && fechaDesde !== '') {
+            if (!regexISO8601.test(fechaDesde)) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Formato de fecha inválido. Use YYYY-MM-DD',
+                    detail: `fechaDesde: "${fechaDesde}" no cumple formato ISO 8601`,
+                    version: '1.0'
+                });
+            }
+        }
+        
+        if (fechaHasta !== undefined && fechaHasta !== null && fechaHasta !== '') {
+            if (!regexISO8601.test(fechaHasta)) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Formato de fecha inválido. Use YYYY-MM-DD',
+                    detail: `fechaHasta: "${fechaHasta}" no cumple formato ISO 8601`,
+                    version: '1.0'
+                });
+            }
+        }
+        
+        // 3. Normalizar valores vacíos a null
+        const fechaDesdeNorm = fechaDesde && fechaDesde.trim() !== '' ? fechaDesde.trim() : null;
+        const fechaHastaNorm = fechaHasta && fechaHasta.trim() !== '' ? fechaHasta.trim() : null;
+        
+        // 4. Llamar al modelo (las validaciones de negocio están allí)
+        const dashboardData = await calculoModel.getDashboard(fechaDesdeNorm, fechaHastaNorm);
+        
+        // 5. Logging de acceso exitoso
+        const periodo = `${dashboardData.periodo.desde} → ${dashboardData.periodo.hasta}`;
+        console.log(`📊 [Controller] Dashboard generado exitosamente: ${periodo}`);
+        
+        // 6. Respuesta exitosa
+        return res.status(200).json({
+            success: true,
+            data: dashboardData,
+            version: '1.0'
+        });
+        
+    } catch (error) {
+        // Manejar errores de validación (400) vs errores internos (500)
+        const statusCode = error?.code === 'VALIDATION_ERROR' ? 400 : 500;
+        const mensaje = obtenerMensajeError(error, 'Error al generar el dashboard');
+        
+        console.error('❌ [Controller] Error en getDashboard:', error?.detail || error?.message || error);
+        
+        return res.status(statusCode).json({
+            success: false,
+            error: mensaje,
+            detail: process.env.NODE_ENV !== 'production' ? error?.detail : undefined,
+            version: '1.0'
+        });
+    }
+};

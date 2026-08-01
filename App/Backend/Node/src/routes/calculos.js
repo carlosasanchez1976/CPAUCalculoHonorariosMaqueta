@@ -10,4 +10,9 @@ router.get('/:calculoId/items', verificarToken, honorariosController.obtenerItem
 router.post('/exportar-pdf', verificarToken, honorariosController.exportarPdf);
 router.post('/:calculoId/experiencia', verificarToken, honorariosController.guardarExperiencia);
 
+// Dashboard de métricas de cálculos (SPEC-027)
+// GET /api/calculos/dashboard?fechaDesde=YYYY-MM-DD&fechaHasta=YYYY-MM-DD
+// Acceso: Todos los usuarios autenticados (NO requiere admin)
+router.get('/dashboard', verificarToken, honorariosController.getDashboard);
+
 module.exports = router;

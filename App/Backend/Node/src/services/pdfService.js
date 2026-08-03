@@ -283,9 +283,7 @@ function prepararDatosPlantilla(datos, plantilla) {
     }, 0);
   };
   
-  const subtotalObraARS = redondear(honorariosObra.length > 0 
-    ? calcularSubtotalCategoria(honorariosObra)
-    : (honorariosAgrupados.reduce((sum, t) => sum + (t.importe || 0), 0)));
+  const subtotalObraARS = redondear(calcularSubtotalCategoria(honorariosObra));
   const subtotalAdicionalesARS = redondear(calcularSubtotalCategoria(honorariosAdicionales));
   const subtotalEspecialidadesARS = redondear(calcularSubtotalCategoria(honorariosEspecialidades));
   

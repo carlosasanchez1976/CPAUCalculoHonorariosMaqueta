@@ -28,7 +28,7 @@ BEGIN
     -- Total de usuarios nuevos (por fec_ult_act)
     (SELECT COUNT(*) 
      FROM Usuarios
-     WHERE fec_ult_act BETWEEN p_fecha_desde AND p_fecha_hasta
+     WHERE fec_ult_act BETWEEN p_fecha_desde AND (p_fecha_hasta + INTERVAL 1 DAY)
     ) AS totalUsuariosNuevos,
     
     -- Total de cálculos nuevos (por fecha_calculo)
@@ -93,7 +93,7 @@ BEGIN
     -- Usuarios nuevos por día
     SELECT DATE(fec_ult_act) AS fecha, COUNT(*) AS usuarios_nuevos
     FROM Usuarios
-    WHERE fec_ult_act BETWEEN p_fecha_desde AND p_fecha_hasta
+    WHERE fec_ult_act BETWEEN p_fecha_desde AND (p_fecha_hasta + INTERVAL 1 DAY)
     GROUP BY DATE(fec_ult_act)
   ) u ON f.fecha = u.fecha
   LEFT JOIN (
@@ -142,7 +142,7 @@ BEGIN
     Usuarios U
     INNER JOIN Calculos C ON U.user_id = C.usuario_id
   WHERE
-    C.fecha_calculo BETWEEN p_fecha_desde AND p_fecha_hasta
+    C.fecha_calculo BETWEEN p_fecha_desde AND (p_fecha_hasta + INTERVAL 1 DAY)
   GROUP BY
     U.user_id, U.user_nombre, U.user_apellido, U.user_mail
   ORDER BY

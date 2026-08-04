@@ -42,7 +42,7 @@ bloque_principal: BEGIN
   DECLARE v_descripcion_servicio VARCHAR(200);
   DECLARE v_total_horas DECIMAL(6,2);
   DECLARE v_hasta_60_km BOOLEAN;
-  DECLARE v_realiza_inspec_ocular BOOLEAN;
+  DECLARE v_realiza_estudios_adicionales BOOLEAN;
   DECLARE v_cant_inspecciones DECIMAL(15,2);
   
   declare v_valor_k DECIMAL(15,2);
@@ -75,7 +75,7 @@ bloque_principal: BEGIN
       v_descripcion_servicio,
       v_total_horas,
       v_hasta_60_km,
-      v_realiza_inspec_ocular,
+      v_realiza_estudios_adicionales,
       v_cant_inspecciones
     FROM
       Calculos
@@ -108,33 +108,41 @@ bloque_principal: BEGIN
    
   SET v_total_honorarios = 0;
 
-  IF v_realiza_inspec_ocular THEN
-      -- Cálculo de consultas con inspección ocular según Art. 10.2
+ -- Si realiza estudios adicionales, se calcula el honorario según Art. 10.3, de lo contrario, se calcula según Art. 1.13
+  IF v_realiza_estudios_adicionales THEN
 
-      CALL Calcular_Hon_Art_10_2(
-        p_calculo_id,
-        v_tarea_profesional,
-        v_cant_inspecciones, -- Cantidad de consultas
-        v_hasta_60_km, -- Hasta 60 km
-        v_valor_k,
-        NULL, -- No se envía descripción adicional
-        v_item_numero,
-        v_total_honorarios
-      );
+    -- Procsar resto del Cálculo como un ESTUDIO (Art.)
+    CALL Calcular_Hon_Art_10_3(
+      p_calculo_id,
+      v_tarea_profesional,
+      v_total_horas, -- Cantidad de horas
+      v_hasta_60_km, -- Hasta 60 km
+      v_valor_k,
+      'Art 10',
+      'ESTUD', -- Tipo de consulta
+      v_item_numero,
+      v_total_honorarios
+    );
+
+    ELSE
+
+-- Cálculo de encargos por tiempo según Art. 1.13
+
+    Call Calcular_Hon_Art_1_13(
+      p_calculo_id,
+      v_tarea_profesional,
+      v_total_horas, -- Cantidad de horas
+      v_hasta_60_km, -- Hasta 60 km
+      v_valor_k,
+      'Art 1.13',
+      FALSE, -- No es solo cálculo, se graban los ítems
+      v_item_numero,
+      v_total_honorarios
+    );
+
+
+
   END IF;
-
-  -- Procsar resto del Cálculo como un ESTUDIO (Art.)
-  CALL Calcular_Hon_Art_10_3(
-    p_calculo_id,
-    v_tarea_profesional,
-    v_total_horas, -- Cantidad de horas
-    v_hasta_60_km, -- Hasta 60 km
-    v_valor_k,
-    'Art 10',
-    'ESTUD', -- Tipo de consulta
-    v_item_numero,
-    v_total_honorarios
-  );
 
 
   -- ========================================================================

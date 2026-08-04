@@ -4,10 +4,10 @@ const path = require('path');
 // Leer el HTML
 // const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-otras-tareas.html');
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-basico-proyecto-direccion.html');
-//const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-conservacion-fachadas.html');
+const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-conservacion-fachadas.html');
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-habilitaciones.html');
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-representacion-tecnica.html');
-const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-medicion-planos.html');
+//const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-medicion-planos.html');
 const html = fs.readFileSync(htmlPath, 'utf8');
 
 // Convertir a hexadecimal (método más seguro para MySQL)

@@ -345,6 +345,7 @@ function prepararDatosPlantilla(datos, plantilla) {
     proyectoLabel: formData.proyectoLabel || 'encargo',
     valorObraLabel: formData.valorObraLabel || 'Valor de la obra',
 
+    valorBol1: formData.valorBol1 || null,
     valorNum1: formData.valorNum1 || null,
     valorNum2: formData.valorNum2 || null,
     valorNum3: formData.valorNum3 || null,

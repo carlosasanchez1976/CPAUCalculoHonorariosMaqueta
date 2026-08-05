@@ -331,7 +331,8 @@ function prepararDatosPlantilla(datos, plantilla) {
     vigenciaFE: formData.vigenciaFE || '<span>Vigencia de índices: No especificada</span><br /><span>Base de cálculo: arancel sugerido CPAU</span>',
     
     // Datos del proyecto (del formData)
-    nombreProyecto: formData.nombreProyecto || 'Sin nombre',
+    nombreCompletoProfesional: formData.nombreCompletoProfesional || 'Sin especificar',
+    nombreProyecto: formData.nombreProyecto || 'Sin especificar',
     cliente: formData.cliente || 'Sin especificar',
     tipoObra: formData.tipoObra || 'Sin especificar',
     destinoUso: formData.destinoUso || 'Sin especificar',

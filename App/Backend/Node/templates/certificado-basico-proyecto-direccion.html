@@ -569,7 +569,19 @@
     <!-- Resumen del Proyecto -->
     <h4 class="section-title">Resumen del Proyecto - Informaci&oacute;n ingresada por el/la profesional</h4>
     <div class="resumen-grid">
-      <!-- Fila 1: Nombre del Proyecto | Comitente -->
+      
+      <!-- Fila 1: Nombre del Profesional -->
+      <div class="resumen-item-container">
+
+        <!-- Fila 1: Nombre y Apellido -->
+        <div class="resumen-item">
+          <span class="resumen-label">Profesional:</span>
+          <span class="resumen-value">{{nombreCompletoProfesional}}</span>
+        </div>
+
+      </div>
+
+      <!-- Fila 2: Nombre del Proyecto | Comitente -->
       <div class="resumen-item-container">
 
         <div class="resumen-item">
@@ -582,7 +594,8 @@
         </div>
        
       </div>
-      <!-- Fila 2: Tipo de obra | Destino/Uso -->
+
+      <!-- Fila 3: Tipo de obra | Destino/Uso -->
       <div class="resumen-item-container">
         <div class="resumen-item">
           <span class="resumen-label">Tipo de obra:</span>
@@ -594,7 +607,8 @@
         </div> 
       </div>
 
-      <!-- Fila 3: Superficie total | Costo por metro cuadrado -->
+      <!-- Fila 4: Superficie total | Costo por metro cuadrado -->
+      <!-- Fila 4: Superficie total | Costo por metro cuadrado -->
       <div class="resumen-item-container">
         <div class="resumen-item">
           <span class="resumen-label">Superficie total:</span>
@@ -606,7 +620,7 @@
         </div> 
       </div>
 
-      <!-- Fila 4: Costo estimado por obra (ARS) | Costo estimado por obra (USD) -->
+      <!-- Fila 5: Costo estimado por obra (ARS) | Costo estimado por obra (USD) -->
       <div class="resumen-item-container">
        <div class="resumen-item">
           <span class="resumen-label">Costo estimado de obra (ARS):</span>
@@ -618,14 +632,25 @@
         </div>
       </div>
 
-      <!-- Fila 4: Plazo de ejecucion de las tareas encomendadas -->
+      <!-- Fila 6: Plazo de ejecucion de las tareas encomendadas -->
       <div class="resumen-item-container">
         <div class="resumen-item">
           <span class="resumen-label">Plazo de ejecución de las tareas encomendadas:</span>
           <span class="resumen-value">{{plazoEjecucion}} meses</span>
         </div>
       </div>
+
+      <!-- Fila 7: Observaciones -->
+      <div class="resumen-item-container">
+        <div class="resumen-item">
+          <span class="resumen-label">Observaciones:</span>
+          <span class="resumen-value">{{observProyecto}}</span>
+        </div>
+      </div>
+      
     </div>
+
+
 
     <!-- Detalle de Honorarios -->
     <h4 class="section-title-sin-linea">Detalle de honorarios</h4>

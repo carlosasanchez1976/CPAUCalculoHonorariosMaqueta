@@ -9,7 +9,9 @@ const path = require('path');
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-representacion-tecnica.html');
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-medicion-planos.html');
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-peritajes.html');
-const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-consultas.html');
+//const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-consultas.html');
+const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-arbitrajes.html');
+
 const html = fs.readFileSync(htmlPath, 'utf8');
 
 // Convertir a hexadecimal (método más seguro para MySQL)
@@ -30,7 +32,7 @@ const sql = `-- ================================================================
 -- Una sola ejecución aplica el template tanto en alta como en actualización.
 UPDATE Entregables_PDF
 SET html_template = 0x${hex}
-WHERE entregable_id = 9;
+WHERE entregable_id = 10;
 
 -- ============================================================================
 -- VERIFICACIÓN

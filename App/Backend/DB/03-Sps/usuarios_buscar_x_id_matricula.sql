@@ -16,7 +16,10 @@ BEGIN
         tipo_matricula,
         rol,
         baja_fecha,
-        fec_ult_act
+        fec_ult_act,
+        tyc_aceptado_fecha,
+        tyc_version_aceptada,
+        tyc_id_aceptado
     FROM Usuarios
     WHERE id_matricula = p_id_matricula
       AND (baja_fecha IS NULL OR baja_fecha > NOW());

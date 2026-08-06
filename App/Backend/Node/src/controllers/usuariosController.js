@@ -90,15 +90,19 @@ exports.login = async (req, res) => {
     console.log('Usuario:', usuario.username_web);
     console.log('ID Matrícula:', usuario.id_matricula);
     console.log('Role:', usuario.rol);
+    console.log('TyC aceptado:', usuario.tyc_aceptado_fecha ? 'SI' : 'NO');
     console.log('Token generado:', token.substring(0, 50) + '...');
     console.log('=====================');
 
-    // 7. Devolver respuesta
+    // 7. Devolver respuesta (incluye datos de TyC para validación en frontend)
     res.json({
       token: token,
       usuario: {
         id: usuario.user_id,
-        role: usuario.rol
+        role: usuario.rol,
+        tyc_aceptado_fecha: usuario.tyc_aceptado_fecha,
+        tyc_version_aceptada: usuario.tyc_version_aceptada,
+        tyc_id_aceptado: usuario.tyc_id_aceptado
       }
     });
 

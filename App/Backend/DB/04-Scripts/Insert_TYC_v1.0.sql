@@ -8,7 +8,7 @@
 -- IMPORTANTE: Reemplazar @user_id con el ID de un usuario ADMIN válido
 -- Ejemplo: Si el admin tiene user_id=1, cambiar @user_id por 1
 
-SET @version = '1.0';
+SET @version = '1.3';
 SET @user_id = 1; -- ⚠️ CAMBIAR ESTO por un user_id de ADMIN válido (ej: 1)
 SET @activar = TRUE; -- TRUE = marcar como vigente y resetear usuarios
 
@@ -419,7 +419,7 @@ Estos Términos, junto con las notas del cálculo, la información de privacidad
 ';
 
 -- Validar que se haya configurado el user_id
-IF @user_id IS NULL THEN
+IF @user_id IS NULL
     SIGNAL SQLSTATE '45000' 
     SET MESSAGE_TEXT = '⚠️ ERROR: Debes configurar @user_id con el ID de un usuario ADMIN válido';
 END IF;

@@ -16,7 +16,10 @@ BEGIN
         username_web,
         matricula,
         id_matricula,
-        tipo_matricula
+        tipo_matricula,
+        tyc_aceptado_fecha,
+        tyc_version_aceptada,
+        tyc_id_aceptado
     FROM Usuarios
     WHERE baja_fecha IS NULL
     ORDER BY user_apellido, user_nombre;

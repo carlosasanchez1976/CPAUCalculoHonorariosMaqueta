@@ -21,7 +21,10 @@ BEGIN
 		`Usuarios`.`username_web`,
 		`Usuarios`.`matricula`,
 		`Usuarios`.`id_matricula`,
-		`Usuarios`.`tipo_matricula`
+		`Usuarios`.`tipo_matricula`,
+		`Usuarios`.`tyc_aceptado_fecha`,
+		`Usuarios`.`tyc_version_aceptada`,
+		`Usuarios`.`tyc_id_aceptado`
 	FROM
 		`Usuarios`
 	WHERE

@@ -1,0 +1,657 @@
+{
+	"info": {
+		"_postman_id": "spec029-tyc-tests",
+		"name": "SPEC029 - Términos y Condiciones - Tests",
+		"description": "Colección de pruebas para endpoints de Términos y Condiciones\n\nSPEC: SPEC029-CALC-Términos y condiciones\nTICKET: T029-014\nFecha: 2026-08-06",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01. PÚBLICO - Obtener TyC Vigente",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Respuesta tiene tyc_id\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('tyc_id');",
+							"});",
+							"",
+							"pm.test(\"Campo vigente es true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.vigente).to.eql(true);",
+							"});",
+							"",
+							"pm.test(\"Versión es 1.0\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.version).to.eql('1.0');",
+							"});",
+							"",
+							"pm.test(\"Contenido Markdown presente\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.contenido_md).to.include('Términos y Condiciones');",
+							"    pm.expect(jsonData.contenido_md.length).to.be.above(10000);",
+							"});",
+							"",
+							"// Guardar tyc_id para usar en otras pruebas",
+							"pm.environment.set(\"tyc_id_vigente\", pm.response.json().tyc_id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/terminos-condiciones/vigente",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"terminos-condiciones",
+						"vigente"
+					]
+				},
+				"description": "Endpoint público para obtener TyC vigente.\n\n✅ No requiere autenticación\n✅ Debe devolver el TyC con vigente=true"
+			},
+			"response": []
+		},
+		{
+			"name": "02. LOGIN - Obtener Token ADMIN",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Respuesta tiene token\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('token');",
+							"});",
+							"",
+							"pm.test(\"Usuario es ADMIN\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.user.rol).to.eql('ADMIN');",
+							"});",
+							"",
+							"// Guardar token y user_id para usar en otras pruebas",
+							"pm.environment.set(\"admin_token\", pm.response.json().token);",
+							"pm.environment.set(\"admin_user_id\", pm.response.json().user.user_id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/usuarios/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"usuarios",
+						"login"
+					]
+				},
+				"description": "Login como usuario ADMIN para obtener token JWT.\n\n⚠️ Configurar email y password en Environment"
+			},
+			"response": []
+		},
+		{
+			"name": "03. LOGIN - Obtener Token WEBUSER",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Respuesta tiene token\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('token');",
+							"});",
+							"",
+							"pm.test(\"Usuario es WEBUSER\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.user.rol).to.eql('WEBUSER');",
+							"});",
+							"",
+							"// Guardar token y user_id para usar en otras pruebas",
+							"pm.environment.set(\"webuser_token\", pm.response.json().token);",
+							"pm.environment.set(\"webuser_user_id\", pm.response.json().user.user_id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"{{webuser_email}}\",\n  \"password\": \"{{webuser_password}}\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/usuarios/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"usuarios",
+						"login"
+					]
+				},
+				"description": "Login como usuario WEBUSER (profesional) para obtener token JWT.\n\n⚠️ Configurar email y password en Environment"
+			},
+			"response": []
+		},
+		{
+			"name": "04. ADMIN - Listar Histórico TyC",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Respuesta es array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});",
+							"",
+							"pm.test(\"Hay al menos 1 TyC\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.be.above(0);",
+							"});",
+							"",
+							"pm.test(\"Contenido truncado a 200 chars\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0].contenido_md.length).to.be.at.most(203); // 200 + '...'",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/terminos-condiciones",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"terminos-condiciones"
+					]
+				},
+				"description": "Listar histórico de TyC (solo ADMIN).\n\n✅ Requiere token de ADMIN\n✅ Devuelve preview de contenido (200 chars)"
+			},
+			"response": []
+		},
+		{
+			"name": "05. ADMIN - Buscar TyC por ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Respuesta tiene tyc_id correcto\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.tyc_id).to.eql(parseInt(pm.environment.get('tyc_id_vigente')));",
+							"});",
+							"",
+							"pm.test(\"Contenido completo presente\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.contenido_md.length).to.be.above(10000);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/terminos-condiciones/{{tyc_id_vigente}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"terminos-condiciones",
+						"{{tyc_id_vigente}}"
+					]
+				},
+				"description": "Buscar TyC específico por ID (solo ADMIN).\n\n✅ Requiere token de ADMIN\n✅ Devuelve contenido completo"
+			},
+			"response": []
+		},
+		{
+			"name": "06. WEBUSER - Usuario Acepta TyC",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Respuesta tiene success true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.success).to.eql(true);",
+							"});",
+							"",
+							"pm.test(\"Mensaje de confirmación presente\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.include('aceptados correctamente');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{webuser_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"tyc_id\": {{tyc_id_vigente}}\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/usuarios/{{webuser_user_id}}/aceptar-terminos",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"usuarios",
+						"{{webuser_user_id}}",
+						"aceptar-terminos"
+					]
+				},
+				"description": "Usuario acepta TyC vigente.\n\n✅ Requiere token del usuario\n✅ Usuario solo puede aceptar para sí mismo\n✅ Actualiza tyc_aceptado_fecha, tyc_version_aceptada, tyc_id_aceptado"
+			},
+			"response": []
+		},
+		{
+			"name": "07. ERROR - Usuario intenta aceptar por otro",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 403 Forbidden\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});",
+							"",
+							"pm.test(\"Error de autorización\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.error).to.include('No autorizado');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{webuser_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"tyc_id\": {{tyc_id_vigente}}\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/usuarios/{{admin_user_id}}/aceptar-terminos",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"usuarios",
+						"{{admin_user_id}}",
+						"aceptar-terminos"
+					]
+				},
+				"description": "Validar que usuario NO puede aceptar TyC de otro.\n\n✅ DEBE devolver 403 Forbidden\n✅ Usuario webuser intenta aceptar para admin"
+			},
+			"response": []
+		},
+		{
+			"name": "08. ERROR - WEBUSER intenta listar TyC (sin permiso)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 403 Forbidden\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});",
+							"",
+							"pm.test(\"Error de rol\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.error).to.exist;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{webuser_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/terminos-condiciones",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"terminos-condiciones"
+					]
+				},
+				"description": "Validar que WEBUSER NO puede listar TyC.\n\n✅ DEBE devolver 403 Forbidden\n✅ Solo ADMIN puede listar"
+			},
+			"response": []
+		},
+		{
+			"name": "09. ERROR - Sin token intenta listar TyC",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 401 Unauthorized\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"pm.test(\"Error de autenticación\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.error).to.exist;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/terminos-condiciones",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"terminos-condiciones"
+					]
+				},
+				"description": "Validar que sin token NO se puede listar TyC.\n\n✅ DEBE devolver 401 Unauthorized"
+			},
+			"response": []
+		},
+		{
+			"name": "10. ADMIN - Crear Nuevo TyC (v1.1) sin activar",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 201 Created\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Respuesta tiene tyc_id\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('tyc_id');",
+							"});",
+							"",
+							"pm.test(\"Versión es 1.1\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.version).to.eql('1.1');",
+							"});",
+							"",
+							"pm.test(\"No está vigente\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.vigente).to.eql(false);",
+							"});",
+							"",
+							"// Guardar tyc_id nuevo",
+							"pm.environment.set(\"tyc_id_nuevo\", pm.response.json().tyc_id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"version\": \"1.1\",\n  \"contenido_md\": \"# Términos y Condiciones v1.1\\n\\nEste es un TyC de prueba actualizado.\\n\\n## Cambios en v1.1\\n\\n- Mejora en sección de privacidad\\n- Actualización de contactos\\n- Ajustes legales menores\",\n  \"activar\": false\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/terminos-condiciones",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"terminos-condiciones"
+					]
+				},
+				"description": "Crear nuevo TyC versión 1.1 sin activarlo (borrador).\n\n✅ Requiere token ADMIN\n✅ activar=false → no resetea usuarios\n✅ vigente=false (borrador)"
+			},
+			"response": []
+		},
+		{
+			"name": "11. ADMIN - Activar TyC v1.1 (resetea usuarios)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Mensaje de confirmación\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.include('activado');",
+							"});",
+							"",
+							"// Actualizar tyc_id_vigente",
+							"pm.environment.set(\"tyc_id_vigente\", pm.environment.get('tyc_id_nuevo'));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/terminos-condiciones/{{tyc_id_nuevo}}/activar",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"terminos-condiciones",
+						"{{tyc_id_nuevo}}",
+						"activar"
+					]
+				},
+				"description": "Activar TyC existente como vigente.\n\n✅ Requiere token ADMIN\n✅ Marca vigente=true\n✅ Desactiva otros TyC\n✅ Resetea tyc_aceptado_fecha de TODOS los usuarios"
+			},
+			"response": []
+		},
+		{
+			"name": "12. VERIFICAR - Nuevo TyC vigente",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Versión ahora es 1.1\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.version).to.eql('1.1');",
+							"});",
+							"",
+							"pm.test(\"Campo vigente es true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.vigente).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/terminos-condiciones/vigente",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"terminos-condiciones",
+						"vigente"
+					]
+				},
+				"description": "Verificar que el nuevo TyC v1.1 está vigente.\n\n✅ Endpoint público\n✅ Debe devolver v1.1"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://cpau-ch2026-api-qa.neosisweb.ar",
+			"type": "string"
+		}
+	]
+}

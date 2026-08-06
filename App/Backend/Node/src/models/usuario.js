@@ -126,6 +126,18 @@ const Usuario = {
     ]);
     
     return { user_id: rows[0]?.user_id };
+  },
+
+  /**
+   * Registra la aceptación de Términos y Condiciones por parte del usuario
+   * @param {number} userId - ID del usuario
+   * @param {number} tycId - ID del documento de TyC aceptado
+   * @returns {Object} { success: true }
+   */
+  async AceptarTYC(userId, tycId) {
+    console.log('Registrar aceptación de TyC - Usuario:', userId, 'TyC ID:', tycId);
+    await executeStoredProcedure('Usuarios_AceptarTerminos', [userId, tycId]);
+    return { success: true };
   }
 };
 

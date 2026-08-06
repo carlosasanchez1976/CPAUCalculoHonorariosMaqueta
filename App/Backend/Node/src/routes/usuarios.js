@@ -13,5 +13,6 @@ router.get('/:id', verificarToken, usuariosController.buscar);
 router.post('/', verificarToken, usuariosController.grabar);
 router.delete('/', verificarToken, usuariosController.borrar);
 router.post('/:id/cambiar-password', verificarToken, usuariosController.cambiarPassword);
+router.post('/:id/aceptar-terminos', verificarToken, usuariosController.aceptarTerminos);
 
 module.exports = router;

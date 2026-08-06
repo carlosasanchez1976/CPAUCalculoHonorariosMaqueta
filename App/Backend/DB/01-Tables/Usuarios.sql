@@ -28,3 +28,19 @@ alter table Usuarios modify column `username_web` VARCHAR(255) NULL;
 
 CREATE INDEX idx_usuarios_fec_ult_act ON Usuarios(fec_ult_act);
 
+ALTER TABLE `Usuarios` 
+  ADD COLUMN `tyc_aceptado_fecha` DATETIME NULL 
+    COMMENT 'Fecha-hora de aceptación TyC. NULL = debe aceptar',
+  ADD COLUMN `tyc_version_aceptada` VARCHAR(20) NULL 
+    COMMENT 'Versión aceptada (ej: 1.0)',
+  ADD COLUMN `tyc_id_aceptado` INT NULL 
+    COMMENT 'ID del documento de TyC aceptado',
+  ADD INDEX `idx_tyc_aceptado` (`tyc_aceptado_fecha`);
+
+-- FK opcional (por si se borra el TyC del histórico)
+ALTER TABLE `Usuarios` 
+  ADD CONSTRAINT `fk_usuarios_tyc` 
+  FOREIGN KEY (`tyc_id_aceptado`) 
+  REFERENCES `Terminos_Condiciones`(`tyc_id`) 
+  ON DELETE SET NULL;
+

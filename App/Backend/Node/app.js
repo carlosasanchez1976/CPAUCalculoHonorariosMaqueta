@@ -12,6 +12,7 @@ const calculosRoutes = require('./src/routes/calculos.js');
 const tareasProfesionalesRoutes = require('./src/routes/tareasProfesionales.js');
 const parametrosRoutes = require('./src/routes/parametros.js');
 const adminTemplatesRoutes = require('./src/routes/adminTemplates.js');
+const terminosCondicionesRoutes = require('./src/routes/terminosCondiciones.js');
 
 require('dotenv').config();
 
@@ -132,6 +133,7 @@ app.use('/api/tareas', tareasProfesionalesRoutes);
 app.use('/api/tareasProfesionales', tareasProfesionalesRoutes);
 app.use('/api/parametros', parametrosRoutes);
 app.use('/api/admin/templates', adminTemplatesRoutes); // SPEC020-ADMIN-Template-Manager (T020-003)
+app.use('/api/terminos-condiciones', terminosCondicionesRoutes); // SPEC029-CALC-Términos y condiciones (T029-008)
 
 
 

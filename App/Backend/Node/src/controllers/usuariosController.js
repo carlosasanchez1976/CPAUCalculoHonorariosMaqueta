@@ -204,3 +204,51 @@ exports.cambiarPassword = async (req, res) => {
     res.status(500).json({ error: 'Error al cambiar contraseña' });
   }
 };
+
+/**
+ * POST /api/usuarios/:id/aceptar-terminos
+ * Registrar aceptación de Términos y Condiciones por parte del usuario
+ */
+exports.aceptarTerminos = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { tyc_id } = req.body;
+    
+    // Validación de parámetros
+    if (!id) {
+      return res.status(400).json({ error: 'ID de usuario requerido' });
+    }
+    
+    if (!tyc_id) {
+      return res.status(400).json({ error: 'ID de TyC requerido' });
+    }
+    
+    // Verificar que el usuario del token coincide con el parámetro
+    // (un usuario solo puede aceptar TyC para sí mismo)
+    if (req.usuario && req.usuario.id !== parseInt(id)) {
+      return res.status(403).json({ 
+        error: 'No autorizado para aceptar TyC de otro usuario' 
+      });
+    }
+    
+    await Usuario.AceptarTYC(parseInt(id), parseInt(tyc_id));
+    
+    res.json({
+      success: true,
+      message: 'Términos y condiciones aceptados correctamente'
+    });
+  } catch (err) {
+    console.error('Error en aceptar TyC:', err.message);
+    
+    // Manejo específico de errores del SP
+    if (err.message && err.message.includes('no encontrado')) {
+      return res.status(404).json({ 
+        error: err.message.includes('Usuario') 
+          ? 'Usuario no encontrado' 
+          : 'TyC no encontrado' 
+      });
+    }
+    
+    res.status(500).json({ error: 'Error al registrar aceptación de TyC' });
+  }
+};

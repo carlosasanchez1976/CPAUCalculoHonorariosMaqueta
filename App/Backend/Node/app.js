@@ -161,7 +161,8 @@ app.get('/', (req, res) => {
 // ========================================
 // SPEC030: Manejo de errores robusto
 // ========================================
-const { notFoundHandler, errorHandler } = require('./src/middlewares/errorHandler');
+const errorHandler = require('./src/middlewares/errorHandler');
+const { notFoundHandler } = errorHandler;
 
 // Manejo de rutas no encontradas (404) - DEBE ir antes de errorHandler
 app.use(notFoundHandler);

@@ -153,11 +153,6 @@ async function renderizarPlantillaDB(datos) {
   if (htmlRenderizado.includes('{{fechaCalculo}}')) {
     console.warn('[PDF] ⚠️ ALERTA: El template contiene {{fechaCalculo}} sin renderizar!');
   }
-  const fechaEnHTML = htmlRenderizado.match(/<span>([^<]*)<\/span>/g);
-  console.log('[PDF] 🔍 Fragmento de HTML con fecha:', htmlRenderizado.substring(
-    htmlRenderizado.indexOf('Fecha:'),
-    htmlRenderizado.indexOf('Fecha:') + 100
-  ));
   
   return htmlRenderizado;
 }
@@ -208,12 +203,8 @@ function prepararDatosPlantilla(datos, plantilla) {
   const honorariosAdicionales = [];
   const honorariosEspecialidades = [];
   
-  console.log('[PDF] calculationResult recibido:', JSON.stringify(calculationResult, null, 2));
-  
   // Usar detalleHonorarios de calculationResult (enviado desde frontend)
   const detalleHonorarios = calculationResult?.detalleHonorarios || formData?.detalleHonorarios || [];
-  
-  console.log(`[PDF] Procesando ${detalleHonorarios.length} items de detalleHonorarios`);
   
   // AGRUPAR POR TAREA PROFESIONAL (igual que en el frontend)
   const agruparHonorariosPorTarea = (items) => {
@@ -240,8 +231,6 @@ function prepararDatosPlantilla(datos, plantilla) {
   };
   
   const honorariosAgrupados = agruparHonorariosPorTarea(detalleHonorarios);
-  
-  console.log(`[PDF] Después de agrupar: ${honorariosAgrupados.length} tareas únicas`);
   
   if (Array.isArray(honorariosAgrupados) && honorariosAgrupados.length > 0) {
     honorariosAgrupados.forEach((tarea, index) => {
@@ -271,8 +260,6 @@ function prepararDatosPlantilla(datos, plantilla) {
         honorariosEspecialidades.push(item);
       }
     });
-    
-    console.log(`[PDF] Categorizado: ${honorariosObra.length} obra, ${honorariosAdicionales.length} adicionales, ${honorariosEspecialidades.length} especialidades`);
   } else {
     console.warn('[PDF] No se encontraron tareas en calculationResult.detalleHonorarios ni en formData.detalleHonorarios');
   }
@@ -306,15 +293,12 @@ function prepararDatosPlantilla(datos, plantilla) {
   if (fechaCalculo) {
     try {
       const fecha = new Date(fechaCalculo);
-      console.log('[PDF] 🔍 fecha parseada:', fecha);
-      console.log('[PDF] 🔍 fecha.getTime():', fecha.getTime());
       if (!isNaN(fecha.getTime())) {
         fechaCalculoFormateada = fecha.toLocaleDateString('es-AR', {
           day: '2-digit',
           month: '2-digit',
           year: 'numeric'
         });
-        console.log('[PDF] ✅ fechaCalculoFormateada:', fechaCalculoFormateada);
       }
     } catch (error) {
       console.warn('[PDF] Error formateando fecha:', error);

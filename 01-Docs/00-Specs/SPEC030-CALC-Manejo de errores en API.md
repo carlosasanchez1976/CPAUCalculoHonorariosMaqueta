@@ -628,14 +628,395 @@ exports.miEndpoint = async (req, res, next) => {
 
 ---
 
-## 📚 Referencias
+## 🎨 Guía para el Equipo Frontend
 
-- **Convenciones**: camelCase, comentarios en español
-- **Logging**: Console.log con emoji prefix (✅❌🔍)
-- **Ambientes**: `development`, `qa`, `production`
-- **CloudWatch**: `/aws/lambda/cpau-ch2026-api-qa`
+### Estructura de Respuesta de Error
+
+**Todos los errores** de la API seguirán esta estructura consistente:
+
+```typescript
+interface ApiErrorResponse {
+  success: false;
+  error: string;              // Mensaje user-friendly en español
+  errorCode: string;          // Código estandarizado (ej: 'DB_SP_ERROR')
+  errorId: string;            // ID único rastreable (ej: 'err_1786548238_a7k9m2')
+  timestamp: string;          // ISO 8601 (ej: '2026-08-12T15:23:58.551Z')
+  version: string;            // Siempre '1.0'
+  errorDetail?: object;       // SOLO en ambientes dev/qa
+  metadata?: object;          // Info contextual adicional
+}
+```
 
 ---
+
+### Códigos de Error (errorCode)
+
+| Código | HTTP Status | Descripción | Acción Frontend |
+|--------|-------------|-------------|-----------------|
+| `VALIDATION_ERROR` | 400 | Error de validación genérico | Mostrar `error` al usuario |
+| `MISSING_REQUIRED_FIELD` | 400 | Campo requerido faltante | Resaltar campo en formulario |
+| `INVALID_FIELD_TYPE` | 400 | Tipo de dato incorrecto | Mostrar mensaje de validación |
+| `INVALID_FIELD_VALUE` | 400 | Valor fuera de rango/formato | Mostrar regla de validación |
+| `RESOURCE_NOT_FOUND` | 404 | Recurso no encontrado | Mostrar "No encontrado" |
+| `DB_CONNECTION_ERROR` | 500 | Error de conexión a BD | Mensaje genérico + reintentar |
+| `DB_QUERY_ERROR` | 500 | Error en query SQL | Mensaje genérico + soporte |
+| `DB_SP_ERROR` | 500 | Error en stored procedure | Mensaje genérico + errorId |
+| `DB_CONSTRAINT_VIOLATION` | 500 | Violación de constraint (duplicado, FK) | Mensaje específico según constraint |
+| `CALCULATION_ERROR` | 500 | Error en lógica de cálculo | Mensaje genérico + errorId |
+| `INTERNAL_SERVER_ERROR` | 500 | Error no clasificado | Mensaje genérico + errorId |
+
+---
+
+### Ejemplo de Consumo en Frontend
+
+#### Service Layer (honorariosService.js)
+
+```javascript
+/**
+ * Calcula honorarios profesionales
+ * @throws {ApiError} Error estructurado con errorCode, errorId, etc.
+ */
+export async function calcularHonorarios(datosCompletos) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/v1/calculos/calcular`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getToken()}`
+      },
+      body: JSON.stringify(datosCompletos)
+    });
+    
+    const data = await response.json();
+    
+    // ✅ Success
+    if (response.ok && data.success) {
+      return data.data;
+    }
+    
+    // ❌ Error estructurado de la API
+    throw data; // Lanza el objeto completo con errorCode, errorId, etc.
+    
+  } catch (error) {
+    // Si es error de red o parsing, wrapearlo
+    if (!error.errorCode) {
+      throw {
+        success: false,
+        error: 'Error de conexión con el servidor',
+        errorCode: 'NETWORK_ERROR',
+        errorId: null,
+        timestamp: new Date().toISOString()
+      };
+    }
+    
+    throw error;
+  }
+}
+```
+
+---
+
+#### Componente React (ProcesoCalculoPage.jsx)
+
+```javascript
+import { useState } from 'react';
+import { calcularHonorarios } from '../services/honorariosService';
+import ErrorMessage from '../components/ErrorMessage';
+
+function ProcesoCalculoPage() {
+  const [resultado, setResultado] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  
+  const handleCalcular = async (datos) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const resultado = await calcularHonorarios(datos);
+      setResultado(resultado);
+      
+    } catch (apiError) {
+      console.error('❌ Error al calcular:', {
+        errorId: apiError.errorId,
+        errorCode: apiError.errorCode,
+        message: apiError.error,
+        detail: apiError.errorDetail // Solo visible en QA
+      });
+      
+      setError(apiError);
+      
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  return (
+    <div>
+      {error && <ErrorMessage error={error} />}
+      {/* ... resto del componente */}
+    </div>
+  );
+}
+```
+
+---
+
+#### Componente de Error Reutilizable (ErrorMessage.jsx)
+
+```javascript
+import styles from './ErrorMessage.module.css';
+
+/**
+ * Componente para mostrar errores de la API de forma consistente
+ * @param {Object} error - Objeto de error de la API con errorCode, errorId, etc.
+ */
+function ErrorMessage({ error, onRetry }) {
+  if (!error) return null;
+  
+  // Determinar severidad por errorCode
+  const getSeverity = (errorCode) => {
+    if (errorCode?.startsWith('VALIDATION')) return 'warning';
+    if (errorCode?.startsWith('DB_')) return 'error';
+    return 'error';
+  };
+  
+  // Determinar si mostrar botón de reintentar
+  const canRetry = (errorCode) => {
+    return ['DB_CONNECTION_ERROR', 'NETWORK_ERROR', 'INTERNAL_SERVER_ERROR']
+      .includes(errorCode);
+  };
+  
+  const severity = getSeverity(error.errorCode);
+  const showRetry = canRetry(error.errorCode) && onRetry;
+  
+  return (
+    <div className={`${styles.errorMessage} ${styles[severity]}`} role="alert">
+      <div className={styles.errorHeader}>
+        <span className={styles.errorIcon}>⚠️</span>
+        <h4>Error al procesar la solicitud</h4>
+      </div>
+      
+      <p className={styles.errorText}>{error.error}</p>
+      
+      {/* Mostrar errorId solo si existe (para copiar en soporte) */}
+      {error.errorId && (
+        <div className={styles.errorFooter}>
+          <small>
+            Código de error: <code>{error.errorId}</code>
+            <button 
+              onClick={() => navigator.clipboard.writeText(error.errorId)}
+              className={styles.copyButton}
+              title="Copiar código de error"
+            >
+              📋
+            </button>
+          </small>
+        </div>
+      )}
+      
+      {/* Botón de reintentar para errores transitorios */}
+      {showRetry && (
+        <button onClick={onRetry} className={styles.retryButton}>
+          🔄 Reintentar
+        </button>
+      )}
+      
+      {/* DEBUG: Mostrar errorDetail en QA (solo para desarrollo) */}
+      {process.env.NODE_ENV !== 'production' && error.errorDetail && (
+        <details className={styles.errorDebug}>
+          <summary>Detalle técnico (QA)</summary>
+          <pre>{JSON.stringify(error.errorDetail, null, 2)}</pre>
+          {error.metadata && (
+            <pre>Metadata: {JSON.stringify(error.metadata, null, 2)}</pre>
+          )}
+        </details>
+      )}
+    </div>
+  );
+}
+
+export default ErrorMessage;
+```
+
+---
+
+#### Hook Personalizado para Manejo de Errores (useApiError.js)
+
+```javascript
+import { useState, useCallback } from 'react';
+
+/**
+ * Hook para manejar errores de API de forma consistente
+ * @returns {Object} { error, setError, clearError, handleApiError }
+ */
+export function useApiError() {
+  const [error, setError] = useState(null);
+  
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+  
+  /**
+   * Maneja errores de API y registra en consola
+   * @param {Object} apiError - Error estructurado de la API
+   * @param {string} context - Contexto del error (ej: 'calcular honorarios')
+   */
+  const handleApiError = useCallback((apiError, context = '') => {
+    // Log estructurado para debugging
+    console.error(`❌ Error en ${context}:`, {
+      errorId: apiError.errorId,
+      errorCode: apiError.errorCode,
+      message: apiError.error,
+      timestamp: apiError.timestamp,
+      detail: apiError.errorDetail,
+      metadata: apiError.metadata
+    });
+    
+    // Si es error de validación, podríamos agregar lógica específica
+    if (apiError.errorCode?.startsWith('VALIDATION') || 
+        apiError.errorCode?.startsWith('INVALID') ||
+        apiError.errorCode?.startsWith('MISSING')) {
+      // Lógica adicional para errores de validación
+      // Por ejemplo, resaltar campos específicos si viene en metadata
+      if (apiError.metadata?.field) {
+        console.log(`🔍 Campo con error: ${apiError.metadata.field}`);
+      }
+    }
+    
+    setError(apiError);
+  }, []);
+  
+  return { error, setError, clearError, handleApiError };
+}
+```
+
+**Uso del hook**:
+```javascript
+function MiComponente() {
+  const { error, handleApiError, clearError } = useApiError();
+  
+  const handleSubmit = async (datos) => {
+    try {
+      clearError();
+      const resultado = await miServicio(datos);
+      // ... manejar éxito
+    } catch (apiError) {
+      handleApiError(apiError, 'guardar datos');
+    }
+  };
+  
+  return (
+    <div>
+      <ErrorMessage error={error} onRetry={() => handleSubmit(lastData)} />
+      {/* ... resto del componente */}
+    </div>
+  );
+}
+```
+
+---
+
+### Casos de Uso Comunes
+
+#### 1. Error de Validación (400)
+```json
+{
+  "success": false,
+  "error": "tareaId es requerido y debe ser un número entero positivo",
+  "errorCode": "INVALID_FIELD_TYPE",
+  "errorId": "err_1786548300_x7j2k9",
+  "timestamp": "2026-08-12T16:45:00.123Z",
+  "metadata": {
+    "field": "tareaId",
+    "receivedValue": "ABC",
+    "expectedType": "integer > 0"
+  },
+  "version": "1.0"
+}
+```
+
+**Acción Frontend**: Mostrar mensaje debajo del campo `tareaId`, resaltar en rojo.
+
+---
+
+#### 2. Error de Base de Datos (500)
+```json
+{
+  "success": false,
+  "error": "Error al ejecutar procedimiento almacenado",
+  "errorCode": "DB_SP_ERROR",
+  "errorId": "err_1786548238_a7k9m2",
+  "timestamp": "2026-08-12T15:23:58.551Z",
+  "version": "1.0"
+}
+```
+
+**Acción Frontend**: 
+- Mostrar mensaje genérico al usuario
+- Incluir botón "Copiar código de error" con el `errorId`
+- Instruir al usuario a contactar soporte con el `errorId`
+
+---
+
+#### 3. Recurso No Encontrado (404)
+```json
+{
+  "success": false,
+  "error": "El cálculo solicitado no existe",
+  "errorCode": "RESOURCE_NOT_FOUND",
+  "errorId": "err_1786548350_b2m5n3",
+  "timestamp": "2026-08-12T16:52:30.789Z",
+  "metadata": {
+    "resourceType": "calculo",
+    "resourceId": 999
+  },
+  "version": "1.0"
+}
+```
+
+**Acción Frontend**: Redirigir a página de error 404 o mostrar mensaje "No encontrado".
+
+---
+
+### Checklist de Integración Frontend
+
+- [ ] Service layer captura y lanza errores estructurados
+- [ ] Componente `ErrorMessage` creado y reutilizable
+- [ ] Hook `useApiError` implementado (opcional pero recomendado)
+- [ ] Errores muestran mensaje user-friendly (`error`)
+- [ ] Errores 500 muestran `errorId` copiable
+- [ ] `errorDetail` solo se muestra en dev/QA (nunca en producción)
+- [ ] Logs de consola incluyen `errorId` para trazabilidad
+- [ ] Errores de validación resaltan campos específicos cuando aplica
+- [ ] Errores transitorios (conexión) tienen botón de reintentar
+- [ ] Documentación frontend actualizada con ejemplos
+
+---
+
+### Debugging con errorId
+
+**Flujo completo de debugging**:
+
+1. **Usuario reporta error** → Copia `errorId` de la interfaz
+2. **Soporte busca en CloudWatch** con el `errorId`
+3. **Logs muestran**:
+   - Stack trace completo
+   - Módulo y función exacta
+   - Stored procedure que falló
+   - Parámetros enviados (si aplica)
+   - errno y sqlState de MySQL
+
+**Comando CloudWatch**:
+```bash
+aws logs filter-log-events \
+  --log-group-name "/aws/lambda/cpau-ch2026-api-qa" \
+  --filter-pattern "err_1786548238_a7k9m2"
+```
+
+---
+
+## 📚 Referencias
 
 **Estimación Total**: 6-9 horas  
 **Archivos Afectados**: 13+ archivos  

@@ -1,12 +1,15 @@
 /**
  * Modelo para operaciones con cálculos de honorarios
  * Repository Pattern para encapsular acceso a datos
+ * SPEC030: Manejo de errores robusto con ApiError
  * 
  * Tablas: Calculos (master), Calculo_Items (detalle)
  * SPs: Calculos_Grabar, Calculos_GetByID
  */
 
 const db = require('../config/db');
+const ApiError = require('../utils/ApiError');
+const ERROR_CODES = require('../constants/errorCodes');
 
 function esIntPositivo(valor) {
     return Number.isInteger(valor) && valor > 0;
@@ -135,11 +138,19 @@ async function grabarCalculo(datosCompletos) {
         };
     } catch (error) {
         console.error('❌ [Model] Error al grabar cálculo:', error.message);
-        throw {
-            code: 'DB_ERROR',
+        
+        if (ApiError.isApiError(error)) {
+            error.addMetadata('function', 'calculo.grabarCalculo');
+            throw error;
+        }
+        
+        throw new ApiError({
+            code: ERROR_CODES.DB_ERROR,
             message: 'Error al guardar el cálculo en la base de datos',
-            detail: error.message
-        };
+            statusCode: 500,
+            detail: { originalError: error.message },
+            metadata: { module: 'calculo', function: 'grabarCalculo' }
+        });
     }
 }
 
@@ -161,11 +172,20 @@ async function existeTareaProfesional(tareaId) {
         return Array.isArray(rows) && rows.length > 0;
     } catch (error) {
         console.error('❌ [Model] Error al validar tarea profesional:', error.message);
-        throw {
-            code: 'DB_ERROR',
+        
+        if (ApiError.isApiError(error)) {
+            error.addMetadata('function', 'calculo.existeTareaProfesional');
+            error.addMetadata('tareaId', tareaId);
+            throw error;
+        }
+        
+        throw new ApiError({
+            code: ERROR_CODES.DB_ERROR,
             message: 'Error al validar la tarea profesional',
-            detail: error.message
-        };
+            statusCode: 500,
+            detail: { originalError: error.message, tareaId },
+            metadata: { module: 'calculo', function: 'existeTareaProfesional' }
+        });
     }
 }
 
@@ -215,11 +235,20 @@ async function obtenerCalculoPorId(calculoId) {
         return calculo;
     } catch (error) {
         console.error('❌ [Model] Error al obtener cálculo:', error.message);
-        throw {
-            code: 'DB_ERROR',
+        
+        if (ApiError.isApiError(error)) {
+            error.addMetadata('function', 'calculo.obtenerCalculoPorId');
+            error.addMetadata('calculoId', calculoId);
+            throw error;
+        }
+        
+        throw new ApiError({
+            code: ERROR_CODES.DB_ERROR,
             message: 'Error al consultar el cálculo',
-            detail: error.message
-        };
+            statusCode: 500,
+            detail: { originalError: error.message, calculoId },
+            metadata: { module: 'calculo', function: 'obtenerCalculoPorId' }
+        });
     }
 }
 
@@ -246,11 +275,20 @@ async function guardarExperiencia(calculoId, puntaje, observaciones) {
         
     } catch (error) {
         console.error('❌ [Model] Error al guardar experiencia:', error.message);
-        throw {
-            code: 'DB_ERROR',
+        
+        if (ApiError.isApiError(error)) {
+            error.addMetadata('function', 'calculo.guardarExperiencia');
+            error.addMetadata('calculoId', calculoId);
+            throw error;
+        }
+        
+        throw new ApiError({
+            code: ERROR_CODES.DB_ERROR,
             message: 'Error al guardar la experiencia en la base de datos',
-            detail: error.message
-        };
+            statusCode: 500,
+            detail: { originalError: error.message, calculoId },
+            metadata: { module: 'calculo', function: 'guardarExperiencia' }
+        });
     }
 }
 
@@ -298,40 +336,48 @@ async function getDashboard(fechaDesde, fechaHasta) {
         
         // Validar que las fechas sean válidas
         if (isNaN(desde.getTime()) || isNaN(hasta.getTime())) {
-            throw {
-                code: 'VALIDATION_ERROR',
+            throw new ApiError({
+                code: ERROR_CODES.VALIDATION_ERROR,
                 message: 'Formato de fecha inválido. Use YYYY-MM-DD',
-                detail: 'Las fechas deben estar en formato ISO 8601'
-            };
+                statusCode: 400,
+                detail: 'Las fechas deben estar en formato ISO 8601',
+                metadata: { module: 'calculo', function: 'getDashboard' }
+            });
         }
         
         // Validar que fechaHasta no sea mayor a hoy
         if (hasta > hoy) {
-            throw {
-                code: 'VALIDATION_ERROR',
+            throw new ApiError({
+                code: ERROR_CODES.VALIDATION_ERROR,
                 message: 'fechaHasta no puede ser mayor a la fecha actual',
-                detail: `fechaHasta: ${hasta.toISOString().split('T')[0]}, hoy: ${hoy.toISOString().split('T')[0]}`
-            };
+                statusCode: 400,
+                detail: `fechaHasta: ${hasta.toISOString().split('T')[0]}, hoy: ${hoy.toISOString().split('T')[0]}`,
+                metadata: { module: 'calculo', function: 'getDashboard' }
+            });
         }
         
         // Validar que fechaDesde no sea mayor a fechaHasta
         if (desde > hasta) {
-            throw {
-                code: 'VALIDATION_ERROR',
+            throw new ApiError({
+                code: ERROR_CODES.VALIDATION_ERROR,
                 message: 'fechaDesde no puede ser mayor a fechaHasta',
-                detail: `fechaDesde: ${desde.toISOString().split('T')[0]}, fechaHasta: ${hasta.toISOString().split('T')[0]}`
-            };
+                statusCode: 400,
+                detail: `fechaDesde: ${desde.toISOString().split('T')[0]}, fechaHasta: ${hasta.toISOString().split('T')[0]}`,
+                metadata: { module: 'calculo', function: 'getDashboard' }
+            });
         }
         
         // Validar rango máximo de 1 año
         const unAnioEnMs = 365 * 24 * 60 * 60 * 1000;
         const rangoMs = hasta - desde;
         if (rangoMs > unAnioEnMs) {
-            throw {
-                code: 'VALIDATION_ERROR',
+            throw new ApiError({
+                code: ERROR_CODES.VALIDATION_ERROR,
                 message: 'Rango de fechas excede el máximo permitido de 1 año',
-                detail: `Rango solicitado: ${Math.ceil(rangoMs / (24 * 60 * 60 * 1000))} días`
-            };
+                statusCode: 400,
+                detail: `Rango solicitado: ${Math.ceil(rangoMs / (24 * 60 * 60 * 1000))} días`,
+                metadata: { module: 'calculo', function: 'getDashboard' }
+            });
         }
         
         // Convertir a formato MySQL (YYYY-MM-DD)
@@ -471,18 +517,32 @@ async function getDashboard(fechaDesde, fechaHasta) {
         return dashboardData;
         
     } catch (error) {
-        // Si es un error estructurado ya, propagarlo
-        if (error.code) {
+        // Si ya es ApiError (validación o DB), enriquecer y propagar
+        if (ApiError.isApiError(error)) {
+            error.addMetadata('function', 'calculo.getDashboard');
             throw error;
         }
         
-        // Si no, envolverlo
+        // Si es un error estructurado legacy (por compatibilidad temporal)
+        if (error.code) {
+            throw new ApiError({
+                code: error.code === 'VALIDATION_ERROR' ? ERROR_CODES.VALIDATION_ERROR : ERROR_CODES.DB_ERROR,
+                message: error.message || 'Error al generar el dashboard',
+                statusCode: error.code === 'VALIDATION_ERROR' ? 400 : 500,
+                detail: error.detail || { originalError: error.message },
+                metadata: { module: 'calculo', function: 'getDashboard' }
+            });
+        }
+        
+        // Error inesperado
         console.error('❌ [Model] Error al generar dashboard:', error.message);
-        throw {
-            code: 'DB_ERROR',
+        throw new ApiError({
+            code: ERROR_CODES.DB_ERROR,
             message: 'Error al generar el dashboard',
-            detail: error.message
-        };
+            statusCode: 500,
+            detail: { originalError: error.message },
+            metadata: { module: 'calculo', function: 'getDashboard' }
+        });
     }
 }
 

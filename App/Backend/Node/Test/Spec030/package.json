@@ -1,0 +1,21 @@
+{
+  "name": "spec030-tests",
+  "version": "1.0.0",
+  "description": "Tests de SPEC030 - Manejo de errores en API CH2026",
+  "scripts": {
+    "test": "jest --config jest.config.js",
+    "test:watch": "jest --config jest.config.js --watch",
+    "test:coverage": "jest --config jest.config.js --coverage",
+    "test:unit": "jest --config jest.config.js --testPathPattern=unit",
+    "test:integration": "jest --config jest.config.js --testPathPattern=integration",
+    "test:verbose": "jest --config jest.config.js --verbose"
+  },
+  "keywords": [
+    "testing",
+    "jest",
+    "error-handling",
+    "spec030"
+  ],
+  "author": "Carlos Sanchez",
+  "license": "ISC"
+}

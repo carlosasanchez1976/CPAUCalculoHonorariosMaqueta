@@ -2,26 +2,31 @@
  * adminTemplatesController.js
  * Controller para gestión de templates PDF (admin)
  * SPEC: SPEC020-ADMIN-Template-Manager (T020-003)
+ * SPEC030: Manejo de errores robusto con ApiError
  * 
  * Proyecto: CH2026 - CPAU Cálculo de Honorarios
  * Fecha: 2026-07-14
  */
 
 const adminTemplatesService = require('../services/adminTemplatesService');
+const ApiError = require('../utils/ApiError');
+const ERROR_CODES = require('../constants/errorCodes');
 
 /**
  * POST /api/admin/templates/preview
  * Renderiza preview de template con test data
  */
-exports.preview = async (req, res) => {
+exports.preview = async (req, res, next) => {
     try {
         const { html } = req.body;
         
         // Validación
         if (!html || html.trim() === '') {
-            return res.status(400).json({
-                success: false,
-                error: 'HTML no puede estar vacío'
+            throw new ApiError({
+                code: ERROR_CODES.VALIDATION_ERROR,
+                message: 'HTML no puede estar vacío',
+                statusCode: 400,
+                metadata: { controller: 'adminTemplates', function: 'preview' }
             });
         }
         
@@ -33,13 +38,7 @@ exports.preview = async (req, res) => {
         return res.send(htmlRendered);
         
     } catch (error) {
-        console.error('[Admin Templates] Error en preview:', error);
-        
-        return res.status(500).json({
-            success: false,
-            error: 'Error renderizando preview',
-            details: error.message
-        });
+        next(error);
     }
 };
 
@@ -47,7 +46,7 @@ exports.preview = async (req, res) => {
  * POST /api/admin/templates/:id/update
  * Actualiza template en base de datos
  */
-exports.update = async (req, res) => {
+exports.update = async (req, res, next) => {
     try {
         const { id } = req.params;
         const { html } = req.body;
@@ -55,26 +54,34 @@ exports.update = async (req, res) => {
         // Validación de ID
         const entregableId = parseInt(id, 10);
         if (isNaN(entregableId) || entregableId <= 0) {
-            return res.status(400).json({
-                success: false,
-                error: 'ID de entregable inválido'
+            throw new ApiError({
+                code: ERROR_CODES.INVALID_FIELD_TYPE,
+                message: 'ID de entregable inválido',
+                statusCode: 400,
+                detail: { entregableId: id },
+                metadata: { controller: 'adminTemplates', function: 'update' }
             });
         }
         
         // Validación de HTML
         if (!html || html.trim() === '') {
-            return res.status(400).json({
-                success: false,
-                error: 'HTML no puede estar vacío'
+            throw new ApiError({
+                code: ERROR_CODES.VALIDATION_ERROR,
+                message: 'HTML no puede estar vacío',
+                statusCode: 400,
+                metadata: { controller: 'adminTemplates', function: 'update' }
             });
         }
         
         // Validar tamaño (500 KB max)
         const htmlSizeKB = Buffer.byteLength(html, 'utf8') / 1024;
         if (htmlSizeKB > 500) {
-            return res.status(400).json({
-                success: false,
-                error: `HTML supera tamaño máximo: ${htmlSizeKB.toFixed(2)} KB (máx: 500 KB)`
+            throw new ApiError({
+                code: ERROR_CODES.VALIDATION_ERROR,
+                message: `HTML supera tamaño máximo: ${htmlSizeKB.toFixed(2)} KB (máx: 500 KB)`,
+                statusCode: 400,
+                detail: { htmlSizeKB: htmlSizeKB.toFixed(2), maxSizeKB: 500 },
+                metadata: { controller: 'adminTemplates', function: 'update' }
             });
         }
         
@@ -82,9 +89,12 @@ exports.update = async (req, res) => {
         const resultado = await adminTemplatesService.actualizarTemplate(entregableId, html);
         
         if (!resultado.success) {
-            return res.status(404).json({
-                success: false,
-                error: resultado.error || 'Entregable no encontrado'
+            throw new ApiError({
+                code: ERROR_CODES.RESOURCE_NOT_FOUND,
+                message: resultado.error || 'Entregable no encontrado',
+                statusCode: 404,
+                detail: { entregableId },
+                metadata: { controller: 'adminTemplates', function: 'update' }
             });
         }
         
@@ -97,13 +107,7 @@ exports.update = async (req, res) => {
         });
         
     } catch (error) {
-        console.error('[Admin Templates] Error actualizando template:', error);
-        
-        return res.status(500).json({
-            success: false,
-            error: 'Error actualizando template en base de datos',
-            details: error.message
-        });
+        next(error);
     }
 };
 
@@ -111,16 +115,19 @@ exports.update = async (req, res) => {
  * GET /api/admin/templates/:id
  * Obtiene template específico por ID
  */
-exports.getById = async (req, res) => {
+exports.getById = async (req, res, next) => {
     try {
         const { id } = req.params;
         
         // Validación de ID
         const entregableId = parseInt(id, 10);
         if (isNaN(entregableId) || entregableId <= 0) {
-            return res.status(400).json({
-                success: false,
-                error: 'ID de entregable inválido'
+            throw new ApiError({
+                code: ERROR_CODES.INVALID_FIELD_TYPE,
+                message: 'ID de entregable inválido',
+                statusCode: 400,
+                detail: { entregableId: id },
+                metadata: { controller: 'adminTemplates', function: 'getById' }
             });
         }
         
@@ -128,9 +135,12 @@ exports.getById = async (req, res) => {
         const template = await adminTemplatesService.obtenerTemplatePorId(entregableId);
         
         if (!template) {
-            return res.status(404).json({
-                success: false,
-                error: 'Template no encontrado'
+            throw new ApiError({
+                code: ERROR_CODES.RESOURCE_NOT_FOUND,
+                message: 'Template no encontrado',
+                statusCode: 404,
+                detail: { entregableId },
+                metadata: { controller: 'adminTemplates', function: 'getById' }
             });
         }
         
@@ -140,12 +150,7 @@ exports.getById = async (req, res) => {
         });
         
     } catch (error) {
-        console.error('[Admin Templates] Error obteniendo template:', error);
-        
-        return res.status(500).json({
-            success: false,
-            error: 'Error cargando template'
-        });
+        next(error);
     }
 };
 
@@ -153,7 +158,7 @@ exports.getById = async (req, res) => {
  * GET /api/admin/templates/test-data
  * Obtiene datos de prueba para hidratar templates
  */
-exports.getTestData = async (req, res) => {
+exports.getTestData = async (req, res, next) => {
     try {
         const testData = await adminTemplatesService.obtenerTestData();
         
@@ -163,12 +168,7 @@ exports.getTestData = async (req, res) => {
         });
         
     } catch (error) {
-        console.error('[Admin Templates] Error obteniendo test data:', error);
-        
-        return res.status(500).json({
-            success: false,
-            error: 'Error cargando datos de prueba'
-        });
+        next(error);
     }
 };
 
@@ -176,7 +176,7 @@ exports.getTestData = async (req, res) => {
  * GET /api/admin/templates/list
  * Lista templates activos
  */
-exports.list = async (req, res) => {
+exports.list = async (req, res, next) => {
     try {
         const templates = await adminTemplatesService.listarTemplates();
         
@@ -186,11 +186,6 @@ exports.list = async (req, res) => {
         });
         
     } catch (error) {
-        console.error('[Admin Templates] Error listando templates:', error);
-        
-        return res.status(500).json({
-            success: false,
-            error: 'Error listando templates'
-        });
+        next(error);
     }
 };

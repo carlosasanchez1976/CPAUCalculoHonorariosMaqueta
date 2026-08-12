@@ -1,72 +1,92 @@
 // ParametrosController.js
+// SPEC030: Manejo de errores robusto con ApiError
 const Parametro = require('../models/parametro');
+const ApiError = require('../utils/ApiError');
+const ERROR_CODES = require('../constants/errorCodes');
 
-exports.listar = async (req, res) => {
+exports.listar = async (req, res, next) => {
   try {
     const Parametros = await Parametro.Listar();
     res.json(Parametros);
   } catch (err) {
-    console.error('Error en listar Parametros:', err.message);
-    res.status(500).json({ error: 'Error al obtener Parametros' });
+    next(err);
   }
 };
 
-exports.grabar = async (req, res) => {
+exports.grabar = async (req, res, next) => {
   try {
     // Validación básica
     const { id, nombre, tipo, valor, descripcion, user_id } = req.body;
     
     
     if (!nombre || !valor || !user_id) {
-      return res.status(400).json({ error: 'Faltan campos requeridos: nombre, valor, user_id' });
+      throw new ApiError({
+        code: ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: 'Faltan campos requeridos: nombre, valor, user_id',
+        statusCode: 400,
+        metadata: { controller: 'parametros', function: 'grabar' }
+      });
     }
     
     const nuevoParametro = await Parametro.Grabar(req.body);
     res.status(201).json(nuevoParametro);
   } catch (err) {
-    console.error('Error en grabar Parametro:', err.message);
-    res.status(500).json({ error: 'Error al crear Parámetro: ' + err.message });
+    next(err);
     }
   }
 ;
 
-exports.borrar = async (req, res) => {
+exports.borrar = async (req, res, next) => {
   try {
     const { user_id, user_modi_id } = req.query;
   
     
     // Validación de parámetros
     if (!user_id || !user_modi_id) {
-      return res.status(400).json({ error: 'Faltan datos requeridos' });
+      throw new ApiError({
+        code: ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: 'Faltan datos requeridos',
+        statusCode: 400,
+        metadata: { controller: 'parametros', function: 'borrar' }
+      });
     }
     
     await Parametro.Borrar({ user_id, user_modi_id });
     res.status(204).send();
   } catch (err) {
-    console.error('Error en borrar Parametro:', err.message);
-    res.status(500).json({ error: 'Error al borrar Parametro '+ err.message });
+    next(err);
   }
 };
 
 
 
-exports.buscar = async (req, res) => {
+exports.buscar = async (req, res, next) => {
   try {
     const { id } = req.params;
     
     if (!id) {
-      return res.status(400).json({ error: 'ID requerido' });
+      throw new ApiError({
+        code: ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: 'ID requerido',
+        statusCode: 400,
+        metadata: { controller: 'parametros', function: 'buscar' }
+      });
     }
     
     const ParametroEncontrado = await Parametro.Buscar(id);
     
     if (!ParametroEncontrado) {
-      return res.status(404).json({ error: 'Parametro no encontrado' });
+      throw new ApiError({
+        code: ERROR_CODES.RESOURCE_NOT_FOUND,
+        message: 'Parametro no encontrado',
+        statusCode: 404,
+        detail: { parametroId: id },
+        metadata: { controller: 'parametros', function: 'buscar' }
+      });
     }
     
     res.json(ParametroEncontrado);
   } catch (err) {
-    console.error('Error en buscar Parametro:', err.message);
-    res.status(500).json({ error: 'Error al buscar Parametro' });
+    next(err);
   }
 };

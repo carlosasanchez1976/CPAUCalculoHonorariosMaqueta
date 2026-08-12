@@ -1,8 +1,11 @@
 // db.js
 // Configuración de conexión a MySQL con soporte AWS Secrets Manager
+// SPEC030: Manejo de errores robusto con ApiError
 
 const mysql = require('mysql2/promise');
 // const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager');
+const ApiError = require('../utils/ApiError');
+const ERROR_CODES = require('../constants/errorCodes');
 require('dotenv').config();
 
 let pool = null;
@@ -111,7 +114,24 @@ const executeQuery = async (query, params = []) => {
         return results;
     } catch (error) {
         console.error('❌ Error en consulta DB:', error.message);
-        throw error;
+        
+        // SPEC030: Lanzar ApiError con información detallada
+        throw new ApiError({
+            code: ERROR_CODES.DB_QUERY_ERROR,
+            message: 'Error al ejecutar consulta en la base de datos',
+            statusCode: 500,
+            detail: {
+                query: query.substring(0, 200), // Limitar longitud para logs
+                sqlError: error.message,
+                errno: error.errno,
+                sqlState: error.sqlState,
+                paramsCount: params.length
+            },
+            metadata: {
+                module: 'db',
+                function: 'executeQuery'
+            }
+        });
     }
 };
 
@@ -136,7 +156,31 @@ const executeStoredProcedure = async (procedureName, params = []) => {
         
     } catch (error) {
         console.error(`❌ Error ejecutando SP ${procedureName}:`, error.message);
-        throw error;
+        
+        // SPEC030: Si ya es ApiError de executeQuery, enriquecer con nombre del SP
+        if (ApiError.isApiError(error)) {
+            error.addMetadata('storedProcedure', procedureName);
+            error.addMetadata('paramsCount', params.length);
+            throw error;
+        }
+        
+        // Si no es ApiError, crear uno nuevo (fallback)
+        throw new ApiError({
+            code: ERROR_CODES.DB_SP_ERROR,
+            message: 'Error al ejecutar procedimiento almacenado',
+            statusCode: 500,
+            detail: {
+                storedProcedure: procedureName,
+                sqlError: error.message,
+                errno: error.errno,
+                sqlState: error.sqlState,
+                paramsCount: params.length
+            },
+            metadata: {
+                module: 'db',
+                function: 'executeStoredProcedure'
+            }
+        });
     }
 };
 

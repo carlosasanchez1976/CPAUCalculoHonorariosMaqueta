@@ -3,9 +3,12 @@
  * Servicio para resolver plantillas de entregables PDF
  * Proyecto: CH2026 - CPAU Cálculo de Honorarios
  * SPEC: SPEC010-CALC-Entregables (T010-001)
+ * SPEC030: Manejo de errores robusto con ApiError
  */
 
 const { executeQuery , executeStoredProcedure } = require('../config/db');
+const ApiError = require('../utils/ApiError');
+const ERROR_CODES = require('../constants/errorCodes');
 
 /**
  * Resuelve la plantilla de entregable activa para una tarea profesional
@@ -13,8 +16,24 @@ const { executeQuery , executeStoredProcedure } = require('../config/db');
  * @returns {Object|null} Datos del entregable (html_template, css_styles, pdf_config, etc.)
  */
 async function resolverPlantillaEntregable(tareaId) {
-  const [rows] = await executeStoredProcedure('Entregables_PDF_BuscarXTareaID', [tareaId]);
-  return rows.length > 0 ? rows[0] : null;
+  try {
+    const [rows] = await executeStoredProcedure('Entregables_PDF_BuscarXTareaID', [tareaId]);
+    return rows.length > 0 ? rows[0] : null;
+  } catch (error) {
+    if (ApiError.isApiError(error)) {
+      error.addMetadata('function', 'entregablesService.resolverPlantillaEntregable');
+      error.addMetadata('tareaId', tareaId);
+      throw error;
+    }
+    
+    throw new ApiError({
+      code: ERROR_CODES.DB_ERROR,
+      message: 'Error al resolver plantilla de entregable',
+      statusCode: 500,
+      detail: { originalError: error.message, tareaId },
+      metadata: { module: 'entregablesService', function: 'resolverPlantillaEntregable' }
+    });
+  }
 }
 
 /**
@@ -23,8 +42,24 @@ async function resolverPlantillaEntregable(tareaId) {
  * @returns {Object|null} Datos del entregable
  */
 async function resolverPlantillaPorCodigo(codigo) {
-  const [rows] = await executeStoredProcedure('Entregables_PDF_BuscarXCodigo', [codigo]);
-  return rows.length > 0 ? rows[0] : null;
+  try {
+    const [rows] = await executeStoredProcedure('Entregables_PDF_BuscarXCodigo', [codigo]);
+    return rows.length > 0 ? rows[0] : null;
+  } catch (error) {
+    if (ApiError.isApiError(error)) {
+      error.addMetadata('function', 'entregablesService.resolverPlantillaPorCodigo');
+      error.addMetadata('codigo', codigo);
+      throw error;
+    }
+    
+    throw new ApiError({
+      code: ERROR_CODES.DB_ERROR,
+      message: 'Error al resolver plantilla por código',
+      statusCode: 500,
+      detail: { originalError: error.message, codigo },
+      metadata: { module: 'entregablesService', function: 'resolverPlantillaPorCodigo' }
+    });
+  }
 }
 
 
@@ -34,8 +69,24 @@ async function resolverPlantillaPorCodigo(codigo) {
  * @returns {Object|null} Datos del entregable
  */
 async function obtenerEntregable(entregableId) {
-  const [rows] = await executeStoredProcedure('Entregables_PDF_Buscar', [entregableId]);
-  return rows.length > 0 ? rows[0] : null;
+  try {
+    const [rows] = await executeStoredProcedure('Entregables_PDF_Buscar', [entregableId]);
+    return rows.length > 0 ? rows[0] : null;
+  } catch (error) {
+    if (ApiError.isApiError(error)) {
+      error.addMetadata('function', 'entregablesService.obtenerEntregable');
+      error.addMetadata('entregableId', entregableId);
+      throw error;
+    }
+    
+    throw new ApiError({
+      code: ERROR_CODES.DB_ERROR,
+      message: 'Error al obtener entregable',
+      statusCode: 500,
+      detail: { originalError: error.message, entregableId },
+      metadata: { module: 'entregablesService', function: 'obtenerEntregable' }
+    });
+  }
 }
 
 /**
@@ -46,11 +97,27 @@ async function obtenerEntregable(entregableId) {
  * @returns {Object} { filas_afectadas, mensaje }
  */
 async function actualizarTemplate(entregableId, htmlTemplate) {
-  const [rows] = await executeStoredProcedure('Entregables_PDF_ActualizarTemplate', [
-    entregableId,
-    htmlTemplate
-  ]);
-  return rows[0];
+  try {
+    const [rows] = await executeStoredProcedure('Entregables_PDF_ActualizarTemplate', [
+      entregableId,
+      htmlTemplate
+    ]);
+    return rows[0];
+  } catch (error) {
+    if (ApiError.isApiError(error)) {
+      error.addMetadata('function', 'entregablesService.actualizarTemplate');
+      error.addMetadata('entregableId', entregableId);
+      throw error;
+    }
+    
+    throw new ApiError({
+      code: ERROR_CODES.DB_ERROR,
+      message: 'Error al actualizar template de entregable',
+      statusCode: 500,
+      detail: { originalError: error.message, entregableId },
+      metadata: { module: 'entregablesService', function: 'actualizarTemplate' }
+    });
+  }
 }
 
 /**
@@ -60,8 +127,24 @@ async function actualizarTemplate(entregableId, htmlTemplate) {
  * @returns {Object|null} Datos completos del entregable
  */
 async function obtenerPorID(entregableId) {
-  const [rows] = await executeStoredProcedure('Entregables_PDF_ObtenerPorID', [entregableId]);
-  return rows.length > 0 ? rows[0] : null;
+  try {
+    const [rows] = await executeStoredProcedure('Entregables_PDF_ObtenerPorID', [entregableId]);
+    return rows.length > 0 ? rows[0] : null;
+  } catch (error) {
+    if (ApiError.isApiError(error)) {
+      error.addMetadata('function', 'entregablesService.obtenerPorID');
+      error.addMetadata('entregableId', entregableId);
+      throw error;
+    }
+    
+    throw new ApiError({
+      code: ERROR_CODES.DB_ERROR,
+      message: 'Error al obtener entregable completo',
+      statusCode: 500,
+      detail: { originalError: error.message, entregableId },
+      metadata: { module: 'entregablesService', function: 'obtenerPorID' }
+    });
+  }
 }
 
 /**
@@ -70,8 +153,23 @@ async function obtenerPorID(entregableId) {
  * @returns {Array} Lista de templates activos con campos básicos
  */
 async function listarActivos() {
-  const [rows] = await executeStoredProcedure('Entregables_PDF_ListarActivos', []);
-  return rows;
+  try {
+    const [rows] = await executeStoredProcedure('Entregables_PDF_ListarActivos', []);
+    return rows;
+  } catch (error) {
+    if (ApiError.isApiError(error)) {
+      error.addMetadata('function', 'entregablesService.listarActivos');
+      throw error;
+    }
+    
+    throw new ApiError({
+      code: ERROR_CODES.DB_ERROR,
+      message: 'Error al listar templates activos',
+      statusCode: 500,
+      detail: { originalError: error.message },
+      metadata: { module: 'entregablesService', function: 'listarActivos' }
+    });
+  }
 }
 
 module.exports = {

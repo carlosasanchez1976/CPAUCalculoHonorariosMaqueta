@@ -159,26 +159,15 @@ app.get('/', (req, res) => {
 });
 
 // ========================================
-// Manejo de rutas no encontradas
+// SPEC030: Manejo de errores robusto
 // ========================================
-app.use((req, res) => {
-    res.status(404).json({ error: 'Ruta no encontrada' });
-});
+const { notFoundHandler, errorHandler } = require('./src/middlewares/errorHandler');
 
-// ========================================
-// Manejo global de errores
-// ========================================
-app.use((err, req, res, next) => {
-    console.error('Error global:', err.message);
-    
-    // No exponer detalles internos en producción
-    const isDevelopment = process.env.NODE_ENV !== 'production';
-    
-    res.status(err.status || 500).json({
-        error: isDevelopment ? err.message : 'Error interno del servidor',
-        ...(isDevelopment && { stack: err.stack })
-    });
-});
+// Manejo de rutas no encontradas (404) - DEBE ir antes de errorHandler
+app.use(notFoundHandler);
+
+// Manejo global de errores - DEBE ser el ÚLTIMO middleware
+app.use(errorHandler);
 
 // Exportar la app (sin app.listen)
 module.exports = app;

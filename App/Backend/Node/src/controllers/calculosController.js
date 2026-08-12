@@ -1,4 +1,8 @@
+// calculosController.js
+// SPEC030: Manejo de errores robusto con ApiError
 const calculoModel = require('../models/calculo');
+const ApiError = require('../utils/ApiError');
+const ERROR_CODES = require('../constants/errorCodes');
 
 function esNumeroPositivo(valor) {
     return typeof valor === 'number' && Number.isFinite(valor) && valor > 0;
@@ -26,59 +30,50 @@ function normalizarCalculoId(valor) {
     return calculoId;
 }
 
-function obtenerMensajeError(error, fallback) {
-    if (!error) {
-        return fallback;
-    }
+// SPEC030: Eliminada función obtenerMensajeError - ya no es necesaria con ApiError
 
-    if (typeof error === 'string') {
-        return error;
-    }
-
-    if (error.message) {
-        return error.message;
-    }
-
-    return fallback;
-}
-
-exports.calcular = async (req, res) => {
+exports.calcular = async (req, res, next) => {
     try {
         const { tareaId, datosObra, tareasProfesionales , tareaCodi } = req.body || {};
 
         const tareaIdInt = Number(tareaId);
         if (!esEnteroPositivo(tareaIdInt)) {
-            return res.status(400).json({
-                success: false,
-                error: 'tareaId es requerido y debe ser un número entero positivo',
-                version: '1.0'
+            throw new ApiError({
+                code: ERROR_CODES.VALIDATION_ERROR,
+                message: 'tareaId es requerido y debe ser un número entero positivo',
+                statusCode: 400,
+                metadata: { controller: 'calculos', function: 'calcular' }
             });
         }
 
         const tareaExiste = await calculoModel.existeTareaProfesional(tareaIdInt);
         if (!tareaExiste) {
-            return res.status(400).json({
-                success: false,
-                error: 'tareaId no existe en Tareas_Profesionales',
-                version: '1.0'
+            throw new ApiError({
+                code: ERROR_CODES.RESOURCE_NOT_FOUND,
+                message: 'tareaId no existe en Tareas_Profesionales',
+                statusCode: 404,
+                detail: { tareaId: tareaIdInt },
+                metadata: { controller: 'calculos', function: 'calcular' }
             });
         }
 
         if (tareaCodi === 'PYDOA') {
         
             if (!datosObra || typeof datosObra !== 'object' || !esNumeroPositivo(datosObra.valorObra)) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'datosObra.valorObra es requerido y debe ser un número mayor a 0',
-                    version: '1.0'
+                throw new ApiError({
+                    code: ERROR_CODES.VALIDATION_ERROR,
+                    message: 'datosObra.valorObra es requerido y debe ser un número mayor a 0',
+                    statusCode: 400,
+                    metadata: { controller: 'calculos', function: 'calcular' }
                 });
             }
 
             if (!hayAlMenosUnaTareaSeleccionada(tareasProfesionales)) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'tareasProfesionales debe incluir al menos una tarea en true',
-                    version: '1.0'
+                throw new ApiError({
+                    code: ERROR_CODES.VALIDATION_ERROR,
+                    message: 'tareasProfesionales debe incluir al menos una tarea en true',
+                    statusCode: 400,
+                    metadata: { controller: 'calculos', function: 'calcular' }
                 });
             }
         }
@@ -93,10 +88,12 @@ exports.calcular = async (req, res) => {
         const calculo = await calculoModel.obtenerCalculoPorId(resultado.calculoId);
 
         if (!calculo) {
-            return res.status(500).json({
-                success: false,
-                error: 'El cálculo fue grabado pero no se pudo recuperar el detalle',
-                version: '1.0'
+            throw new ApiError({
+                code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+                message: 'El cálculo fue grabado pero no se pudo recuperar el detalle',
+                statusCode: 500,
+                detail: { calculoId: resultado.calculoId },
+                metadata: { controller: 'calculos', function: 'calcular' }
             });
         }
 
@@ -119,38 +116,32 @@ exports.calcular = async (req, res) => {
             version: '1.0'
         });
     } catch (error) {
-        const statusCode = error?.code === 'DB_ERROR' ? 500 : 500;
-        const mensaje = obtenerMensajeError(error, 'Error interno al calcular honorarios');
-
-        console.error('Error en honorariosController.calcular:', error?.detail || error?.message || error);
-
-        return res.status(statusCode).json({
-            success: false,
-            error: mensaje,
-            version: '1.0'
-        });
+        next(error);
     }
 };
 
-exports.obtenerItems = async (req, res) => {
+exports.obtenerItems = async (req, res, next) => {
     try {
         const calculoId = normalizarCalculoId(req.params?.calculoId);
 
         if (!calculoId) {
-            return res.status(400).json({
-                success: false,
-                error: 'calculoId debe ser un número entero positivo',
-                version: '1.0'
+            throw new ApiError({
+                code: ERROR_CODES.VALIDATION_ERROR,
+                message: 'calculoId debe ser un número entero positivo',
+                statusCode: 400,
+                metadata: { controller: 'calculos', function: 'obtenerItems' }
             });
         }
 
         const calculo = await calculoModel.obtenerCalculoPorId(calculoId);
 
         if (!calculo) {
-            return res.status(404).json({
-                success: false,
-                error: 'Cálculo no encontrado',
-                version: '1.0'
+            throw new ApiError({
+                code: ERROR_CODES.RESOURCE_NOT_FOUND,
+                message: 'Cálculo no encontrado',
+                statusCode: 404,
+                detail: { calculoId },
+                metadata: { controller: 'calculos', function: 'obtenerItems' }
             });
         }
 
@@ -172,16 +163,7 @@ exports.obtenerItems = async (req, res) => {
             version: '1.0'
         });
     } catch (error) {
-        const statusCode = error?.code === 'DB_ERROR' ? 500 : 500;
-        const mensaje = obtenerMensajeError(error, 'Error interno al obtener el cálculo');
-
-        console.error('Error en honorariosController.obtenerItems:', error?.detail || error?.message || error);
-
-        return res.status(statusCode).json({
-            success: false,
-            error: mensaje,
-            version: '1.0'
-        });
+        next(error);
     }
 };
 
@@ -190,7 +172,7 @@ exports.obtenerItems = async (req, res) => {
  * POST /api/calculos/exportar-pdf
  * SPEC: SPEC010-CALC-Entregables (T010-003)
  */
-exports.exportarPdf = async (req, res) => {
+exports.exportarPdf = async (req, res, next) => {
     const pdfService = require('../services/pdfService');
     const startTime = Date.now();
     
@@ -199,10 +181,11 @@ exports.exportarPdf = async (req, res) => {
 
         // Validación de payload
         if (!formData || !calculationResult) {
-            return res.status(400).json({
-                success: false,
-                error: 'Datos incompletos: se requiere formData y calculationResult',
-                version: '1.0'
+            throw new ApiError({
+                code: ERROR_CODES.VALIDATION_ERROR,
+                message: 'Datos incompletos: se requiere formData y calculationResult',
+                statusCode: 400,
+                metadata: { controller: 'calculos', function: 'exportarPdf' }
             });
         }
 
@@ -229,15 +212,7 @@ exports.exportarPdf = async (req, res) => {
         return res.send(pdfBuffer);
 
     } catch (error) {
-        const mensaje = obtenerMensajeError(error, 'Error generando el certificado PDF');
-        console.error('[PDF] Error generando certificado:', error?.message || error);
-        
-        return res.status(500).json({
-            success: false,
-            error: mensaje,
-            details: process.env.NODE_ENV !== 'production' ? error.message : undefined,
-            version: '1.0'
-        });
+        next(error);
     }
 };
 
@@ -250,15 +225,16 @@ exports.exportarPdf = async (req, res) => {
  * @param {Object} req.body.puntaje - Valoración de 1 a 5
  * @param {Object} req.body.observaciones - Comentarios opcionales
  */
-exports.guardarExperiencia = async (req, res) => {
+exports.guardarExperiencia = async (req, res, next) => {
     try {
         // 1. Validar y normalizar calculoId
         const calculoId = normalizarCalculoId(req.params?.calculoId);
         if (!calculoId) {
-            return res.status(400).json({
-                success: false,
-                error: 'calculoId debe ser un número entero positivo',
-                version: '1.0'
+            throw new ApiError({
+                code: ERROR_CODES.VALIDATION_ERROR,
+                message: 'calculoId debe ser un número entero positivo',
+                statusCode: 400,
+                metadata: { controller: 'calculos', function: 'guardarExperiencia' }
             });
         }
 
@@ -266,10 +242,11 @@ exports.guardarExperiencia = async (req, res) => {
         const { puntaje, observaciones } = req.body || {};
         
         if (!puntaje || !Number.isInteger(puntaje) || puntaje < 1 || puntaje > 5) {
-            return res.status(400).json({
-                success: false,
-                error: 'puntaje es requerido y debe ser un número entero entre 1 y 5',
-                version: '1.0'
+            throw new ApiError({
+                code: ERROR_CODES.VALIDATION_ERROR,
+                message: 'puntaje es requerido y debe ser un número entero entre 1 y 5',
+                statusCode: 400,
+                metadata: { controller: 'calculos', function: 'guardarExperiencia' }
             });
         }
 
@@ -283,10 +260,12 @@ exports.guardarExperiencia = async (req, res) => {
         // 4. Verificar que el cálculo existe
         const calculo = await calculoModel.obtenerCalculoPorId(calculoId);
         if (!calculo) {
-            return res.status(404).json({
-                success: false,
-                error: 'Cálculo no encontrado',
-                version: '1.0'
+            throw new ApiError({
+                code: ERROR_CODES.RESOURCE_NOT_FOUND,
+                message: 'Cálculo no encontrado',
+                statusCode: 404,
+                detail: { calculoId },
+                metadata: { controller: 'calculos', function: 'guardarExperiencia' }
             });
         }
 
@@ -300,13 +279,7 @@ exports.guardarExperiencia = async (req, res) => {
         });
 
     } catch (error) {
-        const mensaje = obtenerMensajeError(error, 'Error interno al guardar la experiencia');
-        console.error('Error en calculosController.guardarExperiencia:', error?.detail || error?.message || error);
-
-        return res.status(500).json({
-            success: false,
-            error: mensaje
-        });
+        next(error);
     }
 };
 
@@ -324,7 +297,7 @@ exports.guardarExperiencia = async (req, res) => {
  * - Solo fechaDesde → desde esa fecha hasta hoy
  * - Solo fechaHasta → desde 30 días antes hasta fechaHasta
  */
-exports.getDashboard = async (req, res) => {
+exports.getDashboard = async (req, res, next) => {
     try {
         // 1. Extraer query params
         const { fechaDesde, fechaHasta } = req.query || {};
@@ -334,22 +307,24 @@ exports.getDashboard = async (req, res) => {
         
         if (fechaDesde !== undefined && fechaDesde !== null && fechaDesde !== '') {
             if (!regexISO8601.test(fechaDesde)) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'Formato de fecha inválido. Use YYYY-MM-DD',
+                throw new ApiError({
+                    code: ERROR_CODES.VALIDATION_ERROR,
+                    message: 'Formato de fecha inválido. Use YYYY-MM-DD',
+                    statusCode: 400,
                     detail: `fechaDesde: "${fechaDesde}" no cumple formato ISO 8601`,
-                    version: '1.0'
+                    metadata: { controller: 'calculos', function: 'getDashboard' }
                 });
             }
         }
         
         if (fechaHasta !== undefined && fechaHasta !== null && fechaHasta !== '') {
             if (!regexISO8601.test(fechaHasta)) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'Formato de fecha inválido. Use YYYY-MM-DD',
+                throw new ApiError({
+                    code: ERROR_CODES.VALIDATION_ERROR,
+                    message: 'Formato de fecha inválido. Use YYYY-MM-DD',
+                    statusCode: 400,
                     detail: `fechaHasta: "${fechaHasta}" no cumple formato ISO 8601`,
-                    version: '1.0'
+                    metadata: { controller: 'calculos', function: 'getDashboard' }
                 });
             }
         }
@@ -373,17 +348,6 @@ exports.getDashboard = async (req, res) => {
         });
         
     } catch (error) {
-        // Manejar errores de validación (400) vs errores internos (500)
-        const statusCode = error?.code === 'VALIDATION_ERROR' ? 400 : 500;
-        const mensaje = obtenerMensajeError(error, 'Error al generar el dashboard');
-        
-        console.error('❌ [Controller] Error en getDashboard:', error?.detail || error?.message || error);
-        
-        return res.status(statusCode).json({
-            success: false,
-            error: mensaje,
-            detail: process.env.NODE_ENV !== 'production' ? error?.detail : undefined,
-            version: '1.0'
-        });
+        next(error);
     }
 };

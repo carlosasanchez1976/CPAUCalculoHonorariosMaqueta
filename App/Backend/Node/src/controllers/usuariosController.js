@@ -1,17 +1,19 @@
 // UsuariosController.js
+// SPEC030: Manejo de errores robusto con ApiError
 const Usuario = require('../models/usuario');
+const ApiError = require('../utils/ApiError');
+const ERROR_CODES = require('../constants/errorCodes');
 
-exports.listar = async (req, res) => {
+exports.listar = async (req, res, next) => {
   try {
     const Usuarios = await Usuario.Listar();
     res.json(Usuarios);
   } catch (err) {
-    console.error('Error en listar Usuarios:', err.message);
-    res.status(500).json({ error: 'Error al obtener Usuarios' });
+    next(err);
   }
 };
 
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
   try {
     // 1. Validación de datos de entrada
     const {
@@ -25,16 +27,23 @@ exports.login = async (req, res) => {
 
     // Validar campos requeridos
     if (!username_web || !idmatricula || !user_nombre_web || !user_apellido_web) {
-      return res.status(400).json({
-        error: 'Faltan campos requeridos',
-        campos_requeridos: ['username_web', 'idmatricula', 'user_nombre_web', 'user_apellido_web']
+      throw new ApiError({
+        code: ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: 'Faltan campos requeridos',
+        statusCode: 400,
+        detail: { campos_requeridos: ['username_web', 'idmatricula', 'user_nombre_web', 'user_apellido_web'] },
+        metadata: { controller: 'usuarios', function: 'login' }
       });
     }
 
     // Validar formato de idmatricula
     if (!Number.isInteger(idmatricula) || idmatricula <= 0) {
-      return res.status(400).json({
-        error: 'idmatricula debe ser un número entero positivo'
+      throw new ApiError({
+        code: ERROR_CODES.INVALID_FIELD_TYPE,
+        message: 'idmatricula debe ser un número entero positivo',
+        statusCode: 400,
+        detail: { idmatricula },
+        metadata: { controller: 'usuarios', function: 'login' }
       });
     }
 
@@ -66,7 +75,12 @@ exports.login = async (req, res) => {
 
     // 4. Verificar que el usuario esté activo
     if (usuario.baja_fecha && new Date(usuario.baja_fecha) <= new Date()) {
-      throw new Error('Usuario dado de baja');
+      throw new ApiError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Usuario inactivo. Contacte al administrador.',
+        statusCode: 403,
+        metadata: { controller: 'usuarios', function: 'login', userId: usuario.user_id }
+      });
     }
 
     // 5. Generar token JWT
@@ -107,105 +121,116 @@ exports.login = async (req, res) => {
     });
 
   } catch (err) {
-    console.error('Error en login:', err.message);
-
-    // Manejo específico de errores
-    if (err.message === 'Usuario dado de baja') {
-      return res.status(403).json({
-        error: 'Usuario inactivo. Contacte al administrador.'
-      });
-    }
-
-    res.status(500).json({
-      error: 'Error en el proceso de autenticación',
-      detalle: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
+    next(err);
   }
 };
 
 
 
-exports.grabar = async (req, res) => {
+exports.grabar = async (req, res, next) => {
   try {
     // Validación básica
     const { user_id, user_mail, user_nombre, user_apellido, rol } = req.body;
     
     // Para nuevo usuario, validar que tenga password
     if (!user_id && !req.body.password) {
-      return res.status(400).json({ error: 'La contraseña es requerida para nuevos usuarios' });
+      throw new ApiError({
+        code: ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: 'La contraseña es requerida para nuevos usuarios',
+        statusCode: 400,
+        metadata: { controller: 'usuarios', function: 'grabar' }
+      });
     }
     
     if (!user_mail || !user_nombre || !user_apellido || !rol) {
-      return res.status(400).json({ error: 'Faltan campos requeridos: user_mail, user_nombre, user_apellido, rol' });
+      throw new ApiError({
+        code: ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: 'Faltan campos requeridos: user_mail, user_nombre, user_apellido, rol',
+        statusCode: 400,
+        metadata: { controller: 'usuarios', function: 'grabar' }
+      });
     }
     
     const nuevoUsuario = await Usuario.Grabar(req.body);
     res.status(201).json(nuevoUsuario);
   } catch (err) {
-    console.error('Error en grabar Usuario:', err.message);
-    if (err.message && err.message.includes('duplicate')) {
-      res.status(409).json({ error: 'Ya existe un usuario con ese email' });
-    } else {
-      res.status(500).json({ error: 'Error al crear Usuario: ' + err.message });
-    }
+    next(err);
   }
 };
 
-exports.borrar = async (req, res) => {
+exports.borrar = async (req, res, next) => {
   try {
     const { user_id, user_modi_id } = req.query;
   
     
     // Validación de parámetros
     if (!user_id || !user_modi_id) {
-      return res.status(400).json({ error: 'Faltan datos requeridos' });
+      throw new ApiError({
+        code: ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: 'Faltan datos requeridos',
+        statusCode: 400,
+        metadata: { controller: 'usuarios', function: 'borrar' }
+      });
     }
     
     await Usuario.Borrar({ user_id, user_modi_id });
     res.status(204).send();
   } catch (err) {
-    console.error('Error en borrar Usuario:', err.message);
-    res.status(500).json({ error: 'Error al borrar Usuario '+ err.message });
+    next(err);
   }
 };
 
 
 
-exports.buscar = async (req, res) => {
+exports.buscar = async (req, res, next) => {
   try {
     const { id } = req.params;
     
     if (!id) {
-      return res.status(400).json({ error: 'ID requerido' });
+      throw new ApiError({
+        code: ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: 'ID requerido',
+        statusCode: 400,
+        metadata: { controller: 'usuarios', function: 'buscar' }
+      });
     }
     
     const usuarioEncontrado = await Usuario.Buscar(id);
     
     if (!usuarioEncontrado) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
+      throw new ApiError({
+        code: ERROR_CODES.RESOURCE_NOT_FOUND,
+        message: 'Usuario no encontrado',
+        statusCode: 404,
+        detail: { userId: id },
+        metadata: { controller: 'usuarios', function: 'buscar' }
+      });
     }
     
     res.json(usuarioEncontrado);
   } catch (err) {
-    console.error('Error en buscar Usuario:', err.message);
-    res.status(500).json({ error: 'Error al buscar Usuario' });
+    next(err);
   }
 };
 
-exports.cambiarPassword = async (req, res) => {
+exports.cambiarPassword = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { password } = req.body;
     
     if (!id || !password) {
-      return res.status(400).json({ error: 'ID y password requeridos' });
+      throw new ApiError({
+        code: ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: 'ID y password requeridos',
+        statusCode: 400,
+        metadata: { controller: 'usuarios', function: 'cambiarPassword' }
+      });
     }
     
     await Usuario.CambiarPassword({ user_id: id, password });
     res.json({ message: 'Contraseña actualizada correctamente' });
   } catch (err) {
-    console.error('Error en cambiar password:', err.message);
-    res.status(500).json({ error: 'Error al cambiar contraseña' });
+    next(err);
   }
 };
 
@@ -213,25 +238,38 @@ exports.cambiarPassword = async (req, res) => {
  * POST /api/usuarios/:id/aceptar-terminos
  * Registrar aceptación de Términos y Condiciones por parte del usuario
  */
-exports.aceptarTerminos = async (req, res) => {
+exports.aceptarTerminos = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { tyc_id } = req.body;
     
     // Validación de parámetros
     if (!id) {
-      return res.status(400).json({ error: 'ID de usuario requerido' });
+      throw new ApiError({
+        code: ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: 'ID de usuario requerido',
+        statusCode: 400,
+        metadata: { controller: 'usuarios', function: 'aceptarTerminos' }
+      });
     }
     
     if (!tyc_id) {
-      return res.status(400).json({ error: 'ID de TyC requerido' });
+      throw new ApiError({
+        code: ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: 'ID de TyC requerido',
+        statusCode: 400,
+        metadata: { controller: 'usuarios', function: 'aceptarTerminos' }
+      });
     }
     
     // Verificar que el usuario del token coincide con el parámetro
     // (un usuario solo puede aceptar TyC para sí mismo)
     if (req.usuario && req.usuario.id !== parseInt(id)) {
-      return res.status(403).json({ 
-        error: 'No autorizado para aceptar TyC de otro usuario' 
+      throw new ApiError({
+        code: ERROR_CODES.FORBIDDEN,
+        message: 'No autorizado para aceptar TyC de otro usuario',
+        statusCode: 403,
+        metadata: { controller: 'usuarios', function: 'aceptarTerminos' }
       });
     }
     
@@ -242,17 +280,6 @@ exports.aceptarTerminos = async (req, res) => {
       message: 'Términos y condiciones aceptados correctamente'
     });
   } catch (err) {
-    console.error('Error en aceptar TyC:', err.message);
-    
-    // Manejo específico de errores del SP
-    if (err.message && err.message.includes('no encontrado')) {
-      return res.status(404).json({ 
-        error: err.message.includes('Usuario') 
-          ? 'Usuario no encontrado' 
-          : 'TyC no encontrado' 
-      });
-    }
-    
-    res.status(500).json({ error: 'Error al registrar aceptación de TyC' });
+    next(err);
   }
 };

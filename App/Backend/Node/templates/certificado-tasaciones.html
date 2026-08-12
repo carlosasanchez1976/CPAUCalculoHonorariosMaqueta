@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificado de Honorarios CPAU - {{calculationNumber}}</title>
+  
+  <style>
+    /* ============================================================
+       ESTILOS BASE
+       ============================================================ */
+
+      /* --- 1. AVENIR ROMAN --- */
+    @font-face {
+      font-family: 'Avenir';
+      src: url('Avenir_Roman.ttf') format('truetype'); /* Ver nombre archivo */
+      font-weight: 400; /* Peso medio */
+      font-style: normal;
+      font-display: swap;
+    }
+    
+    /* --- AVENIR NORMAL ( por defecto) --- */
+    @font-face {
+      font-family: 'Avenir';
+      src: url('Avenir.ttf') format('truetype'); /* Ver nombre archivo */
+      font-weight: 500; /* Peso medio */
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* --- AVENIR BLACK --- */
+    @font-face {
+      font-family: 'Avenir';
+      src: url('Avenir_Black.ttf') format('truetype'); /* Ver nombre archivo */
+      font-weight: 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --blue-color:lab(34.931% 12.316% -35.555%);
+      --cyan-color:lab(80.379% -14.217% -11.292%);
+
+      --border-title-gray-color: lab(42.056% 0.326% 0.117%);
+      --border-blue-color:lab(34.931% 12.316% -35.555%);
+      --border-gray-color:lab(43.192% 0% 0%);
+      
+      --text-black-color:lab(10.709% -0.294% 1.107%);
+      --text-gray-color:lab(42.056% 0.326% 0.117%);
+      --text-white-color:lab(100% 0% 0%);
+      --text-blue-color:lab(34.931% 12.316% -35.555%);
+      
+      --bottom-color:lab(41.94%, -0.123%, 0.456%);
+    }
+    
+    body {
+      font-family: 'Avenir', 'Segoe UI', sans-serif;
+      font-size: 10pt;
+      line-height: 1.3;  /* ← TICKET-003: Reducido de 1.4 a 1.3 */
+      font-weight: 400;
+      background: var(--text-white-color);
+    }
+
+    /* --- Títulos (Cargará Avenir Black) --- */
+    h1, h2, h3, h4, strong, .resumen-label, .section-title, .header-title {
+      font-family: 'Avenir', 'Segoe UI', sans-serif;
+      font-weight: 900;
+    }
+    
+    /* ============================================================
+       PaGINA (A4)
+       ============================================================ */
+    .page {
+      width: 210mm;
+      min-height: 255mm;  /* ← AJUSTADO: 297mm - 35mm (márgenes Puppeteer) - 7mm (margen seguridad) */
+      padding: 0 0 5mm 0;  /* ← TICKET-003: Agregar 5mm padding bottom para separación del footer */
+      page-break-after: always;
+      page-break-inside: avoid;
+      background: var(--text-white-color);
+    }
+
+    .page:last-child {
+      page-break-after: auto;
+    }
+    
+    /* Evitar cortes de pagina en elementos */
+    table, .section-title, .resumen-item, .certificate-header, .disclaimer {
+      page-break-inside: avoid;
+    }
+    
+    thead {
+      display: table-header-group;
+    }
+    
+    tr {
+      page-break-inside: avoid;
+    }
+    
+    /* ============================================================
+       HEADER DEL CERTIFICADO
+       ============================================================ */
+    .certificate-header {
+      display: flex;
+      align-items: stretch;
+      gap: 15px;
+      margin-bottom: 20px;  /* ← TICKET-003: Reducido de 25px a 20px */
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 140px;
+      background: var(--blue-color);
+      border-radius: 8px;
+      padding: 15px;
+      flex-shrink: 0;
+    }
+    
+    .logo {
+      width: 100px;
+      height: auto;
+    }
+    
+    .header-right {
+      flex: 1;
+      padding: 15px 20px;
+      background: var(--cyan-color);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .header-title {
+      position: relative;
+      font-size: 25px;
+      font-weight: 600;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+      color: var(--text-black-color);
+    }
+
+    .header-title::after
+    {
+      content: "";
+      position: absolute;
+      height: 1px;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      background-color: var(--border-title-gray-color);  /* Línea flotante sutil */
+    }
+    
+    .header-metadata {
+      font-size: 9pt;
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-black-color);
+    }
+    
+    .metadata-item {
+      display: inline-block;
+    }
+
+    .metadata-item span { font-weight: 500; }
+    
+    .metadata-label {
+      font-weight: 500;
+    }
+    
+    /* ============================================================
+       RESUMEN DEL PROYECTO
+       ============================================================ */
+    .section-title-sin-linea, .section-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--text-black-color);
+      margin-bottom: 12px;  /* ← TICKET-003: Reducido de 15px a 12px */
+      margin-top: 15px;  /* ← TICKET-003: Reducido de 20px a 15px */
+    }
+
+    .resumen-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 15px;
+      padding: 0 15px;
+      border: 2px solid var(--border-gray-color);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--text-white-color);
+    }
+
+    .resumen-item-container {
+      display: flex;
+      flex-direction: row;
+      border-bottom: 1px solid var(--border-gray-color);
+      padding: 15px 0;
+      gap: 10px;
+    }
+
+    .resumen-item-container:last-child {
+      border-bottom: none;
+    }
+    
+    .resumen-item {
+      display: flex;
+      flex: 1;
+      gap: 5px;
+    }
+    
+    .resumen-item:nth-child(1),
+    .resumen-item:nth-child(2) {
+      /* Fila 1: 2 items de 3 columnas */
+      grid-column: span 3;
+    }
+    
+    .resumen-item:nth-child(3),
+    .resumen-item:nth-child(4),
+    .resumen-item:nth-child(5) {
+      /* Fila 2: 3 items de 2 columnas */
+      grid-column: span 2;
+    }
+    
+    .resumen-item:nth-child(6),
+    .resumen-item:nth-child(7) {
+      /* Fila 3: 2 items de 3 columnas */
+      grid-column: span 3;
+      border-bottom: none;
+    }
+    
+    .resumen-label {
+      font-weight: 900;
+      color: var(--text-gray-color);
+      white-space: nowrap;
+    }
+    
+    .resumen-value {
+      color: var(--text-gray-color);
+    }
+    
+    /* ============================================================
+       DISCLAIMER/IMPORTANTE
+       ============================================================ */
+    .disclaimer {
+      
+      border: 1px solid var(--blue-color);
+      border-radius: 12px;
+      padding: 12px;  /* ← TICKET-003: Reducido de 15px a 12px */
+      padding-right: 40px;
+      margin: 15px 0;  /* ← TICKET-003: Reducido de 20px a 15px */
+    }
+    
+    .disclaimer-title {
+      font-size: 12pt;
+      font-weight: 900;
+    }
+    
+    .disclaimer-text {
+      font-size: 9.5pt;
+      line-height: 1.4;  /* ← TICKET-003: Reducido de 1.6 a 1.4 */
+      color: var(--text-black-color);
+    }
+    /* ============================================================
+       TABLAS DE HONORARIOS
+       ============================================================ */
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-bottom: 15px;  /* ← TICKET-003: Reducido de 20px a 15px */
+      padding: 0 15px;  /* Padding horizontal para efecto de líneas flotantes */
+      font-size: 10pt;  /* ← TICKET-003: Reducido de 9pt a 8.5pt */
+      background: var(--text-white-color);
+      border: 2px solid var(--border-gray-color);
+      border-radius: 12px;
+      overflow: hidden;
+
+      table-layout: fixed;
+
+      margin-right: 1px;
+    }
+
+    table:last-child {
+      margin-bottom: 0;
+    }
+
+    table, .resumen-grid, .disclaimer
+    {
+      width: calc(100% - 3px);
+    }
+    
+    thead th {
+      font-size: 9pt;
+      padding: 15px 0;  /* ← TICKET-003: Reducido de 10px a 8px */
+      text-align: left;
+      border-bottom: 1px solid var(--border-gray-color);
+      font-weight: 900;
+      color: var(--text-gray-color);
+    }
+    
+    /* Anchos específicos para cada columna (solo tablas de honorarios) */
+    table:not(.etapas-table) thead th:nth-child(1),
+    table:not(.etapas-table) tbody td:nth-child(1) {
+      width: 5%;
+      text-align: left;
+    }
+
+    table:not(.etapas-table) thead th:nth-child(2),
+    table:not(.etapas-table) tbody td:nth-child(2) {
+      width: 45%;
+    }
+    
+    table:not(.etapas-table) thead th:nth-child(3),
+    table:not(.etapas-table) tbody td:nth-child(3) {
+      width: 15%;
+      text-align: left;
+    }
+    
+    table:not(.etapas-table) thead th:nth-child(4),
+    table:not(.etapas-table) tbody td:nth-child(4) {
+      width: 15%;
+      text-align: left;
+    }
+    
+    table:not(.etapas-table) thead th:nth-child(5),
+    table:not(.etapas-table) tbody td:nth-child(5) {
+      width: 20%;
+      text-align: left;
+    }
+    
+    
+     /* Anchos específicos para cada columna - Subtotales */
+    table tr.subtotal-row td:nth-child(1) {
+      width: 50%;
+      text-align: left;
+    }
+
+    table tr.subtotal-row td:nth-child(2) {
+      width: 15%;
+      text-align: left;
+    }
+    
+    table tr.subtotal-row td:nth-child(3) {
+      width: 15%;
+      text-align: left;
+    }
+    
+    table tr.subtotal-row td:nth-child(4) {
+      width: 20%;
+      text-align: left;
+    }
+
+    /* Anchos específicos para cada columna - Totales */
+    table tr.total-row td:nth-child(1) {
+      width: 50%;
+      text-align: left;
+    }
+
+    table tr.total-row td:nth-child(2) {
+      width: 15%;
+      text-align: left;
+    }
+    
+    table tr.total-row td:nth-child(3) {
+      width: 15%;
+      text-align: left;
+    }
+    
+    table tr.total-row td:nth-child(4) {
+      width: 20%;
+      text-align: left;
+    }
+
+    /*
+    thead th:first-child {
+      border-top-left-radius: 12px;
+    }
+    
+    thead th:last-child {
+      border-top-right-radius: 12px;
+    }*/
+    
+    tbody td {
+      padding: 15px 0;  /* ← TICKET-003: Reducido de 8px a 6px */
+      border-bottom: 1px solid var(--border-gray-color);
+    }
+    /*
+    tbody tr:last-child td {
+      border-bottom: none;
+    }*/
+    /*
+    tbody tr:last-child td:first-child {
+      border-bottom-left-radius: 12px;
+    }
+    
+    tbody tr:last-child td:last-child {
+      border-bottom-right-radius: 12px;
+    }*/
+    
+    
+    .centered {
+      text-align: center;
+    }
+    
+    .right-align {
+      text-align: right;
+    }
+    
+    .subtotal-row {
+      
+      color: var(--blue-color);
+      font-weight: 900;
+      
+    }
+    
+    .subtotal-row td {
+      padding: 15px 0;  /* Solo padding vertical para efecto flotante */
+      border-bottom: none;
+    }
+    
+    .subtotal-row td:first-child {
+      text-align: left !important;
+      border-bottom-left-radius: 12px;
+    }
+    
+    .subtotal-row td:last-child {
+      text-align: left !important;
+      border-bottom-right-radius: 12px;
+    }
+    
+    .totales-table
+    {
+      border: 2px solid var(--blue-color);
+    }
+
+    .total-row {
+      color: var(--blue-color);
+      font-weight: 900;
+      font-size: 10pt;
+      /*border-bottom: 1px solid var(--blue-color);*/
+    }
+    
+    .total-row:last-child{
+      color: var(--text-black-color);
+    }
+    
+    .total-row td {
+      padding: 12px 0;  /* Solo padding vertical para efecto flotante */
+      border-bottom: 1px solid var(--blue-color);
+    }
+
+    .total-row:last-child td {
+      border-bottom: none;
+    }
+    
+    .total-row td:first-child {
+      text-align: left !important;
+      
+    }
+    
+    .total-row td:last-child {
+      
+      text-align: left !important;
+    }
+    
+    /* Separaci&oacute;n entre secciones de tablas */
+    .table-section {
+      margin-bottom: 10px;
+    }
+    
+    /* ============================================================
+       NOTA FINAL
+       ============================================================ */
+     .nota-final {
+      padding: 0 10px;
+      
+      font-size: 9pt;
+    }
+    
+    /* ============================================================
+       PaGINA 2 - NOTAS
+       ============================================================ */
+    .notas-section {
+      margin-top: 1px;
+    }
+        
+    .nota-block h4 {
+      font-size: 14px;
+      line-height: 1.4;  /* ← TICKET-003: Reducido de 1.6 a 1.4 */
+      font-weight: 900;
+      margin-top: 5px;
+      
+      /* margin-bottom: 8px; */
+    }
+    
+    .nota-block p {
+      font-size: 9.2pt;
+      line-height: 1.2;  /* ← TICKET-003: Reducido de 1.6 a 1.4 */
+      text-align: justify;
+    }
+    
+    .etapas-table {
+      width: auto;
+      min-width: 250px;
+      margin: 10px 0;
+      padding: 0 15px;  /* Padding horizontal para efecto de líneas flotantes */
+      border-collapse: collapse;
+      font-size: 9.2pt;
+      border: none;
+      border-radius: 0;
+    }
+    
+    .etapas-table td {
+      padding: 6px 0;  /* Solo padding vertical para efecto flotante */
+      border-bottom: 1px solid var(--border-gray-color);
+    }
+    .etapas-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+  </style>
+</head>
+<body>
+  <!-- ========================================
+       PaGINA 1: DATOS DEL C&aacute;LCULO
+       ======================================== -->
+  <div class="page">
+    <!-- Header del Certificado -->
+    <div class="certificate-header">
+      <div class="header-left">
+        <img src="{{logoCPAU}}" alt="CPAU Logo" class="logo" />
+      </div>
+      <div class="header-right">
+        <div class="header-title">C&aacute;lculo de honorarios profesionales sugeridos</div>
+        <div class="header-metadata">
+          <div class="metadata-item">
+            <span class="metadata-label">Tipo:</span>
+            <span>{{tipoNombre}}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Fecha:</span>
+            <span>{{fechaCalculo}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disclaimer Legal -->
+    <div class="disclaimer-container">
+      <p class="disclaimer-text">
+        Este c&aacute;lculo es una <strong>estimaci&oacute;n de referencia</strong> basada en los datos proporcionados 
+        y factores est&aacute;ndar del mercado. Los valores finales pueden variar seg&uacute;n condiciones particulares 
+        de cada {{proyectoLabel}}. <strong>No constituye una cotizaci&oacute;n formal ni un compromiso contractual.</strong>
+        <br />
+        <br />
+        {{{vigenciaFE}}}
+        </p>
+    </div>
+
+
+    <!-- Resumen del Proyecto -->
+    <h4 class="section-title">Resumen del {{proyectoLabel}} - Informaci&oacute;n ingresada por el/la profesional</h4>
+    <div class="resumen-grid">
+      <!-- Fila 1: Nombre del Proyecto | Comitente -->
+      <div class="resumen-item-container">
+
+        <div class="resumen-item">
+          <span class="resumen-label">Nombre del {{proyectoLabel}}:</span>
+          <span class="resumen-value">{{nombreProyecto}}</span>
+        </div>
+
+        <div class="resumen-item">
+          <span class="resumen-label">Comitente:</span>
+          <span class="resumen-value">{{cliente}}</span>
+        </div>
+      </div>
+
+      <!-- Fila 2:-->
+      <div class="resumen-item-container">
+
+        <div class="resumen-item">
+          <span class="resumen-label">Ubicación:</span>
+          <span class="resumen-value">{{ubicacion}}</span>
+        </div>
+
+      </div>
+
+      <!-- Fila 3: -->
+      <div class="resumen-item-container">
+        <div class="resumen-item">
+          <span class="resumen-label">{{labelTipoDeObra}}:</span>
+          <span class="resumen-value">{{textoTipoDeObra}}</span>
+        </div>
+
+       {{#if valorStr2}}
+        <div class="resumen-item">
+          <span class="resumen-label">Categoría de tasación:</span>
+          <span class="resumen-value">{{valorStr2}}</span>
+        </div>
+        {{/if}}
+
+      </div>
+
+
+      <!-- Fila 5: -->
+       {{#if valorNum4}}
+      <div class="resumen-item-container">
+        <div class="resumen-item">
+          <span class="resumen-label">Monto del Valor en juego (ARS):</span>
+          <span class="resumen-value">{{valorMon4}}</span>
+        </div>
+      </div>
+      {{/if}}
+
+      <!-- Fila 6: -->
+       {{#if valorBol4}}
+      <div class="resumen-item-container">
+        <div class="resumen-item">
+          <span class="resumen-label">Incluye tareas de ejecución de relevamientos y/o mediciones:</span>
+          <span class="resumen-value">Sí</span>
+        </div>
+      </div>
+      {{/if}}
+
+      <!-- Fila 7: -->
+       {{#if valorBol5}}
+      <div class="resumen-item-container">
+        <div class="resumen-item">
+          <span class="resumen-label">Incluye tareas de confección de planos y/o cómputos y presupuestos:</span>
+          <span class="resumen-value">Sí</span>
+        </div>
+      </div>
+      {{/if}}
+
+
+
+      <!-- Fila 8: -->
+       {{#if valorNum1}}
+      <div class="resumen-item-container">
+        <div class="resumen-item">
+          <span class="resumen-label">Medición de superficie cubierta existente m2:</span>
+          <span class="resumen-value">{{valorNum1}}</span>
+        </div>
+      </div>
+      {{/if}}
+
+      <!-- Fila 9: -->
+       {{#if valorNum2}}
+      <div class="resumen-item-container">
+        <div class="resumen-item">
+          <span class="resumen-label">Medición de construcciones POCO compartimentadas m2:</span>
+          <span class="resumen-value">{{valorNum2}}</span>
+        </div>
+      </div>
+      {{/if}}
+
+      <!-- Fila 10: -->
+       {{#if valorNum3}}
+      <div class="resumen-item-container">
+        <div class="resumen-item">
+          <span class="resumen-label">Medición de construcciones MUY compartimentadas m2:</span>
+          <span class="resumen-value">{{valorNum3}}</span>
+        </div>
+      </div>
+      {{/if}}
+
+      <!-- Fila 11: -->
+      <div class="resumen-item-container">
+        <div class="resumen-item">
+          <span class="resumen-label">Observaciones:</span>
+          <span class="resumen-value">{{observProyecto}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detalle de Honorarios -->
+    <h4 class="section-title-sin-linea">Detalle de honorarios</h4>
+
+    <!-- SECCIoN: Honorarios Especialidades -->
+    {{#if honorariosEspecialidades}}
+    <div class="table-section">
+      <table>
+        <!-- Encabezado: solo si NO existe honorariosObra NI honorariosAdicionales -->
+        {{#unless honorariosObra}}
+          {{#unless honorariosAdicionales}}
+          <thead>
+            <tr>
+              <th class="centered">&Iacute;tem</th>
+              <th>Tarea Profesional</th>
+              <th class="right-align">Importe ARS</th>
+            </tr>
+          </thead>
+          {{/unless}}
+        {{/unless}}
+        <tbody>
+          {{#each honorariosEspecialidades}}
+          <tr>
+            <td class="centered">{{this.indice}}</td>
+            <td>
+              {{this.tareaProfesional}}
+            </td>
+            <td class="right-align">{{this.importeARS}}</td>
+          </tr>
+          {{/each}}
+          
+          <!-- Subtotal Especialidades -->
+          <!-- <tr class="subtotal-row">
+            <td colspan="2"><strong>Total honorarios especialidades</strong></td>
+            <td class="right-align"><strong>{{subtotalEspecialidadesARS}}</strong></td>
+          </tr> -->
+        </tbody>
+      </table>
+    </div>
+    {{/if}}
+
+    <!-- TOTAL GENERAL -->
+    <div class="table-section">
+      <table class="totales-table">
+        <tbody>
+          <tr class="total-row">
+            <td colspan="2"><strong>TOTAL HONORARIOS</strong></td>
+            <td class="right-align"><strong>{{subtotalEspecialidadesARS}}</strong></td>
+          </tr>
+          <!-- <tr class="total-row">
+            <td colspan="3"><strong>Plazo estimado de ejecuci&oacute;n: {{plazoEjecucion}} meses</strong></td>
+            <td class="right-align"></td>
+            <td class="centered"></td>
+          </tr> -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Nota Final -->
+    <div class="nota-final">
+      <p>NOTA: Este honorario corresponde &uacute;nicamente a las tareas profesionales seleccionadas. NO incluye los costos de certificación de trámite. NO incluye IVA.</p>
+    </div>
+  </div>
+  <!-- Fin pagina 1 -->
+
+  <!-- ========================================
+       PÁGINA 2: NOTAS
+       ======================================== -->
+  <div class="page">
+    <!-- Header (repetido para PDF) -->
+    <div class="certificate-header">
+      <div class="header-left">
+        <img src="{{logoCPAU}}" alt="CPAU Logo" class="logo" />
+      </div>
+      <div class="header-right">
+        <div class="header-title">C&aacute;lculo de honorarios profesionales sugeridos</div>
+        <div class="header-metadata">
+          <div class="metadata-item">
+            <span class="metadata-label">Tipo:</span>
+            <span>{{tipoNombre}}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Fecha:</span>
+            <span>{{fechaCalculo}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido de Notas -->
+    <div class="notas-section">
+      <h2 class="section-title-sin-linea">Notas</h2>
+      
+      <!-- Alcance y car&aacute;cter del c&aacute;lculo -->
+      <section class="nota-block">
+        <h4>Variables de cálculo</h4>
+        <p>Las expresiones que determinan honorarios están en función de un coeficiente “K” cuyo valor responde a las variaciones mensuales del Índice del Costo de la Construcción (ICC) del INDEC, que publica el CPAU todos los meses y cuya aplicación tiene por objeto preservar el valor del honorario y su carácter alimentario.
+          En aquellas tareas que se calculan en base a monto de obra, el valor por m2 utilizado en el cálculo constituye una estimación consensuada entre profesional y comitente.
+          El CPAU publica mensualmente índices de referencia de costos de construcción, elaborados por distintos organismos y/o medios, disponibles en la web institucional, quedando a criterio del/la profesional y del comitente seleccionar el valor que consideren adecuado. 
+        </p>
+      </section>
+
+      <!-- Alcance de los honorarios sugeridos -->
+      <section class="nota-block">
+        <h4>Alcance de los honorarios sugeridos</h4>
+        <p>Los honorarios resultantes de esta calculadora contemplan las tareas profesionales correspondientes a un encargo ordinario, de acuerdo con los alcances definidos por la normativa vigente y usos profesionales, ver MEPAU
+            Se recomienda a los profesionales acompañar la encomienda con el detalle de tareas, la modalidad de prestación y la lista de documentos entregables y etapas de pago a fin de clarificar el alcance del encargo y evitar reclamos innecesarios.
+        </p>
+      </section>
+
+      <!-- Conceptos no incluidos -->
+      <section class="nota-block">
+        <h4>Conceptos no incluidos en los honorarios</h4>
+        <p>IVA, en caso de corresponder.<br />
+          Derechos de construcción y/o cualquier tipo de gravámenes, tasas o derechos.
+          Cualquier otro concepto que no esté expreso en el cálculo.
+        </p>
+      </section>
+
+      <!-- Resolución de los honorarios -->
+      <section class="nota-block">
+        <h4>Resolución de los honorarios</h4>
+        <p>En caso de que alguna de las partes decida no continuar con la totalidad del encargo, deberán abonarse los honorarios de las tareas efectivamente realizadas 
+          según lo acordado por las partes, y considerando las etapas de proyecto previamente mencionadas en este documento.</p>
+        <p>En caso de rescisión unilateral por parte del comitente, se deberá convenir un resarcimiento en favor del profesional por las tareas encomendadas y no ejecutadas, 
+          de acuerdo a la normativa vigente.</p>
+      <p><br></p>
+      <p><br></p>
+        <p>Para ampliar la información consultar al MEPAU, capítulo 02 Honorarios, o ponerse en contacto con tecnica@cpau.org</p>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Fin pagina 2 -->
+</body>
+</html>

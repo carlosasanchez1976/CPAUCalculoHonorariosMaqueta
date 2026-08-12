@@ -198,8 +198,10 @@ function prepararDatosPlantilla(datos, plantilla) {
   }
   
   // Formatear valores monetarios
-  const valorObraARS = formatCurrency(formData.valorObra || 0);
-  const valorObraUSD = formatCurrency((formData.valorObra || 0) / (formData.cotizDolar || 1));
+  // si formData.valorObra es null o undefined, dejar valorObraARS en nulo y solo convertir a currency si es un número válido
+  
+  const valorObraARS = formData.valorObra != null ? formatCurrency(formData.valorObra) : null;
+  const valorObraUSD = formData.valorObra != null ? formatCurrency(formData.valorObra / (formData.cotizDolar || 1)) : null;
   
   // Organizar tareas por categoría
   const honorariosObra = [];
@@ -337,6 +339,7 @@ function prepararDatosPlantilla(datos, plantilla) {
     tipoObra: formData.tipoObra || 'Sin especificar',
     destinoUso: formData.destinoUso || 'Sin especificar',
     labelTipoDeObra: formData.labelTipoDeObra || 'Tipo de obra',
+    textoTipoDeObra: formData.textoTipoDeObra || 'No especificado',
     observProyecto: formData.observProyecto || 'Sin observaciones',
     superficieTotal: formData.superficieTotal || 0,
     valorMetro2ARS: formatCurrency(formData.valorMetro2 || 0),
@@ -347,12 +350,22 @@ function prepararDatosPlantilla(datos, plantilla) {
     valorObraLabel: formData.valorObraLabel || 'Valor de la obra',
 
     valorBol1: formData.valorBol1 || null,
+    valorBol2: formData.valorBol2 || null,
+    valorBol3: formData.valorBol3 || null,
+    valorBol4: formData.valorBol4 || null,
+    valorBol5: formData.valorBol5 || null,
     valorNum1: formData.valorNum1 || null,
     valorNum2: formData.valorNum2 || null,
     valorNum3: formData.valorNum3 || null,
+    valorNum4: formData.valorNum4 || null,
     valorStr1: formData.valorStr1 || null,
     valorStr2: formData.valorStr2 || null,
     valorStr3: formData.valorStr3 || null,
+    //sólo si es un número válido, sino null para que {{#if}} funcione en el template
+    valorMon1: formData.valorNum1 != null ? formatCurrency(formData.valorNum1) : null,
+    valorMon2: formData.valorNum2 != null ? formatCurrency(formData.valorNum2) : null,
+    valorMon3: formData.valorNum3 != null ? formatCurrency(formData.valorNum3) : null,
+    valorMon4: formData.valorNum4 != null ? formatCurrency(formData.valorNum4) : null,
     
     // Arrays de honorarios (null si están vacíos para que {{#if}} funcione)
     honorariosObra: honorariosObra.length > 0 ? honorariosObra : null,

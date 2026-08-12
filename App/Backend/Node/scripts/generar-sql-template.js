@@ -3,7 +3,7 @@ const path = require('path');
 
 // Leer el HTML
 // const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-otras-tareas.html');
-const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-basico-proyecto-direccion.html');
+//const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-basico-proyecto-direccion.html');
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-conservacion-fachadas.html');
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-habilitaciones.html');
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-representacion-tecnica.html');
@@ -11,6 +11,9 @@ const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-basico-pro
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-peritajes.html');
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-consultas.html');
 // const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-arbitrajes.html');
+//const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-higieneyseguridad.html');
+//const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-tasaciones.html');
+const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-gpyc.html');
 
 const html = fs.readFileSync(htmlPath, 'utf8');
 
@@ -32,7 +35,7 @@ const sql = `-- ================================================================
 -- Una sola ejecución aplica el template tanto en alta como en actualización.
 UPDATE Entregables_PDF
 SET html_template = 0x${hex}
-WHERE entregable_id = 1;
+WHERE entregable_id = 13;
 
 -- ============================================================================
 -- VERIFICACIÓN

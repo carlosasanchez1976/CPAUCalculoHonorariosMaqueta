@@ -122,3 +122,23 @@ exports.borrar = async (req, res, next) => {
     next(err);
   }
 };
+
+
+exports.activar = async (req, res, next) => {
+  try {
+    const { tarea_id, vigente, user_id } = req.body;
+    if (!tarea_id || vigente === undefined || !user_id) {
+      throw new ApiError({
+        ok: false,
+        code: ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: 'Faltan datos requeridos: tarea_id, vigente, user_id',
+        statusCode: 400,
+        metadata: { controller: 'tareasProfesionales', function: 'activar' }
+      });
+    }
+    const resultado = await TareaProfesional.Activar({ tarea_id, vigente, user_id });
+    res.status(200).json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+};

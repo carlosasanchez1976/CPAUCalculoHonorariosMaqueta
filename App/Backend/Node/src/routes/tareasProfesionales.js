@@ -22,7 +22,7 @@ const { verificarToken } = require('../middlewares/auth');
 // Rutas con autenticación JWT (configurables con REQUIRE_JWT)
 router.get('/', verificarToken, tareasProfesionalesController.listar);
 router.get('/:id', verificarToken, tareasProfesionalesController.buscar);
-router.post('/', verificarToken, tareasProfesionalesController.grabar);
 router.delete('/', verificarToken, tareasProfesionalesController.borrar);
+router.post('/', verificarToken, tareasProfesionalesController.activar);
 
 module.exports = router;

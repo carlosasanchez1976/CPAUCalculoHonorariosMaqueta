@@ -48,6 +48,38 @@ const TareaProfesional = {
     }
   },
 
+  async Activar(data) {
+    try {
+      const {
+        tarea_id,
+        vigente,
+        user_id
+      } = data;
+      const [rows] = await executeStoredProcedure('Tareas_Profesionales_Activar', [
+        tarea_id,
+        vigente,
+        user_id
+      ]);
+      // Retorna tarea completa después de grabar
+      const tareaId = rows[0]?.tarea_id || rows[0]?.tareaId || rows[0]?.id || tarea_id;
+      return tareaId;
+    } catch (error) {
+      if (ApiError.isApiError(error)) {
+        error.addMetadata('function', 'tareaProfesional.Activar');
+        throw error;
+      }
+      
+      throw new ApiError({
+        code: ERROR_CODES.DB_ERROR,
+        message: 'Error al activar tarea profesional',
+        statusCode: 500,
+        detail: { originalError: error.message },
+        metadata: { module: 'tareaProfesional', function: 'Activar' }
+      });
+    }
+  },
+
+
   async Grabar(data) {
     try {
       // UPSERT: si tarea_id IS NULL → INSERT, sino → UPDATE

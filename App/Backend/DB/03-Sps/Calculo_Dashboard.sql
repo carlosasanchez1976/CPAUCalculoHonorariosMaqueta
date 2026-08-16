@@ -8,6 +8,8 @@
 -- CAMBIOS:
 -- v1.1: Usa campo fecha_calculo (que tiene índice idx_fecha) en lugar de created_at
 -- v1.2: Serie temporal limitada a máximo 60 días (independiente del rango solicitado)
+-- 14/08/2026: se agrega total de cálculos con comentarios (app_exp_observ no nulo)
+--             se quita cálculo de valor promedio de obra (se envía a frontend por compatibilidad)
 -- ============================================================================
 
 DELIMITER $$
@@ -22,7 +24,8 @@ BEGIN
   -- ========================================================================
   -- RESULTSET 1: RESUMEN GENERAL
   -- ========================================================================
-  -- Retorna 1 fila con 6 métricas clave
+  -- Retorna 1 fila con 7 métricas clave
+
   
   SELECT
     -- Total de usuarios nuevos (por fec_ult_act)
@@ -50,7 +53,14 @@ BEGIN
      WHERE fecha_calculo BETWEEN p_fecha_desde AND p_fecha_hasta
        AND app_exp_puntaje IS NOT NULL
     ) AS promedioPuntaje,
-    
+
+    -- Cantidad de calculos con comentarios (app_exp_observ no nulo)
+    (SELECT COUNT(*)
+     FROM Calculos
+     WHERE fecha_calculo BETWEEN p_fecha_desde AND p_fecha_hasta
+       AND app_exp_observ IS NOT NULL
+    ) AS totalCalculosConComentarios,
+
     -- Usuarios activos (usuarios que hicieron al menos 1 cálculo)
     (SELECT COUNT(DISTINCT usuario_id)
      FROM Calculos
@@ -58,11 +68,15 @@ BEGIN
     ) AS usuariosActivos,
     
     -- Valor promedio de obra
-    (SELECT AVG(obra_valor_obra)
+   /* (SELECT AVG(obra_valor_obra)
      FROM Calculos
      WHERE fecha_calculo BETWEEN p_fecha_desde AND p_fecha_hasta
        AND obra_valor_obra > 0
-    ) AS valorPromedioObra;
+    ) AS valorPromedioObra;*/
+    -- Enviar cero por compatibilidad con frontend (que espera un número, no NULL)
+
+    0 as valorPromedioObra;
+
   
   
   -- ========================================================================

@@ -9,6 +9,7 @@ router.post('/calcular', verificarToken, honorariosController.calcular);
 router.get('/:calculoId/items', verificarToken, honorariosController.obtenerItems);
 router.post('/exportar-pdf', verificarToken, honorariosController.exportarPdf);
 router.post('/:calculoId/experiencia', verificarToken, honorariosController.guardarExperiencia);
+router.post('/experiencia/listar', verificarToken, honorariosController.listarExperiencia);
 
 // Dashboard de métricas de cálculos (SPEC-027)
 // GET /api/calculos/dashboard?fechaDesde=YYYY-MM-DD&fechaHasta=YYYY-MM-DD

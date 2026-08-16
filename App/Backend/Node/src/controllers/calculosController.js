@@ -351,3 +351,41 @@ exports.getDashboard = async (req, res, next) => {
         next(error);
     }
 };
+
+
+/**
+ * Lista el detalle de cálculos con experiencia de usuario (puntaje y observaciones)
+ * POST /api/calculos/experiencia/listar
+ * SPEC: SPEC032-CALC-Experiencia-Listar
+ * 
+ * Body params:
+ * @param {string} [req.body.fechaDesde] - Fecha inicio en formato ISO 8601 (YYYY-MM-DD)
+ * @param {string} [req.body.fechaHasta] - Fecha fin en formato ISO 8601 (YYYY-MM-DD)
+ * @param {boolean} [req.body.conObservaciones] - Filtrar solo cálculos con observaciones (true/false)
+ * 
+ */
+exports.listarExperiencia = async (req, res, next) => {
+    try {
+        // 1. Extraer parámetros del body y convertir undefined a null
+        const { fechaDesde, fechaHasta, conObservaciones } = req.body || {};
+        
+        // 2. Llamar al modelo (convertir undefined a null para MySQL)
+        const experienciaData = await calculoModel.listarExperiencia(
+            fechaDesde ?? null,
+            fechaHasta ?? null,
+            conObservaciones ?? null
+        );
+        
+        console.log(`📊 [Controller] Experiencia listada exitosamente desde ${fechaDesde} hasta ${fechaHasta} (solo con observaciones: ${conObservaciones})`);
+
+        // 6. Respuesta exitosa
+        return res.status(200).json({
+            success: true,
+            data: experienciaData,
+            version: '1.0'
+        });
+        
+    } catch (error) {
+        next(error);
+    }
+};

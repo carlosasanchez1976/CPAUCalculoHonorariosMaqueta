@@ -26,7 +26,7 @@ DROP PROCEDURE IF EXISTS Calcular_Hon_Art_1_13$$
  ******************************************************************************
  * - 2026-07-08: Se agrega parámetro IN p_solo_calculo para permitir calcular el total sin generar movimientos en la tabla Calculos_Items. 
  ******************************************************************************
- * - 2026-05-22: 
+ * - 2026-08-14: Se corrige el cálculo del importe de las primeras 5 horas según Art. 1.13, ahora es igual al coeficiente K multiplicado por el valor K, sin importar la cantidad de horas trabajadas.
  ******************************************************************************
  *
  * PARAMETROS:
@@ -93,7 +93,10 @@ bloque_principal: BEGIN
   -- PASO 1: GENERAR MOIVMIENTO POR LAS PRIMERAS 5 HORAS
   -- ========================================================================
 
-  SET v_importe_item = v_cant_horas_prim * v_importe_hora_prim; -- Primeras 5 horas
+  -- SET v_importe_item = v_cant_horas_prim * v_importe_hora_prim; -- Primeras 5 horas
+  -- corrección: según Art. 1.13, el importe de las primeras 5 horas es igual al coeficiente K multiplicado por el valor K, sin importar la cantidad de horas trabajadas.
+  -- 14/08/2026
+  SET v_importe_item = ROUND(v_coef_hora_prim * p_valor_k); -- Primeras 5 horas
   
   IF NOT p_solo_calculo THEN
     SET v_descripcion = CONCAT('Art. 1.13 - Primeras ', v_cant_horas_prim, ' horas (coef K ', CAST((v_coef_hora_prim * 100) AS CHAR), '%)');

@@ -1,7 +1,7 @@
-DROP PROCEDURE IF EXISTS Calculo_Experiencia;
+DROP PROCEDURE IF EXISTS Calculo_Experiencia_Grabar;
 DELIMITER $$
 
-CREATE PROCEDURE Calculo_Experiencia(
+CREATE PROCEDURE Calculo_Experiencia_Grabar(
   IN p_calculo_id INT,
   IN p_app_exp_puntaje NUMERIC(1,0),
   IN p_app_exp_observ VARCHAR(255)

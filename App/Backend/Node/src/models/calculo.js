@@ -265,7 +265,7 @@ async function guardarExperiencia(calculoId, puntaje, observaciones) {
     try {
         const calculoIdInt = normalizarIdEntero(calculoId);
         
-        await db.executeStoredProcedure('Calculo_Experiencia', [
+        await db.executeStoredProcedure('Calculo_Experiencia_Grabar', [
             calculoIdInt,
             puntaje,
             observaciones
@@ -422,13 +422,11 @@ async function getDashboard(fechaDesde, fechaHasta) {
             totalUsuariosNuevos: Number(resumenRaw.totalUsuariosNuevos) || 0,
             totalCalculosNuevos: Number(resumenRaw.totalCalculosNuevos) || 0,
             totalCalculosConPuntaje: Number(resumenRaw.totalCalculosConPuntaje) || 0,
+            totalCalculosConComentarios: Number(resumenRaw.totalCalculosConComentarios) || 0,
             promedioPuntaje: resumenRaw.promedioPuntaje !== null && resumenRaw.promedioPuntaje !== undefined
                 ? Number(parseFloat(resumenRaw.promedioPuntaje).toFixed(1))
                 : null,
-            usuariosActivos: Number(resumenRaw.usuariosActivos) || 0,
-            valorPromedioObra: resumenRaw.valorPromedioObra !== null && resumenRaw.valorPromedioObra !== undefined
-                ? Number(parseFloat(resumenRaw.valorPromedioObra).toFixed(2))
-                : null
+            usuariosActivos: Number(resumenRaw.usuariosActivos) || 0
         };
         
         // ====================================================================
@@ -546,10 +544,56 @@ async function getDashboard(fechaDesde, fechaHasta) {
     }
 }
 
+/**
+ * Lista la experiencia del usuario sobre un cálculo en base a fechas desde - hasta y si se requieren solo con observaciones
+ * 
+ * @param {date} fechaDesde
+ * @param {date} fechaHasta
+ * @param {boolean|null} soloConObservaciones - Indica si se requieren solo las experiencias con observaciones
+ * @returns {Promise<void>}
+ * @throws {Object} Error estructurado con code, message, detail
+ */
+async function listarExperiencia(fechaDesde, fechaHasta, soloConObservaciones) {
+    try {
+        
+        const result = await db.executeStoredProcedure('Calculo_Experiencia_Listar', [
+            fechaDesde,
+            fechaHasta,
+            soloConObservaciones
+        ]);
+
+        console.log(`✅ [Model] Experiencia listada desde ${fechaDesde} hasta ${fechaHasta} (solo con observaciones: ${soloConObservaciones})`);
+        
+        // Retornar el primer resultset del SP (patrón estándar)
+        const [rows] = result;
+        return Array.isArray(rows) ? rows : [];
+        
+    } catch (error) {
+        console.error('❌ [Model] Error al listar experiencia:', error.message);
+        
+        if (ApiError.isApiError(error)) {
+            error.addMetadata('function', 'calculo.listarExperiencia');
+            error.addMetadata('fechaDesde', fechaDesde);
+            error.addMetadata('fechaHasta', fechaHasta);
+            throw error;
+        }
+        
+        throw new ApiError({
+            code: ERROR_CODES.DB_ERROR,
+            message: 'Error al listar la experiencia en la base de datos',
+            statusCode: 500,
+            detail: { originalError: error.message, calculoId },
+            metadata: { module: 'calculo', function: 'listarExperiencia' }
+        });
+    }
+}
+
+
 module.exports = {
     grabarCalculo,
     obtenerCalculoPorId,
     existeTareaProfesional,
     guardarExperiencia,
+    listarExperiencia,
     getDashboard
 };

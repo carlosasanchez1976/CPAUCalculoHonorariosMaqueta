@@ -66,15 +66,6 @@ BEGIN
      FROM Calculos
      WHERE fecha_calculo BETWEEN p_fecha_desde AND p_fecha_hasta
     ) AS usuariosActivos,
-    
-    -- Valor promedio de obra
-   /* (SELECT AVG(obra_valor_obra)
-     FROM Calculos
-     WHERE fecha_calculo BETWEEN p_fecha_desde AND p_fecha_hasta
-       AND obra_valor_obra > 0
-    ) AS valorPromedioObra;*/
-    -- Enviar cero por compatibilidad con frontend (que espera un número, no NULL)
-
     0 as valorPromedioObra;
 
   

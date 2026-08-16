@@ -22,6 +22,7 @@ BEGIN
       inner join Usuarios on Calculos.usuario_id = Usuarios.user_id
     WHERE
       fecha_calculo BETWEEN p_fecha_desde AND p_fecha_hasta
+      AND app_exp_puntaje IS NOT NULL
       AND (p_con_observaciones = false OR app_exp_observ IS NOT NULL);
 END$$
 DELIMITER ;

@@ -25,6 +25,7 @@ CREATE PROCEDURE Calculos_Grabar(
   IN p_calc_valor_num2 DECIMAL(15,2),
   IN p_calc_valor_num3 DECIMAL(15,2),
   IN p_calc_valor_num4 DECIMAL(15,2),
+  IN p_calc_valor_num5 DECIMAL(15,2),
 
   -- Datos Obra
   IN p_obra_valor_obra DECIMAL(15,2),
@@ -89,6 +90,7 @@ BEGIN
         calc_valor_num2,
         calc_valor_num3,
         calc_valor_num4,
+        calc_valor_num5,
         tarea_obra_proyecto,
         tarea_obra_direccion,
         tarea_instalacion_sanitaria,
@@ -124,6 +126,7 @@ BEGIN
         p_calc_valor_num2,
         p_calc_valor_num3,
         p_calc_valor_num4,
+        p_calc_valor_num5,
         p_tarea_obra_proyecto,
         p_tarea_obra_direccion,
         p_tarea_instalacion_sanitaria,
@@ -165,6 +168,7 @@ BEGIN
         calc_valor_num2 = p_calc_valor_num2,
         calc_valor_num3 = p_calc_valor_num3,
         calc_valor_num4 = p_calc_valor_num4,
+        calc_valor_num5 = p_calc_valor_num5,
         tarea_obra_proyecto = p_tarea_obra_proyecto,
         tarea_obra_direccion = p_tarea_obra_direccion,
         tarea_instalacion_sanitaria = p_tarea_instalacion_sanitaria,

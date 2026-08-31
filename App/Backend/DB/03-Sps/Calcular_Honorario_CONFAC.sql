@@ -19,7 +19,8 @@ DROP PROCEDURE IF EXISTS Calcular_Honorario_CONFAC$$
  * - 2026-07-06: Creación del procedimiento para cálculo de honorarios de conservación de fachadas (CONFAC)
  ******************************************************************************
  * MODIFICACIONES:
-* - 2026-05-22: 
+ * - 2026-08-29: Se modifica en base a reunión con Amalia. Se agrega dato
+ * -             fachada_en_condiciones en bol1 que reemplaza "realiza estudios"
  ******************************************************************************
  * - 2026-05-22: 
  ******************************************************************************
@@ -41,8 +42,8 @@ bloque_principal: BEGIN
   DECLARE v_obra_tipologia VARCHAR(50);
   DECLARE v_descripcion_servicio VARCHAR(200);
   DECLARE v_total_horas DECIMAL(6,2);
+  DECLARE v_fachada_en_condiciones BOOLEAN;
   DECLARE v_hasta_60_km BOOLEAN;
-  DECLARE v_realiza_estudios_adicionales BOOLEAN;
   DECLARE v_cant_inspecciones DECIMAL(15,2);
   
   declare v_valor_k DECIMAL(15,2);
@@ -75,7 +76,7 @@ bloque_principal: BEGIN
       v_descripcion_servicio,
       v_total_horas,
       v_hasta_60_km,
-      v_realiza_estudios_adicionales,
+      v_fachada_en_condiciones,
       v_cant_inspecciones
     FROM
       Calculos
@@ -108,8 +109,8 @@ bloque_principal: BEGIN
    
   SET v_total_honorarios = 0;
 
- -- Si realiza estudios adicionales, se calcula el honorario según Art. 10.3, de lo contrario, se calcula según Art. 1.13
-  IF v_realiza_estudios_adicionales THEN
+ -- Si fachada está en condiciones (true), se calcula el honorario según Art. 10.3, de lo contrario, se calcula según Art. 1.13
+  IF v_fachada_en_condiciones THEN
 
     -- Procsar resto del Cálculo como un ESTUDIO (Art.)
     CALL Calcular_Hon_Art_10_3(
@@ -139,8 +140,6 @@ bloque_principal: BEGIN
       v_item_numero,
       v_total_honorarios
     );
-
-
 
   END IF;
 

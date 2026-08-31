@@ -342,6 +342,7 @@ function prepararDatosPlantilla(datos, plantilla) {
     valorNum2: formData.valorNum2 || null,
     valorNum3: formData.valorNum3 || null,
     valorNum4: formData.valorNum4 || null,
+    valorNum5: formData.valorNum5 || null,
     valorStr1: formData.valorStr1 || null,
     valorStr2: formData.valorStr2 || null,
     valorStr3: formData.valorStr3 || null,
@@ -350,6 +351,7 @@ function prepararDatosPlantilla(datos, plantilla) {
     valorMon2: formData.valorNum2 != null ? formatCurrency(formData.valorNum2) : null,
     valorMon3: formData.valorNum3 != null ? formatCurrency(formData.valorNum3) : null,
     valorMon4: formData.valorNum4 != null ? formatCurrency(formData.valorNum4) : null,
+    valorMon5: formData.valorNum5 != null ? formatCurrency(formData.valorNum5) : null,
     
     // Arrays de honorarios (null si están vacíos para que {{#if}} funcione)
     honorariosObra: honorariosObra.length > 0 ? honorariosObra : null,

@@ -98,6 +98,7 @@ async function grabarCalculo(datosCompletos) {
         datosProyecto.valornum2 || null,
         datosProyecto.valornum3 || null,
         datosProyecto.valornum4 || null,
+        datosProyecto.valornum5 || null,
         datosObra.valorObra,
         datosObra.superficie || null,
         datosObra.cotizDolar || null,

@@ -93,4 +93,6 @@ alter table Calculos modify column fecha_calculo DATE NOT NULL;
 
 alter table Calculos modify column obra_complejidad VARCHAR(100) NULL;
 
+alter table Calculos add column calc_valor_num5 decimal(15,2) null after calc_valor_num4;
+
 

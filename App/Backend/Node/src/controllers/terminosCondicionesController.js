@@ -23,15 +23,14 @@ exports.listar = async (req, res, next) => {
  */
 exports.buscarVigente = async (req, res, next) => {
   try {
-    const tyc = await TerminosCondiciones.BuscarVigente();
+    let tyc = await TerminosCondiciones.BuscarVigente();
     
+    /*
+    no devolver error 404 si no hay TyC vigente, sino un objeto vacío
+    */
+
     if (!tyc) {
-      throw new ApiError({
-        code: ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: 'No hay términos y condiciones vigentes',
-        statusCode: 404,
-        metadata: { controller: 'terminosCondiciones', function: 'buscarVigente' }
-      });
+      tyc = {success: false, message: 'No hay Términos y Condiciones vigentes'};
     }
     
     res.json(tyc);

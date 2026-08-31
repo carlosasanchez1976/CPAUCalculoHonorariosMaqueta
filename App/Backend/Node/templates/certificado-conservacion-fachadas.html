@@ -605,6 +605,19 @@
 
       <!-- Fila 3: -->
       <div class="resumen-item-container">
+        <div class="resumen-item">
+          <span class="resumen-label">Fachada en condiciones:</span>
+          {{#if valorBol1}}
+          <span class="resumen-value">Sí</span>
+          {{/if}}
+          {{^if valorBol1}}
+          <span class="resumen-value">No</span>
+          {{/if}}
+        </div>
+      </div>
+
+      <!-- Fila 4: -->
+      <div class="resumen-item-container">
 
         <div class="resumen-item">
           <span class="resumen-label">Horas insumidas por el titular:</span>
@@ -612,18 +625,6 @@
         </div>
 
       </div>
-
-      <!-- Fila 5: -->
-       {{#if valorBol1}}
-      <div class="resumen-item-container">
-        <div class="resumen-item">
-          <span class="resumen-label">Realiza estudios adicionales:</span>
-          <span class="resumen-value">Sí</span>
-        </div>
-      </div>
-      {{/if}}
-
-
 
       <!-- Fila 6: -->
       <div class="resumen-item-container">

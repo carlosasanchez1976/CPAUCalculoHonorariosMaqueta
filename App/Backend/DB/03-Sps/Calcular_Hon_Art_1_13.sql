@@ -77,7 +77,7 @@ bloque_principal: BEGIN
   SET v_coef_hora_rest = 0.00006; -- Coeficiente para las horas adicionales
   SET v_coef_dia_60_km = 0.0006; -- Coeficiente para los días de desplazamiento hasta 60 km
 
-  IF NOT p_hasta_60_km THEN
+  IF p_hasta_60_km THEN
     SET v_cant_dias_60_km = CEIL(p_cant_horas / 8); -- Si hay desplazamiento hasta 60 km, se considera 1 día por cada 8 horas
   ELSE
     SET v_cant_dias_60_km = 0; -- No hay desplazamiento

@@ -48,10 +48,14 @@ bloque_principal: BEGIN
   DECLARE v_importe_item DECIMAL(15,2);
   DECLARE v_descripcion VARCHAR(500);
   DECLARE v_coef_consulta DECIMAL(3,2);
+  DECLARE v_importe_dif DECIMAL(15,2);
+  DECLARE v_importe_base DECIMAL(15,2);
 
   IF p_descripcion IS NULL THEN
       SET p_descripcion = '';
   END IF;  
+
+  SET v_importe_base = p_total_importe; -- Guardar el importe base antes de aplicar el coeficiente adicional
 
   CALL Calcular_Hon_Art_1_13(
     p_calculo_id,
@@ -64,6 +68,8 @@ bloque_principal: BEGIN
     p_item_numero,
     p_total_importe
   );
+
+   SET v_importe_dif = p_total_importe - v_importe_base; -- Calcular la diferencia generada por el SP Calcular_Hon_Art_1_13
 
     -- ========================================================================
     -- PASO 3: GENERAR ADICIONALES POR TIPO DE CONSULTA
@@ -96,7 +102,7 @@ bloque_principal: BEGIN
     
     SET v_coef_consulta = v_coef_consulta - 1; -- Convertir para cálculo
 
-    SET v_importe_item = ROUND(p_total_importe * v_coef_consulta);
+    SET v_importe_item = ROUND(v_importe_dif * v_coef_consulta);
    
     CALL Calculos_Items_Grabar(p_calculo_id, p_item_numero, p_tarea_profesional, v_descripcion, v_importe_item);
 

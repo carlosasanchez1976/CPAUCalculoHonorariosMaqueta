@@ -126,8 +126,11 @@ bloque_principal: BEGIN
   -- ========================================================================
   -- PASO 3: GENERAR MOVIMIENTO POR LOS DÍAS DE DESPLAZAMIENTO HASTA 60 KM
   -- ========================================================================
+  -- POR AHORA SE ANULA HASTA QUE SE ESTUDIE MEJOR LA LOGICA DE CÁLCULO DE DESPLAZAMIENTO, YA QUE NO SE TIENE EN CUENTA EL ART. 1.13
+  -- 08/09/2026
+  --
 
-  if v_cant_dias_60_km > 0 then
+  if v_cant_dias_60_km < 0 then
     SET v_importe_dia_60_km = ROUND(v_coef_dia_60_km * p_valor_k);
     SET v_importe_item = v_cant_dias_60_km * v_importe_dia_60_km; -- Días de desplazamiento hasta 60 km
     IF NOT p_solo_calculo THEN

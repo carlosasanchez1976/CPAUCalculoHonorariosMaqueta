@@ -41,6 +41,9 @@ case v_Tarea_codi
   when 'HYS' then
     -- Lógica para calcular honorarios de Higiene y Seguridad
     call Calcular_Honorario_HYS(p_calculo_id);
+  when 'IMPAMB' then
+    -- Lógica para calcular honorarios de Impacto Ambiental
+    call Calcular_Honorario_IMPAMB(p_calculo_id);
   when 'MEDPLAN' then
     -- Lógica para calcular honorarios de Medición y ejecución de Planos
     call Calcular_Honorario_MEDPLAN(p_calculo_id);

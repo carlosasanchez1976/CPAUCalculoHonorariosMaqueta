@@ -110,3 +110,5 @@ INSERT INTO Tareas_Profesionales (codi, descripcion, descripcion_larga, vigente,
  FALSE, NULL);
  
  select * from Tareas_Profesionales
+
+ update Tareas_Profesionales set descripcion_larga = 'Cálculo de honorarios profesionales para tareas de actividades económicas.' where codi = 'HABI'

@@ -219,21 +219,22 @@ bloque_principal: BEGIN
 
   END IF;
 
-  -- Si realizo estudio de impacto ambiental, agregar ítem adicional con art. 1.13
+  -- Si realizo estudio de impacto ambiental, agregar ítem adicional con art. 10.3
   IF v_estudio_impacto_ambiental THEN
-    SET v_descripcion = CONCAT('Honorarios por estudio de impacto ambiental (', CAST(v_horas_estudio_impacto AS CHAR), ' hs a Art. 1.13)');
+    SET v_descripcion = CONCAT('Honorarios por estudio de impacto ambiental (', CAST(v_horas_estudio_impacto AS CHAR), ' hs a Art. 10.3)');
     
-    CALL Calcular_Hon_Art_1_13(
-        p_calculo_id,
-        v_tarea_profesional,
-        v_horas_estudio_impacto, -- Cantidad de horas
-        false, -- Hasta 60 km
-        v_valor_k,
-        v_descripcion,
-        false,
-        v_item_numero,
-        v_total_honorarios
-      );
+     CALL Calcular_Hon_Art_10_3(
+      p_calculo_id,
+      v_tarea_profesional,
+      v_horas_estudio_impacto, -- Cantidad de horas
+      false, -- Hasta 60 km
+      v_valor_k,
+      v_descripcion,
+      'ESTUD',
+      v_item_numero,
+      v_total_honorarios
+    );
+
 
   END IF;
   

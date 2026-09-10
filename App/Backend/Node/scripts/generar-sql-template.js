@@ -24,7 +24,7 @@ const hex = Buffer.from(html, 'utf8').toString('hex');
 // Generar SQL
 const sql = `-- ============================================================================
 -- SCRIPT: Cargar template PDF en Entregables_PDF
--- Template: Certificado Habilitaciones
+-- Template: Certificado Conservacion Fachadas
 -- entregable_id: 7
 -- Fecha: 2026-06-11
 -- ============================================================================

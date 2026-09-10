@@ -391,19 +391,27 @@
     tbody td {
       padding: 15px 0;  /* ← TICKET-003: Reducido de 8px a 6px */
       border-bottom: 1px solid var(--border-gray-color);
+      vertical-align: top;
     }
-    /*
+
+    table tbody td:nth-child(2) {
+      padding-right: 8px;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      white-space: normal;
+    }
+
     tbody tr:last-child td {
       border-bottom: none;
-    }*/
-    /*
+    }
+    
     tbody tr:last-child td:first-child {
       border-bottom-left-radius: 12px;
     }
     
     tbody tr:last-child td:last-child {
       border-bottom-right-radius: 12px;
-    }*/
+    }
     
     
     .centered {

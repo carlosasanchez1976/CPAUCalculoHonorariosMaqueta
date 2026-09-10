@@ -205,6 +205,8 @@ function prepararDatosPlantilla(datos, plantilla) {
   
   // Usar detalleHonorarios de calculationResult (enviado desde frontend)
   const detalleHonorarios = calculationResult?.detalleHonorarios || formData?.detalleHonorarios || [];
+  const tipoCalculo = String(datos.tipoCalculo || formData?.tipoCalculo || '').toUpperCase();
+  const esPYDOA = tipoCalculo === 'PYDOA';
   
   // AGRUPAR POR TAREA PROFESIONAL (igual que en el frontend)
   const agruparHonorariosPorTarea = (items) => {
@@ -229,12 +231,33 @@ function prepararDatosPlantilla(datos, plantilla) {
     
     return Object.values(agrupado);
   };
+
+  const normalizarDetalleParaPdf = (items) => {
+    return (items || []).map((item, index) => {
+      const importe = Number(item.importe ?? item.importeARS ?? item.valor ?? 0);
+      const descripcion = item.descripcion || item.tareaProfesional || 'Sin descripción';
+      const tareaProfesional = descripcion;
+
+      return {
+        ...item,
+        indice: index + 1,
+        descripcion,
+        tareaProfesional,
+        importe,
+        importeARS: formatCurrency(importe),
+        importeUSD: formatCurrency(importe / (formData.cotizDolar || 1)),
+        porcentaje: formData.valorObra > 0 ? ((importe / formData.valorObra) * 100).toFixed(2) : '0.00'
+      };
+    });
+  };
   
-  const honorariosAgrupados = agruparHonorariosPorTarea(detalleHonorarios);
+  const detalleParaPlantilla = esPYDOA
+    ? agruparHonorariosPorTarea(detalleHonorarios)
+    : normalizarDetalleParaPdf(detalleHonorarios);
   
-  if (Array.isArray(honorariosAgrupados) && honorariosAgrupados.length > 0) {
-    honorariosAgrupados.forEach((tarea, index) => {
-      const importeARS = redondear(tarea.importe || 0);
+  if (Array.isArray(detalleParaPlantilla) && detalleParaPlantilla.length > 0) {
+    detalleParaPlantilla.forEach((tarea, index) => {
+      const importeARS = redondear(Number(tarea.importe || 0));
       const importeUSD = redondear(importeARS / (formData.cotizDolar || 1));
       const porcentaje = formData.valorObra > 0 
         ? (importeARS / formData.valorObra * 100).toFixed(2)
@@ -243,19 +266,23 @@ function prepararDatosPlantilla(datos, plantilla) {
       const item = {
         indice: index + 1,
         tareaProfesional: tarea.tareaProfesional || 'Tarea sin nombre',
-        descripcion: tarea.descripcion || '',
+        descripcion: tarea.descripcion || tarea.tareaProfesional || '',
         importeARS: formatCurrency(importeARS),
         importeUSD: formatCurrency(importeUSD),
         porcentaje
       };
       
-      // Categorizar según el nombre de la tarea
-      const nombreTarea = (tarea.tareaProfesional || '').toLowerCase();
-      
-      if (nombreTarea.includes('proyecto de obra') || nombreTarea.includes('dirección de obra')) {
-        honorariosObra.push(item);
-      } else if (nombreTarea.includes('documentación ejecutiva') || nombreTarea.includes('supervisión de obra')) {
-        honorariosAdicionales.push(item);
+      if (esPYDOA) {
+        // Categorizar según el nombre de la tarea
+        const nombreTarea = (tarea.tareaProfesional || '').toLowerCase();
+        
+        if (nombreTarea.includes('proyecto de obra') || nombreTarea.includes('dirección de obra')) {
+          honorariosObra.push(item);
+        } else if (nombreTarea.includes('documentación ejecutiva') || nombreTarea.includes('supervisión de obra')) {
+          honorariosAdicionales.push(item);
+        } else {
+          honorariosEspecialidades.push(item);
+        }
       } else {
         honorariosEspecialidades.push(item);
       }

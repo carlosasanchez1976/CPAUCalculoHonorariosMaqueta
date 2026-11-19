@@ -95,4 +95,9 @@ alter table Calculos modify column obra_complejidad VARCHAR(100) NULL;
 
 alter table Calculos add column calc_valor_num5 decimal(15,2) null after calc_valor_num4;
 
+-- SPEC034
+alter table Calculos add column calc_valor_str3 varchar(255) null after calc_valor_str2;
+alter table Calculos add column calc_valor_str4 varchar(255) null after calc_valor_str3;
+alter table Calculos add column calc_valor_str5 varchar(255) null after calc_valor_str4;
+
 

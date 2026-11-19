@@ -54,6 +54,24 @@ update Tareas_Profesionales set calc_valor_bol5_des = 'Incluye tareas de confecc
 update Tareas_Profesionales set calc_valor_num4_des = 'Monto del Valor en juego' where codi = 'TASA';
 call Tareas_Profesionales_Entregables_Grabar(null,13,2,1,1);
 
+-- SPEC034
+-- DEMO - Demoliciones
+update Tareas_Profesionales set vigente = 1 where codi = 'DEMO';
+update Tareas_Profesionales set calc_obra_valor_obra_des = 'Valor tasación obra a valor reposición exc terreno' where codi = 'DEMO';
+update Tareas_Profesionales set calc_valor_num1_des = 'Coeficiente F1 - Estado de conservación del edificio' where codi = 'DEMO';
+update Tareas_Profesionales set calc_valor_num2_des = 'Coeficiente F2 - Tipo de estructura resistente' where codi = 'DEMO';
+update Tareas_Profesionales set calc_valor_num3_des = 'Coeficiente F3 - Precauciones especiales - linderos' where codi = 'DEMO';
+update Tareas_Profesionales set calc_valor_num4_des = 'Coeficiente F4 - Precauciones especiales - sótanos' where codi = 'DEMO';
+update Tareas_Profesionales set calc_valor_num5_des = 'Coeficiente F5 - Características de la obra' where codi = 'DEMO';
+--call Tareas_Profesionales_Entregables_Grabar(null,13,2,1,1);
+
+update Tareas_Profesionales set calc_valor_str1_des = 'Coeficiente F1 - Estado de conservación del edificio' where codi = 'DEMO';
+update Tareas_Profesionales set calc_valor_str2_des = 'Coeficiente F2 - Tipo de estructura resistente' where codi = 'DEMO';
+update Tareas_Profesionales set calc_valor_str3_des = 'Coeficiente F3 - Precauciones especiales - linderos' where codi = 'DEMO';
+update Tareas_Profesionales set calc_valor_str4_des = 'Coeficiente F4 - Precauciones especiales - sótanos' where codi = 'DEMO';
+update Tareas_Profesionales set calc_valor_str5_des = 'Coeficiente F5 - Características de la obra' where codi = 'DEMO';
+
+
 
 
 

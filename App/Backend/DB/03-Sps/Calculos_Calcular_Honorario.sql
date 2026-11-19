@@ -53,6 +53,9 @@ case v_Tarea_codi
   when 'TASA' then
     -- Lógica para calcular honorarios de Tasaciones
     call Calcular_Honorario_TASA(p_calculo_id);
+  when 'DEMO' then
+    -- Lógica para calcular honorarios de Demoliciones
+    call Calcular_Honorario_DEMO(p_calculo_id);
   else
     select concat('Tarea profesional con código erróneo: ', v_Tarea_codi) as mensaje_error;
 end case;

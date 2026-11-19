@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-09-10T21:50:51.271Z",
+  "timestamp": "2026-11-19T21:57:53.736Z",
   "version": "1.0.0",
   "zipFile": "ch2026-backend-api-lambda.zip",
-  "zipSizeMB": "79.62",
-  "sha256": "63f5937c9028a2ae3763096f0294746a2fb8ee97ebbf5ce61804838ac43ef9d1",
+  "zipSizeMB": "81.38",
+  "sha256": "2729e0be980c264003e907a47790c2897c9d2a103ea8e411089662cb49fc329e",
   "files": [
     "lambda.js",
     "app.js",
@@ -11,6 +11,6 @@
     "package-lock.json",
     "src/"
   ],
-  "nodeVersion": "v22.18.0",
+  "nodeVersion": "v24.22.1",
   "platform": "win32"
 }

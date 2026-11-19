@@ -50,4 +50,11 @@ ALTER TABLE Tareas_Profesionales ADD COLUMN calc_valor_bol5_des VARCHAR(100) NUL
 
 ALTER TABLE Tareas_Profesionales ADD COLUMN calc_valor_num4_des VARCHAR(100) NULL AFTER calc_valor_num3_des;
 
+-- SPEC034
+ALTER TABLE Tareas_Profesionales ADD COLUMN calc_valor_num5_des VARCHAR(100) NULL AFTER calc_valor_num4_des;
+ALTER TABLE Tareas_Profesionales ADD COLUMN calc_valor_str4_des VARCHAR(100) NULL AFTER calc_valor_str3_des;
+ALTER TABLE Tareas_Profesionales ADD COLUMN calc_valor_str5_des VARCHAR(100) NULL AFTER calc_valor_str4_des;
+
+
+
 

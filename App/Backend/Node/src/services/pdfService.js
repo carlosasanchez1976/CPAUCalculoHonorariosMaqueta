@@ -360,6 +360,9 @@ function prepararDatosPlantilla(datos, plantilla) {
     proyectoLabel: formData.proyectoLabel || 'encargo',
     valorObraLabel: formData.valorObraLabel || 'Valor de la obra',
 
+    obraProyecto: formData.obraProyecto || false,
+    obraDireccion: formData.obraDireccion || false,
+
     valorBol1: formData.valorBol1 || null,
     valorBol2: formData.valorBol2 || null,
     valorBol3: formData.valorBol3 || null,
@@ -373,6 +376,8 @@ function prepararDatosPlantilla(datos, plantilla) {
     valorStr1: formData.valorStr1 || null,
     valorStr2: formData.valorStr2 || null,
     valorStr3: formData.valorStr3 || null,
+    valorStr4: formData.valorStr4 || null,
+    valorStr5: formData.valorStr5 || null,
     //sólo si es un número válido, sino null para que {{#if}} funcione en el template
     valorMon1: formData.valorNum1 != null ? formatCurrency(formData.valorNum1) : null,
     valorMon2: formData.valorNum2 != null ? formatCurrency(formData.valorNum2) : null,

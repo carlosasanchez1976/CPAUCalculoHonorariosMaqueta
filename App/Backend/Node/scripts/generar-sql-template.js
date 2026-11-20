@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 // Leer el HTML
-const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-basico-proyecto-direccion.html');
+const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-demoliciones.html');
+//const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-basico-proyecto-direccion.html');
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-otras-tareas.html');
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-habilitaciones.html');
 //const htmlPath = path.join(__dirname, '..', 'templates', 'certificado-impacto-ambiental.html');
@@ -24,8 +25,8 @@ const hex = Buffer.from(html, 'utf8').toString('hex');
 // Generar SQL
 const sql = `-- ============================================================================
 -- SCRIPT: Cargar template PDF en Entregables_PDF
--- Template: Certificado Basico Proyecto Direccion
--- entregable_id: 7
+-- Template: Certificado Demoliciones
+-- entregable_id: 15
 -- Fecha: 2026-06-11
 -- ============================================================================
 
@@ -36,7 +37,7 @@ const sql = `-- ================================================================
 -- Una sola ejecución aplica el template tanto en alta como en actualización.
 UPDATE Entregables_PDF
 SET html_template = 0x${hex}
-WHERE codigo = 'Basico-Proyecto-Direccion';
+WHERE codigo = 'Demoliciones';
 
 -- ============================================================================
 -- VERIFICACIÓN
@@ -50,7 +51,7 @@ SELECT
   LEFT(html_template, 100) as html_preview,
   fecha_creacion
 FROM Entregables_PDF
-WHERE entregable_id = 7;
+WHERE entregable_id = 15;
 `;
 
 // Guardar archivo SQL

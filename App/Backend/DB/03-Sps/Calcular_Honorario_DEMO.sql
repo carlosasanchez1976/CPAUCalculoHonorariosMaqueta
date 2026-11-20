@@ -91,7 +91,7 @@ bloque_principal: BEGIN
     calc_valor_str5,
     obra_valor_obra,
     obra_superficie,
-    obra_cotiz_dolar
+    horas
   INTO
     v_tarea_obra_proyecto,
     v_tarea_obra_direccion,
